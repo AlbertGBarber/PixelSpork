@@ -1,6 +1,6 @@
-#include "palletBlenderPS.h"
+#include "PalletBlenderPS.h"
 
-palletBlenderPS::palletBlenderPS(palletPS &StartPallet, palletPS &EndPallet, uint8_t TotalSteps, uint16_t Rate):
+PalletBlenderPS::PalletBlenderPS(palletPS &StartPallet, palletPS &EndPallet, uint8_t TotalSteps, uint16_t Rate):
 endPallet(EndPallet), startPallet(StartPallet), totalSteps(TotalSteps)
 {   
     //bind the rate vars since they are inherited from BaseEffectPS
@@ -9,7 +9,7 @@ endPallet(EndPallet), startPallet(StartPallet), totalSteps(TotalSteps)
 }
 
 //updates the blended pallet at the passed in rate
-void palletBlenderPS::update(){
+void PalletBlenderPS::update(){
     currentTime = millis();
     globalRateCheckPS();
     //if the blend is active, and enougth time has passed, update the pallet
@@ -38,7 +38,7 @@ void palletBlenderPS::update(){
 }
 
 //resets the core class variables, allowing you to reuse class instances
-void palletBlenderPS::reset(palletPS &StartPallet, palletPS &EndPallet, uint8_t TotalSteps, uint16_t Rate){
+void PalletBlenderPS::reset(palletPS &StartPallet, palletPS &EndPallet, uint8_t TotalSteps, uint16_t Rate){
     reset();
     reset(StartPallet, EndPallet);
     totalSteps = TotalSteps;
@@ -46,7 +46,7 @@ void palletBlenderPS::reset(palletPS &StartPallet, palletPS &EndPallet, uint8_t 
 }
 
 //resets just the start and end pallets
-void palletBlenderPS::reset(palletPS &StartPallet, palletPS &EndPallet){
+void PalletBlenderPS::reset(palletPS &StartPallet, palletPS &EndPallet){
     reset();
     //if we are randomizing, choose a randomized end pallet
     if(randomize){
@@ -68,7 +68,7 @@ void palletBlenderPS::reset(palletPS &StartPallet, palletPS &EndPallet){
 }
 
 //reset the loop variables, basically starting the loop from scratch
-void palletBlenderPS::reset(){
+void PalletBlenderPS::reset(){
     step = 0;
     prevTime = 0;
     blendEnd = false;

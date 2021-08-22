@@ -1,5 +1,5 @@
-#ifndef palletBlenderPS_h
-#define palletBlenderPS_h
+#ifndef PalletBlenderPS_h
+#define PalletBlenderPS_h
 
 #include "SegmentFiles.h"
 #include "palletPS.h"
@@ -25,9 +25,9 @@
 //by using both looped and randomize, you can constantly blend to randomized pallets
 
 //you may reuse class instances by calling one of the reset functions, and passing in new colors
-class palletBlenderPS : public EffectBasePS {
+class PalletBlenderPS : public EffectBasePS {
     public:
-        palletBlenderPS(palletPS &StartPallet, palletPS &EndPallet, uint8_t TotalSteps, uint16_t Rate);
+        PalletBlenderPS(palletPS &StartPallet, palletPS &EndPallet, uint8_t TotalSteps, uint16_t Rate);
         
         void
             reset(palletPS &StartPallet, palletPS &EndPallet), //resets just the colors (also starts the blend again)

@@ -1,0 +1,42 @@
+#######################################
+# Syntax Coloring Map For PixelSpork
+#######################################
+# Class
+#######################################
+
+Segment				KEYWORD1
+segmentSection  		KEYWORD1
+SegmentSet			KEYWORD1
+PixelInfoPS			KEYWORD1
+PalletBlenderPS 		KEYWORD1
+palletPS			KEYWORD1
+EffectFaderPS 			KEYWORD1
+EffectGroupPS			KEYWORD1
+RainbowOffsetCyclePS		KEYWORD1
+RateCtrl			KEYWORD1
+EffectBasePS			KEYWORD1
+EmptyEffectPS			KEYWORD1
+CrossFadeCyclePS		KEYWORD1
+CrossFadeCycleRandPS		KEYWORD1
+FixedLengthRanbowCyclePS	KEYWORD1
+RandomColorsPS			KEYWORD1
+RandomColorsLowRam		KEYWORD1
+
+#######################################
+# Namespace
+#######################################
+
+segDrawUtils 	KEYWORD1
+palletUtilsPS	KEYWORD1
+
+#######################################
+# Methods and Functions
+#######################################	
+
+
+#######################################
+# Constants
+#######################################
+
+NO_EFADE_PS		LITERAL1
+dLed			LITERAL1

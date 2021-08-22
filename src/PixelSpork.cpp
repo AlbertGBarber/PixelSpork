@@ -1,4 +1,4 @@
-#include "PixelStrip2.h"
+#include "PixelSpork.h"
     
 // improvments TODO:
 //. write an exponential dimming function (and allow trail length setting on patternSweep) (done, but exp dimming might be off)
