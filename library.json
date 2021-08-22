@@ -1,0 +1,34 @@
+{
+    "name": "PixelStrip2",
+    "description": "Insert Descript",
+    "keywords": "led",
+    "authors": [
+        {
+            "name": "Albert Barber",
+            "url": "https://github.com/AlbertGBarber",
+            "maintainer": true
+        }
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/AlbertGBarber/PixelStrip.git"
+    },
+    "version": "1.0.0",
+    "license": "MIT",
+    "frameworks": "arduino",
+    "platforms": "atmelavr, atmelsam, freescalekinetis, nordicnrf51, nxplpc, ststm32, teensy, espressif8266, espressif32, nordicnrf52",
+    "export": {
+        "exclude": [
+            "Extra_Stuff"
+        ]
+    },
+    "build": {
+        "srcFilter": [
+            "+<*.c>",
+            "+<*.cpp>",
+            "+<*.h>",
+            "+<platforms/esp/32/*.cpp>"
+        ],
+        "libArchive": false
+    }
+}
