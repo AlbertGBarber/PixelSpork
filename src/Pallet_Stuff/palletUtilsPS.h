@@ -4,14 +4,17 @@
 #include "palletPS.h"
 #include "SegmentFiles.h"
 
+//series of utility functions for interacting with pallets
+//use these to change pallets
+//!!DO NOT try to pallets without using these functions
 namespace palletUtilsPS{
     void
-        setColor(palletPS pallet, CRGB color, uint8_t index),
-        randomize(palletPS pallet);
+        setColor(palletPS *pallet, CRGB color, uint8_t index),
+        randomize(palletPS *pallet);
     
     CRGB 
-        getPalletColor(palletPS pallet, uint8_t index),
-        crossFadePallet(palletPS pallet, uint8_t startIndex, uint8_t endIndex, uint8_t step, uint8_t totalSteps);
+        //crossFadePallet(palletPS *pallet, uint8_t startIndex, uint8_t endIndex, uint8_t step, uint8_t totalSteps),
+        getPalletColor(palletPS *pallet, uint8_t index);
 };
 
 #endif

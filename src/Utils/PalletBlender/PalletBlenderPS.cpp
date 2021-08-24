@@ -1,7 +1,7 @@
 #include "PalletBlenderPS.h"
 
-PalletBlenderPS::PalletBlenderPS(palletPS &StartPallet, palletPS &EndPallet, uint8_t TotalSteps, uint16_t Rate):
-endPallet(EndPallet), startPallet(StartPallet), totalSteps(TotalSteps)
+PalletBlenderPS::PalletBlenderPS(palletPS *StartPallet, palletPS *EndPallet, bool Looped, uint8_t TotalSteps, uint16_t Rate):
+endPallet(EndPallet), startPallet(StartPallet), looped(Looped), totalSteps(TotalSteps)
 {   
     //bind the rate vars since they are inherited from BaseEffectPS
     bindClassRatesPS();
@@ -18,11 +18,11 @@ void PalletBlenderPS::update(){
         //for each color in the blend pallet, blend it towards a color in the end pallet
         //using the getCrossFadeColor function (see segDrawUtils.h)
         //it doesn't matter if one pallet is shorter than the other, b/c pallets wrap automatically
-        for(int i = 0; i <  blendPallet.length; i++){
+        for(int i = 0; i < blendPallet.length; i++){
             CRGB startColor = palletUtilsPS::getPalletColor(startPallet, i);
             CRGB endColor = palletUtilsPS::getPalletColor(endPallet, i);
             CRGB newColor = segDrawUtils::getCrossFadeColor(startColor, endColor, step, totalSteps);
-            palletUtilsPS::setColor(blendPallet, newColor, i);
+            palletUtilsPS::setColor(&blendPallet, newColor, i);
             step++;
         }
         //if we have reached the totalSteps,
@@ -38,7 +38,7 @@ void PalletBlenderPS::update(){
 }
 
 //resets the core class variables, allowing you to reuse class instances
-void PalletBlenderPS::reset(palletPS &StartPallet, palletPS &EndPallet, uint8_t TotalSteps, uint16_t Rate){
+void PalletBlenderPS::reset(palletPS *StartPallet, palletPS *EndPallet, uint8_t TotalSteps, uint16_t Rate){
     reset();
     reset(StartPallet, EndPallet);
     totalSteps = TotalSteps;
@@ -46,7 +46,7 @@ void PalletBlenderPS::reset(palletPS &StartPallet, palletPS &EndPallet, uint8_t 
 }
 
 //resets just the start and end pallets
-void PalletBlenderPS::reset(palletPS &StartPallet, palletPS &EndPallet){
+void PalletBlenderPS::reset(palletPS *StartPallet, palletPS *EndPallet){
     reset();
     //if we are randomizing, choose a randomized end pallet
     if(randomize){
@@ -58,7 +58,7 @@ void PalletBlenderPS::reset(palletPS &StartPallet, palletPS &EndPallet){
     //otherwise you miss colors because you wouldn't have space for them
     endPallet = EndPallet;
     startPallet = StartPallet;
-    uint8_t blendPalletLength = max(startPallet.length, endPallet.length);
+    uint8_t blendPalletLength = max(startPallet->length, endPallet->length);
     //delete the current (if there is one) blendPallet array of colors to free up memory
     //then create a new one, and pass that to a pallet
     //this has to be done this way so that the blendPallet array doesn't vanish after this reset() is finished

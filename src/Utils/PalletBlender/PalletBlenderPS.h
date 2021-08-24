@@ -2,8 +2,7 @@
 #define PalletBlenderPS_h
 
 #include "SegmentFiles.h"
-#include "palletPS.h"
-#include "palletUtilsPS.h"
+#include "PalletFiles.h"
 #include "Effects/EffectBasePS.h"
 
 #if !defined(max)
@@ -27,11 +26,11 @@
 //you may reuse class instances by calling one of the reset functions, and passing in new colors
 class PalletBlenderPS : public EffectBasePS {
     public:
-        PalletBlenderPS(palletPS &StartPallet, palletPS &EndPallet, uint8_t TotalSteps, uint16_t Rate);
+        PalletBlenderPS(palletPS *StartPallet, palletPS *EndPallet, bool looped, uint8_t TotalSteps, uint16_t Rate);
         
         void
-            reset(palletPS &StartPallet, palletPS &EndPallet), //resets just the colors (also starts the blend again)
-            reset(palletPS &StartPallet, palletPS &EndPallet, uint8_t TotalSteps, uint16_t Rate), //resets all vars
+            reset(palletPS *StartPallet, palletPS *EndPallet), //resets just the colors (also starts the blend again)
+            reset(palletPS *StartPallet, palletPS *EndPallet, uint8_t TotalSteps, uint16_t Rate), //resets all vars
             reset(), //resets the loop vars, restarting the blend from the beginning
             update();
 
@@ -40,12 +39,16 @@ class PalletBlenderPS : public EffectBasePS {
             totalSteps;
         
         bool
-            looped = false,
+            looped,
             randomize = false,
             blendEnd;
         
         palletPS
             blendPallet;
+        
+        palletPS
+            *startPallet,
+            *endPallet;
     
     private:
         
@@ -55,10 +58,6 @@ class PalletBlenderPS : public EffectBasePS {
         unsigned long
             currentTime,
             prevTime = 0;
-
-        palletPS
-            &startPallet,
-            &endPallet;
 };
 
 #endif

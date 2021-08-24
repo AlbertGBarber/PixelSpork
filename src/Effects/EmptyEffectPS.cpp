@@ -6,11 +6,6 @@ EmptyEffectPS::EmptyEffectPS(SegmentSet &SegmentSet, uint16_t Rate):
         //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
         bindSegPtrPS();
         bindClassRatesPS();
-        //write out the first frame, but don't automatically show
-        //then reset showOn to it's default
-        showOn = false;
-        update();
-        showOn = true;
 	}
 
 void EmptyEffectPS::update(){

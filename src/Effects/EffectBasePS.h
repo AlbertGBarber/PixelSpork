@@ -39,7 +39,6 @@
     //a few macros for common effect code pieces (see above)
 class EffectBasePS {
     public:
-
         uint16_t 
             rate;
         

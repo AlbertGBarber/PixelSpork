@@ -39,9 +39,9 @@
 class CrossFadeCyclePS : public EffectBasePS {
     public:
         //Constructor for pattern and pallet
-        CrossFadeCyclePS(SegmentSet &SegmentSet, uint8_t *Pattern, uint8_t PatternLength, palletPS pallet, uint16_t NumFades, uint8_t Steps, uint16_t Rate);
+        CrossFadeCyclePS(SegmentSet &SegmentSet, uint8_t *Pattern, uint8_t PatternLength, palletPS *Pallet, uint16_t NumFades, uint8_t Steps, uint16_t Rate);
         //Constructor for pallet as the pattern
-        CrossFadeCyclePS(SegmentSet &SegmentSet, palletPS Pallet, uint16_t NumFades, uint8_t Steps, uint16_t Rate);  
+        CrossFadeCyclePS(SegmentSet &SegmentSet, palletPS *Pallet, uint16_t NumFades, uint8_t Steps, uint16_t Rate);  
         //Constructor for random colors
         CrossFadeCyclePS(SegmentSet &SegmentSet, uint16_t NumFades, uint8_t Steps, uint16_t Rate);
         
@@ -62,12 +62,12 @@ class CrossFadeCyclePS : public EffectBasePS {
             &segmentSet; 
 
         palletPS
-            pallet;
+            *pallet;
         
         void 
             setPattern(uint8_t *newPattern, uint8_t newPatternLength),
-            setPallet(palletPS newPallet),
-            setPalletAsPattern(palletPS newPallet),
+            setPallet(palletPS *newPallet),
+            setPalletAsPattern(palletPS *newPallet),
             reset(void),
             update(void);
     
@@ -75,6 +75,9 @@ class CrossFadeCyclePS : public EffectBasePS {
         unsigned long
             currentTime,
             prevTime = 0;
+        
+        palletPS
+            palletTemp;
         
         CRGB 
             startColor, //the color we are fading from
@@ -87,6 +90,9 @@ class CrossFadeCyclePS : public EffectBasePS {
         
         uint16_t 
             fadeCount = 0; //how many total fades we've done
+        
+        void
+            init(uint16_t Rate);
 };
 
 #endif

@@ -2,3 +2,4 @@
 #include "Utils/RainbowOffsetCycle/RainbowOffsetCyclePS.h"
 #include "Utils/EffectFade/EffectFaderPS.h"
 #include "Utils/EffectGroup/EffectGroupPS.h"
+#include "Utils/PalletBlender/PalletBlenderPS.h"
