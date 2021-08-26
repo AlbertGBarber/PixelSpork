@@ -3,4 +3,5 @@
 #include "Effects/FixedLengthRainbowCycle/FixedLengthRainbowCyclePS.h"
 #include "Effects/CrossFadeCycle/CrossFadeCyclePS.h"
 #include "Effects/CrossFadeCycleRand/CrossFadeCycleRandPS.h"
-#include "Effects/RandomColors/RandomColorsPS.h"
+#include "Effects/Twinkle/TwinklePS.h"
+#include "Effects/TwinkleLowRam/TwinkleLowRamPS.h"

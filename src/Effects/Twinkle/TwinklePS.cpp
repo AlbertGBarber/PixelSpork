@@ -1,14 +1,14 @@
-#include "RandomColorsPS.h"
+#include "TwinklePS.h"
 
 //pallet based constructor
-RandomColorsPS::RandomColorsPS(SegmentSet &SegmentSet, palletPS *Pallet, uint16_t NumPixels, CRGB BgColor, uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate):
+TwinklePS::TwinklePS(SegmentSet &SegmentSet, palletPS *Pallet, uint16_t NumPixels, CRGB BgColor, uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate):
     segmentSet(SegmentSet), pallet(Pallet), numPixels(NumPixels), bgColor(BgColor)
     {    
         init(FadeInSteps, FadeOutSteps, Rate);
 	}
 
 //single color constructor
-RandomColorsPS::RandomColorsPS(SegmentSet &SegmentSet, CRGB Color, uint16_t NumPixels, CRGB BgColor, uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate):
+TwinklePS::TwinklePS(SegmentSet &SegmentSet, CRGB Color, uint16_t NumPixels, CRGB BgColor, uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate):
     segmentSet(SegmentSet), numPixels(NumPixels), bgColor(BgColor)
     {    
         setSingleColor(Color);
@@ -16,7 +16,7 @@ RandomColorsPS::RandomColorsPS(SegmentSet &SegmentSet, CRGB Color, uint16_t NumP
 	}
 
 //random colors constructor
-RandomColorsPS::RandomColorsPS(SegmentSet &SegmentSet, uint16_t NumPixels, CRGB BgColor, uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate):
+TwinklePS::TwinklePS(SegmentSet &SegmentSet, uint16_t NumPixels, CRGB BgColor, uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate):
     segmentSet(SegmentSet), numPixels(NumPixels), bgColor(BgColor)
     {    
         setSingleColor(segDrawUtils::randColor());
@@ -27,7 +27,7 @@ RandomColorsPS::RandomColorsPS(SegmentSet &SegmentSet, uint16_t NumPixels, CRGB 
 	}
 
 //sets up all the core class vars, and initilizes the pixel and color arrays
-void RandomColorsPS::init(uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate){
+void TwinklePS::init(uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate){
     //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
     bindSegPtrPS();
     bindClassRatesPS();
@@ -36,7 +36,7 @@ void RandomColorsPS::init(uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Ra
 }
 
 //creates an pallet of length 1 containing the passed in color
-void RandomColorsPS::setSingleColor(CRGB Color){
+void TwinklePS::setSingleColor(CRGB Color){
     CRGB *pallet_arr = new CRGB[1];
     pallet_arr[0] = Color;
     palletTemp = {pallet_arr, 1};
@@ -44,7 +44,7 @@ void RandomColorsPS::setSingleColor(CRGB Color){
 }
 
 //binds the pallet to a new one
-void RandomColorsPS::setPallet(palletPS *newPallet){
+void TwinklePS::setPallet(palletPS *newPallet){
     pallet = newPallet;
 }
 
@@ -53,7 +53,7 @@ void RandomColorsPS::setPallet(palletPS *newPallet){
 //The arrays are laid out like [numPixels][totalFadeSteps], where the column index is the fade step the pixel is on
 //the minium value of totalFadeSteps is 2, one step to fade in, and one step to fade out
 //we don't initialize the arrays to anything, since we want a gradual build up to the pixels fading
-void RandomColorsPS::initPixelArrays(){
+void TwinklePS::initPixelArrays(){
     //the total length of each column is the number of steps needed to fade a pixel in and out
     //We overlap the center step (where the pixel is fully fade in) 
     //so that that step isn't doubly long
@@ -85,7 +85,7 @@ void RandomColorsPS::initPixelArrays(){
 
 //resets the startup vars to their defaults
 //and sets the BG to clear any mid-fade pixels
-void RandomColorsPS::reset(){
+void TwinklePS::reset(){
     startUpDone = false;
     totalSteps = 0;
     segDrawUtils::fillSegSetColor(segmentSet, bgColor, bgColorMode);
@@ -94,7 +94,7 @@ void RandomColorsPS::reset(){
 //sets the number of fade in and out steps (min value of 1)
 //it's easier to set the both together since we need to recreate the location and color arrays
 //when every we set either of them
-void RandomColorsPS::setSteps(uint8_t newfadeInSteps, uint8_t newfadeOutSteps){
+void TwinklePS::setSteps(uint8_t newfadeInSteps, uint8_t newfadeOutSteps){
     fadeInSteps = newfadeInSteps;
     if(fadeInSteps < 1){
        fadeOutSteps = 1; 
@@ -108,7 +108,7 @@ void RandomColorsPS::setSteps(uint8_t newfadeInSteps, uint8_t newfadeOutSteps){
 }
 
 //sets the number of random pixels
-void RandomColorsPS::setNumPixels(uint16_t newNumPixels){
+void TwinklePS::setNumPixels(uint16_t newNumPixels){
     numPixels = newNumPixels;
     initPixelArrays();
 }
@@ -123,7 +123,7 @@ void RandomColorsPS::setNumPixels(uint16_t newNumPixels){
     //If we're on the zeroth column, we choose a new color and pixel location
     //after each cycle we shift the array entries over by one (no wrapping)
     //so each led is picked, then shifted along the array, fading in and out as it goes
-void RandomColorsPS::update(){
+void TwinklePS::update(){
     currentTime = millis();
     //if we're using an external rate variable, get its value
     globalRateCheckPS();
@@ -185,7 +185,7 @@ void RandomColorsPS::update(){
 }
 
 //set a color based on the size of the pallet
-void RandomColorsPS::pickColor(uint16_t pixelNum){
+void TwinklePS::pickColor(uint16_t pixelNum){
     uint8_t palletLength = pallet->length;
     switch (palletLength) {
         case 0: // 0 pallet length, no pallet, so set colors at random
@@ -206,7 +206,7 @@ void RandomColorsPS::pickColor(uint16_t pixelNum){
 //shift the columns of the pixel arrays to the left by one
 //we don't need to worry about the values of the final index, 
 //since pixels in that location will be fully faded out
-void RandomColorsPS::incrementPixelArrays(){
+void TwinklePS::incrementPixelArrays(){
     for (uint16_t i = 0; i < numPixels; i++) {
         for(uint8_t j = totFadeSteps - 1; j > 0; j--){
             ledArray[i][j] = ledArray[i][j - 1];

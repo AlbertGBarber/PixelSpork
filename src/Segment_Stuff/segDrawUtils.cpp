@@ -336,6 +336,7 @@ void segDrawUtils::setPixelColor(SegmentSet segmentSet, uint16_t pixelNum, CRGB 
 // mode 6: rainbow spread across whole all active leds in the segment set
 // mode 7: produces a single color that cycles through the rainbow over global time at fixedRBRate,
 //         used to color a whole effect as a single color that cycles through the rainbow
+// mode 8: Same as mode 7, but the direction of the cycle is reversed
 CRGB segDrawUtils::getPixelColor(SegmentSet segmentSet, uint16_t pixelNum, CRGB color, uint8_t colorMode, uint8_t segNum, uint8_t lineNum){
     CRGB colorFinal = 0;
     uint16_t containerVar;
@@ -348,11 +349,11 @@ CRGB segDrawUtils::getPixelColor(SegmentSet segmentSet, uint16_t pixelNum, CRGB 
             colorFinal = wheel((uint16_t(lineNum) * 256 / containerVar) & 255, segmentSet.rainbowOffset, segmentSet.rainbowSatur, segmentSet.rainbowVal );
             break;
         case 2: // colors each line to match the BgGradient segmented
-            colorFinal = 0;
+            colorFinal = color;
             //colorFinal = getSegBgGradientColor(segmentSet, segNum);
             break;
         case 3: // colors each line to match the BgGradient
-            colorFinal =  0;
+            colorFinal = color;
             //colorFinal = getBgGradientColor(pixelNum);
             break;
         case 4:// colors each line according to a rainbow spread across all segments
@@ -371,6 +372,12 @@ CRGB segDrawUtils::getPixelColor(SegmentSet segmentSet, uint16_t pixelNum, CRGB 
                 //used to color a whole effect as a single color that cycles through the rainbow
             containerVar = millis()/fixedRBRate;
             colorFinal = wheel( containerVar % 255, 0 );
+            break;
+        case 8: //produces a single color that cycles through the rainbow over global time at fixedRBRate 
+                //but is reversed from mode 7 above
+                //used to color a whole effect as a single color that cycles through the rainbow
+            containerVar = millis()/fixedRBRate;
+            colorFinal = wheel( 255 - (containerVar % 255), 0 );
             break;
         default: 
             colorFinal = color;
@@ -417,4 +424,38 @@ uint8_t segDrawUtils::getCrossFadeColorComp(uint8_t startColor, uint8_t endColor
 //returns a random color
 CRGB segDrawUtils::randColor(){
   return CRGB( random8(), random8(), random8() );
+}
+
+//fades an entire segment set to black by a certain percentage (out of 255)
+//uses FastLED's fadeToBlackBy function
+void segDrawUtils::fadeSegSetToBlackBy(SegmentSet segmentSet, uint8_t val){
+    for(int i = 0; i < segmentSet.numSegs; i++){
+        fadeSegToBlackBy(segmentSet, i, val);
+    }
+}
+
+
+//fades an entire segment to black by a certain percentage (out of 255)
+//uses FastLED's fadeToBlackBy function
+void segDrawUtils::fadeSegToBlackBy(SegmentSet segmentSet, uint8_t segNum, uint8_t val) {
+    byte numSecs = segmentSet.getTotalNumSec(segNum);
+    // run through segment's sections, fetch the startPixel and length of each, then color each pixel
+    for (int i = 0; i < numSecs; i++) {
+        fadeSegSecToBlackBy(segmentSet, segNum, i, val);
+    }
+}
+
+//fades an entire segment section to black by a certain percentage (out of 255)
+//(ex: a segment section has three sub sections: {1, 4} , {8, 3}, {14, 8}) (so 4 pixels starting at 1, 3 starting at 8, and 8 starting at 14)
+//this function fades one section to black
+//uses FastLED's fadeToBlackBy function
+void segDrawUtils::fadeSegSecToBlackBy(SegmentSet segmentSet, uint8_t segNum, uint16_t secNum, uint8_t val){
+    uint16_t startPixel = segmentSet.getSecStartPixel(segNum, secNum);
+    if(startPixel != dLed){
+        int16_t length = segmentSet.getSecLength(segNum, secNum);
+        int8_t step = (length > 0) - (length < 0); // account for negative lengths
+        for (int i = startPixel; i != (startPixel + length); i += step) {
+            segmentSet.leds[i].fadeToBlackBy(val);
+        }
+    }
 }
