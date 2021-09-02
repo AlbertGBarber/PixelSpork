@@ -21,6 +21,7 @@ void FixedLengthRainbowCyclePS::init(){
     numLeds = segmentSet.numLeds;
     //set the maximum cycle length 
     //ie the total amount of cycles before the effect is back at the start
+    //we allow rainbows that are longer than the segmentSet
     maxCycleLength = numLeds - 1;
     if(length > numLeds){
         maxCycleLength = length;

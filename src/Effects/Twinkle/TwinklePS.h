@@ -14,15 +14,24 @@
 
 //Example call: 
     //TwinklePS *CFC = new TwinklePS(mainSegments, CRGB::Red, 2, 0, 4, 4, 70);
-    //Will choose 2 pixels each cycle to fade to/from red, using a blank background
+    //Will choose 2 pixels each cycle to fade to/from red each cycle, using a blank background, 
+    //with 4 fade in and out steps, at a rate of 70ms
 
-//Inputs:
+    //TwinklePS(mainSegments, CRGB::Red, 3, CRGB::Blue, 1, 6, 60);
+    //Will choose 3 pixels each cycle to fade to/from red, using a blue background, 
+    //with 1 fade in and 6 fade out steps, at a rate of 60ms
+
+    //TwinklePS(mainSegments, 4, 0, 2, 2, 80);
+    //Will choose 4 pixels each cycle to fade to/from random colors, using a blank backgound, 
+    //with 2 fade in and 2 fade out steps, at a rate of 80ms
+
+//Constructor Inputs:
     //Pallet(optional, see constructors) -- the pallet from which colors will be choosen randomly
     //Color(optional, see constructors) -- the color that the randomly choosen pixels will be set to
     //NumPixels -- The amount of random pixels choosen each cycle 
     //BgColor -- The color of the background, this is what pixels will fade to and from
     //FadeInSteps and FadeOutSteps -- The number of steps taken to fade pixels in and out (min value of 1, max of 255)
-    //Rate -- The update rate
+    //Rate -- The update rate (ms)
 
 //Functions:
     //setSteps(newfadeInSteps, newfadeOutSteps) -- Sets the number of fade in and out steps, will restart the effect

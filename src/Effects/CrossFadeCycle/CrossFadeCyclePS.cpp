@@ -43,6 +43,7 @@ void CrossFadeCyclePS::init(uint16_t Rate){
     bindClassRatesPS();
     reset();
 }
+
 //resets all loop and color variables to start the effect from scratch
 void CrossFadeCyclePS::reset(){
     done = false;

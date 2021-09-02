@@ -1,6 +1,6 @@
 #include "BGRateFillPS.h"
 
-BGRateFillPS::BGRateFillPS(SegmentSet &SegmentSet, uint8_t colorMode, uint16_t Rate):
+BGRateFillPS::BGRateFillPS(SegmentSet &SegmentSet, uint8_t ColorMode, uint16_t Rate):
     segmentSet(SegmentSet), colorMode(ColorMode)
     {    
         //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS

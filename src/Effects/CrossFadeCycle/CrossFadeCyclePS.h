@@ -1,6 +1,9 @@
 #ifndef CrossFadeCyclePS_h
 #define CrossFadeCyclePS_h
 
+//TODO:
+    //Add direction setting?
+
 #include "FastLED.h"
 #include "SegmentFiles.h"
 #include "palletFiles.h"
@@ -15,27 +18,48 @@
 //once the fade number is reached, the done flag will be set
 //see constructors below for inputs
 
-//Constructor options
-    //Using a Pattern and Pallet:
-    //A pattern is a 1-d array of pallet indexes ie {0, 1, 3, 6, 7} 
-    //the pattern is faded through in order, wrapping at the end
-    //so the above example would fade from the first(0) color in the pallet to the second, to the fourth, etc
+//Example calls: 
+    //uint8_t pattern = {0, 1, 4};
+    //CrossFadeCyclePS *CFC = new CrossFadeCyclePS(mainSegments, pattern, 3, pallet, 0, 40, 30);
+    //Will fade from color 0, to color 1, to color 4 of the pallet, infinitly, taking 40 steps for each fade, with 30ms between steps
 
-    //Using just a Pallet
-    //Like the previous option, but the pallet is also used as the pattern
-    //so the colors will fade in the order they are in the pallet array
+    //CrossFadeCyclePS *CFC = new CrossFadeCyclePS(mainSegments, pallet, 5, 40, 30);
+    //Will fade through the colors of the pallet in order until 5 fades have been completed, taking 40 steps for each fade, with 30ms between steps
 
-    //Random
-    //Fade colors will be choosen at random
+    //CrossFadeCyclePS *CFC = new CrossFadeCyclePS(mainSegments, 0, 40, 30);
+    //Will fade from one random color to the next infinitly, taking 40 steps for each fade, with 30ms between steps
 
 //Modes ( not set in constructor, set using mode variable ):
     //Mode 0: (default), cycles through the pattern in order
-    //Mode 1: Chooses the next color randomly from the current pattern (like it shuffles)
+    //Mode 1: Chooses the next color randomly from the current pattern (it shuffles)
     //Mode 2: Chooses colors completely randomly (is set by the corrosponding constuctor)
 
-//setPattern(), setPallet(), and setPalletAsPattern() to adjust patterns/pallets after initialization
-//reset() restarts the pattern
+//Doe not accept color modes from segDrawUtils::setPixelColor();
 
+//Constructor Inputs
+    //Pattern(optional, see constructors) -- A pattern is a 1-d array of pallet indexes ie {0, 1, 3, 6, 7} 
+    //                                       the pattern is faded through in order, wrapping at the end
+    //                                       so the above example would fade from the first(0) color in the pallet to the second, to the fourth, etc
+    //PatternLenght -- the length of the pattern above
+    //Pallet(optional, see constructors) -- The repository of colors used in the pattern, or can be used as the pattern itself
+    //NumFades -- The total number of crossfades(colors) the effect will go through, setting this to 0 will flag for infinite fades
+    //Steps -- How many steps for each fade
+    //Rate -- update rate (ms)
+
+//Functions:
+    //setPattern(*newPattern, newPatternLength) -- Sets the passed in pattern to be the effect pattern
+    //setPallet(*newPallet) -- Sets the pallet to the passed in pallet
+    //setPalletAsPattern(*newPallet) -- Sets the passed in pallet as the effect pallet, and also the effect pattern
+    //reset() -- restarts the effect
+    //update() -- updates the effect
+
+//Flags:
+    //infinite (default false) -- Sets the effect to run though an contiuous cycle of fades with no stop point
+    //done (starts false) -- set to true flag for if we've done the total number of fades
+
+//Other Settings:
+    //Mode -- see mode note above
+    
 class CrossFadeCyclePS : public EffectBasePS {
     public:
         //Constructor for pattern and pallet

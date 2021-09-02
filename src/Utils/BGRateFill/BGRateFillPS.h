@@ -28,7 +28,7 @@
     //                        effects should already give you this option by themselves
 class BGRateFillPS : public EffectBasePS {
     public:
-        BGRateFillPS(SegmentSet &SegmentSet, uint8_t colorMode, uint16_t Rate);  
+        BGRateFillPS(SegmentSet &SegmentSet, uint8_t ColorMode, uint16_t Rate);  
 
         SegmentSet 
             &segmentSet;
