@@ -13,7 +13,7 @@
 ShiftingRainbowSeaPS::ShiftingRainbowSeaPS(SegmentSet& SegmentSet, uint8_t Grouping, uint16_t Rate): 
     segmentSet(SegmentSet), grouping(Grouping) 
     {
-        mode = 0;
+        sMode = 0;
         init(Rate);
     }
 
@@ -21,9 +21,13 @@ ShiftingRainbowSeaPS::ShiftingRainbowSeaPS(SegmentSet& SegmentSet, uint8_t Group
 ShiftingRainbowSeaPS::ShiftingRainbowSeaPS(SegmentSet& SegmentSet, uint8_t GradLength, uint8_t Grouping, uint16_t Rate): 
     segmentSet(SegmentSet), gradLength(GradLength), grouping(Grouping) 
     {
-        mode = 1;
+        sMode = 1;
         init(Rate);
     }
+
+ShiftingRainbowSeaPS::~ShiftingRainbowSeaPS(){
+    delete[] offsets;
+}
 
 //initlizes core variables for effect
 void ShiftingRainbowSeaPS::init(uint16_t Rate){
@@ -37,14 +41,14 @@ void ShiftingRainbowSeaPS::init(uint16_t Rate){
 //since changing the gradLength doesn't do anything without changing the offset array
 void ShiftingRainbowSeaPS::setGradLength(uint8_t newGradLength) { 
     gradLength = newGradLength;
-    if(mode == 1){
+    if(sMode == 1){
         resetOffsets();
     }
 }
 
 //changes the mode, also resets the offset array, since it depends on the mode
 void ShiftingRainbowSeaPS::setMode(uint8_t newMode) {
-    mode = newMode;
+    sMode = newMode;
     resetOffsets();
 }
 
@@ -54,7 +58,7 @@ void ShiftingRainbowSeaPS::resetOffsets() {
     delete[] offsets;
     offsets = new uint16_t[numPixels];
     //255 is the maxiumum length of the rainbow
-    ShiftingSeaUtilsPS::genOffsetArray(offsets, numPixels, gradLength, grouping, 255, mode);
+    ShiftingSeaUtilsPS::genOffsetArray(offsets, numPixels, gradLength, grouping, 255, sMode);
 }
 
 //updates the effect

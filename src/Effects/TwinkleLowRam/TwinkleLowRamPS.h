@@ -1,10 +1,8 @@
 #ifndef TwinkleLowRamPS_h
 #define TwinkleLowRamPS_h
 
-#include "SegmentFiles.h"
-#include "palletFiles.h"
-
 #include "Effects/EffectBasePS.h"
+#include "Effects/EffectUtils/EffectUtilsPS.h"
 
 //Draws sets of randomly chosen pixels (like FastLED TwinkleFox)
 //This is mostly the same as TwinklePS, but uses much less ram, and has a few restrictions
@@ -43,6 +41,9 @@ class TwinkleLowRamPS : public EffectBasePS {
         TwinkleLowRamPS(SegmentSet &SegmentSet, CRGB Color, uint16_t NumPixels, CRGB BgColor, bool Sparkle, uint8_t FadeOutRate, uint16_t Rate);
         //Constructor for choosing all colors at random
         TwinkleLowRamPS(SegmentSet &SegmentSet, uint16_t NumPixels, CRGB BgColor, bool Sparkle, uint8_t FadeOutRate, uint16_t Rate);
+        
+        //destructor
+        ~TwinkleLowRamPS();
 
         uint16_t
             numPixels;

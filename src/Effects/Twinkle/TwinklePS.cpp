@@ -26,6 +26,11 @@ TwinklePS::TwinklePS(SegmentSet &SegmentSet, uint16_t NumPixels, CRGB BgColor, u
         init(FadeInSteps, FadeOutSteps, Rate);
 	}
 
+TwinklePS::~TwinklePS(){
+    delete[] palletTemp.palletArr;
+    deletePixelArrays();
+}
+
 //sets up all the core class vars, and initilizes the pixel and color arrays
 void TwinklePS::init(uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate){
     //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
@@ -37,9 +42,8 @@ void TwinklePS::init(uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate){
 
 //creates an pallet of length 1 containing the passed in color
 void TwinklePS::setSingleColor(CRGB Color){
-    CRGB *pallet_arr = new CRGB[1];
-    pallet_arr[0] = Color;
-    palletTemp = {pallet_arr, 1};
+    delete[] palletTemp.palletArr;
+    palletTemp = EffectUtilsPS::makeSingleColorpallet(Color);
     pallet = &palletTemp;
 }
 
@@ -59,15 +63,8 @@ void TwinklePS::initPixelArrays(){
     //so that that step isn't doubly long
     totFadeSteps = fadeInSteps + fadeOutSteps;
 
-    //delete the old arrays to free up memory
-    if(ledArray){
-        for(int i = 0; i < numPixels; i++){
-            delete[] ledArray[i];
-            delete[] colorIndexArr[i];
-        }
-        delete[] ledArray;
-        delete[] colorIndexArr;
-    }
+    //delete the old arrays to prevent memory leak
+    deletePixelArrays();
 
     //create new 2D arrays
     //we need to make the rows first, and then fill them
@@ -81,6 +78,19 @@ void TwinklePS::initPixelArrays(){
         colorIndexArr[i] = new CRGB[ totFadeSteps ];
     }
     reset();
+}
+
+//deletes the pixel index and color arrays
+//used to prevent memory leaks
+void TwinklePS::deletePixelArrays(){
+    if(ledArray){
+        for(int i = 0; i < numPixels; i++){
+            delete[] ledArray[i];
+            delete[] colorIndexArr[i];
+        }
+        delete[] ledArray;
+        delete[] colorIndexArr;
+    }
 }
 
 //resets the startup vars to their defaults

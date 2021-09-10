@@ -4,10 +4,8 @@
 //TODO
     //Add spacing setting?
     
-#include "SegmentFiles.h"
-#include "palletFiles.h"
-
 #include "Effects/EffectBasePS.h"
+#include "Effects/EffectUtils/EffectUtilsPS.h"
 
 //draws a repeated rainbow of a set length repeatedly along a segmentSet
 //shifts the rainbows in along the segmentSet in the passed in direction at the passed in rate

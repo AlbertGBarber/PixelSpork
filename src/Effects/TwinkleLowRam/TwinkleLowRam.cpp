@@ -25,6 +25,10 @@ TwinkleLowRamPS::TwinkleLowRamPS(SegmentSet &SegmentSet, uint16_t NumPixels, CRG
         init(Rate);
 	}
 
+TwinkleLowRamPS::~TwinkleLowRamPS(){
+    delete[] palletTemp.palletArr;
+}
+
 //sets up all the core class vars, and initilizes the pixel and color arrays
 void TwinkleLowRamPS::init(uint16_t Rate){
     //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
@@ -41,9 +45,8 @@ void TwinkleLowRamPS::setPallet(palletPS *newPallet){
 
 //creates an pallet of length 1 containing the passed in color
 void TwinkleLowRamPS::setSingleColor(CRGB Color){
-    CRGB *pallet_arr = new CRGB[1];
-    pallet_arr[0] = Color;
-    palletTemp = {pallet_arr, 1};
+    delete[] palletTemp.palletArr;
+    palletTemp = EffectUtilsPS::makeSingleColorpallet(Color);
     pallet = &palletTemp;
 }
 

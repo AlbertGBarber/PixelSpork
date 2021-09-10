@@ -4,7 +4,7 @@
 CrossFadeCyclePS::CrossFadeCyclePS(SegmentSet &SegmentSet, uint8_t *Pattern, uint8_t PatternLength, palletPS *Pallet, uint16_t NumFades, uint8_t Steps, uint16_t Rate):
     segmentSet(SegmentSet), pattern(Pattern), patternLength(PatternLength), pallet(Pallet), numFades(NumFades), steps(Steps)
     {    
-        mode = 0;
+        fMode = 0;
         init(Rate);
 	}
 
@@ -12,7 +12,7 @@ CrossFadeCyclePS::CrossFadeCyclePS(SegmentSet &SegmentSet, uint8_t *Pattern, uin
 CrossFadeCyclePS::CrossFadeCyclePS(SegmentSet &SegmentSet, palletPS *Pallet, uint16_t NumFades, uint8_t Steps, uint16_t Rate):
     segmentSet(SegmentSet), pallet(Pallet), numFades(NumFades), steps(Steps)
     {    
-        mode = 0;
+        fMode = 0;
         setPalletAsPattern(pallet);
         init(Rate);
 	}
@@ -21,7 +21,7 @@ CrossFadeCyclePS::CrossFadeCyclePS(SegmentSet &SegmentSet, palletPS *Pallet, uin
 CrossFadeCyclePS::CrossFadeCyclePS(SegmentSet &SegmentSet, uint16_t NumFades, uint8_t Steps, uint16_t Rate):
     segmentSet(SegmentSet), numFades(NumFades), steps(Steps)
     {    
-        mode = 2; //set mode to 2 since we are doing a full random set of colors
+        fMode = 2; //set mode to 2 since we are doing a full random set of colors
         //setup a minimal backup pallet of random colors of length 2
         //this won't be used in the effect, but if you switched modes without 
         //setting up a pallet, you will crash
@@ -35,6 +35,10 @@ CrossFadeCyclePS::CrossFadeCyclePS(SegmentSet &SegmentSet, uint16_t NumFades, ui
 
         init(Rate);
 	}
+
+CrossFadeCyclePS::~CrossFadeCyclePS(){
+    delete[] palletTemp.palletArr;
+}
 
 //bind core class vars
 void CrossFadeCyclePS::init(uint16_t Rate){
@@ -64,7 +68,7 @@ void CrossFadeCyclePS::reset(){
     currentIndex = 0;
     //set the starting colors depending on the mode
     //for shuffle, we always start with the first color for simplicity
-    switch (mode) {
+    switch (fMode) {
         case 0: 
             startColor = palletUtilsPS::getPalletColor( pallet, pattern[0] );
             nextColor = palletUtilsPS::getPalletColor( pallet, pattern[1] );
@@ -145,7 +149,7 @@ void CrossFadeCyclePS::update(){
             //since the fade is done, the new starting color is the previous next color
             startColor = nextColor;
             //set the next color depending on the mode
-            switch (mode) {
+            switch (fMode) {
                 case 0: 
                     //normal mode
                     //(fadeCount + 2) is used as the next index, because we start with the first pair of colors

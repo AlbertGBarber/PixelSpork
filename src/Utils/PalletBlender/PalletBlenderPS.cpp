@@ -8,6 +8,10 @@ endPallet(EndPallet), startPallet(StartPallet), looped(Looped), totalSteps(Total
     reset( startPallet, endPallet);
 }
 
+PalletBlenderPS::~PalletBlenderPS(){
+    delete[] blendPallet_arr;
+}
+
 //updates the blended pallet at the passed in rate
 void PalletBlenderPS::update(){
     currentTime = millis();

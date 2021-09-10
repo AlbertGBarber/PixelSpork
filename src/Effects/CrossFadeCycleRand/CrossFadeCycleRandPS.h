@@ -1,11 +1,8 @@
 #ifndef CrossFadeCycleRandPS_h
 #define CrossFadeCycleRandPS_h
 
-#include "FastLED.h"
-#include "SegmentFiles.h"
-#include "palletFiles.h"
-
 #include "Effects/EffectBasePS.h"
+#include "Effects/EffectUtils/EffectUtilsPS.h"
 
 //like CrossFadeCycle, but all the colors are choosen at random
 //(this class is redundant since CrossFadeCycle can do randoms, but is here anyway)

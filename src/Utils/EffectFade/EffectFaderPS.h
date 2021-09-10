@@ -84,7 +84,6 @@ class EffectFaderPS {
         EffectBasePS
             **group;
         
-
         SegmentSet
             *getSegPtr(uint8_t effectNum),
             *segmentSet;

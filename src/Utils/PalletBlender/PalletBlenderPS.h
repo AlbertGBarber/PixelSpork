@@ -28,6 +28,8 @@ class PalletBlenderPS : public EffectBasePS {
     public:
         PalletBlenderPS(palletPS *StartPallet, palletPS *EndPallet, bool looped, uint8_t TotalSteps, uint16_t Rate);
         
+        ~PalletBlenderPS();
+        
         void
             reset(palletPS *StartPallet, palletPS *EndPallet), //resets just the colors (also starts the blend again)
             reset(palletPS *StartPallet, palletPS *EndPallet, uint8_t TotalSteps, uint16_t Rate), //resets all vars

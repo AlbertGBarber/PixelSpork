@@ -1,10 +1,8 @@
 #ifndef TwinklePS_h
 #define TwinklePS_h
 
-#include "SegmentFiles.h"
-#include "palletFiles.h"
-
 #include "Effects/EffectBasePS.h"
+#include "Effects/EffectUtils/EffectUtilsPS.h"
 
 //Fades sets of randomly chosen pixels in and out (like FastLED TwinkleFox)
 //The color of the pixels be set to a single color, chosen randomly, of picked from a pallet 
@@ -13,12 +11,12 @@
 //Just run an example and you'll see what I mean
 
 //Example call: 
-    //TwinklePS *CFC = new TwinklePS(mainSegments, CRGB::Red, 2, 0, 4, 4, 70);
-    //Will choose 2 pixels each cycle to fade to/from red each cycle, using a blank background, 
+    //TwinklePS(mainSegments, CRGB::Red, 2, CRGB::Blue, 4, 4, 70);
+    //Will choose 2 pixels each cycle to fade to/from red each cycle, using a blue background, 
     //with 4 fade in and out steps, at a rate of 70ms
 
-    //TwinklePS(mainSegments, CRGB::Red, 3, CRGB::Blue, 1, 6, 60);
-    //Will choose 3 pixels each cycle to fade to/from red, using a blue background, 
+    //TwinklePS(mainSegments, pallet, 3, 0, 1, 6, 60);
+    //Will choose 3 pixels each cycle to fade to/from colors choosen from the pallet, using a blank background,
     //with 1 fade in and 6 fade out steps, at a rate of 60ms
 
     //TwinklePS(mainSegments, 4, 0, 2, 2, 80);
@@ -68,6 +66,9 @@ class TwinklePS : public EffectBasePS {
         //Constructor for choosing all colors at random
         TwinklePS(SegmentSet &SegmentSet, uint16_t NumPixels, CRGB BgColor, uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate);
 
+        //destructor
+        ~TwinklePS();
+
         uint16_t
             numPixels;
 
@@ -98,6 +99,7 @@ class TwinklePS : public EffectBasePS {
             reset(),
             setNumPixels(uint16_t newNumPixels),
             initPixelArrays(),
+            deletePixelArrays(),
             update(void);
     
     private:

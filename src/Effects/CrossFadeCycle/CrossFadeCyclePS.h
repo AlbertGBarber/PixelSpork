@@ -4,11 +4,8 @@
 //TODO:
     //Add direction setting?
 
-#include "FastLED.h"
-#include "SegmentFiles.h"
-#include "palletFiles.h"
-
 #include "Effects/EffectBasePS.h"
+#include "Effects/EffectUtils/EffectUtilsPS.h"
 
 //Cross fades the entire segmentSet from one solid color to the next
 //following either a pattern and pallet, a pallet alone, or using random colors
@@ -68,10 +65,12 @@ class CrossFadeCyclePS : public EffectBasePS {
         CrossFadeCyclePS(SegmentSet &SegmentSet, palletPS *Pallet, uint16_t NumFades, uint8_t Steps, uint16_t Rate);  
         //Constructor for random colors
         CrossFadeCyclePS(SegmentSet &SegmentSet, uint16_t NumFades, uint8_t Steps, uint16_t Rate);
-        
+
+        ~CrossFadeCyclePS();
+
         uint8_t
             steps, //total steps per fade
-            mode = 0, //see description above
+            fMode = 0, //see description above
             patternLength, //length of the pattern array, use SIZE(pattern)
             *pattern;
         

@@ -82,7 +82,7 @@ public:
     // note that if RunTime is passed in as 0, infinite will be set to true
     // numEffects is the length of the effGroup array
     EffectGroupPS(EffectBasePS** effGroup, uint8_t NumEffects, uint16_t RunTime): 
-    runTime(RunTime), numEffects(NumEffects), group(effGroup) \
+    runTime(RunTime), numEffects(NumEffects), group(effGroup)
     {
         runTimeCheck();
         reset();
@@ -99,7 +99,11 @@ public:
 
     //pointer to the EffectFaderPS object created by the effect group
     //is public for external access
-    EffectFaderPS* effectFader = nullptr;
+    EffectFaderPS  *effectFader = nullptr;
+
+    ~EffectGroupPS(){
+        delete effectFader;
+    }
 
     //sets a new fade run time and also resets the fader
     //the fader's direction is initally set to false because this keeps us at max brightness
@@ -209,6 +213,18 @@ public:
                 #endif
             }
         }
+    };
+
+    //deletes all the effects in the effect array (for freeing memory) 
+    void destructAllEffects(void){
+        for (int i = 0; i < numEffects; i++) {
+            delete group[i];
+        }
+    };
+
+    //deletes the effect at the specified index in the effect array (for freeing memory)
+    void destructEffects(uint8_t index){
+        delete group[index];
     };
 
 private:

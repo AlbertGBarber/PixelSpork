@@ -10,14 +10,18 @@
 // If the randomShift is on, then with each cycle we do a random check to see if we should change the pixel's offset
 // if so, then we increment it by a random amount up to shiftStep.
 
-ShiftingSeaPS::ShiftingSeaPS(SegmentSet& SegmentSet, palletPS* Pallet, uint8_t GradLength, uint8_t Mode, uint8_t Grouping, uint16_t Rate):
-    segmentSet(SegmentSet), pallet(Pallet), gradLength(GradLength), mode(Mode), grouping(Grouping) 
+ShiftingSeaPS::ShiftingSeaPS(SegmentSet& SegmentSet, palletPS* Pallet, uint8_t GradLength, uint8_t Smode, uint8_t Grouping, uint16_t Rate):
+    segmentSet(SegmentSet), pallet(Pallet), gradLength(GradLength), sMode(Smode), grouping(Grouping) 
 {
     // bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
     bindSegPtrPS();
     bindClassRatesPS();
     setTotalEffectLength();
     resetOffsets();
+}
+
+ShiftingSeaPS::~ShiftingSeaPS(){
+    delete[] offsets;
 }
 
 // binds the pallet to a new one, can be done without reseting the offsets
@@ -43,7 +47,7 @@ void ShiftingSeaPS::setTotalEffectLength() {
 // changes the mode, also resets the offset array
 // since that's where the mode is expressed
 void ShiftingSeaPS::setMode(uint8_t newMode) {
-    mode = newMode;
+    sMode = newMode;
     resetOffsets();
 }
 
@@ -52,7 +56,7 @@ void ShiftingSeaPS::resetOffsets() {
     numPixels = segmentSet.numActiveSegLeds;
     delete[] offsets;
     offsets = new uint16_t[numPixels];
-    ShiftingSeaUtilsPS::genOffsetArray(offsets, numPixels, gradLength, grouping, totalCycleLength, mode);
+    ShiftingSeaUtilsPS::genOffsetArray(offsets, numPixels, gradLength, grouping, totalCycleLength, sMode);
 }
 
 // updates the effect

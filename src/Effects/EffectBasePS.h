@@ -54,6 +54,8 @@ class EffectBasePS {
 
         virtual void update() = 0;
 
+        virtual ~EffectBasePS() = 0;
+
         //binds the update rate to a global variable as passed in
         //useful for cordinating multiple effects
         void setGlobalRate(uint16_t &rate){

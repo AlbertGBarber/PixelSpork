@@ -41,6 +41,8 @@ class RainbowOffsetCyclePS : public EffectBasePS {
         RainbowOffsetCyclePS(SegmentSet &segmentSet, uint16_t Rate, bool offsetDirctInit),
         RainbowOffsetCyclePS(SegmentSet** SegmentSetArr, uint8_t NumSegsSets, uint16_t Rate, bool offsetDirctInit);
 
+        ~RainbowOffsetCyclePS();
+        
         bool 
             cycleRun = true, //turns the cycle on/off, default is on
             direct(void); //returns the current direction of the cycle

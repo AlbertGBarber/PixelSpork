@@ -19,6 +19,10 @@ RainbowOffsetCyclePS::RainbowOffsetCyclePS(SegmentSet &segmentSet, uint16_t Rate
         setGroup(segmentSet);
     }
 
+RainbowOffsetCyclePS::~RainbowOffsetCyclePS(){
+    delete[] segGroupTemp;
+}
+
 //returns the direction of the offset
 bool RainbowOffsetCyclePS::direct(void){
     return _dirct;

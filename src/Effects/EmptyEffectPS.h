@@ -5,6 +5,7 @@
 #include "palletFiles.h"
 
 #include "Effects/EffectBasePS.h"
+#include "Effects/EffectUtils/EffectUtilsPS.h"
 
 //an empty effect, copy it to use as a base to bulid effects
 class EmptyEffectPS : public EffectBasePS {

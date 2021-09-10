@@ -7,3 +7,4 @@
 #include "Effects/TwinkleLowRam/TwinkleLowRamPS.h"
 #include "Effects/ShiftingSea/ShiftingSeaPS.h"
 #include "Effects/ShiftingRainbowSea/ShiftingRainbowSeaPS.h"
+#include "Effects/FairyLights/FairyLightsPS.h"

@@ -1,10 +1,8 @@
 #ifndef ShiftingSeaPS_h
 #define ShiftingSeaPS_h
 
-#include "SegmentFiles.h"
-#include "palletFiles.h"
-
 #include "Effects/EffectBasePS.h"
+#include "Effects/EffectUtils/EffectUtilsPS.h"
 #include "Utils/ShiftingSeaUtilsPS.h"
 
 //Cycles each pixel of a segment set through a pallet of colors. Each pixel is given an random 
@@ -65,7 +63,10 @@
     //So if you are short on ram, you might not be able to run this!
 class ShiftingSeaPS : public EffectBasePS {
     public:
-        ShiftingSeaPS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t GradLength, uint8_t Mode, uint8_t Grouping, uint16_t Rate);  
+        ShiftingSeaPS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t GradLength, uint8_t Smode, uint8_t Grouping, uint16_t Rate);  
+
+        //destructor
+        ~ShiftingSeaPS();
 
         SegmentSet 
             &segmentSet; 
@@ -77,7 +78,7 @@ class ShiftingSeaPS : public EffectBasePS {
             shiftThreshold = 15,
             shiftStep = 1,
             grouping,
-            mode,
+            sMode,
             gradLength;
         
         uint16_t

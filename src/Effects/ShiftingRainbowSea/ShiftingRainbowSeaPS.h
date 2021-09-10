@@ -1,10 +1,8 @@
 #ifndef ShiftingRainbowSeaPS_h
 #define ShiftingRainbowSeaPS_h
 
-#include "SegmentFiles.h"
-#include "palletFiles.h"
-
 #include "Effects/EffectBasePS.h"
+#include "Effects/EffectUtils/EffectUtilsPS.h"
 #include "Effects/ShiftingSea/Utils/ShiftingSeaUtilsPS.h"
 
 //Cycles each pixel of a segment set through a rainbow. Each pixel is given an random 
@@ -70,6 +68,9 @@ class ShiftingRainbowSeaPS : public EffectBasePS {
         ShiftingRainbowSeaPS(SegmentSet &SegmentSet, uint8_t Grouping, uint16_t Rate);
         //constructor for mode 1  
         ShiftingRainbowSeaPS(SegmentSet &SegmentSet, uint8_t GradLength, uint8_t Grouping, uint16_t Rate);  
+        
+        //destructor
+        ~ShiftingRainbowSeaPS();
 
         SegmentSet 
             &segmentSet; 
@@ -79,7 +80,7 @@ class ShiftingRainbowSeaPS : public EffectBasePS {
             val = 255,
             shiftThreshold = 15,
             grouping = 1,
-            mode = 0,
+            sMode = 0,
             gradLength = 30,
             shiftStep = 1;
         
