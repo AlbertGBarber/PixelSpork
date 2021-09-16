@@ -3,6 +3,7 @@
 
 //TODO:
     //Add direction setting?
+    //Add hang time?
 
 #include "Effects/EffectBasePS.h"
 #include "Effects/EffectUtils/EffectUtilsPS.h"
@@ -17,13 +18,13 @@
 
 //Example calls: 
     //uint8_t pattern = {0, 1, 4};
-    //CrossFadeCyclePS *CFC = new CrossFadeCyclePS(mainSegments, pattern, 3, pallet, 0, 40, 30);
+    //CrossFadeCyclePS(mainSegments, pattern, 3, pallet, 0, 40, 30);
     //Will fade from color 0, to color 1, to color 4 of the pallet, infinitly, taking 40 steps for each fade, with 30ms between steps
 
-    //CrossFadeCyclePS *CFC = new CrossFadeCyclePS(mainSegments, pallet, 5, 40, 30);
+    //CrossFadeCyclePS(mainSegments, pallet, 5, 40, 30);
     //Will fade through the colors of the pallet in order until 5 fades have been completed, taking 40 steps for each fade, with 30ms between steps
 
-    //CrossFadeCyclePS *CFC = new CrossFadeCyclePS(mainSegments, 0, 40, 30);
+    //CrossFadeCyclePS(mainSegments, 0, 40, 30);
     //Will fade from one random color to the next infinitly, taking 40 steps for each fade, with 30ms between steps
 
 //Modes ( not set in constructor, set using mode variable ):

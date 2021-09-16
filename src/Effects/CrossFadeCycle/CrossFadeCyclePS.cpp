@@ -26,11 +26,8 @@ CrossFadeCyclePS::CrossFadeCyclePS(SegmentSet &SegmentSet, uint16_t NumFades, ui
         //this won't be used in the effect, but if you switched modes without 
         //setting up a pallet, you will crash
         //this prevents crashing
-        patternLength = 2;
-        CRGB *pallet_arr = new CRGB[patternLength];
-        pallet_arr[0] = segDrawUtils::randColor();
-        pallet_arr[1] = segDrawUtils::randColor();
-        palletTemp = {pallet_arr, patternLength};
+        palletTemp = EffectUtilsPS::makeRandomPallet(2);
+        pallet = &palletTemp;
         setPalletAsPattern(&palletTemp);
 
         init(Rate);

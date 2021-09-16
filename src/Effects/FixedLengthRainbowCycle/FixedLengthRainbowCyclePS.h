@@ -13,7 +13,7 @@
 //suggested min length is 5 (ie red, yellow, green, blue, indigo/violet)
 
 //Example call: 
-    //FixedLengthRainbowCyclePS *FLRC = new FixedLengthRainbowCyclePS(mainSegments, 30, true, 80); 
+    //FixedLengthRainbowCyclePS(mainSegments, 30, true, 80); 
     //Will draw rainbows of length 30, moving towards the end of the segmentSet, at 80ms
 
 //Constructor Inputs:

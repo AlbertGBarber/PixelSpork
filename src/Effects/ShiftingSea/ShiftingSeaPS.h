@@ -27,7 +27,7 @@
 //So if you are short on ram, you might not be able to run this!
 
 //Example call: 
-    //ShiftingSeaPS *CFC = new ShiftingSeaPS(mainSegments, &pallet3, 20, 0, 3, 40);
+    //ShiftingSeaPS(mainSegments, &pallet3, 20, 0, 3, 40);
     //Will shift through the colors of pallet3, with 20 steps between each shift, using mode 0
     //grouping pixels by 3, at a rate of 40ms
 

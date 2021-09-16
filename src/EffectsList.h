@@ -8,3 +8,4 @@
 #include "Effects/ShiftingSea/ShiftingSeaPS.h"
 #include "Effects/ShiftingRainbowSea/ShiftingRainbowSeaPS.h"
 #include "Effects/FairyLights/FairyLightsPS.h"
+#include "Effects/Dissolve/DissolvePS.h"

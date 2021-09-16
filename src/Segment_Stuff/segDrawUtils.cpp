@@ -115,6 +115,8 @@ uint16_t segDrawUtils::getSegmentPixel(SegmentSet segmentSet, uint8_t segNum, ui
             }
         }
     }
+    //if we don't find the pixel across all the segments, we return the dLed value
+    //when passed into setPixelColor, this value will be safely ignored
     return dLed;
 }
 

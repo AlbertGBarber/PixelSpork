@@ -30,7 +30,7 @@
     //Will shift through the rainbow, using mode 0 (offsets can be anything between 0 and 255), 
     //grouping pixels by 3, at a rate of 20ms
 
-    //ShiftingRainbowSeaPS *CFC = new ShiftingRainbowSeaPS(mainSegments, 10, 3, 20);
+    //ShiftingRainbowSeaPS(mainSegments, 10, 3, 20);
     //Will shift through the rainbow, using mode 1, where the offsets are choosen to be in a range of 0 to 10
     //grouping pixels by 3, at a rate of 20ms
 

@@ -15,15 +15,15 @@
     //Mode 2: Each cycle, a new pixel is turned on while an old is turned off (first on first off)
 
 //Example calls: 
-    //TwinklePS(mainSegments, pallet, 8, 0, 0, 150);
+    //FairyLightsPS(mainSegments, pallet, 8, 0, 0, 150);
     //Will choose 8 pixels to cycle to/from colors choosen from the pallet, using a blank background, 
     //Each pixel will be turned on one at a time, before reseting them all at once (mode 0), with 150ms between each cycle
 
-    //TwinklePS(mainSegments, CRGB::Red, 10, CRGB::Blue, 1, 100);
+    //FairyLightsPS(mainSegments, CRGB::Red, 10, CRGB::Blue, 1, 100);
     //Will choose 10 pixels to set to red before reseting, using a blue background, 
     //The pixels will be turned on one at a time, and then off one at a time (mode 1), with 100ms between each cycle
 
-    //TwinklePS(mainSegments, 12, 0, 2, 80);
+    //FairyLightsPS(mainSegments, 12, 0, 2, 80);
     //Will choose 12 pixels each cycle to set to random colors, using a blank backgound, 
     //Each cycle, a new pixel will be turned on, while an old is turned off (mode 2), with 80ms in between each cycle
 
