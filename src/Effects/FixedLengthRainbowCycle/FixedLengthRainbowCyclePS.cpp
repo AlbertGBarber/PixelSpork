@@ -81,7 +81,8 @@ void FixedLengthRainbowCyclePS::update(){
                 //get the actual pixel address, and set it
                 //color mode is 0 because we are working out the rainbow color ourselves
                 ledLoc = segDrawUtils::getSegmentPixel(segmentSet, i, j);
-                segDrawUtils::setPixelColor(segmentSet, ledLoc, color, 0);
+                //set the color, segNum and lineNum don't matter for this since we're always in colorMode 0
+                segDrawUtils::setPixelColor(segmentSet, ledLoc, color, 0, 0, 0);
             }
         }
         showCheckPS();

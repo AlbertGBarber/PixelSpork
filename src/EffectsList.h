@@ -9,3 +9,4 @@
 #include "Effects/ShiftingRainbowSea/ShiftingRainbowSeaPS.h"
 #include "Effects/FairyLights/FairyLightsPS.h"
 #include "Effects/Dissolve/DissolvePS.h"
+#include "Effects/SoftTwinkle/SoftTwinklePS.h"

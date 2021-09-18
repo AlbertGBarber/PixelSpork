@@ -13,7 +13,7 @@
 //or can be combined with a RainbowOffsetCycle to do simple rainbow shifting effects
 
 //Example call: 
-    //BGRateFillPS *CFC = new BGRateFillPS(mainSegments, 7, 70);
+    //BGRateFillPS(mainSegments, 7, 70);
     //Will fill the segment using color mode 7 every 70ms
 
 //Inputs:

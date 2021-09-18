@@ -263,7 +263,9 @@ void segDrawUtils::drawSegLineSimpleSection(SegmentSet segmentSet, uint8_t start
     }
 } 
 
-//fills in a colorLocComboPS struct with data (the pixel's actual address, what segment it's in, it's line number, and what color it should be)
+//fills in a pixelInfoPS struct with data (the pixel's actual address, what segment it's in, it's line number, and what color it should be)
+//(the passed in struct is empty and will be filled in, but you must provide it, 
+//the segPixelNum is the number of the pixel you want the info for)
 //you're probably calling this to account for different color modes before manipulating or storing a color
 //this gives you all the data to call the full setPixelColor() directly
 //the passed in color will be set to struct color if color mode is zero
