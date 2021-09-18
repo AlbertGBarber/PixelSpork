@@ -1,5 +1,5 @@
-#ifndef FixedLengthRainbowCyclePS_h
-#define FixedLengthRainbowCyclePS_h
+#ifndef RainbowCyclePS_h
+#define RainbowCyclePS_h
 
 //TODO
     //Add spacing setting?
@@ -13,7 +13,7 @@
 //suggested min length is 5 (ie red, yellow, green, blue, indigo/violet)
 
 //Example call: 
-    //FixedLengthRainbowCyclePS(mainSegments, 30, true, 80); 
+    //RainbowCyclePS(mainSegments, 30, true, 80); 
     //Will draw rainbows of length 30, moving towards the end of the segmentSet, at 80ms
 
 //Constructor Inputs:
@@ -31,9 +31,9 @@
 
 //Notes:
     //do not set the direction directly, use setDirect()!
-class FixedLengthRainbowCyclePS : public EffectBasePS {
+class RainbowCyclePS : public EffectBasePS {
     public:
-        FixedLengthRainbowCyclePS(SegmentSet &SegmentSet, uint8_t Length, bool Direction, uint16_t Rate); 
+        RainbowCyclePS(SegmentSet &SegmentSet, uint8_t Length, bool Direction, uint16_t Rate); 
         //length fixed at 255 max, b/c that's the maximum length of a rainbow
     
         uint8_t
