@@ -10,9 +10,8 @@ BGRateFillPS::BGRateFillPS(SegmentSet &SegmentSet, uint8_t ColorMode, uint16_t R
 
 void BGRateFillPS::update(){
     currentTime = millis();
-    //if we're using an external rate variable, get its value
-    globalRateCheckPS();
-    if( ( currentTime - prevTime ) >= rate ) {
+
+    if( ( currentTime - prevTime ) >= *rate ) {
         prevTime = currentTime;
         segDrawUtils::fillSegSetColor(segmentSet, color, colorMode);
         showCheckPS();

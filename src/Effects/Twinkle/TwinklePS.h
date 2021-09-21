@@ -73,7 +73,8 @@ class TwinklePS : public EffectBasePS {
             numPixels;
 
         CRGB 
-            bgColor;
+            bgColorOrig,
+            *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a pallet color)
 
         bool 
             fillBG = false;
@@ -128,7 +129,7 @@ class TwinklePS : public EffectBasePS {
             palletTemp;
         
         void
-            init(uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate),
+            init(uint8_t FadeInSteps, uint8_t FadeOutSteps, CRGB BgColor, uint16_t Rate),
             incrementPixelArrays(),
             pickColor(uint16_t pixelNum);
 };

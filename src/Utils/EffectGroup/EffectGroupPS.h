@@ -17,6 +17,9 @@
 #include "Utils/EffectFade/EffectFaderPS.h"
 #endif
 
+//TODO:
+//-- Add ability to store a callback function ptr, would be called when group finishes
+
 // EffectBasePS *effArray[] = {&effectInstanceName1, &effectInstanceName2, etc } // example of an effect group array
 
 // Takes an array of effects, and calls their update functions together

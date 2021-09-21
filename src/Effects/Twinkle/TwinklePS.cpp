@@ -2,28 +2,28 @@
 
 //pallet based constructor
 TwinklePS::TwinklePS(SegmentSet &SegmentSet, palletPS *Pallet, uint16_t NumPixels, CRGB BgColor, uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate):
-    segmentSet(SegmentSet), pallet(Pallet), numPixels(NumPixels), bgColor(BgColor)
+    segmentSet(SegmentSet), pallet(Pallet), numPixels(NumPixels)
     {    
-        init(FadeInSteps, FadeOutSteps, Rate);
+        init(FadeInSteps, FadeOutSteps, BgColor, Rate);
 	}
 
 //single color constructor
 TwinklePS::TwinklePS(SegmentSet &SegmentSet, CRGB Color, uint16_t NumPixels, CRGB BgColor, uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate):
-    segmentSet(SegmentSet), numPixels(NumPixels), bgColor(BgColor)
+    segmentSet(SegmentSet), numPixels(NumPixels)
     {    
         setSingleColor(Color);
-        init(FadeInSteps, FadeOutSteps, Rate);
+        init(FadeInSteps, FadeOutSteps, BgColor, Rate);
 	}
 
 //random colors constructor
 TwinklePS::TwinklePS(SegmentSet &SegmentSet, uint16_t NumPixels, CRGB BgColor, uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate):
-    segmentSet(SegmentSet), numPixels(NumPixels), bgColor(BgColor)
+    segmentSet(SegmentSet), numPixels(NumPixels)
     {    
         setSingleColor(segDrawUtils::randColor());
         //although we set a single pallet, we want to choose the colors at random,
         //so we set the pallet length to 0 (see pickColor()  )
         pallet->length = 0;
-        init(FadeInSteps, FadeOutSteps, Rate);
+        init(FadeInSteps, FadeOutSteps, BgColor, Rate);
 	}
 
 TwinklePS::~TwinklePS(){
@@ -32,10 +32,11 @@ TwinklePS::~TwinklePS(){
 }
 
 //sets up all the core class vars, and initilizes the pixel and color arrays
-void TwinklePS::init(uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate){
+void TwinklePS::init(uint8_t FadeInSteps, uint8_t FadeOutSteps, CRGB BgColor, uint16_t Rate){
     //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
     bindSegPtrPS();
     bindClassRatesPS();
+    bindBGColorPS();
     setSteps(FadeInSteps, FadeOutSteps);
     reset();
 }
@@ -98,7 +99,7 @@ void TwinklePS::deletePixelArrays(){
 void TwinklePS::reset(){
     startUpDone = false;
     totalSteps = 0;
-    segDrawUtils::fillSegSetColor(segmentSet, bgColor, bgColorMode);
+    segDrawUtils::fillSegSetColor(segmentSet, *bgColor, bgColorMode);
 }
 
 //sets the number of fade in and out steps (min value of 1)
@@ -135,9 +136,8 @@ void TwinklePS::setNumPixels(uint16_t newNumPixels){
     //so each led is picked, then shifted along the array, fading in and out as it goes
 void TwinklePS::update(){
     currentTime = millis();
-    //if we're using an external rate variable, get its value
-    globalRateCheckPS();
-    if( ( currentTime - prevTime ) >= rate ) {
+
+    if( ( currentTime - prevTime ) >= *rate ) {
         prevTime = currentTime;
         uint16_t numActiveLeds = segmentSet.numActiveSegLeds;
 
@@ -154,7 +154,7 @@ void TwinklePS::update(){
         //but for rainbow or gradient backgrounds that a cycling
         //you want to redraw the whole thing
         if(fillBG){
-            segDrawUtils::fillSegSetColor(segmentSet, bgColor, bgColorMode);
+            segDrawUtils::fillSegSetColor(segmentSet, *bgColor, bgColorMode);
         }
 
         ////We run through all the pixels in the array and set their color based on the fade level (the array column index)
@@ -170,7 +170,7 @@ void TwinklePS::update(){
                     colorIndexArr[i][0] = color;
                 }
                 //grab the background color info
-                segDrawUtils::getPixelColor(segmentSet, &pixelInfo, bgColor, bgColorMode, ledArray[i][j]);
+                segDrawUtils::getPixelColor(segmentSet, &pixelInfo, *bgColor, bgColorMode, ledArray[i][j]);
                 //we either fade in or out depending which index we're on (earlier fade in, later fade out)
                 //we don't want to double count the final step of the fade in and the initial step of the fade out
                 //since they're the same

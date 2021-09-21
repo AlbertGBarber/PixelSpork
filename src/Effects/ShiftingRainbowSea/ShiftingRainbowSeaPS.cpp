@@ -67,9 +67,8 @@ void ShiftingRainbowSeaPS::resetOffsets() {
 //the writes it out
 void ShiftingRainbowSeaPS::update() {
     currentTime = millis();
-    // if we're using an external rate variable, get its value
-    globalRateCheckPS();
-    if ((currentTime - prevTime) >= rate) {
+
+    if ((currentTime - prevTime) >= *rate) {
         prevTime = currentTime;
 
         for (uint16_t i = 0; i < numPixels; i++) {

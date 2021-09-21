@@ -1,6 +1,6 @@
 #include "Effects/EffectBasePS.h"
 #include "Effects/EmptyEffectPS.h"
-#include "Effects/FixedLengthRainbowCycle/FixedLengthRainbowCyclePS.h"
+#include "Effects/RainbowCycle/RainbowCyclePS.h"
 #include "Effects/CrossFadeCycle/CrossFadeCyclePS.h"
 #include "Effects/CrossFadeCycleRand/CrossFadeCycleRandPS.h"
 #include "Effects/Twinkle/TwinklePS.h"

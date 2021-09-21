@@ -154,10 +154,8 @@ uint8_t DissolvePS::shuffleIndex(){
         //during hangTime nothing from the effect is drawn or incremented
 void DissolvePS::update(){
     currentTime = millis();
-    //if we're using an external rate variable, get its value
-    globalRateCheckPS();
 
-    if( ( currentTime - prevTime ) >= rate) {
+    if( ( currentTime - prevTime ) >= *rate) {
         
         //code for pausing the effect after a dissolve is finished
         //if we're in hang time, we simply return to break out of the function 

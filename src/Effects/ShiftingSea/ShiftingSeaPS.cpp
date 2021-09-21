@@ -56,6 +56,7 @@ void ShiftingSeaPS::resetOffsets() {
     numPixels = segmentSet.numActiveSegLeds;
     delete[] offsets;
     offsets = new uint16_t[numPixels];
+    setTotalEffectLength();
     ShiftingSeaUtilsPS::genOffsetArray(offsets, numPixels, gradLength, grouping, totalCycleLength, sMode);
 }
 
@@ -66,9 +67,8 @@ void ShiftingSeaPS::resetOffsets() {
 // then writes it out
 void ShiftingSeaPS::update() {
     currentTime = millis();
-    // if we're using an external rate variable, get its value
-    globalRateCheckPS();
-    if ((currentTime - prevTime) >= rate) {
+
+    if ((currentTime - prevTime) >= *rate) {
         prevTime = currentTime;
 
         for (uint16_t i = 0; i < numPixels; i++) {

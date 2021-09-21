@@ -56,13 +56,13 @@
 class FairyLightsPS : public EffectBasePS {
     public:
         //pallet based constructor
-        FairyLightsPS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t NumTwinkles,  CRGB BGColor, uint8_t Tmode, uint16_t Rate);
+        FairyLightsPS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode, uint16_t Rate);
         
         //single color constructor
-        FairyLightsPS(SegmentSet &SegmentSet, CRGB Color, uint8_t NumTwinkles,  CRGB BGColor, uint8_t Tmode, uint16_t Rate);
+        FairyLightsPS(SegmentSet &SegmentSet, CRGB Color, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode, uint16_t Rate);
         
         //random colors constructor
-        FairyLightsPS(SegmentSet &SegmentSet, uint8_t NumTwinkles,  CRGB BGColor, uint8_t Tmode, uint16_t Rate); 
+        FairyLightsPS(SegmentSet &SegmentSet, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode, uint16_t Rate); 
 
         //destructor
         ~FairyLightsPS();
@@ -81,7 +81,8 @@ class FairyLightsPS : public EffectBasePS {
             *pixelSet;
         
         CRGB
-            bgColor = 0,
+            bgColorOrig = 0,
+            *bgColor, //bgColor is a pointer so it can be tied to an external variable if needed (such as a pallet color)
             color,
             *colorSet;
         
@@ -98,7 +99,7 @@ class FairyLightsPS : public EffectBasePS {
             setPallet(palletPS *newPallet),
             setNumTwinkles(uint8_t newNumTwinkles),
             genPixelSet(),
-            init(uint16_t Rate),
+            init(CRGB BgColor, uint16_t Rate),
             update(void);
     
     private:

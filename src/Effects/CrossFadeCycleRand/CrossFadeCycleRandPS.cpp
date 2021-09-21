@@ -24,12 +24,11 @@ void CrossFadeCycleRandPS::reset(){
 
 void CrossFadeCycleRandPS::update(){
     currentTime = millis();
-    //if we're using an external rate variable, get its value
-    globalRateCheckPS();
+
     if(!infinite && (cycleCount == numCycles ) ){
         done = true;
     }
-    if( !done && ( currentTime - prevTime ) >= rate ) {
+    if( !done && ( currentTime - prevTime ) >= *rate ) {
         prevTime = currentTime;
         
         CRGB newColor;

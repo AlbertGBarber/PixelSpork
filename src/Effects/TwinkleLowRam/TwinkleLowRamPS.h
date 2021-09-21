@@ -49,7 +49,8 @@ class TwinkleLowRamPS : public EffectBasePS {
             numPixels;
 
         CRGB 
-            bgColor;
+            bgColorOrig,
+            *bgColor;
         
         bool
             fillBG = true,
@@ -88,7 +89,7 @@ class TwinkleLowRamPS : public EffectBasePS {
             palletTemp;
         
         void
-            init(uint16_t Rate);
+            init(CRGB BgColor, uint16_t Rate);
 };
 
 #endif

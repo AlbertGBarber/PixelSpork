@@ -1,28 +1,28 @@
 #include "TwinkleLowRamPS.h"
 
 TwinkleLowRamPS::TwinkleLowRamPS(SegmentSet &SegmentSet, palletPS *Pallet, uint16_t NumPixels, CRGB BgColor, bool Sparkle, uint8_t FadeOutRate, uint16_t Rate):
-    segmentSet(SegmentSet), pallet(Pallet), numPixels(NumPixels), bgColor(BgColor), sparkle(Sparkle), fadeOutRate(FadeOutRate)
+    segmentSet(SegmentSet), pallet(Pallet), numPixels(NumPixels), sparkle(Sparkle), fadeOutRate(FadeOutRate)
     {    
-        init(Rate);
+        init(BgColor, Rate);
     }
 
 //single color constructor
 TwinkleLowRamPS::TwinkleLowRamPS(SegmentSet &SegmentSet, CRGB Color, uint16_t NumPixels, CRGB BgColor, bool Sparkle, uint8_t FadeOutRate, uint16_t Rate):
-    segmentSet(SegmentSet), numPixels(NumPixels), bgColor(BgColor), sparkle(Sparkle), fadeOutRate(FadeOutRate)
+    segmentSet(SegmentSet), numPixels(NumPixels), sparkle(Sparkle), fadeOutRate(FadeOutRate)
     {    
         setSingleColor(Color);
-        init(Rate);
+        init(BgColor, Rate);
 	}
 
 //random colors constructor
 TwinkleLowRamPS::TwinkleLowRamPS(SegmentSet &SegmentSet, uint16_t NumPixels, CRGB BgColor, bool Sparkle, uint8_t FadeOutRate, uint16_t Rate):
-    segmentSet(SegmentSet), numPixels(NumPixels), bgColor(BgColor), sparkle(Sparkle), fadeOutRate(FadeOutRate)
+    segmentSet(SegmentSet), numPixels(NumPixels), sparkle(Sparkle), fadeOutRate(FadeOutRate)
     {    
         setSingleColor(segDrawUtils::randColor());
         //although we set a single pallet, we want to choose the colors at random,
         //so we set the pallet length to 0 (see pickColor()  )
         pallet->length = 0;
-        init(Rate);
+        init(BgColor, Rate);
 	}
 
 TwinkleLowRamPS::~TwinkleLowRamPS(){
@@ -30,10 +30,11 @@ TwinkleLowRamPS::~TwinkleLowRamPS(){
 }
 
 //sets up all the core class vars, and initilizes the pixel and color arrays
-void TwinkleLowRamPS::init(uint16_t Rate){
+void TwinkleLowRamPS::init(CRGB BgColor, uint16_t Rate){
     //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
     bindSegPtrPS();
     bindClassRatesPS();
+    bindBGColorPS();
     palletLength = pallet->length;
 }
 
@@ -52,9 +53,8 @@ void TwinkleLowRamPS::setSingleColor(CRGB Color){
 
 void TwinkleLowRamPS::update(){
     currentTime = millis();
-    //if we're using an external rate variable, get its value
-    globalRateCheckPS();
-    if( ( currentTime - prevTime ) >= rate ) {
+
+    if( ( currentTime - prevTime ) >= *rate ) {
         prevTime = currentTime;
         uint16_t numActiveLeds = segmentSet.numActiveSegLeds;
 
@@ -63,7 +63,7 @@ void TwinkleLowRamPS::update(){
         if (sparkle) {
             segDrawUtils::fadeSegSetToBlackBy(segmentSet, fadeOutRate);
         } else if(fillBG) {
-            segDrawUtils::fillSegSetColor(segmentSet, bgColor, bgColorMode);
+            segDrawUtils::fillSegSetColor(segmentSet, *bgColor, bgColorMode);
         }
 
         // sets a random set of pixels to a random or indicated color(s)

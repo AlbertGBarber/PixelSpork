@@ -113,7 +113,7 @@ class ShiftingSeaPS : public EffectBasePS {
             gradStep;
 
         uint16_t
-            step;
+            step = 0;
 };
 
 #endif

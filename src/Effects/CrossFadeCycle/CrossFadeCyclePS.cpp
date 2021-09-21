@@ -121,14 +121,12 @@ void CrossFadeCyclePS::setPattern(uint8_t *newPattern, uint8_t newPatternLength)
 //updates the effect until we reach the fadeCount number of cycles
 void CrossFadeCyclePS::update(){
     currentTime = millis();
-    //if we're using an external rate variable, get its value
-    globalRateCheckPS();
     //if we've reached the fadeCount number of cycle
     //the effect is finished
     //other wise update the effect
     if(!infinite && (fadeCount == numFades ) ){
         done = true;
-    } else if( ( currentTime - prevTime ) >= rate ) {
+    } else if( ( currentTime - prevTime ) >= *rate ) {
         prevTime = currentTime;
         
         //caculate the next step of the current fade and display it

@@ -44,6 +44,8 @@ class EffectFaderPS {
     public:
         EffectFaderPS(EffectBasePS **effGroup, uint8_t newNumEffects, bool direction, uint16_t RunTime);
 
+        ~EffectFaderPS();
+
         bool
             direct, //true -> increasing brightness
             done = false, //is the fade finished?

@@ -47,10 +47,9 @@ bool RainbowCyclePS::direct(){
 //core update cycle, draws the rainbows along the segmentSet every rate ms
 void RainbowCyclePS::update(){
     currentTime = millis();
-    //if we're using an external rate variable, get its value
-    globalRateCheckPS();
+
     //if it's time to update the effect, do so
-    if( ( currentTime - prevTime ) >= rate ) {
+    if( ( currentTime - prevTime ) >= *rate ) {
         prevTime = currentTime;
         //prevents cycle count from overflowing by resetting it when the cycle loops
         //very important to keep the rainbow correct

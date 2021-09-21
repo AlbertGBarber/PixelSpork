@@ -16,9 +16,8 @@ void SoftTwinklePS::reset(){
 
 void SoftTwinklePS::update() {
     currentTime = millis();
-    // if we're using an external rate variable, get its value
-    globalRateCheckPS();
-    if ((currentTime - prevTime) >= rate) {
+
+    if ((currentTime - prevTime) >= *rate) {
         prevTime = currentTime;
 
         numPixels = segmentSet.numActiveSegLeds;

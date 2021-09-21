@@ -4,6 +4,8 @@
 #include "FastLED.h"
 #include "segmentSection.h"
 #include "segment.h"
+//TODO:
+//-- Scrap turning off segments, full behavior too hard to implement, current behavior is confusing
 
 /*
 An explaination of segment structure:

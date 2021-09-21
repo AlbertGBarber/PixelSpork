@@ -51,8 +51,8 @@ void RainbowOffsetCyclePS::setGroup(SegmentSet &segmentSet){
 // lets you constantly shift the rainbow while an effect is active
 // newDirct = true will set the rainbow to move positivly along the strip, false will set to reverse
 //setting cycleRun to true will start the cycle
-void RainbowOffsetCyclePS::setCycle(uint16_t newRate, bool newDirct, bool newCycleRun) {
-    rate = newRate;
+void RainbowOffsetCyclePS::setCycle(uint16_t Rate, bool newDirct, bool newCycleRun) {
+    bindClassRatesPS();
     setDirect(newDirct);
     cycleRun = newCycleRun;
 }
@@ -72,8 +72,8 @@ void RainbowOffsetCyclePS::setDirect(bool newDirct){
 void RainbowOffsetCyclePS::update(){
 	if (cycleRun) {
         currentTime = millis();
-        globalRateCheckPS();
-        if (currentTime - prevTime >= rate) {
+        
+        if (currentTime - prevTime >= *rate) {
             prevTime = currentTime;
             for(int i = 0; i < numSegSets; i++){ 
                 //increment/decement the offset wrapping as it reaches 255

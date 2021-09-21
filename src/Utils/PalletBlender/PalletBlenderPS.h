@@ -9,6 +9,13 @@
 #define max(a, b) ((a) > (b) ? (a) : (b))
 #endif
 
+//TODO:
+//-- Add a pause after finishing a blend
+//-- Add new Blend version that takes an array of pallets and cycles through them
+//-- Add new blend version that lets you exclude some indexes from blending 
+//   (for randomizing when you want a const color), forced same length pallets, excluding colors at end?
+//-- 
+
 //takes two pallets, a start and and end one, and gives you a pallet that is blended from the start towards the end
 //the pallet is blended at the passed in rate (ms) in the passed in totalSteps steps
 //update() updates the pallet (assuming enought time has passed)

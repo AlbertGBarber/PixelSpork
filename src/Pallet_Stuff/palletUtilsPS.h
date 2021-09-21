@@ -14,7 +14,10 @@ namespace palletUtilsPS{
     
     CRGB 
         //crossFadePallet(palletPS *pallet, uint8_t startIndex, uint8_t endIndex, uint8_t step, uint8_t totalSteps),
-        getPalletColor(palletPS *pallet, uint8_t index);
+        getPalletColor(palletPS *pallet, uint8_t index),
+        *getColorPtr(palletPS *pallet, uint8_t index);
+    
+    
 };
 
 #endif

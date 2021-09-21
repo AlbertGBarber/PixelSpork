@@ -11,18 +11,28 @@
 })                               \
 
 //bind the rate vars since they are inherited from BaseEffectPS
+//the rate is used to control the update cycle
+//rate is a pointer, by default it is bound to rateOrig, 
+//which is set equal to the rate from the effect constructor
+//but you can re-bind it to an external variable for external rate control
 #define bindClassRatesPS() ({  \
-    (this->rate = Rate);       \
-    (this->rateG = &rate);     \
+    (rateOrig = Rate);         \
+    (rate = &rateOrig);        \
 })                             \
 
-//used for setting the internal effect rate to the value of an external global variable
-//(if th effect is using one)
-#define globalRateCheckPS() ({   \
-    if ((useGlobalRate)) {       \
-        (rate) = (*rateG);       \
-    }                            \
-})
+//Used for binding the background color used in some effects
+//we want to use a pointer for the bgColor so it can be tied to an external variable easily
+//so we use the bgColorOrig to store the BgColor from the constructor, 
+//and point the bgColor to it
+//in your .h class file include
+//CRGB 
+    //bgColorOrig,
+    //*bgColor;
+// and use BgColor in your constructors
+#define bindBGColorPS() ({      \
+    (bgColorOrig = BgColor);    \
+    (bgColor = &bgColorOrig);   \
+})                              \
 
 //checks the effect is set to show, if so, do so
 #define showCheckPS() ({    \
@@ -34,17 +44,16 @@
 //This is the base effect class from which effects are derived (and some other helper functions)
 //contains:
     //update() interface method (all effects must have an update method)
-    //setGlobalRate and related vars, used for binding an effect's rate to an external variable
     //a segmentSet pointer to access the effect's segmentSet from outside the effect
     //a few macros for common effect code pieces (see above)
 class EffectBasePS {
     public:
         uint16_t 
-            rate;
+            rateOrig,
+            *rate;
         
         bool
-            showOn = true,
-            useGlobalRate;
+            showOn = true;
 
         //pointer to the segmentSet the effect is using
         //defaults to null, since a couple of other classes use the effectBase but don't use a segmentSet
@@ -55,18 +64,6 @@ class EffectBasePS {
         virtual void update() = 0;
 
         virtual ~EffectBasePS() = 0;
-
-        //binds the update rate to a global variable as passed in
-        //useful for cordinating multiple effects
-        void setGlobalRate(uint16_t &rate){
-            rateG = &rate;
-            useGlobalRate = true;
-        }
-
-    protected:
-
-        uint16_t
-            *rateG;
 
 };
 

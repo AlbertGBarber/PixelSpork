@@ -3,25 +3,25 @@
 //see update() for how the effect works
 
 //pallet based constructor
-FairyLightsPS::FairyLightsPS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t NumTwinkles,  CRGB BGColor, uint8_t Tmode, uint16_t Rate):
-    segmentSet(SegmentSet), pallet(Pallet), numTwinkles(NumTwinkles), tmode(Tmode), bgColor(BGColor)
+FairyLightsPS::FairyLightsPS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode, uint16_t Rate):
+    segmentSet(SegmentSet), pallet(Pallet), numTwinkles(NumTwinkles), tmode(Tmode)
     {    
-        init(Rate);
+        init(BGColor, Rate);
 	}
 
 //single color constructor
-FairyLightsPS::FairyLightsPS(SegmentSet &SegmentSet, CRGB Color, uint8_t NumTwinkles,  CRGB BGColor, uint8_t Tmode, uint16_t Rate):
-    segmentSet(SegmentSet), numTwinkles(NumTwinkles), tmode(Tmode), bgColor(BGColor)
+FairyLightsPS::FairyLightsPS(SegmentSet &SegmentSet, CRGB Color, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode, uint16_t Rate):
+    segmentSet(SegmentSet), numTwinkles(NumTwinkles), tmode(Tmode)
     {    
-        init(Rate);
+        init(BGColor, Rate);
         setSingleColor(Color);
 	}
 
 //random colors constructor
-FairyLightsPS::FairyLightsPS(SegmentSet &SegmentSet, uint8_t NumTwinkles,  CRGB BGColor, uint8_t Tmode, uint16_t Rate):
-    segmentSet(SegmentSet), numTwinkles(NumTwinkles), tmode(Tmode), bgColor(BGColor)
+FairyLightsPS::FairyLightsPS(SegmentSet &SegmentSet, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode, uint16_t Rate):
+    segmentSet(SegmentSet), numTwinkles(NumTwinkles), tmode(Tmode)
     {    
-        init(Rate);
+        init(BGColor, Rate);
         setSingleColor(segDrawUtils::randColor());
         //although we set a single pallet, we want to choose the colors at random,
         //so we set the pallet length to 0 (see pickColor()  )
@@ -35,10 +35,11 @@ FairyLightsPS::~FairyLightsPS(){
     delete[] colorSet;
 }
 
-void FairyLightsPS::init(uint16_t Rate){
+void FairyLightsPS::init(CRGB BgColor, uint16_t Rate){
     //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
     bindSegPtrPS();
     bindClassRatesPS();
+    bindBGColorPS();
     genPixelSet();
 }
 
@@ -88,16 +89,15 @@ void FairyLightsPS::setPallet(palletPS *newPallet){
 //see the individual functions for how they work
 void FairyLightsPS::update(){
     currentTime = millis();
-    //if we're using an external rate variable, get its value
-    globalRateCheckPS();
-    if( ( currentTime - prevTime ) >= rate ) {
+
+    if( ( currentTime - prevTime ) >= *rate ) {
         prevTime = currentTime;
         //by default, we only touch the pixel at the current cycleNum
         //but for rainbow or gradient backgrounds that a cycling
         //you want to redraw the whole thing
         if(fillBG){
             reDrawAll = true;
-            segDrawUtils::fillSegSetColor(segmentSet, bgColor, bgColorMode);
+            segDrawUtils::fillSegSetColor(segmentSet, *bgColor, bgColorMode);
         }
         switch (tmode) {
             case 0: 
@@ -178,7 +178,7 @@ void FairyLightsPS::modeZeroSet(){
     } else {
         //turn off all the pixels, and make a new pixel group to turn on
         for(uint8_t i = 0; i <= cycleLimit; i++){
-            segDrawUtils::setPixelColor(segmentSet, pixelSet[i], bgColor, bgColorMode);
+            segDrawUtils::setPixelColor(segmentSet, pixelSet[i], *bgColor, bgColorMode);
         }
         genPixelSet();
         turnOff = false;
@@ -227,7 +227,7 @@ void FairyLightsPS::modeOneSet(){
         }
     } else {
         //turn the pixels off one at a time
-        segDrawUtils::setPixelColor(segmentSet, pixelSet[cycleNum], bgColor, bgColorMode);
+        segDrawUtils::setPixelColor(segmentSet, pixelSet[cycleNum], *bgColor, bgColorMode);
         //once we've finished turning all the pixels off, we need make a new pixelSet and start again
         if(cycleNum == cycleLimit ){
             genPixelSet();
@@ -248,7 +248,7 @@ void FairyLightsPS::modeTwoSet(){
     
     //turn the current pixel off
     pickColor(pixelSet[cycleNum]); 
-    segDrawUtils::setPixelColor(segmentSet, pixelInfo.pixelLoc, bgColor, bgColorMode, pixelInfo.segNum, pixelInfo.lineNum);
+    segDrawUtils::setPixelColor(segmentSet, pixelInfo.pixelLoc, *bgColor, bgColorMode, pixelInfo.segNum, pixelInfo.lineNum);
     
     //pick a new pixel to turn on
     pixelSet[cycleNum] = random(segmentSet.numActiveSegLeds); // set a new pixel to turn on and put it in the array

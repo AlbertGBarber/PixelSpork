@@ -6,13 +6,14 @@ EmptyEffectPS::EmptyEffectPS(SegmentSet &SegmentSet, uint16_t Rate):
         //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
         bindSegPtrPS();
         bindClassRatesPS();
+        //bind background color pointer (if needed)
+        //bindBGColorPS();
 	}
 
 void EmptyEffectPS::update(){
     currentTime = millis();
-    //if we're using an external rate variable, get its value
-    globalRateCheckPS();
-    if( ( currentTime - prevTime ) >= rate ) {
+
+    if( ( currentTime - prevTime ) >= *rate ) {
         prevTime = currentTime;
         
         showCheckPS();

@@ -1,13 +1,14 @@
 #include "EffectFaderPS.h"
 
-EffectFaderPS::EffectFaderPS(EffectBasePS** effGroup, uint8_t newNumEffects, bool direction, uint16_t RunTime)
-    :group(effGroup)
-    ,numEffects(newNumEffects)
-    ,direct(direction)
-    ,runTime(RunTime) {
-    reset();
-}
+EffectFaderPS::EffectFaderPS(EffectBasePS** effGroup, uint8_t newNumEffects, bool direction, uint16_t RunTime) :
+    group(effGroup), numEffects(newNumEffects), direct(direction), runTime(RunTime) 
+    {
+        reset();
+    }
 
+EffectFaderPS::~EffectFaderPS(){
+    delete[] origBrightness_arr;
+}
 // sets a new set of effects for fading, as well as a new direction
 void EffectFaderPS::reset(EffectBasePS** newGroup, uint8_t newNumEffects, bool direction) {
     group = newGroup;

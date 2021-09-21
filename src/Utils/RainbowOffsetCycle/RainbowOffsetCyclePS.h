@@ -48,7 +48,7 @@ class RainbowOffsetCyclePS : public EffectBasePS {
             direct(void); //returns the current direction of the cycle
     
         void
-            setCycle(uint16_t newRate, bool newDirct, bool cycleRun), //defines a new set of cycle parameters
+            setCycle(uint16_t Rate, bool newDirct, bool cycleRun), //defines a new set of cycle parameters
             setDirect(bool newDirct), //sets the shift direction, 
             setGroup(SegmentSet** SegmentSetArr, uint8_t NumSegsSets), //sets a new group of segmentSets to act on
             setGroup(SegmentSet &segmentSet), //sets a new segmentSet to act on
