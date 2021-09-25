@@ -23,6 +23,7 @@ CRGB palletUtilsPS::getPalletColor(palletPS *pallet, uint8_t index){
 
 //returns a pointer to the color in the pallet array at the specified index (wrapping if needed)
 //useful for background color syncing
+//Note: maybe remove the wrapping?, 
 CRGB* palletUtilsPS::getColorPtr(palletPS *pallet, uint8_t index){
     return &(pallet->palletArr[ index % pallet->length ]);
 }
