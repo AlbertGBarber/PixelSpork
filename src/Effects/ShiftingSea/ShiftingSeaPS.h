@@ -1,6 +1,9 @@
 #ifndef ShiftingSeaPS_h
 #define ShiftingSeaPS_h
 
+//TODO:
+//  -- Add option to use a pattern based on a pallet?
+
 #include "Effects/EffectBasePS.h"
 #include "Effects/EffectUtils/EffectUtilsPS.h"
 #include "Utils/ShiftingSeaUtilsPS.h"

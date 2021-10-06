@@ -11,3 +11,4 @@
 #include "Effects/Dissolve/DissolvePS.h"
 #include "Effects/SoftTwinkle/SoftTwinklePS.h"
 #include "Effects/Glimmer/GlimmerPS.h"
+#include "Effects/Shimmer/ShimmerPS.h"
