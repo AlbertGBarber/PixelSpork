@@ -12,3 +12,4 @@
 #include "Effects/SoftTwinkle/SoftTwinklePS.h"
 #include "Effects/Glimmer/GlimmerPS.h"
 #include "Effects/Shimmer/ShimmerPS.h"
+#include "Effects/Pride2015/Pride2015PS.h"
