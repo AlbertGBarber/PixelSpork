@@ -56,46 +56,46 @@ Segment* SegmentSet::getSegPtr(uint8_t segNum){
 }
 
 //returns the specified segment's totalLength (segNum is the segment's index in the segments array passed to the constructor)
-uint16_t  SegmentSet::getTotalSegLength(byte segNum){
+uint16_t  SegmentSet::getTotalSegLength(uint8_t segNum){
 	return getSegPtr(segNum)->totalLength; //secNum = 0, it's not needed for the call
 }
 
 //returns the specified segment's number of sections
-uint16_t  SegmentSet::getTotalNumSec(byte segNum){
+uint16_t  SegmentSet::getTotalNumSec(uint8_t segNum){
 	return getSegPtr(segNum)->numSec;//secNum = 0, it's not needed for the call
 }
 
 // //returns the pointer to the specified segment
-// uint16_t  SegmentSet::getSectionPtr(byte segNum){
+// uint16_t  SegmentSet::getSectionPtr(uint8_t segNum){
 // 	getSegPtr(segNum);
 // }
 
 //returns the start pixel of the specified section in the specified segment (secNum is the index of the section within the segment array)
-uint16_t  SegmentSet::getSecStartPixel(byte segNum, byte secNum){
+uint16_t  SegmentSet::getSecStartPixel(uint8_t segNum, uint8_t secNum){
 	return getSegPtr(segNum)->getSecStartPixel(secNum);
 }
 
 //returns the length of the specified section in the specified segment	
-int16_t  SegmentSet::getSecLength(byte segNum, byte secNum){
+int16_t  SegmentSet::getSecLength(uint8_t segNum, uint8_t secNum){
 	return getSegPtr(segNum)->getSecLength(secNum);
 }
 
 //returns the direction of the specified segment
-bool SegmentSet::getSegDirection(byte segNum){
+bool SegmentSet::getSegDirection(uint8_t segNum){
 	return getSegPtr(segNum)->dirct;
 }
 
-bool SegmentSet::getSegActive(byte segNum){
+bool SegmentSet::getSegActive(uint8_t segNum){
 	return getSegPtr(segNum)->active;
 }
 
 //returns the pointer to the specified segment's section array
-segmentSection*  SegmentSet::getSecArrPtr(byte segNum){
+segmentSection*  SegmentSet::getSecArrPtr(uint8_t segNum){
 	return getSegPtr(segNum)->secPtr;
 }
 
 //sets the direction of the specified segment to the specified direction
-void SegmentSet::setSegDirection(byte segNum, boolean direction){
+void SegmentSet::setSegDirection(uint8_t segNum, boolean direction){
 	getSegPtr(segNum)->dirct = direction;
 }
 
@@ -109,7 +109,7 @@ void SegmentSet::setAllSegDirection(boolean direction){
 //flips the direction of every freq segment, starting with the first segment according to startAtFirst
 //ie if you have three segments and do flipSegDirectionEvery(2, true), the first and third segment will be flipped
 //but if you do flipSegDirectionEvery(2, false), only the second segment will be flipped
-void SegmentSet::flipSegDirectionEvery(byte freq, boolean startAtFirst){
+void SegmentSet::flipSegDirectionEvery(uint8_t freq, boolean startAtFirst){
 	boolean currentDirect;
 	//run over the segments and check if they match the flip frequency,
 	//if they do, flip the direction
@@ -124,7 +124,7 @@ void SegmentSet::flipSegDirectionEvery(byte freq, boolean startAtFirst){
 //sets the direction of every freq segment, starting with the first segment according to startAtFirst
 //ie if you have three segments and do setsegDirectionEvery(2, true, true), the first and third segment will be be set to true
 //but if you do flipSegDirectionEvery(2, true, false), only the second segment will be set to true
-void SegmentSet::setsegDirectionEvery(byte freq, boolean direction, boolean startAtFirst){
+void SegmentSet::setsegDirectionEvery(uint8_t freq, boolean direction, boolean startAtFirst){
 	//run over the segments and check if they match the flip frequency,
 	//if they do, set the direction
 	for(int i = 0; i < numSegs; i++ ){
@@ -138,9 +138,9 @@ void SegmentSet::setsegDirectionEvery(byte freq, boolean direction, boolean star
 //count is started at the first segment or not
 //ie checkDirectionFlip(2, 1, true) will return false, b/c we are checking for every other segment, and we started with the first
 //but, 	checkDirectionFlip(2, 1, false)	will return true, b/c the we are not starting on the first segment
-bool SegmentSet::checkSegFreq(byte freq, byte num, boolean startAtFirst){
-	byte segNum;
-	byte testNum;
+bool SegmentSet::checkSegFreq(uint8_t freq, uint8_t num, boolean startAtFirst){
+	uint8_t segNum;
+	uint8_t testNum;
 	//if we're checking the first segment, and startAtFirst is true, we automatically
 	//return true
 	if(startAtFirst && num == 0){
@@ -184,7 +184,7 @@ void SegmentSet::setBrightness(uint8_t newBrightness){
 	brightness = newBrightness;
 }
 
-void SegmentSet::setSegActive(byte segNum, boolean state){
+void SegmentSet::setSegActive(uint8_t segNum, boolean state){
 	boolean isActive = getSegActive(segNum);
 	if(isActive != state){
 		Segment *ptr = *(segArr + segNum);

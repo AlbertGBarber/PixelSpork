@@ -76,13 +76,13 @@ An explaination of segment structure:
 				Data representation:
 					Segment is a class constructed using the number of segmentSections and a pointer to the segmentSections array
 					It gives access to four data points:
-						numSec; A byte equal to the number of sections in the passed in array.
+						numSec; A uint8_t equal to the number of sections in the passed in array.
 						totalLength; A uint16_t equal to the combined length of all the sections.
 						section; Which is of type segmentSection, and is a pointer to the array of sections.
 						dirct; A boolean indicating the segment direction
 					It also gives access to two functions:
-						getSecStartPixel( byte secNum ); returns the start pixel of the indicated section number (secNum is the section's position in the segmentSection array).
-						getSecLength( byte secNum ); same as above, but returns the section length.
+						getSecStartPixel( uint8_t secNum ); returns the start pixel of the indicated section number (secNum is the section's position in the segmentSection array).
+						getSecLength( uint8_t secNum ); same as above, but returns the section length.
 						
 			@Segment{}	
 				Description:
@@ -108,23 +108,23 @@ An explaination of segment structure:
 				Data representation:	
 					SegmentSet is a class constructed using the number of segements, and a pointer to the segment array.
 					It gives access to three data points:
-						numSegs; A byte equal to the segment array length passed to the constructor.
+						numSegs; A uint8_t equal to the segment array length passed to the constructor.
 						maxSegLength; A uint16_t equaling the maxium segment length of the segments in the segment array.
 						segNumMaxSegLength; A uint8_t equaling the number of the segment that has the maximum length
 						ie, if the segment array has one segment of length 8, and one of length 12, 12 will be the maxSegLength.
 						segArr; a double pointer of type Segment, used to access the segment array.
 					It also gives access to a number of functions:
-						getTotalSegLength(byte segNum): returns the totalLength of the segment specified by the array index (segNum is the section's position in the segment array)
-						getTotalNumSec(byte segNum): returns the total number of sections in the segment specified by the array index.
-						getSectionPtr(byte segNum): returns the pointer to the segment's sections array specified by the array index.
-						getSecStartPixel(byte segNum, byte secNum): returns the start pixel of the specified section in the specified segment. (ie getSecStartPixel(0, 0) would return the start pixel of the first section in the first segment in the segments array)
-						getSecLength(byte segNum, byte secNum): returns the length of the specified section in the specified segment.
-						getSegDirection(byte segNum): returns a boolean direction of the specified segment
+						getTotalSegLength(uint8_t segNum): returns the totalLength of the segment specified by the array index (segNum is the section's position in the segment array)
+						getTotalNumSec(uint8_t segNum): returns the total number of sections in the segment specified by the array index.
+						getSectionPtr(uint8_t segNum): returns the pointer to the segment's sections array specified by the array index.
+						getSecStartPixel(uint8_t segNum, uint8_t secNum): returns the start pixel of the specified section in the specified segment. (ie getSecStartPixel(0, 0) would return the start pixel of the first section in the first segment in the segments array)
+						getSecLength(uint8_t segNum, uint8_t secNum): returns the length of the specified section in the specified segment.
+						getSegDirection(uint8_t segNum): returns a boolean direction of the specified segment
 						setAllSegDirection(boolean dirct): sets all the segments in the segmentSet to the specified direction
-						setSegDirection(byte segNum, boolean dirct): sets the direction of the specified segment to the specified direction 
-						flipSegDirectionEvery(byte freq, boolean startAtFirst): flips the direction of every freq segment, starting with the first segment according to startAtFirst
-						setsegDirectionEvery(byte freq, boolean direction, boolean startAtFirst): sets the direction of every freq segment, starting with the first segment according to startAtFirst
-						setSegActive(byte segNum, boolean state): turns a segment on or off, off segments are not drawn onto, and do not count towards the total segment length
+						setSegDirection(uint8_t segNum, boolean dirct): sets the direction of the specified segment to the specified direction 
+						flipSegDirectionEvery(uint8_t freq, boolean startAtFirst): flips the direction of every freq segment, starting with the first segment according to startAtFirst
+						setsegDirectionEvery(uint8_t freq, boolean direction, boolean startAtFirst): sets the direction of every freq segment, starting with the first segment according to startAtFirst
+						setSegActive(uint8_t segNum, boolean state): turns a segment on or off, off segments are not drawn onto, and do not count towards the total segment length
 
 */
 
@@ -197,20 +197,20 @@ class SegmentSet {
 		maxSegLength,
 		numLeds,
 		numActiveSegLeds,
-		getTotalSegLength(byte segNum),
-		//getSectionPtr(byte segNum),
-		getSecStartPixel(byte segNum, byte secNum),
-		getTotalNumSec(byte segNum);
+		getTotalSegLength(uint8_t segNum),
+		//getSectionPtr(uint8_t segNum),
+		getSecStartPixel(uint8_t segNum, uint8_t secNum),
+		getTotalNumSec(uint8_t segNum);
 		
 	  int16_t
-		getSecLength(byte segNum, byte secNum);
+		getSecLength(uint8_t segNum, uint8_t secNum);
 		
 	  bool
-		getSegDirection(byte segNum),
-		getSegActive(byte segNum);
+		getSegDirection(uint8_t segNum),
+		getSegActive(uint8_t segNum);
 	
 	  segmentSection* 
-		getSecArrPtr(byte segNum);
+		getSecArrPtr(uint8_t segNum);
 		
 	  Segment
 		**segArr;
@@ -223,21 +223,21 @@ class SegmentSet {
 
 	  void
 		setAllSegDirection(boolean dirct),
-		setSegDirection(byte segNum, boolean dirct),
-		flipSegDirectionEvery(byte freq, boolean startAtFirst),
-		setsegDirectionEvery(byte freq, boolean direction, boolean startAtFirst),
+		setSegDirection(uint8_t segNum, boolean dirct),
+		flipSegDirectionEvery(uint8_t freq, boolean startAtFirst),
+		setsegDirectionEvery(uint8_t freq, boolean direction, boolean startAtFirst),
 		setBrightness(uint8_t newBrightness),
-		setSegActive(byte segNum, boolean state);
+		setSegActive(uint8_t segNum, boolean state);
 	  
 	private:	
 	  uint16_t 
 	    getMaxSegLength(void),
 		getsegNumMaxSegLength(void),
 		getNumActiveSegLeds(void),
-		getSegProperty(byte segNum, byte secNum, byte prop);
+		getSegProperty(uint8_t segNum, uint8_t secNum, uint8_t prop);
 		
 	  bool
-		checkSegFreq(byte freq, byte num, boolean startAtFirst);
+		checkSegFreq(uint8_t freq, uint8_t num, boolean startAtFirst);
 };
 
 #endif

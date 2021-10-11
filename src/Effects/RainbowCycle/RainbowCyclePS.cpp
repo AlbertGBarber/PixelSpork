@@ -75,7 +75,7 @@ void RainbowCyclePS::update(){
                 //note that maxCycleLength is added so that the value is never negative, 
                 //because Adruino % is weird with neg values
                 uint32_t stepVal = maxCycleLength + cycleCount * stepDirect; 
-                CRGB color = segDrawUtils::wheel( ( ( (stepVal + ledCount) % length ) * 256 / length ) % 255 , 0, satur, value);
+                CRGB color = segDrawUtils::wheel( ( ( (stepVal + ledCount) % length ) * 256 / length ) & 255 , 0, satur, value);
 
                 //get the actual pixel address, and set it
                 //color mode is 0 because we are working out the rainbow color ourselves

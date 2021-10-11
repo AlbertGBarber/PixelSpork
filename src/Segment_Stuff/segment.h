@@ -7,9 +7,9 @@
 class Segment {
 	
 	public:
-		Segment(byte numSections, segmentSection *segSectionsArr, boolean direction, boolean segActive = true);
+		Segment(uint8_t numSections, segmentSection *segSectionsArr, boolean direction, boolean segActive = true);
 		
-	  byte
+	  uint8_t
 		numSec;
 	 
 	  boolean
@@ -17,11 +17,11 @@ class Segment {
 		dirct;
 		
 	  uint16_t
-	    getSecStartPixel( byte secNum ),
+	    getSecStartPixel( uint8_t secNum ),
 		totalLength;
 		
 	  int16_t
-		getSecLength( byte secNum );
+		getSecLength( uint8_t secNum );
 		
 	  segmentSection 
 		*secPtr;
