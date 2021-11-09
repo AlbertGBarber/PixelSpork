@@ -9,7 +9,6 @@
 #include "pins_arduino.h"
 #endif
 
-#include "SegmentFiles.h"
 #include "palletFiles.h"
 
 namespace EffectUtilsPS {

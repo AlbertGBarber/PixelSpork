@@ -8,10 +8,35 @@ void palletUtilsPS::setColor(palletPS *pallet, CRGB color, uint8_t index){
     pallet->palletArr[ index % pallet->length ] = color;
 }
 
-//randomize the colors in a pallet
+//randomizes all the colors in a pallet
 void palletUtilsPS::randomize(palletPS *pallet){
     for(int i = 0; i < pallet->length; i++){
-        setColor(pallet, segDrawUtils::randColor(), i);
+        randomize(pallet, i);
+    }
+}
+
+//randomize the color in pallet at the specified index
+void palletUtilsPS::randomize(palletPS *pallet, uint8_t index){
+    setColor(pallet, segDrawUtils::randColor(), index);
+}
+
+//randomizes the order of colors in a pallet
+void palletUtilsPS::shuffle(palletPS *pallet){
+    CRGB randColor, tempColor;
+    uint8_t randIndex;
+    uint8_t loopStart = pallet->length - 1;
+    // Start from the last element and swap
+    // one by one. We don't need to run for
+    // the first element that's why i > 0
+    for(int i = loopStart; i > 0; i--){
+        // Pick a random index from 0 to i
+        randIndex = random(i + 1);
+        // Swap arr[i] with the element
+        // at random index
+        tempColor = getPalletColor(pallet, i);
+        randColor = getPalletColor(pallet, randIndex);
+        setColor(pallet, tempColor, randIndex);
+        setColor(pallet, randColor, i);
     }
 }
 
@@ -28,11 +53,9 @@ CRGB* palletUtilsPS::getColorPtr(palletPS *pallet, uint8_t index){
     return &(pallet->palletArr[ index % pallet->length ]);
 }
 
-//blends one color of a pallet into another
-//not sure why this exists, since it doesn't seem very useful
-//commented out for posterity
-// CRGB palletUtilsPS::crossFadePallet(palletPS *pallet, uint8_t startIndex, uint8_t endIndex, uint8_t step, uint8_t totalSteps){
-//     CRGB startColor = getPalletColor(pallet, startIndex);
-//     CRGB endColor = getPalletColor(pallet, endIndex);
-//     return segDrawUtils::getCrossFadeColor(startColor, endColor, step, totalSteps);
-// }
+//returns the blended result of two pallet colors
+CRGB palletUtilsPS::getBlendedPalletColor(palletPS *pallet, uint8_t startIndex, uint8_t endIndex, uint8_t step, uint8_t totalSteps){
+    CRGB startColor = getPalletColor(pallet, startIndex);
+    CRGB endColor = getPalletColor(pallet, endIndex);
+    return segDrawUtils::getCrossFadeColor(startColor, endColor, step, totalSteps);
+}

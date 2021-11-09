@@ -1,3 +1,4 @@
+#include "Utils/MathUtilsPS.h"
 #include "Utils/RateCtrl/RateCtrlPS.h"
 #include "Utils/RainbowOffsetCycle/RainbowOffsetCyclePS.h"
 #include "Utils/EffectFade/EffectFaderPS.h"
@@ -5,3 +6,5 @@
 #include "Utils/PalletBlender/PalletBlenderPS.h"
 #include "Utils/RateRandomizer/RateRandomizerPS.h"
 #include "Utils/RandRateCtrl/RandRateCtrlPS.h"
+#include "Utils/PalletCycle/PalletCyclePS.h"
+#include "Utils/SinglePalletCycle/SinglePalletCyclePS.h"
