@@ -2,7 +2,8 @@
 #define palletUtilsPS_h
 
 //TODO
-//Add function that takes two pallets, a step, and a total number of steps and returns a pallet blended between the two
+//Add direction to pallets? Ie you can set them to be read backwards or forwards
+
 #include "palletPS.h"
 #include "SegmentFiles.h"
 

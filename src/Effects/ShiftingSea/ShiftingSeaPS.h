@@ -44,7 +44,6 @@
     //Rate -- The update rate (ms)
 
 //Functions:
-
     //setPallet(*newPallet) -- Sets the pallet used for the random pixels
     //resetOffsets() -- Resets the offset array, recaulating offsets for each pixel, will cause a jump if done mid-effect
     //setTotalEffectLength() -- calculates all possible offset values for the pixels, you shouldn't need to call this

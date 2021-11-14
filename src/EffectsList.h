@@ -14,3 +14,5 @@
 #include "Effects/Shimmer/ShimmerPS.h"
 #include "Effects/Pride2015/Pride2015PS.h"
 #include "Effects/TheaterChase/TheaterChasePS.h"
+#include "Effects/GradientCycle/GradientCyclePS.h"
+#include "Effects/GradientCycleLow/GradientCycleLowPS.h"
