@@ -16,6 +16,8 @@
 
 #include "SegmentFiles.h"
 
+#include "PatternFiles.h"
+
 #include "PalletFiles.h"
 
 #include "EffectsList.h"

@@ -14,8 +14,9 @@
 //It has a few restrictions, but should run faster than this effect
 
 //Example calls: 
-    //uint8_t pattern = {0, 1, 4};
-    //GradientCyclePS(mainSegments, pattern, SIZE(pattern), &pallet, 10, 100);
+    //uint8_t pattern_arr = {0, 1, 4};
+    //patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
+    //GradientCyclePS(mainSegments, &pattern, &pallet, 10, 100);
     //Will do a gradient cycle from color 0, to color 1, to color 4, of the pallet
     //with 10 steps to each gradient, and a 100ms update rate
 
@@ -26,10 +27,9 @@
     //Will do a gradient cycle using 3 randomly choosen colors, with 15 steps to each gradient,and an 80ms update rate
  
 //Constructor Inputs:
-    //Pattern(optional, see constructors) -- A pattern is a 1-d array of pallet indexes ie {0, 1, 3, 6, 7} 
-    //                                       the pattern is faded through in order, wrapping at the end
-    //                                       so the above example would fade from the first(0) color in the pallet to the second, to the fourth, etc
-    //PatternLength -- the length of the pattern above
+    //Pattern(optional, see constructors) -- A pattern is struct made from a 1-d array of pallet indexes ie {0, 1, 3, 6, 7} 
+    //                                       and the length of the array 
+    //                                       (see patternPS.h)   
     //Pallet(optional, see constructors) -- The repository of colors used in the pattern, or can be used as the pattern itself
     //NumColors (optional, see contructors) -- The number of randomly choosen colors for the gradients
     //GradLength -- How many steps for each gradient
@@ -38,20 +38,20 @@
 //Functions:
     //setPallet(*newPallet) -- Sets the pallet used for the gradient
     //setTotalEffectLength() -- Calculates the total length of all the gradients combined, you shouldn't need to call this
-    //setPattern(*newPattern, newPatternLength) -- Sets the passed in pattern to be the effect pattern
-    //                                             Will force setTotalEffectLength() call, so may cause effect to jump
-    //setPalletAsPattern(*newPallet) -- Sets the passed in pallet as the effect pallet, and also the effect pattern (calls setTotalEffectLength())
+    //setPattern(*newPattern) -- Sets the passed in pattern to be the effect pattern
+    //                           Will force setTotalEffectLength() call, so may cause effect to jump
+    //setPalletAsPattern() -- Sets the effect pattern to match the current pallet (calls setTotalEffectLength())
     //setGradLength(newGradLength) -- Changes the Gradlength to the specified value, adjusting the length of the gradients (calls setTotalEffectLength())
     //update() -- updates the effect
 
 //Notes:
     //For the randomly generated gradient constructor, the random pallet can be accessed via palletTemp
 
-    //If using the pallet as the pattern, if you change the pallet, you'll ned to change the pattern as well
+    //If using the pallet as the pattern, if you change the pallet, you'll need to change the pattern as well
     //(unless the pallets are the same length)
 class GradientCyclePS : public EffectBasePS {
     public:
-        GradientCyclePS(SegmentSet &SegmentSet, uint8_t *Pattern, uint8_t PatternLength, palletPS *Pallet, uint8_t GradLength, uint16_t Rate); 
+        GradientCyclePS(SegmentSet &SegmentSet, patternPS *Pattern, palletPS *Pallet, uint8_t GradLength, uint16_t Rate); 
 
         GradientCyclePS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t GradLength, uint16_t Rate);
 
@@ -60,13 +60,15 @@ class GradientCyclePS : public EffectBasePS {
         ~GradientCyclePS();
 
         uint8_t
-            gradLength, //total steps per fade
-            patternLength, //length of the pattern array, use SIZE(pattern)
-            *pattern;
+            gradLength;
         
         uint16_t 
             totalCycleLength, //total length of all the gradients combined, for reference
             cycleNum = 0; // tracks what how many patterns we've gone through
+
+        patternPS
+            patternTemp,
+            *pattern;
 
         palletPS
             palletTemp,
@@ -78,8 +80,8 @@ class GradientCyclePS : public EffectBasePS {
         void 
             setGradLength(uint8_t newGradLength),
             setPallet(palletPS* newPallet),
-            setPattern(uint8_t *newPattern, uint8_t newPatternLength),
-            setPalletAsPattern(palletPS *newPallet),
+            setPattern(patternPS *newPattern),
+            setPalletAsPattern(),
             setTotalEffectLength(),
             update(void);
     
@@ -89,15 +91,14 @@ class GradientCyclePS : public EffectBasePS {
             prevTime = 0;
         
         uint8_t
+            nextPattern, 
+            currentPattern,
             currentColorIndex,
             blendStep;
         
         uint16_t
             step,
             numPixels;
-        
-        bool
-            tempPatternSet;
 
         CRGB 
             currentColor,

@@ -9,13 +9,16 @@
 #include "pins_arduino.h"
 #endif
 
-#include "palletFiles.h"
+#include "PalletFiles.h"
+#include "PatternFiles.h"
 
 namespace EffectUtilsPS {
 
     palletPS 
         makeSingleColorpallet(CRGB Color),
         makeRandomPallet(uint8_t length);
-
+    
+    patternPS
+        setPalletAsPattern(palletPS *pallet);
 };
 #endif

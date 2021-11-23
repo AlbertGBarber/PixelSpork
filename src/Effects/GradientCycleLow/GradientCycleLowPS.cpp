@@ -1,8 +1,8 @@
 #include "GradientCycleLowPS.h"
 
 //constructor with pattern
-GradientCycleLowPS::GradientCycleLowPS(SegmentSet &SegmentSet, uint8_t *Pattern, uint8_t PatternLength, palletPS *Pallet, uint8_t GradLength, uint16_t Rate):
-    segmentSet(SegmentSet), pattern(Pattern), patternLength(PatternLength), pallet(Pallet), gradLength(GradLength)
+GradientCycleLowPS::GradientCycleLowPS(SegmentSet &SegmentSet, patternPS *Pattern, palletPS *Pallet, uint8_t GradLength, uint16_t Rate):
+    segmentSet(SegmentSet), pattern(Pattern), pallet(Pallet), gradLength(GradLength)
     {    
         init(Rate);
 	}
@@ -11,7 +11,7 @@ GradientCycleLowPS::GradientCycleLowPS(SegmentSet &SegmentSet, uint8_t *Pattern,
 GradientCycleLowPS::GradientCycleLowPS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t GradLength, uint16_t Rate):
     segmentSet(SegmentSet), pallet(Pallet), gradLength(GradLength)
     {    
-        setPalletAsPattern(pallet);
+        setPalletAsPattern();
         init(Rate);
 	}
 
@@ -21,16 +21,13 @@ GradientCycleLowPS::GradientCycleLowPS(SegmentSet &SegmentSet, uint8_t NumColors
     {    
         palletTemp = EffectUtilsPS::makeRandomPallet(NumColors);
         pallet = &palletTemp;
-        setPalletAsPattern(pallet);
+        setPalletAsPattern();
         init(Rate);
 	}
 
 GradientCycleLowPS::~GradientCycleLowPS(){
     delete[] palletTemp.palletArr;
-    //only delete the pattern if it's using a temp array
-    if(tempPatternSet){
-        delete[] pattern;
-    }
+    delete[] patternTemp.patternArr;
 }
 
 //inits core variables for the effect
@@ -44,23 +41,17 @@ void GradientCycleLowPS::reset(){
     initFillDone = false;
 }
 
-//sets the pattern to match the passed in pallet
-//ie pattern color 1 is pallet color 1, etc
-void GradientCycleLowPS::setPalletAsPattern(palletPS *newPallet){
-    tempPatternSet = true; //flag for destructor, since the pattern is being allocated with new
-    pallet = newPallet;
-    patternLength = pallet->length;
-    pattern = new uint8_t[patternLength];
-    for(uint8_t i = 0; i < patternLength; i++){
-        pattern[i] = i;
-    }
+//sets the pattern to match the current pallet
+//ie for a pallet length 5, the pattern would be 
+//{0, 1, 2, 3, 4}
+void GradientCycleLowPS::setPalletAsPattern(){
+    patternTemp = EffectUtilsPS::setPalletAsPattern(pallet);
+    pattern = &patternTemp;
 }
 
 //sets a new pattern for the effect
-void GradientCycleLowPS::setPattern(uint8_t *newPattern, uint8_t newPatternLength){
+void GradientCycleLowPS::setPattern(patternPS *newPattern){
     pattern = newPattern;
-    patternLength = newPatternLength;
-    tempPatternSet = false; //set flag to avoid deleting the pattern in the destuctor
 }
 
 //binds the pallet to a new one
@@ -73,8 +64,9 @@ void GradientCycleLowPS::setPallet(palletPS* newPallet){
 void GradientCycleLowPS::initalFill(){
     cycleNum = 0;
     patternCount = 0;
-    nextPattern = pattern[0];
+    nextPattern = patternUtilsPS::getPatternVal(pattern, 0);
 
+    //numPixels is the loop limit below, so we subtract 1
     numPixels = segmentSet.numActiveSegLeds - 1;
 
     //we need to draw the initial gradients on the strip
@@ -82,17 +74,17 @@ void GradientCycleLowPS::initalFill(){
     //to do this we run across all the leds
     //every gradsteps number of leds, we rotate the gradient colors,
     //transitioning from the current color to the next
-    //we loop backwards to match the direction of the loop in update()
+    //we loop forwards to match the direction of the loop in update()
     //so that where this initial setup ends, 
     //the patternCount and cycleNum vars will be correct
-    for (int32_t i = numPixels; i >= 0; i--) {
+    for (uint16_t i = 0; i <= numPixels; i++) {
 
         // if we've gone through gradLength cycles
         // a color transition is finished and we need to move to the next color
         if (cycleNum == 0) {
-            patternCount = (patternCount + 1) % patternLength;
+            patternCount = (patternCount + 1) % pattern->length;
             currentPattern = nextPattern;
-            nextPattern = pattern[patternCount];
+            nextPattern = patternUtilsPS::getPatternVal(pattern, patternCount);
         }
 
         //the color we're at based on the current index
@@ -112,10 +104,10 @@ void GradientCycleLowPS::initalFill(){
 //Every gradLength steps we switch to the next color,
 //To avoid re-caculating the same blend repeatedly, we only work out the blend for the first pixel in the strip
 //since this is the only new color entering the strip
-//For all the other pixels we simply copy the color of the pixel behind it
+//For all the other pixels we simply copy the color of the pixel in front of it
 //This way we shift the gradients along the strip
-//The gradient we're on is tracked by cycleNum and patternCount, which vary from 0 to gradLenth and 0 to patternLength 
-//respectively
+//The gradient we're on is tracked by cycleNum and patternCount, which vary from 0 to gradLent,
+//and 0 to the pattern length respectively
 //(see notes for the restrictions this method causes)
 void GradientCycleLowPS::update(){
     currentTime = millis();
@@ -135,24 +127,24 @@ void GradientCycleLowPS::update(){
         //if we've gone through gradLengths cycles
         //a color gradient is finished and we need to move to the next color
         if (cycleNum == 0) {
-            patternCount = (patternCount + 1) % patternLength;
+            patternCount = (patternCount + 1) % pattern->length;
             currentPattern = nextPattern;
-            nextPattern = pattern[patternCount];
+            nextPattern = patternUtilsPS::getPatternVal(pattern, patternCount);
         }
 
         //prep for the loop below.
         //The first pixel we need to copy into is the last pixel in the strip
-        nextPixelNumber = segDrawUtils::getSegmentPixel(segmentSet, numPixels);
+        nextPixelNumber = segDrawUtils::getSegmentPixel(segmentSet, 0);
 
-        //cycle through backwards along the strip, shifting the led colors forward by coping from the next led in line
-        //Once we reach the first (0th) led we set it to the next transistion color
+        //cycle along the strip, shifting the led colors forward by coping from the next led in line
+        //Once we reach the last led we set it to the next transistion color
         //So we steadily copy the graident waves along the strip
-        for (int32_t i = numPixels; i >= 0; i--) {
+        for (uint16_t i = 0; i <= numPixels; i++) {
             //The nextPixelNumber from the previous loop iteration is now
             //the pixelNumber for this iteration
             pixelNumber = nextPixelNumber;
-            nextPixelNumber = segDrawUtils::getSegmentPixel(segmentSet, i - 1);
-            if (i == 0) {
+            nextPixelNumber = segDrawUtils::getSegmentPixel(segmentSet, i + 1);
+            if (i == numPixels) {
                 //the color we're at based on the current index
                 currentColor = palletUtilsPS::getPalletColor(pallet, currentPattern);
                 //the next color, wrapping to the start of the pattern as needed

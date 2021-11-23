@@ -1,8 +1,8 @@
 #include "DissolvePS.h"
 
 //constructor for pattern
-DissolvePS::DissolvePS(SegmentSet &SegmentSet, uint8_t *Pattern, uint8_t PatternLength, palletPS *Pallet, uint8_t DMode, uint16_t SpawnRateInc, uint16_t Rate):
-    segmentSet(SegmentSet), pattern(Pattern), patternLength(PatternLength), pallet(Pallet), dMode(DMode), spawnRateInc(SpawnRateInc)
+DissolvePS::DissolvePS(SegmentSet &SegmentSet, patternPS *Pattern, palletPS *Pallet, uint8_t DMode, uint16_t SpawnRateInc, uint16_t Rate):
+    segmentSet(SegmentSet), pattern(Pattern), pallet(Pallet), dMode(DMode), spawnRateInc(SpawnRateInc)
     {    
         init(Rate);
 	}
@@ -11,7 +11,7 @@ DissolvePS::DissolvePS(SegmentSet &SegmentSet, uint8_t *Pattern, uint8_t Pattern
 DissolvePS::DissolvePS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t DMode, uint16_t SpawnRateInc, uint16_t Rate):
     segmentSet(SegmentSet), pallet(Pallet), dMode(DMode), spawnRateInc(SpawnRateInc)
     {
-        setPalletAsPattern(pallet);
+        setPalletAsPattern();
         init(Rate);
     }
 
@@ -23,15 +23,15 @@ DissolvePS::DissolvePS(SegmentSet &SegmentSet, uint8_t DMode, uint16_t SpawnRate
         //so that if the dMode is changed later, there's still a pallet/pattern to use
         palletTemp = EffectUtilsPS::makeRandomPallet(2);
         pallet = &palletTemp;
-        setPalletAsPattern(pallet);
+        setPalletAsPattern();
         init(Rate);
-
     }
 
 //destructor
 DissolvePS::~DissolvePS(){
     delete[] palletTemp.palletArr;
     delete[] pixelArray;
+    delete[] patternTemp.patternArr;
 }
 
 //inits core variables for the effect
@@ -59,26 +59,22 @@ void DissolvePS::resetPixelArray(){
     randColorPicked = false;
 }
 
-//sets the pattern to match the passed in pallet
-//ie pattern color 1 is pallet color 1, etc
-void DissolvePS::setPalletAsPattern(palletPS *newPallet){
-    pallet = newPallet;
-    patternLength = pallet->length;
-    pattern = new uint8_t[patternLength];
-    for(int i = 0; i < patternLength; i++){
-        pattern[i] = i;
-    }
-}
-
 //binds the pallet to a new one
 void DissolvePS::setPallet(palletPS *newPallet){
     pallet = newPallet;
 }
 
 //sets a new pattern for the effect
-void DissolvePS::setPattern(uint8_t *newPattern, uint8_t newPatternLength){
+void DissolvePS::setPattern(patternPS *newPattern){
     pattern = newPattern;
-    patternLength = newPatternLength;
+}
+
+//sets the pattern to match the current pallet
+//ie for a pallet length 5, the pattern would be 
+//{0, 1, 2, 3, 4}
+void DissolvePS::setPalletAsPattern(){
+    patternTemp = EffectUtilsPS::setPalletAsPattern(pallet);
+    pattern = &patternTemp;
 }
 
 //set a color based on the pattern and dMode
@@ -92,10 +88,10 @@ void DissolvePS::setPattern(uint8_t *newPattern, uint8_t newPatternLength){
 void DissolvePS::pickColor(){
     if(dMode == 0){
         //cycle through the pattern
-        color = palletUtilsPS::getPalletColor(pallet, pattern[numCycles] );
+        color = palletUtilsPS::getPalletColor(pallet, patternUtilsPS::getPatternVal(pattern, numCycles) );
     } else if(dMode == 1){
         //choose colors randomly from the pattern
-        color = palletUtilsPS::getPalletColor(pallet, pattern[random(patternLength)] );
+        color = palletUtilsPS::getPalletColor(pallet, patternUtilsPS::getRandVal(pattern) );
     } else if(dMode == 2){
         //choose colors randomly
         color = segDrawUtils::randColor();
@@ -119,17 +115,21 @@ void DissolvePS::pickColor(){
 //if it does we'll just advance the index by one and return that
 //this stops the same color from being chosen again
 uint8_t DissolvePS::shuffleIndex(){
-    uint8_t indexGuess = random8(patternLength);
+    uint8_t patternLength = pattern->length;
+    uint8_t indexGuess = random8(pattern->length);
 
     //we don't want to pick the same color index as we're already at
     //since shuffleIndex() is called after we've advanced the numCycles, we need to find the previous index
     //which indicates what color we're starting from so we can avoid it
-    uint8_t prevIndex = (patternLength + numCycles - 1) % patternLength;
-    if( pattern[indexGuess] == pattern[ prevIndex ] ){
-        return pattern[ numCycles ];
+    uint8_t valAtGuess = patternUtilsPS::getPatternVal(pattern, indexGuess);
+    //to get the prevIndex, we take numCycles - 1, but we don;t want the input to getPatternVal to to be negative, so we add patternLength
+    //this keeps the mod accurate in getPatternVal
+    uint8_t prevVal = patternUtilsPS::getPatternVal(pattern, (patternLength + numCycles - 1)); 
+    if( valAtGuess == prevVal ){
+        return patternUtilsPS::getPatternVal(pattern, numCycles);
     } else {
         numCycles = indexGuess;
-        return pattern[ numCycles ];
+        return valAtGuess;
     }
 }
 
@@ -201,7 +201,7 @@ void DissolvePS::update(){
         if(numSpawned >= numActiveLeds){
             resetPixelArray();
             hangTimeOn = true;
-            numCycles = (numCycles + 1) % patternLength;
+            numCycles = (numCycles + 1) % pattern->length;
         }
 
         showCheckPS();

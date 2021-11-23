@@ -16,8 +16,9 @@
 //Once a morpoh is finished, the effect can be set to pause for a period using the hangTime variable
 
 //Example calls: 
-    //uint8_t pattern = {0, 1, 4};
-    //DissolvePS(mainSegments, pattern, 3, pallet, 0, 150, 70);
+    //uint8_t pattern_arr = {0, 1, 4};
+    //patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
+    //DissolvePS(mainSegments, &pattern, pallet, 0, 150, 70);
     //Will dissolve from color 0 in the pallet to color 1, to color 4, etc using dMode 0 (see below) 
     //with the number of leds set on one cycle increasing every 150ms with the effect updating every 70ms
 
@@ -27,6 +28,7 @@
 
     //DissolvePS(mainSegments, 3, 150, 70);
     //Will dissolve using random colors set according to dMode 3
+    //(use dMode 2 or 3 with this constructor)
     //with the number of leds set on one cycle increasing every 150ms with the effect updating every 70ms
 
 //dModes:
@@ -42,10 +44,9 @@
 //unless you are also using a rainbowOffsetCycle()
 
 //Constructor Inputs
-    //Pattern(optional, see constructors) -- A pattern is a 1-d array of pallet indexes ie {0, 1, 3, 6, 7} 
-    //                                       the pattern is cycled through in order, wrapping at the end
-    //                                       so the above example would fade from the first(0) color in the pallet to the second, to the fourth, etc
-    //PatternLength -- the length of the pattern above
+    //Pattern(optional, see constructors) -- A pattern is struct made from a 1-d array of pallet indexes ie {0, 1, 3, 6, 7} 
+    //                                       and the length of the array 
+    //                                       (see patternPS.h)   
     //Pallet(optional, see constructors) -- The repository of colors used in the pattern, or can be used as the pattern itself
     //DMode -- The dMode that will be used for the dissolves (see above)
     //SpawnRateInc -- The rate increase at which the total number of leds that are set each cycle (ms)
@@ -53,9 +54,9 @@
     //Rate -- update rate (ms)
 
 //Functions:
-    //setPattern(*newPattern, newPatternLength) -- Sets the passed in pattern to be the effect pattern
+    //setPattern(*newPattern) -- Sets the passed in pattern to be the effect pattern
     //setPallet(*newPallet) -- Sets the pallet to the passed in pallet
-    //setPalletAsPattern(*newPallet) -- Sets the passed in pallet as the effect pallet, and also the effect pattern
+    //setPalletAsPattern() -- Sets the effect pattern to match the current pallet
     //resetPixelArray() -- effectivly restarts the current dissolve
     //update() -- updates the effect
 
@@ -75,7 +76,7 @@
     //So be careful of your memory usage
 class DissolvePS : public EffectBasePS {
     public:
-        DissolvePS(SegmentSet &SegmentSet, uint8_t *Pattern, uint8_t PatternLength, palletPS *Pallet, uint8_t DMode, uint16_t SpawnRateInc, uint16_t Rate); 
+        DissolvePS(SegmentSet &SegmentSet, patternPS *Pattern, palletPS *Pallet, uint8_t DMode, uint16_t SpawnRateInc, uint16_t Rate); 
 
         DissolvePS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t DMode, uint16_t SpawnRateInc, uint16_t Rate); 
         
@@ -89,8 +90,6 @@ class DissolvePS : public EffectBasePS {
             spawnRateInc;
         
         uint8_t
-            *pattern,
-            patternLength,
             dMode,
             colorMode = 0,
             numCycles = 0,
@@ -104,15 +103,18 @@ class DissolvePS : public EffectBasePS {
 
         SegmentSet 
             &segmentSet; 
+        
+        patternPS
+            *pattern;
 
         palletPS
             *pallet;
         
         void
-            setPattern(uint8_t *newPattern, uint8_t newPatternLength),
+            setPattern(patternPS *newpattern),
             pickColor(),
             setPallet(palletPS *newPallet),
-            setPalletAsPattern(palletPS *newPallet),
+            setPalletAsPattern(),
             resetPixelArray(),
             update(void);
     
@@ -133,6 +135,9 @@ class DissolvePS : public EffectBasePS {
         
         CRGB 
             color;
+
+        patternPS
+            patternTemp;
 
         palletPS
             palletTemp;
