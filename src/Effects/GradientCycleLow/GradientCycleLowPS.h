@@ -21,7 +21,11 @@
 //2: The same restrictions as (1) apply to changing the pattern of the gradLength
 //3: Changing the direction of the segments or segment set mid-effect may break it temporarily
 //4: Depending on the length, you may have a temporary blend "jump" at the beginning of the strip
-//   This will along the strip before disappering
+//   This will move along the strip before disappering
+
+//Basically the effect works by setting the color of the first pixel, then for each subsequent pixel,
+//it copies the color of the next pixel in line
+//So any changes you make to colors will only show up at the first pixel, and will be shifted along the strip
 
 //Example calls: 
     //uint8_t pattern_arr = {0, 1, 4};

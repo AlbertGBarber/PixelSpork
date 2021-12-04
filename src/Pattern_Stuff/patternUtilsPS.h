@@ -11,13 +11,13 @@
 //!!DO NOT try to patterns without using these functions
 namespace patternUtilsPS{
     void
-        setVal(patternPS *pattern, uint8_t val, uint8_t index),
+        setVal(patternPS *pattern, uint8_t val, uint16_t index),
         shuffle(patternPS *pattern);
     
     uint8_t 
-        getPatternVal(patternPS *pattern, uint8_t index),
+        getPatternVal(patternPS *pattern, uint16_t index),
         getRandVal(patternPS *pattern),
-        *getValPtr(patternPS *pattern, uint8_t index);
+        *getValPtr(patternPS *pattern, uint16_t index);
     
 };
 

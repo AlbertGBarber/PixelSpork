@@ -4,7 +4,7 @@ using namespace patternUtilsPS;
 
 //sets the pattern Val at the specified index
 //the index wraps, so running off the end of the pattern, will put you back at the start
-void patternUtilsPS::setVal(patternPS *pattern, uint8_t val, uint8_t index){
+void patternUtilsPS::setVal(patternPS *pattern, uint8_t val, uint16_t index){
     pattern->patternArr[ index % pattern->length ] = val;
 }
 
@@ -29,7 +29,7 @@ void patternUtilsPS::shuffle(patternPS *pattern){
 
 //returns the Val at a specified index
 //the index wraps, so running off the end of the pattern, will put you back at the start
-uint8_t patternUtilsPS::getPatternVal(patternPS *pattern, uint8_t index){
+uint8_t patternUtilsPS::getPatternVal(patternPS *pattern, uint16_t index){
     return pattern->patternArr[ index % pattern->length ];
 }
 
@@ -41,6 +41,6 @@ uint8_t patternUtilsPS::getRandVal(patternPS *pattern){
 //returns a pointer to the Val in the pattern array at the specified index (wrapping if needed)
 //useful for background Val syncing
 //Note: maybe remove the wrapping?, 
-uint8_t* patternUtilsPS::getValPtr(patternPS *pattern, uint8_t index){
+uint8_t* patternUtilsPS::getValPtr(patternPS *pattern, uint16_t index){
     return &(pattern->patternArr[ index % pattern->length ]);
 }

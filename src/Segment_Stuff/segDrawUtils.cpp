@@ -70,22 +70,19 @@ uint16_t segDrawUtils::getSegmentPixel(SegmentSet segmentSet, uint8_t segNum, ui
     numSec = segmentSet.getTotalNumSec(segNum);
     count = 0;
     prevCount = 0; 
-    secStartPixel;
-    secLength;
-    absSecLength;
-    secLengthSign; //int8_t
-
-    // counting loop setup variables, the default is a ascending segment, so we count forward
-    step = 1; //int8_t
-    endLimit = numSec;  //int16_t
-    startLimit = 0; //uint8_t
 
     // if the segment is decending, we want to count backwards, so we change the loop variables
     if (!segDirection) {
         step = -1;
         endLimit = -1;
         startLimit = numSec - 1;
+    } else {
+        // counting loop setup variables, the default is a ascending segment, so we count forward
+        step = 1; //int8_t
+        endLimit = numSec;  //int16_t
+        startLimit = 0; //uint8_t
     }
+    
     // run through each segment section, summing the lengths of the sections,
     // starting at the end or beginning of the segment depending on direction
     // if the sum is larger than the number we want, then the pixel is in the current section

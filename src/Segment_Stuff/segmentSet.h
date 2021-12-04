@@ -233,8 +233,7 @@ class SegmentSet {
 	  uint16_t 
 	    getMaxSegLength(void),
 		getsegNumMaxSegLength(void),
-		getNumActiveSegLeds(void),
-		getSegProperty(uint8_t segNum, uint8_t secNum, uint8_t prop);
+		getNumActiveSegLeds(void);
 		
 	  bool
 		checkSegFreq(uint8_t freq, uint8_t num, boolean startAtFirst);

@@ -115,7 +115,7 @@ void DissolvePS::pickColor(){
 //if it does we'll just advance the index by one and return that
 //this stops the same color from being chosen again
 uint8_t DissolvePS::shuffleIndex(){
-    uint8_t patternLength = pattern->length;
+    uint16_t patternLength = pattern->length;
     uint8_t indexGuess = random8(pattern->length);
 
     //we don't want to pick the same color index as we're already at
