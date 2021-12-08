@@ -1,22 +1,23 @@
-#include "GradientCycleLowPS.h"
+#include "GradientCycleFastPS.h"
 
 //constructor with pattern
-GradientCycleLowPS::GradientCycleLowPS(SegmentSet &SegmentSet, patternPS *Pattern, palletPS *Pallet, uint8_t GradLength, uint16_t Rate):
+GradientCycleFastPS::GradientCycleFastPS(SegmentSet &SegmentSet, patternPS *Pattern, palletPS *Pallet, uint8_t GradLength, uint16_t Rate):
     segmentSet(SegmentSet), pattern(Pattern), pallet(Pallet), gradLength(GradLength)
     {    
         init(Rate);
 	}
 
 //constuctor with pallet as pattern
-GradientCycleLowPS::GradientCycleLowPS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t GradLength, uint16_t Rate):
+GradientCycleFastPS::GradientCycleFastPS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t GradLength, uint16_t Rate):
     segmentSet(SegmentSet), pallet(Pallet), gradLength(GradLength)
     {    
         setPalletAsPattern();
         init(Rate);
 	}
 
-//constructor with random colors
-GradientCycleLowPS::GradientCycleLowPS(SegmentSet &SegmentSet, uint8_t NumColors, uint8_t GradLength, uint16_t Rate):
+//constructor with pallet of randomly choosen colors
+//(does not set randColors or randColor mode)
+GradientCycleFastPS::GradientCycleFastPS(SegmentSet &SegmentSet, uint8_t NumColors, uint8_t GradLength, uint16_t Rate):
     segmentSet(SegmentSet), gradLength(GradLength)
     {    
         palletTemp = EffectUtilsPS::makeRandomPallet(NumColors);
@@ -25,46 +26,62 @@ GradientCycleLowPS::GradientCycleLowPS(SegmentSet &SegmentSet, uint8_t NumColors
         init(Rate);
 	}
 
-GradientCycleLowPS::~GradientCycleLowPS(){
+GradientCycleFastPS::~GradientCycleFastPS(){
     delete[] palletTemp.palletArr;
     delete[] patternTemp.patternArr;
 }
 
 //inits core variables for the effect
-void GradientCycleLowPS::init(uint16_t Rate){
+void GradientCycleFastPS::init(uint16_t Rate){
     //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
     bindSegPtrPS();
     bindClassRatesPS();
 }
 
-void GradientCycleLowPS::reset(){
+//restarts the effect
+void GradientCycleFastPS::reset(){
     initFillDone = false;
 }
 
 //sets the pattern to match the current pallet
 //ie for a pallet length 5, the pattern would be 
 //{0, 1, 2, 3, 4}
-void GradientCycleLowPS::setPalletAsPattern(){
+void GradientCycleFastPS::setPalletAsPattern(){
     patternTemp = EffectUtilsPS::setPalletAsPattern(pallet);
     pattern = &patternTemp;
 }
 
 //sets a new pattern for the effect
-void GradientCycleLowPS::setPattern(patternPS *newPattern){
+void GradientCycleFastPS::setPattern(patternPS *newPattern){
     pattern = newPattern;
 }
 
 //binds the pallet to a new one
-void GradientCycleLowPS::setPallet(palletPS* newPallet){
+void GradientCycleFastPS::setPallet(palletPS* newPallet){
     pallet = newPallet;
+}
+
+//retuns a random value from the pattern and sets nextPattern to be that value 
+//the code checks to see if the random index matches the current index
+//if it does we'll just advance the index by one and return that
+//this stops the same color from being chosen again
+uint8_t GradientCycleFastPS::shuffleIndex(){
+    uint16_t indexGuess = random16(pattern->length);
+    uint8_t guessVal = patternUtilsPS::getPatternVal(pattern, indexGuess);
+    if( guessVal == currentPattern ){
+        return patternUtilsPS::getPatternVal(pattern, indexGuess + 1);
+    } else {
+        return guessVal;
+    }
 }
 
 //We need to pre-fill the strip with the first set of gradients
 //in order for the led colors to be copied properly in the main update cycle
-void GradientCycleLowPS::initalFill(){
+void GradientCycleFastPS::initalFill(){
     cycleNum = 0;
     patternCount = 0;
     nextPattern = patternUtilsPS::getPatternVal(pattern, 0);
+    nextColor = palletUtilsPS::getPalletColor(pallet, nextPattern );
 
     //numPixels is the loop limit below, so we subtract 1
     numPixels = segmentSet.numActiveSegLeds - 1;
@@ -82,20 +99,14 @@ void GradientCycleLowPS::initalFill(){
         // if we've gone through gradLength cycles
         // a color transition is finished and we need to move to the next color
         if (cycleNum == 0) {
-            patternCount = (patternCount + 1) % pattern->length;
-            currentPattern = nextPattern;
-            nextPattern = patternUtilsPS::getPatternVal(pattern, patternCount);
+            pickNextColor();
         }
 
-        //the color we're at based on the current index
-        currentColor = palletUtilsPS::getPalletColor(pallet, currentPattern);
-        //the next color, wrapping to the start of the pattern as needed
-        nextColor = palletUtilsPS::getPalletColor(pallet, nextPattern );
         // get the crossfade between the current and next color, where the transition is gradsteps long
         colorOut = segDrawUtils::getCrossFadeColor(currentColor, nextColor, cycleNum, gradLength);
         segDrawUtils::setPixelColor(segmentSet, i, colorOut, 0);
 
-        cycleNum = (cycleNum + 1) % gradLength;
+        cycleNum = (cycleNum + 1) % gradLength; //track what step we're on in the gradient
     }
     initFillDone = true;
 }
@@ -109,7 +120,7 @@ void GradientCycleLowPS::initalFill(){
 //The gradient we're on is tracked by cycleNum and patternCount, which vary from 0 to gradLent,
 //and 0 to the pattern length respectively
 //(see notes for the restrictions this method causes)
-void GradientCycleLowPS::update(){
+void GradientCycleFastPS::update(){
     currentTime = millis();
 
     if( ( currentTime - prevTime ) >= *rate ) {
@@ -124,14 +135,6 @@ void GradientCycleLowPS::update(){
         //numPixels is the loop limit below, so we subtract 1
         numPixels = segmentSet.numActiveSegLeds - 1;
 
-        //if we've gone through gradLengths cycles
-        //a color gradient is finished and we need to move to the next color
-        if (cycleNum == 0) {
-            patternCount = (patternCount + 1) % pattern->length;
-            currentPattern = nextPattern;
-            nextPattern = patternUtilsPS::getPatternVal(pattern, patternCount);
-        }
-
         //prep for the loop below.
         //The first pixel we need to copy into is the last pixel in the strip
         nextPixelNumber = segDrawUtils::getSegmentPixel(segmentSet, 0);
@@ -145,10 +148,12 @@ void GradientCycleLowPS::update(){
             pixelNumber = nextPixelNumber;
             nextPixelNumber = segDrawUtils::getSegmentPixel(segmentSet, i + 1);
             if (i == numPixels) {
-                //the color we're at based on the current index
-                currentColor = palletUtilsPS::getPalletColor(pallet, currentPattern);
-                //the next color, wrapping to the start of the pattern as needed
-                nextColor = palletUtilsPS::getPalletColor(pallet, nextPattern );
+                //we only need to pick new colors once a full gradient transition is done
+                //our step in the gradient is marked by cycleNum, so once it reaches 0
+                //a gradient has finished (this is esp important for random modes, since we don't know what the colors are)
+                if(cycleNum == 0){
+                    pickNextColor();
+                }
                 colorOut = segDrawUtils::getCrossFadeColor(currentColor, nextColor, cycleNum, gradLength);
                 segDrawUtils::setPixelColor(segmentSet, pixelNumber, colorOut, 0, 0, 0);
             } else {
@@ -157,7 +162,37 @@ void GradientCycleLowPS::update(){
             }
         }
 
-        cycleNum = (cycleNum + 1) % gradLength;
+        cycleNum = (cycleNum + 1) % gradLength; //track what step we're on in the gradient
         showCheckPS();
+    }
+}
+
+//For calling whenever a gradient has finished
+//sets the currentColor to the color we've just transitioned to (ie the nextColor)
+//and then chooses a new color for the the nextColor depending on the the options for random colors
+void GradientCycleFastPS::pickNextColor(){
+    //advance the current pattern and colors to the next pattern and color
+    //since we've just transitioned to them
+    currentPattern = nextPattern;
+    currentColor = nextColor;
+    //advance the pattern count,
+    //even with random colors, I think you still need to do this for the initalFill?
+    //idk, I'm tired today and it seemed to fix a bug where a gradient would start half-filled
+    patternCount = (patternCount + 1) % pattern->length;
+    if(!randColors){
+        //if we're not choosing a random color, we need to pick the next color in the pattern
+        nextPattern = patternUtilsPS::getPatternVal(pattern, patternCount);
+        //the next color, wrapping to the start of the pattern as needed
+        nextColor = palletUtilsPS::getPalletColor(pallet, nextPattern );
+    } else {
+        //choose the next color based on the random mode
+        if(randMode == 0){
+            //choose a completely random color
+            nextColor = segDrawUtils::randColor();
+        } else {
+            //choose a color randomly from the pattern (making sure it's not the same as the current color)
+            nextPattern = shuffleIndex();
+            nextColor = palletUtilsPS::getPalletColor( pallet, nextPattern );
+        }
     }
 }

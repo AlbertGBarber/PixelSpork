@@ -14,6 +14,7 @@ StreamerFastPS::StreamerFastPS(SegmentSet &SegmentSet, patternPS *Pattern, palle
         setPatternAsPattern(Pattern, ColorLength, Spacing);
         init(BgColor, Rate);
 	}
+    
 //constructor for building a streamer using all the colors in the passed in pallet, using the colorLength and spacing for each color
 StreamerFastPS::StreamerFastPS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint16_t Rate):
     segmentSet(SegmentSet), pallet(Pallet)
@@ -123,7 +124,7 @@ CRGB StreamerFastPS::pickStreamerColor(uint8_t patternIndex){
         //since that indicates a new streamer length
         //(we don't need to worry about the 255 spacing values, since they're caught further up in the if)
         if(randMode == 0){
-            //choose a comepetely random color
+            //choose a completely random color
             nextColor = segDrawUtils::randColor();
         } else {
             //choose a color randomly from the pallet

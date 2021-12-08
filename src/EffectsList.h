@@ -15,6 +15,6 @@
 #include "Effects/Pride2015/Pride2015PS.h"
 #include "Effects/TheaterChase/TheaterChasePS.h"
 #include "Effects/GradientCycle/GradientCyclePS.h"
-#include "Effects/GradientCycleLow/GradientCycleLowPS.h"
+#include "Effects/GradientCycleFast/GradientCycleFastPS.h"
 #include "Effects/Streamer/StreamerPS.h"
 #include "Effects/StreamerFast/StreamerFastPS.h"

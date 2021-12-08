@@ -1,5 +1,7 @@
-#ifndef GradientCycleLowPS_h
-#define GradientCycleLowPS_h
+#ifndef GradientCycleFastPS_h
+#define GradientCycleFastPS_h
+
+//TODO -- add constructor for random options?
 
 #include "Effects/EffectBasePS.h"
 #include "Effects/EffectUtils/EffectUtilsPS.h"
@@ -27,18 +29,23 @@
 //it copies the color of the next pixel in line
 //So any changes you make to colors will only show up at the first pixel, and will be shifted along the strip
 
+//However, as a bonus, this effect supports random colored gradients
+//where the colors for the gradients are choosen at random as the enter the strip
+//This is controlled by the randColors flag and the randMode setting
+
 //Example calls: 
     //uint8_t pattern_arr = {0, 1, 4};
     //patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-    //GradientCycleLowPS(mainSegments, &pattern, &pallet, 10, 100);
+    //GradientCycleFastPS(mainSegments, &pattern, &pallet, 10, 100);
     //Will do a gradient cycle from color 0, to color 1, to color 4, of the pallet
     //with 10 steps to each gradient, and a 100ms update rate
 
-    //GradientCycleLowPS(mainSegments, &pallet, 10, 100);
+    //GradientCycleFastPS(mainSegments, &pallet, 10, 100);
     //Will do a gradient cycle using the colors in the pallet, with 10 steps to each gradient,and a 100ms update rate
 
-    //GradientCycleLowPS(mainSegments, 3, 15, 80);
+    //GradientCycleFastPS(mainSegments, 3, 15, 80);
     //Will do a gradient cycle using 3 randomly choosen colors, with 15 steps to each gradient,and an 80ms update rate
+    //note this is not the same as setting randMode, it just makes a random pallet
  
 //Constructor Inputs:
     //Pattern(optional, see constructors) -- A pattern is struct made from a 1-d array of pallet indexes ie {0, 1, 3, 6, 7} 
@@ -56,29 +63,38 @@
     //reset() -- Restarts the effect
     //update() -- updates the effect
 
+//Other Settings:
+    //randColors (default false) -- If true, the colors for each gradient will be choosen randomly according to the randMode
+    //randMode (default 0) -- Sets the type of random colors choosen:
+    //                     -- 0: Colors will be choosen completely at random
+    //                     -- 1: Colors will be choosen randomly from the pattern (will not repeat the same color in a row)
+    //                     --                                                     (unless your pattern has the same color in a row, like { 2, 2, 3})
+
 //Flags:
     //initFillDone -- Flag for doing the initial fill of the gradients on the strip
     //                Set true once the fill is done
 
 //Notes:
 
-class GradientCycleLowPS : public EffectBasePS {
+class GradientCycleFastPS : public EffectBasePS {
     public:
-        GradientCycleLowPS(SegmentSet &SegmentSet, patternPS *Pattern, palletPS *Pallet, uint8_t GradLength, uint16_t Rate); 
+        GradientCycleFastPS(SegmentSet &SegmentSet, patternPS *Pattern, palletPS *Pallet, uint8_t GradLength, uint16_t Rate); 
 
-        GradientCycleLowPS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t GradLength, uint16_t Rate);
+        GradientCycleFastPS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t GradLength, uint16_t Rate);
 
-        GradientCycleLowPS(SegmentSet &SegmentSet, uint8_t NumColors, uint8_t GradLength, uint16_t Rate);
+        GradientCycleFastPS(SegmentSet &SegmentSet, uint8_t NumColors, uint8_t GradLength, uint16_t Rate);
 
-        ~GradientCycleLowPS();
+        ~GradientCycleFastPS();
 
         uint8_t
+            randMode = 0,
             gradLength;
         
         uint16_t 
             cycleNum = 0; // tracks what how many patterns we've gone through
 
         bool
+            randColors = false,
             initFillDone = false;
 
         patternPS
@@ -106,7 +122,8 @@ class GradientCycleLowPS : public EffectBasePS {
 
         uint8_t
             currentPattern,
-            nextPattern;
+            nextPattern,
+            shuffleIndex();
         
         uint16_t
             pixelNumber,
@@ -121,6 +138,7 @@ class GradientCycleLowPS : public EffectBasePS {
         
         void 
             init(uint16_t Rate),
+            pickNextColor(),
             initalFill();    
 };
 

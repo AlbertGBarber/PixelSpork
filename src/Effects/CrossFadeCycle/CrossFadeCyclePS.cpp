@@ -86,14 +86,12 @@ void CrossFadeCyclePS::reset(){
 //if it does we'll just advance the index by one and return that
 //this stops the same color from being chosen again
 uint8_t CrossFadeCyclePS::shuffleIndex(){
-    uint8_t indexGuess = patternUtilsPS::getRandVal(pattern);
-    uint8_t currentVal = patternUtilsPS::getPatternVal(pattern, currentIndex);
-    if( indexGuess == currentVal ){
-        currentIndex = patternUtilsPS::getPatternVal(pattern, currentIndex + 1);
-        return currentIndex;
+    uint16_t indexGuess = random16(pattern->length);
+    uint8_t guessVal = patternUtilsPS::getPatternVal(pattern, indexGuess);
+    if( guessVal == currentIndex ){
+        return patternUtilsPS::getPatternVal(pattern, indexGuess + 1);
     } else {
-        currentIndex = indexGuess;
-        return indexGuess;
+        return guessVal;
     }
 }
 
@@ -152,7 +150,8 @@ void CrossFadeCyclePS::update(){
                     break;
                 case 1:
                     //shuffle mode
-                    nextColor = palletUtilsPS::getPalletColor( pallet, shuffleIndex());
+                    currentIndex = shuffleIndex();
+                    nextColor = palletUtilsPS::getPalletColor( pallet, currentIndex);
                     break;
                 default:
                     //random mode (for all cases above 1)
