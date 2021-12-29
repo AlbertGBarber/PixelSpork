@@ -20,7 +20,7 @@
 //1: Changing the pallet on the fly will have a delayed effect on the colors
 //   The exisiting colors will shift off the strip before new ones shift on
 //   This prevents this effect from playing well with palletBlend functions
-//2: The same restrictions as (1) apply to changing the pattern of the gradLength
+//2: The same restrictions as (1) apply to changing the pattern or the gradLength
 //3: Changing the direction of the segments or segment set mid-effect may break it temporarily
 //4: Depending on the length, you may have a temporary blend "jump" at the beginning of the strip
 //   This will move along the strip before disappering

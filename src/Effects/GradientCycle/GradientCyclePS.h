@@ -106,7 +106,8 @@ class GradientCyclePS : public EffectBasePS {
             colorOut;
         
         void 
-            init(uint16_t Rate);
+            init(uint16_t Rate),
+            setnextColors(uint16_t pixelNum);
         
 };
 

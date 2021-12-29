@@ -18,3 +18,5 @@
 #include "Effects/GradientCycleFast/GradientCycleFastPS.h"
 #include "Effects/Streamer/StreamerPS.h"
 #include "Effects/StreamerFast/StreamerFastPS.h"
+#include "Effects/RollingWaves/RollingWavesPS.h"
+#include "Effects/RollingWavesFast/RollingWavesFastPS.h"
