@@ -236,7 +236,7 @@ CRGB RollingWavesPS::desaturate(CRGB color, uint8_t step, uint8_t totalSteps) {
 //sets the color for the passed in pixel number based on the cycleNum
 //note that the pixel number is local to the segment set, not the physical led number
 void RollingWavesPS::setNextColors(uint16_t segPixelNum){
-    currentColorIndex = ( ( segPixelNum + cycleNu ) % totalCycleLength ) / blendLimit; // what color we've started from (integers always round down)
+    currentColorIndex = ( ( segPixelNum + cycleNum ) % totalCycleLength ) / blendLimit; // what color we've started from (integers always round down)
     //the color we're at based on the current index
     currentPattern = patternUtilsPS::getPatternVal(pattern, currentColorIndex);
     currentColor = palletUtilsPS::getPalletColor(pallet, currentPattern);

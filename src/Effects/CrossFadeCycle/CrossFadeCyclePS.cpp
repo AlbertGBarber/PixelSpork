@@ -62,36 +62,22 @@ void CrossFadeCyclePS::reset(){
         infinite = true;
     }
     
-    currentIndex = 0;
+    currentIndex = patternUtilsPS::getPatternVal( pattern, 0 );
     //set the starting colors depending on the mode
     //for shuffle, we always start with the first color for simplicity
     switch (fMode) {
         case 0: 
-            startColor = palletUtilsPS::getPalletColor( pallet, pattern->patternArr[0] );
-            nextColor = palletUtilsPS::getPalletColor( pallet, pattern->patternArr[1] );
+            startColor = palletUtilsPS::getPalletColor( pallet, currentIndex );
+            nextColor = palletUtilsPS::getPalletColor( pallet, patternUtilsPS::getPatternVal( pattern, 1 ) );
             break;
         case 1:
-            startColor = palletUtilsPS::getPalletColor( pallet, pattern->patternArr[0] );
-            nextColor = palletUtilsPS::getPalletColor( pallet, shuffleIndex() );
+            startColor = palletUtilsPS::getPalletColor( pallet, currentIndex );
+            nextColor = palletUtilsPS::getPalletColor( pallet, EffectUtilsPS::shuffleIndex(pattern, currentIndex) );
             break;
         default: //anything mode 2 or above
             startColor = segDrawUtils::randColor();
             nextColor = segDrawUtils::randColor();
             break;
-    }
-}
-
-//retuns a random pallet index from the pattern   
-//the code checks to see if the random index matches the current index
-//if it does we'll just advance the index by one and return that
-//this stops the same color from being chosen again
-uint8_t CrossFadeCyclePS::shuffleIndex(){
-    uint16_t indexGuess = random16(pattern->length);
-    uint8_t guessVal = patternUtilsPS::getPatternVal(pattern, indexGuess);
-    if( guessVal == currentIndex ){
-        return patternUtilsPS::getPatternVal(pattern, indexGuess + 1);
-    } else {
-        return guessVal;
     }
 }
 
@@ -150,7 +136,7 @@ void CrossFadeCyclePS::update(){
                     break;
                 case 1:
                     //shuffle mode
-                    currentIndex = shuffleIndex();
+                    currentIndex = EffectUtilsPS::shuffleIndex(pattern, currentIndex);
                     nextColor = palletUtilsPS::getPalletColor( pallet, currentIndex);
                     break;
                 default:

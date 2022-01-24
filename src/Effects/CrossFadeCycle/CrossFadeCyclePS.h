@@ -113,8 +113,7 @@ class CrossFadeCyclePS : public EffectBasePS {
         
         uint8_t
             currentIndex = 0, //the index of the pattern that we are currently fading away from, mainly used for shuffle()
-            currentStep = 0, //current step of the current fade
-            shuffleIndex();
+            currentStep = 0; //current step of the current fade
         
         uint16_t 
             fadeCount = 0; //how many total fades we've done

@@ -125,7 +125,7 @@ class DissolvePS : public EffectBasePS {
             prevTime = 0;
 
         uint8_t
-            shuffleIndex();
+            currentIndex = 0;
         
         uint16_t
             thresStartPoint = 0,

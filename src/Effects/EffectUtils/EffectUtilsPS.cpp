@@ -41,3 +41,17 @@ patternPS EffectUtilsPS::setPalletAsPattern(palletPS *pallet){
     newPattern = {pattern_arr, patternLength};
     return newPattern;
 }
+
+//retuns a random value from the pattern
+//the code checks to see if the random index matches the current index (passed in)
+//if it does we'll just advance the index by one and return that
+//this stops the same color from being chosen again (assuming the pattern doesn't repeat)
+uint8_t EffectUtilsPS::shuffleIndex(patternPS *pattern, uint8_t currentPatternVal){
+    uint16_t indexGuess = random16(pattern->length);
+    uint8_t guessVal = patternUtilsPS::getPatternVal(pattern, indexGuess);
+    if( guessVal == currentPatternVal ){
+        return patternUtilsPS::getPatternVal(pattern, indexGuess + 1);
+    } else {
+        return guessVal;
+    }
+}

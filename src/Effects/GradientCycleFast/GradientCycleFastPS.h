@@ -122,8 +122,7 @@ class GradientCycleFastPS : public EffectBasePS {
 
         uint8_t
             currentPattern,
-            nextPattern,
-            shuffleIndex();
+            nextPattern;
         
         uint16_t
             pixelNumber,

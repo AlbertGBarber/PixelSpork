@@ -309,23 +309,9 @@ void RollingWavesFastPS::setNextColors(uint16_t segPixelNum){
             currentColor = segDrawUtils::randColor();
         } else {
             //choose a color randomly from the pattern (making sure it's not the same as the current color)
-            currentPattern = shuffleIndex();
+            currentPattern = EffectUtilsPS::shuffleIndex(pattern, currentPattern);
             currentColor = palletUtilsPS::getPalletColor( pallet, currentPattern );
         }
     }
    
-}
-
-//retuns a random value from the pattern and sets nextPattern to be that value 
-//the code checks to see if the random index matches the current index
-//if it does we'll just advance the index by one and return that
-//this stops the same color from being chosen again
-uint8_t RollingWavesFastPS::shuffleIndex(){
-    uint16_t indexGuess = random16(pattern->length);
-    uint8_t guessVal = patternUtilsPS::getPatternVal(pattern, indexGuess);
-    if( guessVal == currentPattern ){
-        return patternUtilsPS::getPatternVal(pattern, indexGuess + 1);
-    } else {
-        return guessVal;
-    }
 }

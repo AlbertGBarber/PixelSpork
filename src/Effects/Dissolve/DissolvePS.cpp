@@ -88,7 +88,8 @@ void DissolvePS::setPalletAsPattern(){
 void DissolvePS::pickColor(){
     if(dMode == 0){
         //cycle through the pattern
-        color = palletUtilsPS::getPalletColor(pallet, patternUtilsPS::getPatternVal(pattern, numCycles) );
+        currentIndex = patternUtilsPS::getPatternVal(pattern, numCycles);
+        color = palletUtilsPS::getPalletColor(pallet, currentIndex );
     } else if(dMode == 1){
         //choose colors randomly from the pattern
         color = palletUtilsPS::getPalletColor(pallet, patternUtilsPS::getRandVal(pattern) );
@@ -103,33 +104,11 @@ void DissolvePS::pickColor(){
             if(dMode == 3){
                 color = segDrawUtils::randColor();
             } else if(dMode == 4) {
-                color = palletUtilsPS::getPalletColor(pallet, shuffleIndex());
+                currentIndex = EffectUtilsPS::shuffleIndex(pattern, currentIndex);
+                color = palletUtilsPS::getPalletColor( pallet, currentIndex );
             }
             randColorPicked = true;
         }
-    }
-}
-
-//retuns a random pallet index from the pattern
-//the code checks to see if the random index matches the current index (choosen color is same as current color)
-//if it does we'll just advance the index by one and return that
-//this stops the same color from being chosen again
-uint8_t DissolvePS::shuffleIndex(){
-    uint16_t patternLength = pattern->length;
-    uint16_t indexGuess = random16(pattern->length);
-
-    //we don't want to pick the same color index as we're already at
-    //since shuffleIndex() is called after we've advanced the numCycles, we need to find the previous index
-    //which indicates what color we're starting from so we can avoid it
-    uint8_t valAtGuess = patternUtilsPS::getPatternVal(pattern, indexGuess);
-    //to get the prevIndex, we take numCycles - 1, but we don;t want the input to getPatternVal to to be negative, so we add patternLength
-    //this keeps the mod accurate in getPatternVal
-    uint8_t prevVal = patternUtilsPS::getPatternVal(pattern, (patternLength + numCycles - 1)); 
-    if( valAtGuess == prevVal ){
-        return patternUtilsPS::getPatternVal(pattern, numCycles);
-    } else {
-        numCycles = indexGuess;
-        return valAtGuess;
     }
 }
 

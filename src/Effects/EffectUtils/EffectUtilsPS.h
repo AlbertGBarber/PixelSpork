@@ -12,7 +12,11 @@
 #include "PalletFiles.h"
 #include "PatternFiles.h"
 
+//namespace for general functions that are used in multiple effects
 namespace EffectUtilsPS {
+
+    uint8_t 
+        shuffleIndex(patternPS *pattern, uint8_t currentPatternVal);
 
     palletPS 
         makeSingleColorpallet(CRGB Color),

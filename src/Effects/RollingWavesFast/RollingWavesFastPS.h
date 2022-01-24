@@ -173,9 +173,8 @@ class RollingWavesFastPS : public EffectBasePS {
             midPoint,
             blendStepAdjust,
             firstHalfGrad,
-            blendLimit,
-            shuffleIndex();
-        
+            blendLimit;
+            
         uint16_t
             pixelNumber,
             nextPixelNumber,

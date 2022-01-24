@@ -61,20 +61,6 @@ void GradientCycleFastPS::setPallet(palletPS* newPallet){
     pallet = newPallet;
 }
 
-//retuns a random value from the pattern and sets nextPattern to be that value 
-//the code checks to see if the random index matches the current index
-//if it does we'll just advance the index by one and return that
-//this stops the same color from being chosen again
-uint8_t GradientCycleFastPS::shuffleIndex(){
-    uint16_t indexGuess = random16(pattern->length);
-    uint8_t guessVal = patternUtilsPS::getPatternVal(pattern, indexGuess);
-    if( guessVal == currentPattern ){
-        return patternUtilsPS::getPatternVal(pattern, indexGuess + 1);
-    } else {
-        return guessVal;
-    }
-}
-
 //We need to pre-fill the strip with the first set of gradients
 //in order for the led colors to be copied properly in the main update cycle
 void GradientCycleFastPS::initalFill(){
@@ -191,7 +177,7 @@ void GradientCycleFastPS::pickNextColor(){
             nextColor = segDrawUtils::randColor();
         } else {
             //choose a color randomly from the pattern (making sure it's not the same as the current color)
-            nextPattern = shuffleIndex();
+            nextPattern = EffectUtilsPS::shuffleIndex(pattern, currentPattern);
             nextColor = palletUtilsPS::getPalletColor( pallet, nextPattern );
         }
     }
