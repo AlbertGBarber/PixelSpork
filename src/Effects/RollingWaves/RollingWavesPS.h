@@ -115,7 +115,6 @@ class RollingWavesPS : public EffectBasePS {
             bgColorOrig,
            *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a pallet color)
 
-
         patternPS
             patternTemp,
             *pattern;

@@ -20,3 +20,4 @@
 #include "Effects/StreamerFast/StreamerFastPS.h"
 #include "Effects/RollingWaves/RollingWavesPS.h"
 #include "Effects/RollingWavesFast/RollingWavesFastPS.h"
+#include "Effects/Particles/ParticlesPS.h"
