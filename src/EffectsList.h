@@ -21,3 +21,4 @@
 #include "Effects/RollingWaves/RollingWavesPS.h"
 #include "Effects/RollingWavesFast/RollingWavesFastPS.h"
 #include "Effects/Particles/ParticlesPS.h"
+#include "Effects/LarsonScanner/LarsonScannerPS.h"

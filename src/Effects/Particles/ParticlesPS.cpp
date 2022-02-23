@@ -91,7 +91,7 @@ void ParticlesPS::update(){
         updateRate = 65535; //max value of a uint16_t. This is an update rate of 65.5 sec.
 
         //refill the background if directed (if we're using a dynamic rainbow or something)
-        if(fillBG){
+        if(fillBG || blend){
             segDrawUtils::fillSegSetColor(segmentSet, *bgColor, bgColorMode);
         }
 
@@ -153,7 +153,7 @@ void ParticlesPS::update(){
 
             //if we have 4 trails or more, we are in infinite trails mode, so we don't touch the previous leds
             //otherwise we need to set the last pixel in the trail to the background
-            if (trailType < 4 && !fillBG) {
+            if (trailType < 4 && (!fillBG || blend) ) {
                 //if we don't have trails, we just need to turn off the first trail pixel
                 //otherwise we need to switch the pixel at the end of the trail
                 if (trailType == 0 || trailType == 3) {
@@ -178,7 +178,8 @@ void ParticlesPS::update(){
             //this gets the correct look when bouncing with two trails
             if (trailType != 0 && trailType < 4) {
                 //draw a trail, extending positively or negativly, dimming with each step, wrapping according to the modAmmount
-                for (uint8_t k = 1; k <= trailSize; k++) {
+                //we draw the trail rear first, so that on bounces the brighter part of the trail over-writes the dimmer part
+                for (uint8_t k = trailSize; k > 0; k--) {
 
                     //if we have two trails, we need to draw the negative trail
                     if (trailType == 2 || trailType == 3) {
@@ -192,7 +193,7 @@ void ParticlesPS::update(){
                         setTrailColor(trailLedLocation, k);
                         //If we have trails, we need to record the trail end color at the end of the trail
                         if(k == trailSize){
-                            trailEndColors[i] = pixelInfo.color;
+                            trailEndColors[i] = segmentSet.leds[pixelInfo.pixelLoc]; //pixelInfo.color;
                         }
                     }
                 }
@@ -212,12 +213,16 @@ void ParticlesPS::update(){
                 }
                 //get the pixel location and color and set it
                 segDrawUtils::getPixelColor(segmentSet, &pixelInfo, colorOut, colorMode, trailLedLocation);
-                segmentSet.leds[pixelInfo.pixelLoc] = pixelInfo.color;
+                if(blend){
+                    segmentSet.leds[pixelInfo.pixelLoc] += pixelInfo.color;
+                } else {
+                    segmentSet.leds[pixelInfo.pixelLoc] = pixelInfo.color;
+                }
 
                 //if we don't have a rear trail, then the next pixel that needs to be set to background
                 //is the last pixel in the particle body, so we record it's color
                 if( k == (size - 1) && (trailType == 0 || trailType == 3) ){
-                    trailEndColors[i] = pixelInfo.color;
+                    trailEndColors[i] = segmentSet.leds[pixelInfo.pixelLoc];//pixelInfo.color;
                 }
             }
         }
@@ -274,7 +279,11 @@ void ParticlesPS::setTrailColor(uint16_t trailLedLocation, uint8_t trailPixelNum
     //blend the color into the background according to where we are in the trail
     pixelInfo.color = desaturate(pixelInfo.color, trailPixelNum, trailSize);
     //output the color
-    segmentSet.leds[pixelInfo.pixelLoc] = pixelInfo.color;                    
+    if(blend){
+        segmentSet.leds[pixelInfo.pixelLoc] += pixelInfo.color;
+    } else {
+        segmentSet.leds[pixelInfo.pixelLoc] = pixelInfo.color;
+    }                 
 }
 
 //returns a blended color towards the background color based on the input steps and totalSteps

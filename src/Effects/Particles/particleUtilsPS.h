@@ -68,7 +68,7 @@ namespace particleUtilsPS{
     //functions for changing particle properties
     void
         setParticleSetProp(particleSetPS *particleSet, uint8_t propNum, uint16_t opt1, uint16_t opt2, uint16_t opt3),
-        setParticleSetPosition(particleSetPS *particleSet, uint8_t partNum, uint16_t max),
+        setParticleSetPosition(particleSetPS *particleSet, uint8_t partNum, uint16_t position, bool rand),
         setParticleSetDirection(particleSetPS *particleSet, uint8_t partNum, uint8_t direction),
         setParticleSetSpeed(particleSetPS *particleSet, uint8_t partNum, uint16_t baseSpeed, uint16_t range),
         setParticleSetSize(particleSetPS *particleSet, uint8_t partNum, uint16_t size, uint16_t range),

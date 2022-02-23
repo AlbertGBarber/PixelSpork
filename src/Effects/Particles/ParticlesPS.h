@@ -21,6 +21,19 @@
 //Note that unlike other effects the update rate is not externally controllable, and depends on the 
 //update rates of the particles
 
+//Due to the way the effect is programmed, particles that are placed later in the particleSet will run "in front"
+//of those eariler in the set. This means that when two particles pass each other, the later one will be drawn 
+//over the eariler one.
+//You can adjust this behavior by turning on "blend", which will add particle colors together as they pass by each other
+//However this does have two draw backs:
+//1: Due to the way particle trails are drawn, this forces the background to be re-drawn each update cycle,
+//   which may have a performance impact depending on your strip length, update rate, etc
+//2: For colored backgrounds, the particles colors are added to the background colors.
+//   This will in most cases significantly change the particle colors 
+//   For example, blue particles running on a red background will appear purple (blue +  red = purple)
+//   This can be used to create some nice effects, (like oceanish of lavaish looking things),
+//   But overall I do not recommend using blend for colored backgrounds
+
 //Making a particle set:
 //A particle set is a struct consisting of an array of particles (technically pointers to particles)
 //and a length (the number of particles in the array)
@@ -79,7 +92,7 @@
     //trailType -- The type of trails used for the particles (see below and particlePS.h),
     //             pass in any number > 4 to set the trails randomly between 0, 1, and 2 trails
     //             (You may set the trails randomly with more detail using particleUtilsPS::setAllTrailRand() )
-    //trailSize -- The minimum length of the trails (if the particle has them)
+    //trailSize -- The minimum length of the trails (if the particle has them, min val 1)
     //trailRange -- The amount the trailSize can vary from the base size (ie trailSize + random(range))
     //bounce -- Whether the particles should reverse direction at either end of the segment set
     //          pass in any number > 1 to set this randomly
@@ -124,11 +137,13 @@
     //colorMode (default 0) -- sets the color mode for the particles (see segDrawUtils::setPixelColor)
     //bgColorMode (default 0) -- sets the color mode for the spacing pixels (see segDrawUtils::setPixelColor)
     //dimPow (default 80, min -127, max 127) -- Adjusts the rate of dimming for the trails (see dimPow above)
+    //blend (default false) -- Causes particles to add their colors to the strip, rather than set them
+    //                         See explanation of this in more detail above in effect intro
     //fillBG (default false) -- Sets the background to be redrawn every update, useful for bgColorModes that are dynamic
     //                          Warning!: Not compatible with infinite trails (mode 4). They will be drawn over.
 
 //Notes:
-    //If you're looking for a preset cylon or knightRider mode see CylonKight effect
+    //If you're looking for a preset cylon or knightRider mode see LarsonScanner effect
 class ParticlesPS : public EffectBasePS {
     public:
         ParticlesPS(SegmentSet &SegmentSet, palletPS *Pallet, CRGB BgColor, uint8_t numParticles, uint8_t direction, 
@@ -150,6 +165,7 @@ class ParticlesPS : public EffectBasePS {
             bgColorMode = 0;
         
         bool
+            blend = false, //sets if particles should add onto one another
             fillBG = false;
 
         CRGB 
@@ -159,9 +175,6 @@ class ParticlesPS : public EffectBasePS {
         palletPS
             *pallet;
 
-        particlePS
-            *particleArr; //storage array for the particles used in particleSetTemp
-            
         particleSetPS 
             *particleSet, //the particle set used in the effect
             particleSetTemp; //storage for self created particle sets

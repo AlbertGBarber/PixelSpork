@@ -13,6 +13,8 @@
 //the particle has a direction, speed, and can leave a trail
 //Trails blend cleanly into the background color over the trail length
 //(like waving a flame around, or a metor trail)
+//Trails have a minimum length of 1 (turned on/off with trail mode)
+//Particles have a minimum size of 1
 //Trail options:
 //    0: no trails
 //    1: one trail facing away from the direction of motion (like a comet)

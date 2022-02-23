@@ -56,7 +56,7 @@ void particleUtilsPS::randomizeParticleSet(particleSetPS *particleSet, uint16_t 
                                        uint8_t trailRange, uint8_t bounce, uint8_t colorIndex, bool randColor){
     particleSetLength = particleSet->length;
     for(uint8_t i = 0; i < particleSetLength; i++ ){
-        setParticleSetPosition(particleSet, i, maxPosition);
+        setParticleSetPosition(particleSet, i, maxPosition, true);
         setParticleSetDirection(particleSet, i, direction);
         setParticleSetSpeed(particleSet, i, baseSpeed, speedRange);
         setParticleSetSize(particleSet, i, size, sizeRange);
@@ -95,7 +95,7 @@ void particleUtilsPS::setParticleSetProp(particleSetPS *particleSet, uint8_t pro
     for(uint8_t i = 0; i < particleSetLength; i++ ){
         switch (propNum) {
             case 0:
-                setParticleSetPosition(particleSet, i, opt1);
+                setParticleSetPosition(particleSet, i, opt1, opt2);
                 break;
             case 1:
                 setParticleSetDirection(particleSet, i, opt1);
@@ -121,10 +121,14 @@ void particleUtilsPS::setParticleSetProp(particleSetPS *particleSet, uint8_t pro
     }
 }
 
-//Sets a particle's startPosition randomly based on the passed in max
-//(generally use the segmentSet length as the max)
-void particleUtilsPS::setParticleSetPosition(particleSetPS *particleSet, uint8_t partNum, uint16_t max){
-    particleSet->particleArr[partNum]->startPosition = random16(max);
+//Sets a particle's startPosition to the passed in value
+//if rand is true, it will be choosen randomly up to the passed in position
+//(generally use the segmentSet length as the position for rand)
+void particleUtilsPS::setParticleSetPosition(particleSetPS *particleSet, uint8_t partNum, uint16_t position, bool rand){
+    if(rand){
+        position = random16(position);
+    }
+    particleSet->particleArr[partNum]->startPosition = position;
 }
 
 //sets a particle's direction based on the passed in direction
@@ -219,7 +223,11 @@ void particleUtilsPS::setTrailRand(particleSetPS *particleSet, uint8_t partNum, 
 
 //sets the length of a particle's trail
 //The trail length is varied by a random amount no greater than the passed in range
+//Trails must have a minimum length of 1
 void particleUtilsPS::setParticleSetTrailSize(particleSetPS *particleSet, uint8_t partNum, uint8_t trailSize, uint8_t range){
+    if( trailSize == 0 ){
+        trailSize = 1;
+    }
     particleSet->particleArr[partNum]->trailSize = trailSize + random(range + 1);
 }
 
