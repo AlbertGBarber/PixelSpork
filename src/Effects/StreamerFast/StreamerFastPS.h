@@ -25,7 +25,7 @@
 
 //However, as a bonus, this effect supports random colored streamer
 //where the colors for the streamers are choosen at random as the enter the strip
-//This is controlled by the randColors flag and the randMode setting
+//This is controlled by the randMode setting
 
 //Otherwise, all the settings are/functions are the same as StreamerPS
 
@@ -95,10 +95,10 @@
     //fadeOn (default true) -- If false, the streamer will jump directly to the next color instead of fading
     //                         Note that if 1 or 0 are passed in as the FadeSteps in the constructor, 
     //                         fadeOn will be set to false automatically
-    //randColors (default false) -- If true, the colors for each streamer will be choosen randomly according to the randMode
-    //randMode (default 0) -- Sets the type of random colors choosen:
-    //                     -- 0: Colors will be choosen completly at random
-    //                     -- 1: Colors will be choosen randomly from the pallet
+    //randMode (default 0) -- Sets the type of how colors are choosen:
+    //                     -- 0: Colors will be choosen in order from the pattern (not random)
+    //                     -- 1: Colors will be choosen completely at random
+    //                     -- 2: Colors will be choosen randomly from the pallet
 
 //Flags:
     //preFillDone -- Indicates if the strip has been pre-filled with the effect's color outputs 
@@ -133,7 +133,6 @@ class StreamerFastPS : public EffectBasePS {
             cycleCount = 0;
             
         bool
-            randColors = false,
             preFillDone = false;
 
         CRGB 

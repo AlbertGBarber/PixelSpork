@@ -31,7 +31,7 @@
 
 //However, as a bonus, this effect supports random colored waves
 //where the colors for the waves are choosen at random as the enter the strip
-//This is controlled by the randColors flag and the randMode setting
+//This is controlled by the randMode setting
 
 //Example calls: 
     //uint8_t pattern_arr = {0, 1, 4};
@@ -40,7 +40,7 @@
     //Will do a set of waves according to the pattern, with a blank background
     //each wave will be 7 pixels long, using both types of trails
     //there will be zero spacing between the waves
-    //The effect will update at a 100ms update rate
+    //The effect will update at a 100ms
 
     //RollingWavesPS(mainSegments, &pallet, 0, 9, 0, 2, 80);
     //Will do a set of waves matching the input pallet with an blank background
@@ -92,10 +92,10 @@
     //update() -- updates the effect
 
 //Other Settings:
-    //randColors (default false) -- If true, the colors for each gradient will be choosen randomly according to the randMode
-    //randMode (default 0) -- Sets the type of random colors choosen:
-    //                     -- 0: Colors will be choosen completely at random
-    //                     -- 1: Colors will be choosen randomly from the pattern (will not repeat the same color in a row)
+    //randMode (default 0) -- Sets how colors are choosen from the pallet
+    //                     -- 0: Colors will be choosen from the pallet in order (not random)
+    //                     -- 1: Colors will be choosen completely at random
+    //                     -- 2: Colors will be choosen randomly from the pattern (will not repeat the same color in a row)
     // 
     //dimPow (default 120, max 255) -- Adjusts the rate of dimming for the wave trails
     //                                 255 will do typical linear dimming
@@ -131,8 +131,7 @@ class RollingWavesFastPS : public EffectBasePS {
             cycleNum = 0; // tracks what how many patterns we've gone through
         
         bool
-            initFillDone = false,
-            randColors = false;
+            initFillDone = false;
         
         CRGB 
             bgColorOrig,

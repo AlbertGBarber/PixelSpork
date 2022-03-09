@@ -31,7 +31,7 @@
 
 //However, as a bonus, this effect supports random colored gradients
 //where the colors for the gradients are choosen at random as the enter the strip
-//This is controlled by the randColors flag and the randMode setting
+//This is controlled by the randMode setting
 
 //Example calls: 
     //uint8_t pattern_arr = {0, 1, 4};
@@ -64,10 +64,10 @@
     //update() -- updates the effect
 
 //Other Settings:
-    //randColors (default false) -- If true, the colors for each gradient will be choosen randomly according to the randMode
-    //randMode (default 0) -- Sets the type of random colors choosen:
-    //                     -- 0: Colors will be choosen completely at random
-    //                     -- 1: Colors will be choosen randomly from the pattern (will not repeat the same color in a row)
+    //randMode (default 0) -- Sets the type of how colors are choosen:
+    //                     -- 0: Colors will be choosen in order from the pattern (not random)
+    //                     -- 1: Colors will be choosen completely at random
+    //                     -- 2: Colors will be choosen randomly from the pattern (will not repeat the same color in a row)
     //                     --                                                     (unless your pattern has the same color in a row, like { 2, 2, 3})
 
 //Flags:
@@ -94,7 +94,6 @@ class GradientCycleFastPS : public EffectBasePS {
             cycleNum = 0; // tracks what how many patterns we've gone through
 
         bool
-            randColors = false,
             initFillDone = false;
 
         patternPS

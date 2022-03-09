@@ -165,20 +165,17 @@ void GradientCycleFastPS::pickNextColor(){
     //even with random colors, I think you still need to do this for the initalFill?
     //idk, I'm tired today and it seemed to fix a bug where a gradient would start half-filled
     patternCount = (patternCount + 1) % pattern->length;
-    if(!randColors){
+    if(randMode == 0){
         //if we're not choosing a random color, we need to pick the next color in the pattern
         nextPattern = patternUtilsPS::getPatternVal(pattern, patternCount);
         //the next color, wrapping to the start of the pattern as needed
         nextColor = palletUtilsPS::getPalletColor(pallet, nextPattern );
+    } else if(randMode == 1){
+        //choose a completely random color
+        nextColor = segDrawUtils::randColor();
     } else {
-        //choose the next color based on the random mode
-        if(randMode == 0){
-            //choose a completely random color
-            nextColor = segDrawUtils::randColor();
-        } else {
-            //choose a color randomly from the pattern (making sure it's not the same as the current color)
-            nextPattern = EffectUtilsPS::shuffleIndex(pattern, currentPattern);
-            nextColor = palletUtilsPS::getPalletColor( pallet, nextPattern );
-        }
+        //choose a color randomly from the pattern (making sure it's not the same as the current color)
+        nextPattern = EffectUtilsPS::shuffleIndex(pattern, currentPattern);
+        nextColor = palletUtilsPS::getPalletColor( pallet, nextPattern );  
     }
 }

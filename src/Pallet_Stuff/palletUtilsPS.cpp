@@ -1,5 +1,6 @@
 #include "palletUtilsPS.h"
 
+//TODO: add blendColorFromPallet where you just pass in a step (total steps assumed to be 255) and it works out how far in the pallet you should be
 using namespace palletUtilsPS;
 
 //sets the pallet color at the specified index

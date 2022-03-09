@@ -130,10 +130,10 @@ void RollingWavesFastPS::setTrailMode(uint8_t newTrailMode){
             //The "head" is the wave center which is at halfGrad
             halfGrad = (gradLength)/2;
             firstHalfGrad = halfGrad;
-            blendStepAdjust = 0;
-            if( (gradLength % 2) != 0){
-                blendStepAdjust = 1;
-            }
+            blendStepAdjust = gradLength % 2;
+            //if( (gradLength % 2) != 0){
+                //blendStepAdjust = 1;
+            //}
             midPoint = halfGrad;
             break;
     }
@@ -297,21 +297,18 @@ CRGB RollingWavesFastPS::desaturate(CRGB color, uint8_t step, uint8_t totalSteps
 //For calling whenever a wave has finished
 //Chooses a new color for the next wave depending on the the options for random colors
 void RollingWavesFastPS::setNextColors(uint16_t segPixelNum){
-    if(!randColors){
+    if(randMode == 0){
         currentColorIndex = ( ( segPixelNum + cycleNum ) % totalCycleLength ) / blendLimit; // what color we've started from (integers always round down)
         //the color we're at based on the current index
         currentPattern = patternUtilsPS::getPatternVal(pattern, currentColorIndex);
         currentColor = palletUtilsPS::getPalletColor(pallet, currentPattern);
+    } else if(randMode == 1){
+        //choose a completely random color
+        currentColor = segDrawUtils::randColor();
     } else {
-        //choose the next color based on the random mode
-        if(randMode == 0){
-            //choose a completely random color
-            currentColor = segDrawUtils::randColor();
-        } else {
-            //choose a color randomly from the pattern (making sure it's not the same as the current color)
-            currentPattern = EffectUtilsPS::shuffleIndex(pattern, currentPattern);
-            currentColor = palletUtilsPS::getPalletColor( pallet, currentPattern );
-        }
+        //choose a color randomly from the pattern (making sure it's not the same as the current color)
+        currentPattern = EffectUtilsPS::shuffleIndex(pattern, currentPattern);
+        currentColor = palletUtilsPS::getPalletColor( pallet, currentPattern );
     }
    
 }

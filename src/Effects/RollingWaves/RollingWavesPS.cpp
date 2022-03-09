@@ -130,10 +130,10 @@ void RollingWavesPS::setTrailMode(uint8_t newTrailMode){
             //The "head" is the wave center which is at halfGrad
             halfGrad = (gradLength)/2;
             firstHalfGrad = halfGrad;
-            blendStepAdjust = 0;
-            if( (gradLength % 2) != 0){
-                blendStepAdjust = 1;
-            }
+            blendStepAdjust = gradLength % 2;
+            //if( (gradLength % 2) != 0){
+                //blendStepAdjust = 1;
+            //}
             midPoint = halfGrad;
             break;
     }

@@ -98,7 +98,7 @@ void StreamerFastPS::reset(){
 }
 
 //intilization of core variables and pointers
-void StreamerFastPS::init( CRGB BgColor, uint16_t Rate){
+void StreamerFastPS::init(CRGB BgColor, uint16_t Rate){
     //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
     bindSegPtrPS();
     bindClassRatesPS();
@@ -114,7 +114,7 @@ void StreamerFastPS::init( CRGB BgColor, uint16_t Rate){
 CRGB StreamerFastPS::pickStreamerColor(uint8_t patternIndex){
     if(patternIndex == 255){
         nextColor = *bgColor;
-    } else if(!randColors){
+    } else if(randMode == 0){
         //the color we're at based on the current index
         nextColor = palletUtilsPS::getPalletColor(pallet, patternIndex);
     } else if(patternIndex != prevPattern){
@@ -123,7 +123,7 @@ CRGB StreamerFastPS::pickStreamerColor(uint8_t patternIndex){
         //So we only pick a new random color each time the nextPattern is different from the previous one
         //since that indicates a new streamer length
         //(we don't need to worry about the 255 spacing values, since they're caught further up in the if)
-        if(randMode == 0){
+        if(randMode == 1){
             //choose a completely random color
             nextColor = segDrawUtils::randColor();
         } else {
