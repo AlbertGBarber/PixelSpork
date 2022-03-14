@@ -109,10 +109,13 @@ class TwinklePS : public EffectBasePS {
             prevTime = 0;
         
         uint8_t
+            palletLength,
+            step,
             totalSteps = 0,
             totFadeSteps;
 
         uint16_t
+            numActiveLeds,
             **ledArray = nullptr;
 
         bool

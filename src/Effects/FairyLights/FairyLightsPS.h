@@ -108,6 +108,7 @@ class FairyLightsPS : public EffectBasePS {
             prevTime = 0;
         
         uint8_t
+            palletLength,
             cycleLimit,
             loopStart,
             loopEnd;

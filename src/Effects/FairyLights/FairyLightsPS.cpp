@@ -53,7 +53,7 @@ void FairyLightsPS::genPixelSet(){
     pixelSet = new uint16_t[numTwinkles];
     cycleLimit = numTwinkles - 1; //the number of cycles to go through the whole array
     //pick locations for the pixels (local to the segment set)
-    for (int i = 0; i < numTwinkles; i++) {
+    for (uint8_t i = 0; i < numTwinkles; i++) {
         pixelSet[i] = random(numLEDS);
     }
 
@@ -120,7 +120,7 @@ void FairyLightsPS::update(){
 
 //set a color based on the size of the pallet
 void FairyLightsPS::pickColor(uint16_t pixelNum){
-    uint8_t palletLength = pallet->length;
+    palletLength = pallet->length;
     switch (palletLength) {
         case 0: // 0 pallet length, no pallet, so set colors at random
             color = segDrawUtils::randColor();

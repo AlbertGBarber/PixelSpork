@@ -74,7 +74,7 @@ void TwinklePS::initPixelArrays(){
 
     colorIndexArr = new CRGB*[numPixels];
 
-    for(int i = 0; i < numPixels; i++){
+    for(uint16_t i = 0; i < numPixels; i++){
         ledArray[i] = new uint16_t[ totFadeSteps ];
         colorIndexArr[i] = new CRGB[ totFadeSteps ];
     }
@@ -85,7 +85,7 @@ void TwinklePS::initPixelArrays(){
 //used to prevent memory leaks
 void TwinklePS::deletePixelArrays(){
     if(ledArray){
-        for(int i = 0; i < numPixels; i++){
+        for(uint16_t i = 0; i < numPixels; i++){
             delete[] ledArray[i];
             delete[] colorIndexArr[i];
         }
@@ -139,7 +139,7 @@ void TwinklePS::update(){
 
     if( ( currentTime - prevTime ) >= *rate ) {
         prevTime = currentTime;
-        uint16_t numActiveLeds = segmentSet.numActiveSegLeds;
+        numActiveLeds = segmentSet.numActiveSegLeds;
 
         //startup settings to limit how much of the array is written out
         //since the arrays start un-initilized
@@ -179,7 +179,7 @@ void TwinklePS::update(){
                     color = segDrawUtils::getCrossFadeColor( pixelInfo.color, colorIndexArr[i][j], j + 1, fadeInSteps);
                 } else {
                     //+1 since we skip the first step of the fade in
-                    uint8_t step = (j - fadeInSteps + 1);
+                    step = (j - fadeInSteps + 1);
                     //we need to clamp the step, because it overshoots if fadeout and fadein are 1
                     if(step > fadeOutSteps){ step = fadeOutSteps; }
                     color = segDrawUtils::getCrossFadeColor(colorIndexArr[i][j], pixelInfo.color, step, fadeOutSteps);
@@ -196,7 +196,7 @@ void TwinklePS::update(){
 
 //set a color based on the size of the pallet
 void TwinklePS::pickColor(uint16_t pixelNum){
-    uint8_t palletLength = pallet->length;
+    palletLength = pallet->length;
     switch (palletLength) {
         case 0: // 0 pallet length, no pallet, so set colors at random
             color = segDrawUtils::randColor();

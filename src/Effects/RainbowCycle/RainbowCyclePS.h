@@ -66,6 +66,9 @@ class RainbowCyclePS : public EffectBasePS {
         unsigned long
             currentTime,
             prevTime = 0;
+        
+        uint32_t
+            stepVal;
 
         bool 
             _direct;

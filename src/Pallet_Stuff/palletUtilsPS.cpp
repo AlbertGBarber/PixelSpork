@@ -56,7 +56,7 @@ CRGB* palletUtilsPS::getColorPtr(palletPS *pallet, uint8_t index){
 
 //returns the blended result of two pallet colors
 CRGB palletUtilsPS::getBlendedPalletColor(palletPS *pallet, uint8_t startIndex, uint8_t endIndex, uint8_t step, uint8_t totalSteps){
-    CRGB startColor = getPalletColor(pallet, startIndex);
-    CRGB endColor = getPalletColor(pallet, endIndex);
-    return segDrawUtils::getCrossFadeColor(startColor, endColor, step, totalSteps);
+
+    return segDrawUtils::getCrossFadeColor(getPalletColor(pallet, startIndex), getPalletColor(pallet, endIndex), step, totalSteps);
+    
 }

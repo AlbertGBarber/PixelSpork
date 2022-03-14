@@ -48,15 +48,15 @@ void segDrawUtils::getSegLocationFromPixel(SegmentSet segmentSet, uint16_t segPi
    //so we mark it as non existant
    locData[0] = 0;
    locData[1] = dLed; 
-   for (int i = 0; i < segmentSet.numSegs; i++) {
-       if(segmentSet.getSegActive(i)){ //only count active segments
+   for (uint8_t i = 0; i < segmentSet.numSegs; i++) {
+        //if(segmentSet.getSegActive(i)){ //only count active segments
             lengthSoFar += segmentSet.getTotalSegLength(i);
             if( (lengthSoFar - 1) >= segPixelNum){
                 locData[0] = i;
                 locData[1] = segPixelNum - ( lengthSoFar - segmentSet.getTotalSegLength(i) );
                 break;
             }
-       }
+       //}
    }
 }
 
@@ -87,7 +87,7 @@ uint16_t segDrawUtils::getSegmentPixel(SegmentSet segmentSet, uint8_t segNum, ui
     // starting at the end or beginning of the segment depending on direction
     // if the sum is larger than the number we want, then the pixel is in the current section
     // use the section to get the physical pixel number
-    for (int i = startLimit; i != endLimit; i += step) {
+    for (int16_t i = startLimit; i != endLimit; i += step) {
         secLength = segmentSet.getSecLength(segNum, i); // sec length can be negative
         secLengthSign = (secLength > 0) - (secLength < 0);
         absSecLength = abs(secLength);
