@@ -2,8 +2,8 @@
 #define RandRateCtrlPS_h
 
 #include "Effects/EffectBasePS.h"
-#include "Utils/RateRandomizer/RateRandomizerPS.h"
-#include "Utils/RateCtrl/RateCtrlPS.h"
+#include "UtilEffects/RateRandomizer/RateRandomizerPS.h"
+#include "UtilEffects/RateCtrl/RateCtrlPS.h"
 
 //A utility that combines the effects of RateCtrl and RateRandomizer to
 //Produce a rate that varies around a base rate in a range specified

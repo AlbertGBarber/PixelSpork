@@ -2,9 +2,11 @@
 #define StreamerFastPS_h
 
 //TODO -- add constructor for random options?
+//     -- When picking random colors, use getShuffleIndex instead of just randoming
 
 #include "Effects/EffectBasePS.h"
-#include "Effects/EffectUtils/EffectUtilsPS.h"
+#include "GeneralUtils/generalUtilsPS.h"
+#include "MathUtils/mathUtilsPS.h"
 
 //Similar to StreamerPS, but runs faster with some restrictions
 //Repeats a set of lines down the strip according to the passed in pallet, shifting them forward over time

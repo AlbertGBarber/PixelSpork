@@ -2,7 +2,8 @@
 #define StreamerPS_h
 
 #include "Effects/EffectBasePS.h"
-#include "Effects/EffectUtils/EffectUtilsPS.h"
+#include "GeneralUtils/generalUtilsPS.h"
+#include "MathUtils/mathUtilsPS.h"
 
 //Repeats a set of lines down the strip according to the passed in pallet, shifting them forward over time
 //Like a theater chase, but a pattern is used instead of just dots

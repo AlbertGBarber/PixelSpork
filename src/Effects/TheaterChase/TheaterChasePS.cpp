@@ -67,12 +67,12 @@ void TheaterChasePS::update(){
                 //when we draw the spot, we start with the first pixel of the spot,
                 //if the spot size is greater than 1 (litLength), then we will run into the next 
                 //spot region. To prevent this, loop the spot round by modding by totalDrawLength
-                pixelLoc = i + (j + cycleCount) % totalDrawLength;
+                pixelLoc = i + addMod16PS( j, cycleCount, totalDrawLength ); //i + (j + cycleCount) % totalDrawLength;
                 segDrawUtils::setPixelColor(segmentSet, pixelLoc, *color, colorMode);
             }
         }
         
-        cycleCount = (cycleCount + 1) % (totalDrawLength);
+        cycleCount = addMod16PS( cycleCount, 1, totalDrawLength ); //(cycleCount + 1) % (totalDrawLength);
         showCheckPS();
     }
 }

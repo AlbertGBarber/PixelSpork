@@ -2,7 +2,7 @@
 #define CrossFadeCycleRandPS_h
 
 #include "Effects/EffectBasePS.h"
-#include "Effects/EffectUtils/EffectUtilsPS.h"
+#include "GeneralUtils/generalUtilsPS.h"
 
 //like CrossFadeCycle, but all the colors are choosen at random
 //(this class is redundant since CrossFadeCycle can do randoms, but is here anyway)
@@ -33,7 +33,8 @@ class CrossFadeCycleRandPS : public EffectBasePS {
             prevTime = 0;
         
         CRGB 
-            startColor, 
+            startColor,
+            newColor, 
             nextColor;
         
         uint8_t

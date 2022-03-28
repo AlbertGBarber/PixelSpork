@@ -5,6 +5,7 @@
 //Add direction to patterns? Ie you can set them to be read backwards or forwards
 #include "FastLED.h"
 #include "patternPS.h"
+#include "MathUtils/mathUtilsPS.h"
 
 //series of utility functions for interacting with patterns
 //use these to change patterns
@@ -17,7 +18,8 @@ namespace patternUtilsPS{
     uint8_t 
         getPatternVal(patternPS *pattern, uint16_t index),
         getRandVal(patternPS *pattern),
-        *getValPtr(patternPS *pattern, uint16_t index);
+        *getValPtr(patternPS *pattern, uint16_t index),
+        getShuffleIndex(patternPS *pattern, uint8_t currentPatternVal);
     
 };
 

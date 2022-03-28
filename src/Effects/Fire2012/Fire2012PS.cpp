@@ -186,7 +186,7 @@ void Fire2012PS::setPixelHeatColorPallet(uint16_t pixelLoc, uint8_t temperature)
         //The blend amount is the temperature - secHeatLimit
         //ie the difference between the minimum temperature of the pallet section, and the current temperature
         //so we blend further to the next color with higher temps
-        colorOut = segDrawUtils::getCrossFadeColor(startColor, targetColor, temperature - secHeatLimit, palletSecLen);
+        colorOut = colorUtilsPS::getCrossFadeColor(startColor, targetColor, temperature - secHeatLimit, palletSecLen);
     }
     segDrawUtils::setPixelColor(segmentSet, pixelLoc, colorOut, 0, 0, 0);
 }

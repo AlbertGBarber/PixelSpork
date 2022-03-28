@@ -70,12 +70,12 @@ void PalletBlenderPS::update(){
         if(!holdActive && !blendEnd){
             prevTime = currentTime;
             //for each color in the blend pallet, blend it towards a color in the end pallet
-            //using the getCrossFadeColor function (see segDrawUtils.h)
+            //using the getCrossFadeColor function (see colorUtilsPS.h)
             //it doesn't matter if one pallet is shorter than the other, b/c pallets wrap automatically
             for(uint8_t i = 0; i < blendPallet.length; i++){
-                CRGB startColor = palletUtilsPS::getPalletColor(startPallet, i);
-                CRGB endColor = palletUtilsPS::getPalletColor(endPallet, i);
-                CRGB newColor = segDrawUtils::getCrossFadeColor(startColor, endColor, step, totalSteps);
+                startColor = palletUtilsPS::getPalletColor(startPallet, i);
+                endColor = palletUtilsPS::getPalletColor(endPallet, i);
+                newColor = colorUtilsPS::getCrossFadeColor(startColor, endColor, step, totalSteps);
                 palletUtilsPS::setColor(&blendPallet, newColor, i);
                 step++;
             }

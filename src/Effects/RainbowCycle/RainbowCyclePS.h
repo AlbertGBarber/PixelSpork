@@ -5,7 +5,8 @@
     //Add spacing setting?
     
 #include "Effects/EffectBasePS.h"
-#include "Effects/EffectUtils/EffectUtilsPS.h"
+#include "GeneralUtils/generalUtilsPS.h"
+#include "MathUtils/mathUtilsPS.h"
 
 //draws a repeated rainbow of a set length repeatedly along a segmentSet
 //shifts the rainbows in along the segmentSet in the passed in direction at the passed in rate
@@ -60,6 +61,7 @@ class RainbowCyclePS : public EffectBasePS {
             ledCount = 0,
             numSegs,
             numLeds,
+            totLen,
             maxCycleLength,
             ledLoc;
         
@@ -72,6 +74,9 @@ class RainbowCyclePS : public EffectBasePS {
 
         bool 
             _direct;
+        
+        CRGB
+            color;
 
         void 
             init();

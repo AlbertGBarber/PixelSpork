@@ -209,7 +209,7 @@ void ParticlesPS::update(){
                 } else {
                     //add numLEDs to prevent the value from being negative before the mod
                     //(arduino handles mods of negative numbers weirdly)
-                    trailLedLocation = ( (position - k * directStep) + numLEDs) % numLEDs;
+                    trailLedLocation = addMod16PS( position, numLEDs - k * directStep, numLEDs); //( (position - k * directStep) + numLEDs) % numLEDs;
                 }
                 //get the pixel location and color and set it
                 segDrawUtils::getPixelColor(segmentSet, &pixelInfo, colorOut, colorMode, trailLedLocation);
@@ -250,7 +250,7 @@ void ParticlesPS::moveParticle(particlePS *particlePtr) {
     //get the next position of the particle 
     //if we're bouncing, then the particle can step outside of the strip
     //due to the mod ammount, we catch this below
-    position = (position + directStep + modAmmount) % modAmmount;
+    position = addMod16PS(position, modAmmount + directStep, modAmmount);//(position + directStep + modAmmount) % modAmmount;
 
     //if we're bouncing, and we're either at the start or end of the strip
     //we need to reverse direction, and shift the particle's position by size from either end
@@ -306,7 +306,7 @@ CRGB ParticlesPS::desaturate(CRGB color, uint8_t step, uint8_t totalSteps) {
     //ratio = dim8_video(ratio); 
     //dimRatio = triwave8( 128 * (uint16_t)step / (totalSteps) );
 
-    return segDrawUtils::getCrossFadeColor(color, colorEnd, dimRatio);
+    return colorUtilsPS::getCrossFadeColor(color, colorEnd, dimRatio);
 }
 
 //returns the position of a trail pixel(local to the segment) based on the trail direction, and the mod ammount
@@ -328,7 +328,8 @@ uint16_t ParticlesPS::getTrailLedLoc(bool trailDirect, uint8_t trailPixelNum, ui
     //worked this formula out by hand, basically just adds/subtracts the trail location from the particle location
     //wrapping according to the mod ammount (note that we add the mod ammount to prevent this from being negative,
     //arduino handles mods of negative numbers weirdly)
-    trailLocOutput = ( position + modAmmount - trailDirectionAdj * ( directStep * ( trailPixelNum + sizeAdj ) ) ) % modAmmount;
+    //( position + modAmmount - trailDirectionAdj * ( directStep * ( trailPixelNum + sizeAdj ) ) ) % modAmmount;
+    trailLocOutput = addMod16PS(position, modAmmount - trailDirectionAdj * ( directStep * ( trailPixelNum + sizeAdj ) ), modAmmount);
 
     //if we've bounced and have a trail coming from the rear of the particle
     //we produce a fading trail as it bounces (like you'd see on a flame or stream irl)
@@ -338,7 +339,7 @@ uint16_t ParticlesPS::getTrailLedLoc(bool trailDirect, uint8_t trailPixelNum, ui
         if(direction){
             trailLocOutput = modAmmount - trailLocOutput;
         } else {
-            trailLocOutput = (numLEDs - 1) - trailLocOutput % (numLEDs - 1);
+            trailLocOutput = (numLEDs - 1) - mod16PS( trailLocOutput, (numLEDs - 1) ); //(numLEDs - 1) - trailLocOutput % (numLEDs - 1);
         }
         //displace the trail by the size of the particle
         trailLocOutput = trailLocOutput - sizeAdj;

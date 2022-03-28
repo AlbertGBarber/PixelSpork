@@ -19,10 +19,11 @@ TwinklePS::TwinklePS(SegmentSet &SegmentSet, CRGB Color, uint16_t NumPixels, CRG
 TwinklePS::TwinklePS(SegmentSet &SegmentSet, uint16_t NumPixels, CRGB BgColor, uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate):
     segmentSet(SegmentSet), numPixels(NumPixels)
     {    
-        setSingleColor(segDrawUtils::randColor());
-        //although we set a single pallet, we want to choose the colors at random,
-        //so we set the pallet length to 0 (see pickColor()  )
-        pallet->length = 0;
+        //we make a random pallet of one color so that 
+        //if we switch to randMode 0 then we have a pallet to use
+        setSingleColor(colorUtilsPS::randColor()); 
+        //since we're choosing colors at random, set the randMode
+        randMode = 1;
         init(FadeInSteps, FadeOutSteps, BgColor, Rate);
 	}
 
@@ -44,7 +45,7 @@ void TwinklePS::init(uint8_t FadeInSteps, uint8_t FadeOutSteps, CRGB BgColor, ui
 //creates an pallet of length 1 containing the passed in color
 void TwinklePS::setSingleColor(CRGB Color){
     delete[] palletTemp.palletArr;
-    palletTemp = EffectUtilsPS::makeSingleColorpallet(Color);
+    palletTemp = palletUtilsPS::makeSingleColorpallet(Color);
     pallet = &palletTemp;
 }
 
@@ -140,6 +141,7 @@ void TwinklePS::update(){
     if( ( currentTime - prevTime ) >= *rate ) {
         prevTime = currentTime;
         numActiveLeds = segmentSet.numActiveSegLeds;
+        palletLength = pallet->length;
 
         //startup settings to limit how much of the array is written out
         //since the arrays start un-initilized
@@ -165,7 +167,7 @@ void TwinklePS::update(){
         for (uint16_t i = 0; i < numPixels; i++) {
             for(int16_t j = totalSteps - 1; j >= 0; j--){
                 if(j == 0){ //first index, set a new pixel location and color
-                    ledArray[i][0] = random(numActiveLeds);
+                    ledArray[i][0] = random16(numActiveLeds);
                     pickColor( ledArray[i][0] );
                     colorIndexArr[i][0] = color;
                 }
@@ -176,13 +178,13 @@ void TwinklePS::update(){
                 //since they're the same
                 if(j < fadeInSteps) {
                     //step is j + 1, since we skip the first step (fully Bg)
-                    color = segDrawUtils::getCrossFadeColor( pixelInfo.color, colorIndexArr[i][j], j + 1, fadeInSteps);
+                    color = colorUtilsPS::getCrossFadeColor( pixelInfo.color, colorIndexArr[i][j], j + 1, fadeInSteps);
                 } else {
                     //+1 since we skip the first step of the fade in
                     step = (j - fadeInSteps + 1);
                     //we need to clamp the step, because it overshoots if fadeout and fadein are 1
                     if(step > fadeOutSteps){ step = fadeOutSteps; }
-                    color = segDrawUtils::getCrossFadeColor(colorIndexArr[i][j], pixelInfo.color, step, fadeOutSteps);
+                    color = colorUtilsPS::getCrossFadeColor(colorIndexArr[i][j], pixelInfo.color, step, fadeOutSteps);
                 }
                 //output the color, we can reuse the pixel info we got from the BG color, since it's the same pixel
                 segDrawUtils::setPixelColor(segmentSet, pixelInfo.pixelLoc, color, 0, pixelInfo.segNum, pixelInfo.lineNum);
@@ -196,19 +198,16 @@ void TwinklePS::update(){
 
 //set a color based on the size of the pallet
 void TwinklePS::pickColor(uint16_t pixelNum){
-    palletLength = pallet->length;
-    switch (palletLength) {
-        case 0: // 0 pallet length, no pallet, so set colors at random
-            color = segDrawUtils::randColor();
+    switch (randMode) {
+        case 0: // we're picking from a set of colors 
+            color = palletUtilsPS::getPalletColor(pallet, random8(palletLength));
             break;
-        case 1: // pallet length one means all the pixels must be the same color
-            color = palletUtilsPS::getPalletColor(pallet, 0);
-            break;
-        default: // we're picking from a set of colors
-            color = palletUtilsPS::getPalletColor(pallet, random(palletLength));
+        default: //(mode 1) set colors at random
+            color = colorUtilsPS::randColor();
             break;
     }
     //get the pixel color to account for any color modes
+    //this also fills in pixelInfo for the pixel location
     segDrawUtils::getPixelColor(segmentSet, &pixelInfo, color, colorMode, pixelNum);
     color = pixelInfo.color;
 }

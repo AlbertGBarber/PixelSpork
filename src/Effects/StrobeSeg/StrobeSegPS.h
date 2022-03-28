@@ -1,8 +1,11 @@
 #ifndef StrobeSegPS_h
 #define StrobeSegPS_h
 
+//TODO: make strobe colors based on pattern and pallet?
+
 #include "Effects/EffectBasePS.h"
-#include "Effects/EffectUtils/EffectUtilsPS.h"
+#include "GeneralUtils/generalUtilsPS.h"
+#include "MathUtils/mathUtilsPS.h"
 
 //An effect to strobe segment sets in various patterns, while switching between pallet colors automatically
 //A strobe is a rapid blinking of light.

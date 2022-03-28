@@ -6,7 +6,7 @@
     //Add hang time?
 
 #include "Effects/EffectBasePS.h"
-#include "Effects/EffectUtils/EffectUtilsPS.h"
+#include "GeneralUtils/generalUtilsPS.h"
 
 //Cross fades the entire segmentSet from one solid color to the next
 //following either a pattern and pallet, a pallet alone, or using random colors
@@ -90,7 +90,7 @@ class CrossFadeCyclePS : public EffectBasePS {
             *pallet;
         
         void 
-            setPattern(patternPS * newPattern),
+            setPattern(patternPS *newPattern),
             setPallet(palletPS *newPallet),
             setPalletAsPattern(),
             reset(void),
@@ -109,6 +109,7 @@ class CrossFadeCyclePS : public EffectBasePS {
         
         CRGB 
             startColor, //the color we are fading from
+            newColor,
             nextColor; //the color we are fading to
         
         uint8_t

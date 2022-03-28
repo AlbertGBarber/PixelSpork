@@ -5,7 +5,7 @@
 //https://gist.github.com/kriegsman/99082f66a726bdff7776
 
 #include "Effects/EffectBasePS.h"
-#include "Effects/EffectUtils/EffectUtilsPS.h"
+#include "GeneralUtils/generalUtilsPS.h"
 
 // For this animation to work, the Red component of lightColor
 // MUST be nonzero, AND must be an EVEN number!!!!

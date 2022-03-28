@@ -5,8 +5,8 @@
 //#include "palletFiles.h"
 
 #include "Effects/EffectBasePS.h"
-#include "Effects/EffectUtils/EffectUtilsPS.h"
-///#include "Utils/MathUtilsPS.h"
+#include "GeneralUtils/generalUtilsPS.h"
+//#include "MathUtils/mathUtilsPS.h"
 
 //an empty effect, copy it to use as a base to bulid effects
 class EmptyEffectPS : public EffectBasePS {

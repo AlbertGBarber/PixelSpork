@@ -1,7 +1,7 @@
 {
     "name": "PixelSpork",
     "description": "Insert Descript",
-    "keywords": "led" "WS2182" "FastLED",
+    "keywords": "led" "WS2182" "FastLED" "Neopixel" "WS2811",
     "authors": [
         {
             "name": "Albert Barber",

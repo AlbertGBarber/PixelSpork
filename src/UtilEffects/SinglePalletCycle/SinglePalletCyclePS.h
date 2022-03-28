@@ -7,7 +7,7 @@
 // -- Add cycle limit
 
 #include "Effects/EffectBasePS.h"
-#include "Utils/PalletBlender/PalletBlenderPS.h"
+#include "UtilEffects/PalletBlender/PalletBlenderPS.h"
 
 //Takes a single pallet and blends between it's own colors depending on the blend mode
 //for example, you could shift all of the pallet's colors forward by one

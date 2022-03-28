@@ -20,7 +20,7 @@ GradientCycleFastPS::GradientCycleFastPS(SegmentSet &SegmentSet, palletPS *Palle
 GradientCycleFastPS::GradientCycleFastPS(SegmentSet &SegmentSet, uint8_t NumColors, uint8_t GradLength, uint16_t Rate):
     segmentSet(SegmentSet), gradLength(GradLength)
     {    
-        palletTemp = EffectUtilsPS::makeRandomPallet(NumColors);
+        palletTemp = palletUtilsPS::makeRandomPallet(NumColors);
         pallet = &palletTemp;
         setPalletAsPattern();
         init(Rate);
@@ -47,7 +47,7 @@ void GradientCycleFastPS::reset(){
 //ie for a pallet length 5, the pattern would be 
 //{0, 1, 2, 3, 4}
 void GradientCycleFastPS::setPalletAsPattern(){
-    patternTemp = EffectUtilsPS::setPalletAsPattern(pallet);
+    patternTemp = generalUtilsPS::setPalletAsPattern(pallet);
     pattern = &patternTemp;
 }
 
@@ -89,10 +89,10 @@ void GradientCycleFastPS::initalFill(){
         }
 
         // get the crossfade between the current and next color, where the transition is gradsteps long
-        colorOut = segDrawUtils::getCrossFadeColor(currentColor, nextColor, cycleNum, gradLength);
+        colorOut = colorUtilsPS::getCrossFadeColor(currentColor, nextColor, cycleNum, gradLength);
         segDrawUtils::setPixelColor(segmentSet, i, colorOut, 0);
 
-        cycleNum = (cycleNum + 1) % gradLength; //track what step we're on in the gradient
+        cycleNum = addmod8(cycleNum, 1, gradLength);//(cycleNum + 1) % gradLength; //track what step we're on in the gradient
     }
     initFillDone = true;
 }
@@ -140,7 +140,7 @@ void GradientCycleFastPS::update(){
                 if(cycleNum == 0){
                     pickNextColor();
                 }
-                colorOut = segDrawUtils::getCrossFadeColor(currentColor, nextColor, cycleNum, gradLength);
+                colorOut = colorUtilsPS::getCrossFadeColor(currentColor, nextColor, cycleNum, gradLength);
                 segDrawUtils::setPixelColor(segmentSet, pixelNumber, colorOut, 0, 0, 0);
             } else {
                 //copy the color of the next pixel in line into the current pixel
@@ -172,10 +172,10 @@ void GradientCycleFastPS::pickNextColor(){
         nextColor = palletUtilsPS::getPalletColor(pallet, nextPattern );
     } else if(randMode == 1){
         //choose a completely random color
-        nextColor = segDrawUtils::randColor();
+        nextColor = colorUtilsPS::randColor();
     } else {
         //choose a color randomly from the pattern (making sure it's not the same as the current color)
-        nextPattern = EffectUtilsPS::shuffleIndex(pattern, currentPattern);
+        nextPattern = patternUtilsPS::getShuffleIndex(pattern, currentPattern);
         nextColor = palletUtilsPS::getPalletColor( pallet, nextPattern );  
     }
 }

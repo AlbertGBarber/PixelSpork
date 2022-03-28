@@ -21,7 +21,7 @@ DissolvePS::DissolvePS(SegmentSet &SegmentSet, uint8_t DMode, uint16_t SpawnRate
     {
         //although we're randomly choosing colors, we still make a pallet and pattern 
         //so that if the dMode is changed later, there's still a pallet/pattern to use
-        palletTemp = EffectUtilsPS::makeRandomPallet(2);
+        palletTemp = palletUtilsPS::makeRandomPallet(2);
         pallet = &palletTemp;
         setPalletAsPattern();
         init(Rate);
@@ -73,7 +73,7 @@ void DissolvePS::setPattern(patternPS *newPattern){
 //ie for a pallet length 5, the pattern would be 
 //{0, 1, 2, 3, 4}
 void DissolvePS::setPalletAsPattern(){
-    patternTemp = EffectUtilsPS::setPalletAsPattern(pallet);
+    patternTemp = generalUtilsPS::setPalletAsPattern(pallet);
     pattern = &patternTemp;
 }
 
@@ -95,16 +95,16 @@ void DissolvePS::pickColor(){
         color = palletUtilsPS::getPalletColor(pallet, patternUtilsPS::getRandVal(pattern) );
     } else if(dMode == 2){
         //choose colors randomly
-        color = segDrawUtils::randColor();
+        color = colorUtilsPS::randColor();
     } else {
         //for modes 3 and 4, the colors must only be picked once, since they are choosen randomly
         //hence the ranColorPicked flag
         //(This could also apply to mode 0, but we want to check the color each time for palletBlending)
         if( !randColorPicked ){
             if(dMode == 3){
-                color = segDrawUtils::randColor();
+                color = colorUtilsPS::randColor();
             } else if(dMode == 4) {
-                currentIndex = EffectUtilsPS::shuffleIndex(pattern, currentIndex);
+                currentIndex = patternUtilsPS::getShuffleIndex(pattern, currentIndex);
                 color = palletUtilsPS::getPalletColor( pallet, currentIndex );
             }
             randColorPicked = true;
@@ -155,7 +155,7 @@ void DissolvePS::update(){
             //if we're not passed the threshold for setting all the leds,
             //choose one randomly and try to set it
             if(numSpawned < setAllThreshold){
-                pixelNum = random( numActiveLeds );
+                pixelNum = random16( numActiveLeds );
                 if(!pixelArray[pixelNum]){
                     spawnLed(pixelNum);
                 }
@@ -180,7 +180,7 @@ void DissolvePS::update(){
         if(numSpawned >= numActiveLeds){
             resetPixelArray();
             hangTimeOn = true;
-            numCycles = (numCycles + 1) % pattern->length;
+            numCycles = addmod8(numCycles, 1, pattern->length); //(numCycles +1) % pattern->length
         }
 
         showCheckPS();

@@ -2,7 +2,7 @@
 #define TwinkleLowRamPS_h
 
 #include "Effects/EffectBasePS.h"
-#include "Effects/EffectUtils/EffectUtilsPS.h"
+#include "GeneralUtils/generalUtilsPS.h"
 
 //Draws sets of randomly chosen pixels (like FastLED TwinkleFox)
 //This is mostly the same as TwinklePS, but uses much less ram, and has a few restrictions
@@ -33,6 +33,9 @@
     //colorMode (default 0) -- sets the color mode for the random pixels (see segDrawUtils::setPixelColor)
     //bgColorMode (default 0) -- sets the color mode for the background (see segDrawUtils::setPixelColor)
     //fillBG (default true) -- sets the background to be redrawn every cycle
+    //randMode (default 0) -- sets how colors will be picked
+    //                        0: Picks colors from the pallet
+    //                        1: Picks colors at random
 class TwinkleLowRamPS : public EffectBasePS {
     public:
         //Constructor for a full pallet effect
@@ -57,6 +60,7 @@ class TwinkleLowRamPS : public EffectBasePS {
             sparkle;
         
         uint8_t
+            randMode = 0,
             colorMode = 0,
             bgColorMode = 0;
 
@@ -81,6 +85,10 @@ class TwinkleLowRamPS : public EffectBasePS {
         
         uint8_t 
             palletLength;
+        
+        uint16_t
+            numActiveLeds,
+            randPixel;
 
         CRGB
             color; //this variable is slightly abused, since it is set by multiple functions

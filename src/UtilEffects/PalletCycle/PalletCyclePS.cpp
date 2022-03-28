@@ -8,7 +8,7 @@ PalletCyclePS::PalletCyclePS(palletSetPS *PalletSet, bool Looped, uint8_t TotalS
         //the initial start/end pallets are set just to setup the PalletBlenderPS instance
         //we'll change the initial start and end pallets officially below
         currentIndex = 0;
-        nextIndex = (currentIndex + 1) % palletSet->length;
+        nextIndex = addmod8( currentIndex, 1, palletSet->length ); //(currentIndex + 1) % palletSet->length;
         PB = new PalletBlenderPS(palletSet->getPallet(currentIndex), palletSet->getPallet(nextIndex), false, TotalSteps, Rate);
         //point the PB update rate to the same rate as the PalletCyclePS instance, so they stay in sync
         PB->rate = rate;
@@ -26,7 +26,7 @@ PalletCyclePS::~PalletCyclePS(){
 void PalletCyclePS::reset(){
     cycleEnd = false;
     currentIndex = 0;
-    nextIndex = (currentIndex + 1) % palletSet->length;
+    nextIndex = addmod8( currentIndex, 1, palletSet->length ); //(currentIndex + 1) % palletSet->length;
     PB->startPallet = palletSet->getPallet(currentIndex);
     PB->endPallet = palletSet->getPallet(nextIndex);
     PB->reset();
@@ -83,16 +83,16 @@ void PalletCyclePS::update(){
 
         //if we've finished the current blend (and hold time), we need to move onto the next one 
         if( PB->blendEnd && !PB->holdActive){
-            uint8_t length = palletSet->length;
+            palletLength = palletSet->length;
             //if we're not looping, and the end pallet was the last on in the set, we need to set the end flag
             //otherwise move onto the next pallet
-            if(!looped && ( nextIndex >= (length - 1) ) ){
+            if(!looped && ( nextIndex >= (palletLength - 1) ) ){
                 cycleEnd = true;
             } else {
                 //setup the next pallet to blend to
                 //the starting pallet is the one we're just blended to (ie at nextIndex)
                 currentIndex = nextIndex;
-                nextIndex = (currentIndex + 1) % length;
+                nextIndex = mod8( (currentIndex + 1), palletLength );
                 //if we're randomizing, we randomize the next pallet
                 if(randomize){
                     palletUtilsPS::randomize( palletSet->getPallet(nextIndex) );

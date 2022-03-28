@@ -19,7 +19,7 @@ RollingWavesFastPS::RollingWavesFastPS(SegmentSet &SegmentSet, palletPS *Pallet,
 RollingWavesFastPS::RollingWavesFastPS(SegmentSet &SegmentSet, uint8_t NumColors, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate):
     segmentSet(SegmentSet), gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)
     {    
-        palletTemp = EffectUtilsPS::makeRandomPallet(NumColors);
+        palletTemp = palletUtilsPS::makeRandomPallet(NumColors);
         pallet = &palletTemp;
         setPalletAsPattern();
         init(BGColor, Rate);
@@ -74,7 +74,7 @@ void RollingWavesFastPS::setPallet(palletPS* newPallet){
 //ie for a pallet length 5, the pattern would be 
 //{0, 1, 2, 3, 4}
 void RollingWavesFastPS::setPalletAsPattern(){
-    patternTemp = EffectUtilsPS::setPalletAsPattern(pallet);
+    patternTemp = generalUtilsPS::setPalletAsPattern(pallet);
     pattern = &patternTemp;
     setTotalEffectLength();
 }
@@ -130,7 +130,7 @@ void RollingWavesFastPS::setTrailMode(uint8_t newTrailMode){
             //The "head" is the wave center which is at halfGrad
             halfGrad = (gradLength)/2;
             firstHalfGrad = halfGrad;
-            blendStepAdjust = gradLength % 2;
+            blendStepAdjust = mod16PS( gradLength, 2 );
             //if( (gradLength % 2) != 0){
                 //blendStepAdjust = 1;
             //}
@@ -165,7 +165,7 @@ void RollingWavesFastPS::initalFill(){
         colorOut = getWaveColor(cycleNum);
         segDrawUtils::setPixelColor(segmentSet, pixelNumber, colorOut, 0, 0, 0);
 
-        cycleNum = (cycleNum + 1) % blendLimit; //track what step we're on in the wave
+        cycleNum = addmod8(cycleNum, 1, blendLimit); //(cycleNum + 1) % blendLimit; //track what step we're on in the wave
     }
     initFillDone = true;
 }
@@ -208,7 +208,7 @@ void RollingWavesFastPS::update(){
             pixelNumber = nextPixelNumber;
             nextPixelNumber = segDrawUtils::getSegmentPixel(segmentSet, i + 1);
             if(i == numPixels){
-                blendStep = (cycleNum + i) % blendLimit; // what step we're on between the current and next color
+                blendStep = addmod8(cycleNum, i, blendLimit); //(cycleNum + i) % blendLimit; // what step we're on between the current and next color
                 //If the blendStep is 0, then a wave has finished, and we need to choose the next color
                 if( blendStep == 0 ){
                     //the color we're at based on the current index
@@ -226,7 +226,7 @@ void RollingWavesFastPS::update(){
             
         }
 
-        cycleNum = (cycleNum + 1) % totalCycleLength;
+        cycleNum = addMod16PS( cycleNum, 1, totalCycleLength); //(cycleNum + 1) % totalCycleLength;
         showCheckPS();
     }
 }
@@ -298,16 +298,17 @@ CRGB RollingWavesFastPS::desaturate(CRGB color, uint8_t step, uint8_t totalSteps
 //Chooses a new color for the next wave depending on the the options for random colors
 void RollingWavesFastPS::setNextColors(uint16_t segPixelNum){
     if(randMode == 0){
-        currentColorIndex = ( ( segPixelNum + cycleNum ) % totalCycleLength ) / blendLimit; // what color we've started from (integers always round down)
+        //(segPixelNum + cycleNum) % totalCycleLength
+        currentColorIndex = addMod16PS( segPixelNum, cycleNum, totalCycleLength ) / blendLimit; // what color we've started from (integers always round down)
         //the color we're at based on the current index
         currentPattern = patternUtilsPS::getPatternVal(pattern, currentColorIndex);
         currentColor = palletUtilsPS::getPalletColor(pallet, currentPattern);
     } else if(randMode == 1){
         //choose a completely random color
-        currentColor = segDrawUtils::randColor();
+        currentColor = colorUtilsPS::randColor();
     } else {
         //choose a color randomly from the pattern (making sure it's not the same as the current color)
-        currentPattern = EffectUtilsPS::shuffleIndex(pattern, currentPattern);
+        currentPattern = patternUtilsPS::getShuffleIndex(pattern, currentPattern);
         currentColor = palletUtilsPS::getPalletColor( pallet, currentPattern );
     }
    

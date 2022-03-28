@@ -18,10 +18,11 @@ TwinkleLowRamPS::TwinkleLowRamPS(SegmentSet &SegmentSet, CRGB Color, uint16_t Nu
 TwinkleLowRamPS::TwinkleLowRamPS(SegmentSet &SegmentSet, uint16_t NumPixels, CRGB BgColor, bool Sparkle, uint8_t FadeOutRate, uint16_t Rate):
     segmentSet(SegmentSet), numPixels(NumPixels), sparkle(Sparkle), fadeOutRate(FadeOutRate)
     {    
-        setSingleColor(segDrawUtils::randColor());
-        //although we set a single pallet, we want to choose the colors at random,
-        //so we set the pallet length to 0 (see pickColor()  )
-        pallet->length = 0;
+        //we make a random pallet of one color so that 
+        //if we switch to randMode 0 then we have a pallet to use
+        setSingleColor(colorUtilsPS::randColor()); 
+        //since we're choosing colors at random, set the randMode
+        randMode = 1;
         init(BgColor, Rate);
 	}
 
@@ -41,13 +42,12 @@ void TwinkleLowRamPS::init(CRGB BgColor, uint16_t Rate){
 //binds the pallet to a new one
 void TwinkleLowRamPS::setPallet(palletPS *newPallet){
     pallet = newPallet;
-    palletLength = pallet->length;
 }
 
 //creates an pallet of length 1 containing the passed in color
 void TwinkleLowRamPS::setSingleColor(CRGB Color){
     delete[] palletTemp.palletArr;
-    palletTemp = EffectUtilsPS::makeSingleColorpallet(Color);
+    palletTemp = palletUtilsPS::makeSingleColorpallet(Color);
     pallet = &palletTemp;
 }
 
@@ -56,7 +56,8 @@ void TwinkleLowRamPS::update(){
 
     if( ( currentTime - prevTime ) >= *rate ) {
         prevTime = currentTime;
-        uint16_t numActiveLeds = segmentSet.numActiveSegLeds;
+        numActiveLeds = segmentSet.numActiveSegLeds;
+        palletLength = pallet->length;
 
         //controls the background setting, when sparkleOn is true, the strip will dim with each cycle
         //instead of setting a background
@@ -68,20 +69,17 @@ void TwinkleLowRamPS::update(){
 
         // sets a random set of pixels to a random or indicated color(s)
         for (uint16_t i = 0; i < numPixels; i++) {
-            uint16_t j = random(numActiveLeds);
-            switch (palletLength) {
-                case 0: // 0 pallet length, no pallet, so set colors at random
-                    color = segDrawUtils::randColor();
+            randPixel = random16(numActiveLeds);
+            switch (randMode) {
+                case 0: // we're picking from a set of colors 
+                    color = palletUtilsPS::getPalletColor(pallet, random8(palletLength));
                     break;
-                case 1: // pallet length one means all the pixels must be the same color
-                    color = palletUtilsPS::getPalletColor(pallet, 0);
-                    break;
-                default: // we're picking from a set of colors
-                    color = palletUtilsPS::getPalletColor(pallet, random(palletLength));
+                default: //(mode 1) set colors at random
+                    color = colorUtilsPS::randColor();
                     break;
             }
             //get the pixel color to account for any color modes
-            segDrawUtils::setPixelColor(segmentSet, j, color, colorMode);
+            segDrawUtils::setPixelColor(segmentSet, randPixel, color, colorMode);
         }
         showCheckPS();
     }

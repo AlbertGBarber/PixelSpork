@@ -5,7 +5,7 @@
 //-- add version with backgound color?, would need to use blend instead of scale8
 
 #include "Effects/EffectBasePS.h"
-#include "Effects/EffectUtils/EffectUtilsPS.h"
+#include "GeneralUtils/generalUtilsPS.h"
 
 //A simple effect
 //Colors all the pixels in a segmentSet either using a single color, choosing colors from a pallet, or at random
@@ -15,6 +15,7 @@
 //Example calls: 
     //ShimmerPS(SegmentSet &SegmentSet, 80);
     //Each pixel will be set to a random color, refreshing at 80ms
+    //(note this sets randMode = 1)
 
     //FairyLightsPS(mainSegments, CRGB::Red, 100);
     //Each pixel will be set to red, and dimmed randomly, refreshing at 100ms
@@ -35,7 +36,10 @@
 //Other Settings:
     //colorMode (default 0) -- sets the color mode for the random pixels (see segDrawUtils::setPixelColor)
     //shimmerMin (min 0, max 255, default 0) -- The minimum amount of dim that will be applied to a pixel 
-    //shimmerMax (min 0, max 255, default 180) -- The maximum amount of dim that will be applied to a pixel 
+    //shimmerMax (min 0, max 255, default 180) -- The maximum amount of dim that will be applied to a pixel
+    //randMode (default 0) -- sets how colors will be picked
+    //                        0: Picks colors from the pallet
+    //                        1: Picks colors at random
 class ShimmerPS : public EffectBasePS {
     public:
 
@@ -51,6 +55,7 @@ class ShimmerPS : public EffectBasePS {
             &segmentSet; 
         
         uint8_t
+            randMode = 0,
             colorMode = 0,
             shimmerMin = 0,
             shimmerMax = 180;
@@ -69,6 +74,7 @@ class ShimmerPS : public EffectBasePS {
             prevTime = 0;
         
         uint8_t
+            palletLength,
             shimmerVal;
         
         uint16_t

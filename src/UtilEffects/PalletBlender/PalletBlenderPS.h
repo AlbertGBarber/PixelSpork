@@ -3,7 +3,7 @@
 
 #include "PalletFiles.h"
 #include "Effects/EffectBasePS.h"
-#include "Utils/MathUtilsPS.h"
+#include "MathUtils/mathUtilsPS.h"
 
 //TODO:
 //-- Add new blend version that lets you exclude some indexes from blending 
@@ -100,7 +100,10 @@ class PalletBlenderPS : public EffectBasePS {
             prevTime = 0;
 
         CRGB
-           *blendPallet_arr;
+           *blendPallet_arr,
+           startColor,
+           endColor,
+           newColor;
         
         uint8_t 
             blendPalletLength = 0;

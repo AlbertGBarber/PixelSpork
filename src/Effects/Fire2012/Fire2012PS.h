@@ -2,7 +2,7 @@
 #define Fire2012PS_h
 
 #include "Effects/EffectBasePS.h"
-#include "Effects/EffectUtils/EffectUtilsPS.h"
+#include "GeneralUtils/generalUtilsPS.h"
 
 //A traditional fire loop, most useful for strips with a diffuser
 //Code modified from https://www.tweaking4all.com/hardware/arduino/adruino-led-strip-effects/#fire

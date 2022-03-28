@@ -2,7 +2,7 @@
 #define TwinklePS_h
 
 #include "Effects/EffectBasePS.h"
-#include "Effects/EffectUtils/EffectUtilsPS.h"
+#include "GeneralUtils/generalUtilsPS.h"
 
 //Fades sets of randomly chosen pixels in and out (like FastLED TwinkleFox)
 //The color of the pixels be set to a single color, chosen randomly, of picked from a pallet 
@@ -21,6 +21,7 @@
 
     //TwinklePS(mainSegments, 4, 0, 2, 2, 80);
     //Will choose 4 pixels each cycle to fade to/from random colors, using a blank backgound, 
+    //(note this sets randMode = 1)
     //with 2 fade in and 2 fade out steps, at a rate of 80ms
 
 //Constructor Inputs:
@@ -43,6 +44,9 @@
 //Other Settings:
     //colorMode (default 0) -- sets the color mode for the random pixels (see segDrawUtils::setPixelColor)
     //bgColorMode (default 0) -- sets the color mode for the background (see segDrawUtils::setPixelColor)
+    //randMode (default 0) -- sets how colors will be picked
+    //                        0: Picks colors from the pallet
+    //                        1: Picks colors at random
     //fillBG (default false) -- sets the background to be redrawn every cycle, useful for bgColorModes that are dynamic
 
 //Notes:
@@ -80,6 +84,7 @@ class TwinklePS : public EffectBasePS {
             fillBG = false;
         
         uint8_t 
+            randMode = 0,
             colorMode = 0,
             bgColorMode = 0;
 

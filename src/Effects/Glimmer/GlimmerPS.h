@@ -3,7 +3,7 @@
 
 
 #include "Effects/EffectBasePS.h"
-#include "Effects/EffectUtils/EffectUtilsPS.h"
+#include "GeneralUtils/generalUtilsPS.h"
 
 //The goal of the effect is to fade a random set of leds in and out, between the glimmerColor and the bgColor
 //(note that the bgColor is the dominant color in the effect)

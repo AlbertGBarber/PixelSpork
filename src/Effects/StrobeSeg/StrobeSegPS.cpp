@@ -13,7 +13,7 @@ StrobeSegPS::StrobeSegPS(SegmentSet &SegmentSet, CRGB Color, CRGB BgColor, uint8
                         bool SegEach, bool SegDual, bool SegLine, bool SegLineDual, bool SegAll, uint16_t Rate):
     segmentSet(SegmentSet), numPulses(NumPulses), pauseTime(PauseTime), segEach(SegEach), segDual(SegDual), segLineDual(SegLineDual), segLine(SegLine), segAll(SegAll)
     {    
-        palletTemp = EffectUtilsPS::makeSingleColorpallet(Color);
+        palletTemp = palletUtilsPS::makeSingleColorpallet(Color);
         pallet = &palletTemp;
         init(BgColor, Rate);
 	}
@@ -23,7 +23,7 @@ StrobeSegPS::StrobeSegPS(SegmentSet &SegmentSet, uint8_t numColors, CRGB BgColor
                         bool SegEach, bool SegDual, bool SegLine, bool SegLineDual, bool SegAll, uint16_t Rate):
     segmentSet(SegmentSet), numPulses(NumPulses), pauseTime(PauseTime), segEach(SegEach), segDual(SegDual), segLineDual(SegLineDual), segLine(SegLine), segAll(SegAll)
     {    
-        palletTemp = EffectUtilsPS::makeRandomPallet(numColors);
+        palletTemp = palletUtilsPS::makeRandomPallet(numColors);
         pallet = &palletTemp;
         init(BgColor, Rate);
 	}
@@ -142,7 +142,7 @@ void StrobeSegPS::update(){
                 case 0:
                     //the next seg moves forward by one for each set of pulses
                     //(cycleCount always increments by 1 after a pulse set)
-                    nextSeg = cycleCount % numSegs;
+                    nextSeg = mod16PS( cycleCount, numSegs ); //cycleCount % numSegs;
                     //if we're starting from the last seg moving out
                     //we need to reverse our count
                     if(!direct){
@@ -161,7 +161,7 @@ void StrobeSegPS::update(){
                     break;
                 case 2:
                     //similar to case 0, but we're filling seg lines instead of segments
-                    nextSeg = cycleCount % maxSegLength;
+                    nextSeg = mod16PS( cycleCount, maxSegLength );//cycleCount % maxSegLength;
                     if(!direct){
                         nextSeg = maxSegLength - 1 - nextSeg;
                     }
@@ -196,7 +196,7 @@ void StrobeSegPS::update(){
         } else {
             //if we've finished a set of pulses we need to decide what to do next
             //we advance the cycleCount since we've finished a set of pulses
-            cycleCount = (cycleCount + 1) % cycleCountMax;
+            cycleCount = addMod16PS( cycleCount, 1, cycleCountMax );//(cycleCount + 1) % cycleCountMax;
             //if the cycleCount is 0 then we've gone through a full strobe cycle for the current mode
             //so we need to move to the next mode and trigger a pause (maybe)
             if( cycleCount == 0 ){
@@ -210,13 +210,13 @@ void StrobeSegPS::update(){
 
             //The cycle loop limit is the number of cycles until all the segments have been filled with color once
             //if this has happened we need to chooses a new color and flip the direction (maybe)
-            boolTemp = (cycleCount % cycleLoopLimit == 0);
+            boolTemp = mod16PS( cycleCount, cycleLoopLimit ) == 0; //(cycleCount % cycleLoopLimit == 0);
             //if newColor is true, we always choose a the next color for each pulse cycle
             //otherwise we only do it at the end of a full strobe cycle
             if(newColor || boolTemp){
                 //color is picked via pickColor() above
                 //color num tracks the pallet color index we're on
-                colorNum = (colorNum + 1) % pallet->length;
+                colorNum = addmod8( colorNum, 1, pallet->length ); //(colorNum + 1) % pallet->length;
             }
 
             //switch the direction if alternate is on and
@@ -326,13 +326,13 @@ void StrobeSegPS::pickColor(){
         colorTemp = palletUtilsPS::getPalletColor( pallet, colorNum );
     } else if(randMode == 1 && pulseCount <= 1) {
         //choose a completely random color
-        colorTemp = segDrawUtils::randColor();
+        colorTemp = colorUtilsPS::randColor();
     } else {
         //choose a color randomly from the pattern (making sure it's not the same as the current color)
         if(pulseCount <= 1) {
             randGuess = random8(pallet->length);
             if(randGuess == prevGuess){
-                randGuess = (prevGuess + 1) % pallet->length;
+                randGuess = addmod8(prevGuess, 1, pallet->length); //(prevGuess + 1) % pallet->length;
             }
             prevGuess = randGuess;
         }

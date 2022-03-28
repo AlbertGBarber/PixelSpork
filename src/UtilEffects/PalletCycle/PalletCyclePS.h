@@ -2,7 +2,7 @@
 #define PalletCyclePS_h
 
 #include "Effects/EffectBasePS.h"
-#include "Utils/PalletBlender/PalletBlenderPS.h"
+#include "UtilEffects/PalletBlender/PalletBlenderPS.h"
 
 //NEEDS TESTING!!!!
 
@@ -125,6 +125,9 @@ class PalletCyclePS : public EffectBasePS {
         unsigned long
             currentTime,
             prevTime = 0;
+        
+        uint8_t
+            palletLength;
 };
 
 #endif

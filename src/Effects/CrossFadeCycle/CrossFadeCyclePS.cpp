@@ -26,7 +26,7 @@ CrossFadeCyclePS::CrossFadeCyclePS(SegmentSet &SegmentSet, uint16_t NumFades, ui
         //this won't be used in the effect, but if you switched modes without 
         //setting up a pallet, you will crash
         //this prevents crashing
-        palletTemp = EffectUtilsPS::makeRandomPallet(2);
+        palletTemp = palletUtilsPS::makeRandomPallet(2);
         pallet = &palletTemp;
         setPalletAsPattern();
         init(Rate);
@@ -72,11 +72,11 @@ void CrossFadeCyclePS::reset(){
             break;
         case 1:
             startColor = palletUtilsPS::getPalletColor( pallet, currentIndex );
-            nextColor = palletUtilsPS::getPalletColor( pallet, EffectUtilsPS::shuffleIndex(pattern, currentIndex) );
+            nextColor = palletUtilsPS::getPalletColor( pallet, patternUtilsPS::getShuffleIndex(pattern, currentIndex) );
             break;
         default: //anything mode 2 or above
-            startColor = segDrawUtils::randColor();
-            nextColor = segDrawUtils::randColor();
+            startColor = colorUtilsPS::randColor();
+            nextColor = colorUtilsPS::randColor();
             break;
     }
 }
@@ -95,7 +95,7 @@ void CrossFadeCyclePS::setPattern(patternPS *newPattern){
 //ie for a pallet length 5, the pattern would be 
 //{0, 1, 2, 3, 4}
 void CrossFadeCyclePS::setPalletAsPattern(){
-    patternTemp = EffectUtilsPS::setPalletAsPattern(pallet);
+    patternTemp = generalUtilsPS::setPalletAsPattern(pallet);
     pattern = &patternTemp;
 }
 
@@ -111,8 +111,7 @@ void CrossFadeCyclePS::update(){
         prevTime = currentTime;
         
         //caculate the next step of the current fade and display it
-        CRGB newColor;
-        newColor = segDrawUtils::getCrossFadeColor(startColor, nextColor, currentStep, steps);
+        newColor = colorUtilsPS::getCrossFadeColor(startColor, nextColor, currentStep, steps);
         segDrawUtils::fillSegSetColor(segmentSet, newColor, 0);
         currentStep++;
         showCheckPS();
@@ -136,12 +135,12 @@ void CrossFadeCyclePS::update(){
                     break;
                 case 1:
                     //shuffle mode
-                    currentIndex = EffectUtilsPS::shuffleIndex(pattern, currentIndex);
+                    currentIndex = patternUtilsPS::getShuffleIndex(pattern, currentIndex);
                     nextColor = palletUtilsPS::getPalletColor( pallet, currentIndex);
                     break;
                 default:
                     //random mode (for all cases above 1)
-                    nextColor = segDrawUtils::randColor();
+                    nextColor = colorUtilsPS::randColor();
                     break;
             }
             fadeCount++;

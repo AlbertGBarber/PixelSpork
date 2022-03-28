@@ -27,7 +27,7 @@ StreamerFastPS::StreamerFastPS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t
 StreamerFastPS::StreamerFastPS(SegmentSet &SegmentSet, CRGB Color, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint16_t Rate):
     segmentSet(SegmentSet)
     {    
-        palletTemp = EffectUtilsPS::makeSingleColorpallet(Color);
+        palletTemp = palletUtilsPS::makeSingleColorpallet(Color);
         pallet = &palletTemp;
         setPalletAsPattern(ColorLength, Spacing);
         init(BgColor, Rate);
@@ -125,10 +125,10 @@ CRGB StreamerFastPS::pickStreamerColor(uint8_t patternIndex){
         //(we don't need to worry about the 255 spacing values, since they're caught further up in the if)
         if(randMode == 1){
             //choose a completely random color
-            nextColor = segDrawUtils::randColor();
+            nextColor = colorUtilsPS::randColor();
         } else {
             //choose a color randomly from the pallet
-            nextColor = palletUtilsPS::getPalletColor( pallet, random(pallet->length) );
+            nextColor = palletUtilsPS::getPalletColor( pallet, random8(pallet->length) );
         }
     }
     prevPattern = patternIndex; //save the current pattern value (only needed for the random color case)
@@ -155,7 +155,7 @@ void StreamerFastPS::preFill(){
         //every time we draw a pixel, we're basically doing one whole update()
         //so we need to increment the cycleCount, so that once the preFill is done, the 
         //next update() call will sync properly
-        cycleCount = (cycleCount + 1) % patternLength;
+        cycleCount = addMod16PS( cycleCount, 1, patternLength );// (cycleCount + 1) % patternLength;
     }
     preFillDone = true;
 }
@@ -203,7 +203,7 @@ void StreamerFastPS::update(){
             }
 
         }
-        cycleCount = (cycleCount + 1) % pattern->length; //one update = one cycle
+        cycleCount = addMod16PS( cycleCount, 1, pattern->length );//(cycleCount + 1) % pattern->length; //one update = one cycle
 
         showCheckPS();
     }

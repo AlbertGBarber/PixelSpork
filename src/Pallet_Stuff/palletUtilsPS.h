@@ -5,7 +5,8 @@
 //Add direction to pallets? Ie you can set them to be read backwards or forwards
 
 #include "palletPS.h"
-#include "SegmentFiles.h"
+#include "ColorUtils/colorUtilsPS.h"
+#include "MathUtils/mathUtilsPS.h"
 
 //series of utility functions for interacting with pallets
 //use these to change pallets
@@ -20,8 +21,27 @@ namespace palletUtilsPS{
     CRGB 
         getBlendedPalletColor(palletPS *pallet, uint8_t startIndex, uint8_t endIndex, uint8_t step, uint8_t totalSteps),
         getPalletColor(palletPS *pallet, uint8_t index),
-        *getColorPtr(palletPS *pallet, uint8_t index);
+        getShuffleIndex(palletPS *pallet, CRGB currentPalletVal),
+        *getColorPtr(palletPS *pallet, uint8_t index),
+        getPalletGradColor(palletPS *pallet, uint16_t num, uint16_t offset, uint16_t totalLength),
+        getPalletGradColor(palletPS *pallet, uint16_t num, uint16_t offset, uint16_t totalLength, uint16_t gradLength);
     
+    palletPS
+        makeSingleColorpallet(CRGB Color),
+        makeRandomPallet(uint8_t length);
+
+    static uint8_t
+        uint8One,
+        uint8Two,
+        uint8Three;
+    
+    static uint16_t
+        uint16One,
+        uint16Two;
+    
+    static CRGB
+        colorOne,
+        colorTwo;
 };
 
 #endif

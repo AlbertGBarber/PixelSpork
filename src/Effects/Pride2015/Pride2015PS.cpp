@@ -39,11 +39,11 @@ void Pride2015PS::update() {
         bri8 = (uint32_t)(((uint32_t)bri16) * brightdepth) / 65536;
         bri8 += (255 - brightdepth);
 
-        CRGB newcolor = CHSV(hue8, sat8, bri8);
+        newColor = CHSV(hue8, sat8, bri8);
 
         pixelnumber = segDrawUtils::getSegmentPixel(segmentSet, (numActiveLeds - 1) - i);
 
-        nblend(segmentSet.leds[pixelnumber], newcolor, 64);
+        nblend(segmentSet.leds[pixelnumber], newColor, 64);
     }
     showCheckPS();
 }

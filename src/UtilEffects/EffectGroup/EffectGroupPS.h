@@ -14,7 +14,7 @@
 
 #include "Effects/EffectBasePS.h"
 #ifndef NO_EFADE_PS
-#include "Utils/EffectFade/EffectFaderPS.h"
+#include "UtilEffects/EffectFade/EffectFaderPS.h"
 #endif
 
 //TODO:

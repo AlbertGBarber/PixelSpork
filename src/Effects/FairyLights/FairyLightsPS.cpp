@@ -22,10 +22,11 @@ FairyLightsPS::FairyLightsPS(SegmentSet &SegmentSet, uint8_t NumTwinkles, CRGB B
     segmentSet(SegmentSet), numTwinkles(NumTwinkles), tmode(Tmode)
     {    
         init(BGColor, Rate);
-        setSingleColor(segDrawUtils::randColor());
-        //although we set a single pallet, we want to choose the colors at random,
-        //so we set the pallet length to 0 (see pickColor()  )
-        pallet->length = 0;
+        //we make a random pallet of one color so that 
+        //if we switch to randMode 0 then we have a pallet to use
+        setSingleColor(colorUtilsPS::randColor()); 
+        //since we're choosing colors at random, set the randMode
+        randMode = 1;
 	}
 
 //destructor
@@ -54,7 +55,7 @@ void FairyLightsPS::genPixelSet(){
     cycleLimit = numTwinkles - 1; //the number of cycles to go through the whole array
     //pick locations for the pixels (local to the segment set)
     for (uint8_t i = 0; i < numTwinkles; i++) {
-        pixelSet[i] = random(numLEDS);
+        pixelSet[i] = random16(numLEDS);
     }
 
     delete[] colorSet;
@@ -71,7 +72,7 @@ void FairyLightsPS::setNumTwinkles(uint8_t newNumTwinkles){
 //binds it to the temp pallet to keep it in scope
 void FairyLightsPS::setSingleColor(CRGB Color){
     delete[] palletTemp.palletArr;
-    palletTemp = EffectUtilsPS::makeSingleColorpallet(Color);
+    palletTemp = palletUtilsPS::makeSingleColorpallet(Color);
     pallet = &palletTemp;
 }
 
@@ -92,6 +93,7 @@ void FairyLightsPS::update(){
 
     if( ( currentTime - prevTime ) >= *rate ) {
         prevTime = currentTime;
+        palletLength = pallet->length;
         //by default, we only touch the pixel at the current cycleNum
         //but for rainbow or gradient backgrounds that a cycling
         //you want to redraw the whole thing
@@ -113,26 +115,23 @@ void FairyLightsPS::update(){
                 modeZeroSet();
                 break;
         }
-        cycleNum = (cycleNum + 1) % (numTwinkles);
+        cycleNum = addmod8( cycleNum, 1, numTwinkles );//(cycleNum + 1) % (numTwinkles);
         showCheckPS();
     }
 }
 
 //set a color based on the size of the pallet
 void FairyLightsPS::pickColor(uint16_t pixelNum){
-    palletLength = pallet->length;
-    switch (palletLength) {
-        case 0: // 0 pallet length, no pallet, so set colors at random
-            color = segDrawUtils::randColor();
+    switch (randMode) {
+        case 0: // we're picking from a set of colors 
+            color = palletUtilsPS::getPalletColor(pallet, random8(palletLength));
             break;
-        case 1: // pallet length one means all the pixels must be the same color
-            color = palletUtilsPS::getPalletColor(pallet, 0);
-            break;
-        default: // we're picking from a set of colors
-            color = palletUtilsPS::getPalletColor(pallet, random(palletLength));
+        default: //(mode 1) set colors at random
+            color = colorUtilsPS::randColor();
             break;
     }
     //get the pixel color to account for any color modes
+    //this also fills in pixelInfo for the pixel location
     segDrawUtils::getPixelColor(segmentSet, &pixelInfo, color, colorMode, pixelNum);
     color = pixelInfo.color;
 }
@@ -251,7 +250,7 @@ void FairyLightsPS::modeTwoSet(){
     segDrawUtils::setPixelColor(segmentSet, pixelInfo.pixelLoc, *bgColor, bgColorMode, pixelInfo.segNum, pixelInfo.lineNum);
     
     //pick a new pixel to turn on
-    pixelSet[cycleNum] = random(segmentSet.numActiveSegLeds); // set a new pixel to turn on and put it in the array
+    pixelSet[cycleNum] = random16(segmentSet.numActiveSegLeds); // set a new pixel to turn on and put it in the array
     
     //to save space, we always use a loop to draw the pixels
     //we we're not redrawing, we set the limits to only do one cycle at the current cycleNum

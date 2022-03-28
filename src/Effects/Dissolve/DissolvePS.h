@@ -7,7 +7,7 @@
 //  --Add a set number of dissolves?, like CrossFadeCycle
 
 #include "Effects/EffectBasePS.h"
-#include "Effects/EffectUtils/EffectUtilsPS.h"
+#include "GeneralUtils/generalUtilsPS.h"
 
 //Morphs the segment set from one color to the next by setting each led one at a time at random
 //Includes various options for color selection (see modes) 

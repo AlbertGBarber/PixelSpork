@@ -2,7 +2,10 @@
 #define PoliceStrobePS_h
 
 #include "Effects/EffectBasePS.h"
-#include "Effects/EffectUtils/EffectUtilsPS.h"
+#include "GeneralUtils/generalUtilsPS.h"
+#include "MathUtils/mathUtilsPS.h"
+
+//TODO: add color pattern to strobe?
 
 //An effect to strobe a strip to mimic police lights, with some additional options
 //A strobe is a rapid blinking of light.

@@ -7,10 +7,27 @@ SegmentSet::SegmentSet(struct CRGB *segLeds, uint16_t segAllLeds, Segment **segm
 		maxSegLength = getMaxSegLength();	
 		segNumMaxSegLength = getsegNumMaxSegLength();
 		numActiveSegLeds = getNumActiveSegLeds();
+		resetGradVals();
+		
+		//create a default gradient pallet
+		CRGB *newPallet_arr = new CRGB[2];
+        newPallet_arr[0] = CRGB(230, 15, 230); //purple
+        newPallet_arr[1] = CRGB(0, 200, 0); //green
+        palletTemp = {newPallet_arr, 2};
+        gradPallet = &palletTemp;
+
+		offsetRate = &offsetRateOrig;
 	}
 
+//resets the gradient vars to their defaults
+void SegmentSet::resetGradVals(){
+	gradLenVal = numLeds;
+	gradLineVal = maxSegLength;
+	gradSegVal = numSegs;
+}
+
 //returns the maxium length across all the segments
-uint16_t  SegmentSet::getMaxSegLength(void){
+uint16_t SegmentSet::getMaxSegLength(void){
   uint16_t maxSegLength = 0;
   uint16_t totalLength;
   //walk across all the segments
@@ -25,7 +42,7 @@ uint16_t  SegmentSet::getMaxSegLength(void){
 }
 
 //returns the segment number that has the maxium length across all the segments
-uint16_t  SegmentSet::getsegNumMaxSegLength(void){
+uint16_t SegmentSet::getsegNumMaxSegLength(void){
   uint16_t totalLength;
   //walk across all the segments
   //if the segment length is equal to the maxSegLength, return it
@@ -157,7 +174,8 @@ bool SegmentSet::checkSegFreq(uint8_t freq, uint8_t num, boolean startAtFirst){
 	
 	//if the segment occurs at the freq, and it isn't off the end of the segmentSet
 	//then return true
-	if(testNum % freq == 0 && segNum < numSegs){
+	//testNum % freq
+	if( mod8(testNum, freq) == 0 && segNum < numSegs){
 		return true;
 	} else {
 		return false;

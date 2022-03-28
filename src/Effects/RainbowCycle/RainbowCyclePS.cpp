@@ -53,12 +53,12 @@ void RainbowCyclePS::update(){
         prevTime = currentTime;
         //prevents cycle count from overflowing by resetting it when the cycle loops
         //very important to keep the rainbow correct
-        cycleCount = (cycleCount + 1) % (maxCycleLength); 
+        cycleCount = addMod16PS( cycleCount, 1, maxCycleLength); //(cycleCount + 1) % (maxCycleLength); 
         ledCount = 0; //reset the ledCount, the total number of leds we've set in the current cycle
         //for each segment, set each pixel in the segment to the appropriate rainbow color
         //we must call getSegmentPixel(segmentSet, i, j) to account for reversed segments
         for (uint8_t i = 0; i < numSegs; i++) {
-            uint16_t totLen = segmentSet.getTotalSegLength(i);
+            totLen = segmentSet.getTotalSegLength(i);
             for(uint16_t j = 0; j < totLen; j++){
                 ledCount++;
                 //we always need to make a rainbow of length # of steps
@@ -75,7 +75,7 @@ void RainbowCyclePS::update(){
                 //note that maxCycleLength is added so that the value is never negative, 
                 //because Adruino % is weird with neg values
                 stepVal = maxCycleLength + cycleCount * stepDirect; 
-                CRGB color = segDrawUtils::wheel( ( ( (stepVal + ledCount) % length ) * 256 / length ) & 255 , 0, satur, value);
+                color = colorUtilsPS::wheel( ( addMod16PS(stepVal, ledCount, length ) * 256 / length ) & 255 , 0, satur, value);
 
                 //get the actual pixel address, and set it
                 //color mode is 0 because we are working out the rainbow color ourselves

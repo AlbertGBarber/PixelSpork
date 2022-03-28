@@ -72,19 +72,19 @@ void ShiftingRainbowSeaPS::update() {
         prevTime = currentTime;
 
         for (uint16_t i = 0; i < numPixels; i++) {
-            step = (cycleNum + offsets[i]) % 255; // where we are in the cycle of all the colors
-            color = segDrawUtils::wheel(step, 0, sat, val); //wheel since it's a rainbow
+            step = addMod16PS( cycleNum, offsets[i], 255); //(cycleNum + offsets[i]) % 255; // where we are in the cycle of all the colors
+            color = colorUtilsPS::wheel(step, 0, sat, val); //wheel since it's a rainbow
             segDrawUtils::setPixelColor(segmentSet, i, color, 0);
 
             //randomly increment the offset
             if (randomShift) {
                 if (random8(100) <= shiftThreshold) {
-                    offsets[i] = (offsets[i] + random8(1, shiftStep) ) % 255;
+                    offsets[i] = addMod16PS( offsets[i], random8(1, shiftStep), 255); //(offsets[i] + random8(1, shiftStep) ) % 255;
                 }
             }
         }
         //incrment the cycle, clamping it's max value to prevent any overflow
-        cycleNum = (cycleNum + 1) % 255;
+        cycleNum = addMod16PS(cycleNum, 1, 255); //(cycleNum + 1) % 255;
         showCheckPS();
     }
 }

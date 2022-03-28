@@ -32,7 +32,7 @@ void LarsonScannerPS::setColorMode(uint8_t colorMode, bool bgColorMode){
 //changes the color of the particles
 void LarsonScannerPS::setColor(CRGB color){
     delete[] pallet.palletArr;
-    pallet = EffectUtilsPS::makeSingleColorpallet(color);
+    pallet = palletUtilsPS::makeSingleColorpallet(color);
 }
 
 //builds the particle set for the type of scan

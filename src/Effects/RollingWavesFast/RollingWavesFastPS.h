@@ -2,7 +2,8 @@
 #define RollingWavesFastPS_h
 
 #include "Effects/EffectBasePS.h"
-#include "Effects/EffectUtils/EffectUtilsPS.h"
+#include "GeneralUtils/generalUtilsPS.h"
+#include "MathUtils/mathUtilsPS.h"
 
 //Repeats a set of waves along the segment set according to the input pattern and pallet
 //Each wave is a gradient that shifts towards black (off)

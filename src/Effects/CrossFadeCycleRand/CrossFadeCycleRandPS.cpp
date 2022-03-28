@@ -18,7 +18,7 @@ void CrossFadeCycleRandPS::reset(){
         infinite = true;
     }
     startColor = 0;
-    nextColor = segDrawUtils::randColor();
+    nextColor = colorUtilsPS::randColor();
 }
 
 
@@ -30,9 +30,8 @@ void CrossFadeCycleRandPS::update(){
     }
     if( !done && ( currentTime - prevTime ) >= *rate ) {
         prevTime = currentTime;
-        
-        CRGB newColor;
-        newColor = segDrawUtils::getCrossFadeColor(startColor, nextColor, currentStep, steps);
+
+        newColor = colorUtilsPS::getCrossFadeColor(startColor, nextColor, currentStep, steps);
         segDrawUtils::fillSegSetColor(segmentSet, newColor, 0);
 
         currentStep++;
@@ -40,7 +39,7 @@ void CrossFadeCycleRandPS::update(){
         if(currentStep == steps){
             currentStep = 0;
             startColor = nextColor;
-            nextColor = segDrawUtils::randColor();
+            nextColor = colorUtilsPS::randColor();
             cycleCount++;
         }
         showCheckPS();

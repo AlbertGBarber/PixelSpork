@@ -2,7 +2,8 @@
 #define ShiftingRainbowSeaPS_h
 
 #include "Effects/EffectBasePS.h"
-#include "Effects/EffectUtils/EffectUtilsPS.h"
+#include "GeneralUtils/generalUtilsPS.h"
+#include "MathUtils/mathUtilsPS.h"
 #include "Effects/ShiftingSea/Utils/ShiftingSeaUtilsPS.h"
 
 //Cycles each pixel of a segment set through a rainbow. Each pixel is given an random 

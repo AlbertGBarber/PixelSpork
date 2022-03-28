@@ -27,7 +27,7 @@ StreamerPS::StreamerPS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t ColorLe
 StreamerPS::StreamerPS(SegmentSet &SegmentSet, CRGB Color, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate):
     segmentSet(SegmentSet), fadeSteps(FadeSteps)
     {    
-        palletTemp = EffectUtilsPS::makeSingleColorpallet(Color);
+        palletTemp = palletUtilsPS::makeSingleColorpallet(Color);
         pallet = &palletTemp;
         setPalletAsPattern(ColorLength, Spacing);
         init(BgColor, Rate);
@@ -192,7 +192,7 @@ void StreamerPS::updateFade(){
         if(nextColor == currentColor){
             colorOut = nextColor;
         } else {
-            colorOut = segDrawUtils::getCrossFadeColor(currentColor, nextColor, blendStep, fadeSteps);
+            colorOut = colorUtilsPS::getCrossFadeColor(currentColor, nextColor, blendStep, fadeSteps);
         }
         segDrawUtils::setPixelColor(segmentSet, pixelInfo.pixelLoc, colorOut, 0, pixelInfo.segNum, pixelInfo.lineNum);
         currentColor = nextColor; //the start color of the current pixel is the target color of the next one
@@ -201,9 +201,9 @@ void StreamerPS::updateFade(){
     //each cycle we advance the blend step
     //if the blend step wraps back to zero, then a blend is finished
     //and we need to advance the cycleCount, so that all the streamer colors shift forwards
-    blendStep = (blendStep + 1) % fadeSteps;
+    blendStep = addmod8(blendStep, 1, fadeSteps); //(blendStep + 1) % fadeSteps;
     if(blendStep == 0){
-        cycleCount = (cycleCount + 1) % patternLength;
+        cycleCount = addMod16PS( cycleCount, 1, patternLength ); //(cycleCount + 1) % patternLength;
     }
 
 }
@@ -220,6 +220,6 @@ void StreamerPS::updateNoFade(){
         segDrawUtils::setPixelColor(segmentSet, pixelInfo.pixelLoc, nextColor, 0, pixelInfo.segNum, pixelInfo.lineNum);
     }
 
-    cycleCount = (cycleCount + 1) % patternLength;
+    cycleCount = addMod16PS( cycleCount, 1, patternLength );//(cycleCount + 1) % patternLength;
 
 }

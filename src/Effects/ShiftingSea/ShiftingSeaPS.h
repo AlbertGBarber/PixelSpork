@@ -5,7 +5,8 @@
 //  -- Add option to use a pattern based on a pallet?
 
 #include "Effects/EffectBasePS.h"
-#include "Effects/EffectUtils/EffectUtilsPS.h"
+#include "GeneralUtils/generalUtilsPS.h"
+#include "MathUtils/mathUtilsPS.h"
 #include "Utils/ShiftingSeaUtilsPS.h"
 
 //Cycles each pixel of a segment set through a pallet of colors. Each pixel is given an random 

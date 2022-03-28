@@ -2,7 +2,7 @@
 #define FairyLightsPS_h
 
 #include "Effects/EffectBasePS.h"
-#include "Effects/EffectUtils/EffectUtilsPS.h"
+#include "GeneralUtils/generalUtilsPS.h"
 
 //Colors a number of pixels on at a time, turning them off depending on the mode choosen
 //Meant to be similar to classic twinkling fairy lights
@@ -25,6 +25,7 @@
 
     //FairyLightsPS(mainSegments, 12, 0, 2, 80);
     //Will choose 12 pixels each cycle to set to random colors, using a blank backgound, 
+    //(note this sets randMode = 1)
     //Each cycle, a new pixel will be turned on, while an old is turned off (mode 2), with 80ms in between each cycle
 
 //Constructor Inputs:
@@ -46,6 +47,9 @@
 //Other Settings:
     //colorMode (default 0) -- sets the color mode for the random pixels (see segDrawUtils::setPixelColor)
     //bgColorMode (default 0) -- sets the color mode for the background (see segDrawUtils::setPixelColor)
+    //randMode (default 0) -- sets how colors will be picked
+    //                        0: Picks colors from the pallet
+    //                        1: Picks colors at random
     //fillBG (default false) -- sets the background to be redrawn every cycle, useful for bgColorModes that are dynamic
     //reDrawAll (default false) -- Will re-draw all the pixels each cycle, is slower than default, but you need this if you want to layer this effect with another
     //                             (is set true if fillBG is true)
@@ -71,6 +75,7 @@ class FairyLightsPS : public EffectBasePS {
             &segmentSet; 
         
         uint8_t
+            randMode = 0,
             cycleNum = 0,
             numTwinkles,
             tmode,

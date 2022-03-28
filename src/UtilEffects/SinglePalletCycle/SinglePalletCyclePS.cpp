@@ -121,7 +121,7 @@ void SinglePalletCyclePS::switchPallet(){
             for(uint8_t i = 0; i < palletLength; i++ ){
                 currentIndex = (i + stepDirect * (cycleNum + 1) ) + palletLength; //we add palletLength to prevent this from going negative
                 palletColorArr1[i] = palletUtilsPS::getPalletColor(&nextPallet, i);
-                palletColorArr2[i] = palletUtilsPS::getPalletColor(palletOrig, currentIndex % palletLength);
+                palletColorArr2[i] = palletUtilsPS::getPalletColor(palletOrig, mod8(currentIndex, palletLength) );
             }
             break;
         }
@@ -141,7 +141,7 @@ void SinglePalletCyclePS::switchPallet(){
             for(uint8_t i = loopStart; i != loopEnd; i += stepDirect ){
                 currentIndex = (i + stepDirect * (cycleNum + 1) ) + palletLength;
                 palletColorArr1[i] = palletUtilsPS::getPalletColor(&nextPallet, i);
-                palletColorArr2[i] = palletUtilsPS::getPalletColor(&nextPallet, currentIndex % palletLength);
+                palletColorArr2[i] = palletUtilsPS::getPalletColor(&nextPallet, mod8(currentIndex, palletLength) );
             }
 
             //randomize the start or end color
@@ -173,7 +173,7 @@ void SinglePalletCyclePS::switchPallet(){
             //the output is a pallet with a single color of length 1
             currentIndex = ( stepDirect * (cycleNum + 1) ) + palletLength;
             palletColorArr1[0] = palletUtilsPS::getPalletColor(&nextPallet, 0);
-            palletColorArr2[0] = palletUtilsPS::getPalletColor(palletOrig, currentIndex % palletLength);
+            palletColorArr2[0] = palletUtilsPS::getPalletColor(palletOrig, mod8(currentIndex, palletLength) );
             break;
         }
         case 4: {
@@ -209,7 +209,7 @@ void SinglePalletCyclePS::update(){
 
         //if we've finished the current blend (and hold time), we need to move onto the next one
         if(PB->blendEnd && !PB->holdActive){
-            cycleNum = (cycleNum + 1) % palletOrig->length;
+            cycleNum = addmod8( cycleNum, 1, palletOrig->length );
             switchPallet();
             PB->reset( &currentPallet, &nextPallet );
         }

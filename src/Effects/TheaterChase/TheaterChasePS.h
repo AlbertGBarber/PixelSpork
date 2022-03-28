@@ -2,7 +2,8 @@
 #define TheaterChasePS_h
 
 #include "Effects/EffectBasePS.h"
-#include "Effects/EffectUtils/EffectUtilsPS.h"
+#include "GeneralUtils/generalUtilsPS.h"
+#include "MathUtils/mathUtilsPS.h"
 
 //Does a classic theater chase (one color running on top of another with spaces in between)
 //You can customize the spacing between the running color spots, and the lengths of each of the sections

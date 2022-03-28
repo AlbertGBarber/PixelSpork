@@ -4,8 +4,11 @@
 #include "FastLED.h"
 #include "segmentSection.h"
 #include "segment.h"
+#include "Pallet_Stuff/palletPS.h"
 //TODO:
 //-- Scrap turning off segments, full behavior too hard to implement, current behavior is confusing
+//-- Add function somewhere to automatically sync a rainbow or gradent across multiple segment sets
+//-- Move direction settings to segDrawUtils?
 
 /*
 An explaination of segment structure:
@@ -125,9 +128,8 @@ An explaination of segment structure:
 						flipSegDirectionEvery(uint8_t freq, boolean startAtFirst): flips the direction of every freq segment, starting with the first segment according to startAtFirst
 						setsegDirectionEvery(uint8_t freq, boolean direction, boolean startAtFirst): sets the direction of every freq segment, starting with the first segment according to startAtFirst
 						setSegActive(uint8_t segNum, boolean state): turns a segment on or off, off segments are not drawn onto, and do not count towards the total segment length
-
 */
-
+//=====================================================================
 /*
 Example of a typical segmentSet definition:
 This segmentSet will consist of four segments with two sections each. 
@@ -152,91 +154,163 @@ Segment segment2 = { SIZE(sec2_array), sec2_array, true };
 const PROGMEM segmentSection sec3_array[] = { {25, 5}, {35, 5} };
 Segment segment3 = { SIZE(sec3_array), sec3_array, false };
 
-
 //define the segment array and the segmentSet (must inlucde the * and the &'s)
 Segment *segment_array[] = { &segment0 , &segment1, &segment2, &segment3 };
 SegmentSet segmentset0 = {leds, numLeds, SIZE(segment_array), segment_array};
 
 //Note: leds is your FastLED array of leds, numLeds is it's length
 
-//OTHER NOTES
-//A rainbowOffset is set for the entire segmentSet, since a number of color settings need the whole segmentSet
-//the default value is 0, you can manipulate this either manually, or by using RainbowOffsetCycle.h
+//Note that for the ESP family of chips (and possibly others) omit the const PROGMEM
+//from the segment definitions 
 
-//brightness sets the brightness of the segmentSet (relative to the overall strip brightness) 
+//That's it, segmentSet0 can be passed to whatever effects you choose.
+
+//==============================================================
+
+//Rainbows and Gradients
+//Many effects support the color modes used in segDrawUtils::getPixelColor() 
+//These modes allow you to easily set effects to use a rainbow of colors or a specific pallet gradient
+//The variables that control the rainbow/gradient are specific to each segmentSet:
+
+	gradPallet --The pallet of colors used for the gradient. Set this to what ever pallet you like.
+				 By default it is tied to palletTemp, which is a pallet of green and purple
+	gradLenVal -- The gradient length for color modes 1 & 7 (default val is the number of leds in the segment set)
+	gradSegVal -- The gradient length for color modes 3 & 9 (default val is the number of segments in the segmentSet)
+	gradLineVal -- The gradient length for color modes 4 & 10 (defaulted val is the length of the longest segment (maxSeglength) )\
+	rainbowVal -- (default 255) HSV style value for the rainbows drawn on the segmentSet
+	rainbowSatur -- (default 255) HSV style saturation for the rainbows drawn on the segmentSet
+
+The gradient lengths are seperated by mode to make it easy to switch between color modes
+By changing these vars you can change how the rainbow or gradient looks.
+
+You can reset to defaults by calling resetGradVals()
+
+Lets say you your using color mode 1, and you segmentSet is length 50.
+But you set gradLenVal to 100.
+This means that only half the rainbow or gradient would show up on the strip
+This is where offsets come in.
+
+Each segmentSet has a gradOffset variable. This is defaulted to 0.
+This sets a constant offset for rainbows and gradients, which is added to the color mode input var. 
+So, based on the previous example, lets say you set the offset to 50
+This means that the first pixel will show the color of the 50th step in the gradient
+Then the next will be the 51st and so forth. Overall the second half of the gradient will be shown.
+
+Now, this isn't super useful by itself, but what if we could shift the offset over time. That 
+way the whole gradient could cycle accross the strip.
+Helpfully this functionality is build right into all segmentSets (with some help from segDrawUtils)
+We can set up a constantly shifting offset using the following segmentSet vars:
+
+	offsetRateOrig -- (default 30ms) the base offset rate, this is tied to offsetRate on startup
+	*offsetRate -- (ms) The offset rate used for the segmentSet. This is pointer, which by default is bound to
+				   offsetRateOrig, but can be rebound to point to an external variable for easy rate control
+				   (ie offsetRate = &yourExternalRate)
+	runOffset (default false) -- Sets if the shifing offset should be active or not
+    offsetDirect (default true) -- The direction of the offset (false is reverse)
+
+So by setting an offsetRate and setting runOffset to true, we can have an automatically shifting offset
+The offset is updated in segDrawUtils using setGradOffset(), which is automatically called
+in any effect that has a colorMode option whenever a pixel color is updated (is using a gradient or rainbow mode)
+
+Calling the offset update function as part of an effect does limit the rate to that of the effect
+(you can't update it faster than the effect updates)
+So you can use SegOffsetCycle, which only sets the offset
+
+Please note that there's one offset, but several vars for the gradient length.
+Where the offset wraps back to 0 depends on the gradient length,
+so if you have multiple effects with different color modes on the same segment
+you will get weird behavior in the offset. This should not be common. And in the case you'd like to 
+do this, just use two segementSets.
+
+//================================================================
+
+//Brightness:
+//"brightness" sets the brightness of the segmentSet (relative to the overall strip brightness) 
 //255 -> same brightness as all the global FastLED brightness setting
 //DO NOT use this in effects, it is meant as a set-up once type of control
 //Note that effectFader will change this value during fades (but should reset to the original once done)
-              
-//That's it, segmentSet0 can be passed to whatever relevant animations you choose.
 */
 
-//note segAllLeds should be all the length value of the segLeds[] array
 class SegmentSet {
-	
 	public:
 		SegmentSet(struct CRGB *segLeds, uint16_t segAllLeds, Segment **segmentsArr, uint8_t numSegments);
 		//Object.*pointerToMember
 		//ObjectPointer->*pointerToMember
 		
-	  uint8_t
-	  	rainbowOffset = 0, //sets the offset used when calling the wheel function in segDrawUtils.h
-		  				   //this adjusts the start point of any rainbow drawn on the segmentSet
-						   //can also be controlled externally using RainbowOffsetCycle.h
-		rainbowVal = 255, //HSV style value for the rainbows drawn on the segmentSet
-		rainbowSatur = 255, //HSV style saturation for the rainbows drawn on the segmentSet
+	    uint8_t
+			rainbowVal = 255, 	//HSV style value for the rainbows drawn on the segmentSet
+			rainbowSatur = 255, //HSV style saturation for the rainbows drawn on the segmentSet
+	  		brightness = 255, 	//brightness of the segment (relative to the overall strip brightness) 
+		  				  		//255 = same brightness as strip
+						  		//DO NOT use this in effects, it is meant as a set-up once type of control
+						  		//Note that effectFader will change this value during fades (but should reset to the original once done)
+	    	segNumMaxSegLength,
+			numSegs;
 
-	  	brightness = 255, //brightness of the segment (relative to the overall strip brightness) 
-		  				  //255 = same brightness as strip
-						  //DO NOT use this in effects, it is meant as a set-up once type of control
-						  //Note that effectFader will change this value during fades (but should reset to the original once done)
-	    segNumMaxSegLength,
-		numSegs;
+		uint16_t
+			maxSegLength, //the length of the longest segment in the set
+			numLeds, //the total number of pixels in the set
+			numActiveSegLeds, //the number of pixels in all the active segments
+			getTotalSegLength(uint8_t segNum),
+			//getSectionPtr(uint8_t segNum),
+			getSecStartPixel(uint8_t segNum, uint8_t secNum),
+			getTotalNumSec(uint8_t segNum);
 		
-	  uint16_t
-		maxSegLength,
-		numLeds,
-		numActiveSegLeds,
-		getTotalSegLength(uint8_t segNum),
-		//getSectionPtr(uint8_t segNum),
-		getSecStartPixel(uint8_t segNum, uint8_t secNum),
-		getTotalNumSec(uint8_t segNum);
+	  	int16_t
+			getSecLength(uint8_t segNum, uint8_t secNum);
+
+		uint16_t
+			offsetRateOrig = 30, //default setting for color mode 5 and 6 of segDrawUtils::setPixelColor in ms
+			*offsetRate,
+			gradOffset = 0, 	//sets the offset used when calling the wheel function in segDrawUtils.h
+		  				   		//this adjusts the start point of any rainbow drawn on the segmentSet
+						   		//can also be controlled externally using RainbowOffsetCycle.h
+			gradLenVal, 		//used in color modes of segDrawUtils::setPixelColor
+			gradLineVal, 		//used in color modes of segDrawUtils::setPixelColor
+			gradSegVal; 		//used in color modes of segDrawUtils::setPixelColor
+								
+		unsigned long
+			offsetUpdateTime = 0; //the last time the offset value was automatically updated
 		
-	  int16_t
-		getSecLength(uint8_t segNum, uint8_t secNum);
-		
-	  bool
-		getSegDirection(uint8_t segNum),
-		getSegActive(uint8_t segNum);
+	  	bool
+		  	runOffset = false,
+			offsetDirect = true, 
+			getSegDirection(uint8_t segNum),
+			getSegActive(uint8_t segNum);
 	
-	  segmentSection* 
-		getSecArrPtr(uint8_t segNum);
+	  	segmentSection* 
+			getSecArrPtr(uint8_t segNum);
 		
-	  Segment
-		**segArr;
+	  	Segment
+			**segArr;
 
-	  Segment*
-	  	getSegPtr(uint8_t segNum);
+	  	Segment*
+	  		getSegPtr(uint8_t segNum);
 	  
-	  CRGB
-	  	*leds;
+	    CRGB
+	  	 	*leds; //pointer to the FastLed leds array
+		
+		palletPS //pallets for gradients
+			palletTemp,
+			*gradPallet;
 
-	  void
-		setAllSegDirection(boolean dirct),
-		setSegDirection(uint8_t segNum, boolean dirct),
-		flipSegDirectionEvery(uint8_t freq, boolean startAtFirst),
-		setsegDirectionEvery(uint8_t freq, boolean direction, boolean startAtFirst),
-		setBrightness(uint8_t newBrightness),
-		setSegActive(uint8_t segNum, boolean state);
+	  	void
+		  	resetGradVals(),
+			setAllSegDirection(boolean direction),
+			setSegDirection(uint8_t segNum, boolean dirct),
+			flipSegDirectionEvery(uint8_t freq, boolean startAtFirst),
+			setsegDirectionEvery(uint8_t freq, boolean direction, boolean startAtFirst),
+			setBrightness(uint8_t newBrightness),
+			setSegActive(uint8_t segNum, boolean state);
 	  
 	private:	
-	  uint16_t 
-	    getMaxSegLength(void),
-		getsegNumMaxSegLength(void),
-		getNumActiveSegLeds(void);
-		
-	  bool
-		checkSegFreq(uint8_t freq, uint8_t num, boolean startAtFirst);
+	  	uint16_t 
+			getMaxSegLength(void),
+			getsegNumMaxSegLength(void),
+			getNumActiveSegLeds(void);
+			
+		bool
+			checkSegFreq(uint8_t freq, uint8_t num, boolean startAtFirst);
 };
 
 #endif

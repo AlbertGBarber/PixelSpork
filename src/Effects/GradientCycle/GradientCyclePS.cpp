@@ -19,7 +19,7 @@ GradientCyclePS::GradientCyclePS(SegmentSet &SegmentSet, palletPS *Pallet, uint8
 GradientCyclePS::GradientCyclePS(SegmentSet &SegmentSet, uint8_t NumColors, uint8_t GradLength, uint16_t Rate):
     segmentSet(SegmentSet), gradLength(GradLength)
     {    
-        palletTemp = EffectUtilsPS::makeRandomPallet(NumColors);
+        palletTemp = palletUtilsPS::makeRandomPallet(NumColors);
         pallet = &palletTemp;
         setPalletAsPattern();
         init(Rate);
@@ -64,7 +64,7 @@ void GradientCyclePS::setPallet(palletPS* newPallet){
 //ie for a pallet length 5, the pattern would be 
 //{0, 1, 2, 3, 4}
 void GradientCyclePS::setPalletAsPattern(){
-    patternTemp = EffectUtilsPS::setPalletAsPattern(pallet);
+    patternTemp = generalUtilsPS::setPalletAsPattern(pallet);
     pattern = &patternTemp;
     setTotalEffectLength();
 }
@@ -96,17 +96,17 @@ void GradientCyclePS::update(){
        
         for (uint16_t i = 0; i < numPixels; i++) {
 
-            blendStep = (cycleNum + i) % gradLength; // what step we're on between the current and next color
+            blendStep = addmod8(cycleNum, i, gradLength);//(cycleNum + i) % gradLength; // what step we're on between the current and next color
             //If the blendStep is 0, then a gradient has finished, and we need to choose the next color
             if( blendStep == 0 ){
                 setnextColors(i);
             }
 
-            colorOut = segDrawUtils::getCrossFadeColor(currentColor, nextColor, blendStep, gradLength);
+            colorOut = colorUtilsPS::getCrossFadeColor(currentColor, nextColor, blendStep, gradLength);
             segDrawUtils::setPixelColor(segmentSet, i, colorOut, 0);
         }
 
-        cycleNum = (cycleNum + 1) % totalCycleLength;
+        cycleNum = addMod16PS( cycleNum, 1, totalCycleLength ); //(cycleNum + 1) % totalCycleLength
 
         showCheckPS();
     }
@@ -114,7 +114,7 @@ void GradientCyclePS::update(){
 
 //sets the current and next colors for the gradient based on the led number, and how many cycles we've gone through
 void GradientCyclePS::setnextColors(uint16_t pixelNum){
-    step = ( pixelNum + cycleNum ) % totalCycleLength; // where we are in the cycle of all the colors
+    step = addMod16PS(pixelNum, cycleNum, totalCycleLength); //( pixelNum + cycleNum ) % totalCycleLength; // where we are in the cycle of all the colors
     currentColorIndex = step / gradLength; // what color we've started from (integers always round down)
     //the color we're at based on the current index
     currentPattern = patternUtilsPS::getPatternVal(pattern, currentColorIndex);

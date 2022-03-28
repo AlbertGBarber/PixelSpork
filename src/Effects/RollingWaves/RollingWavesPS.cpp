@@ -19,7 +19,7 @@ RollingWavesPS::RollingWavesPS(SegmentSet &SegmentSet, palletPS *Pallet, CRGB BG
 RollingWavesPS::RollingWavesPS(SegmentSet &SegmentSet, uint8_t NumColors, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate):
     segmentSet(SegmentSet), gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)
     {    
-        palletTemp = EffectUtilsPS::makeRandomPallet(NumColors);
+        palletTemp = palletUtilsPS::makeRandomPallet(NumColors);
         pallet = &palletTemp;
         setPalletAsPattern();
         init(BGColor, Rate);
@@ -75,7 +75,7 @@ void RollingWavesPS::setPallet(palletPS* newPallet){
 //ie for a pallet length 5, the pattern would be 
 //{0, 1, 2, 3, 4}
 void RollingWavesPS::setPalletAsPattern(){
-    patternTemp = EffectUtilsPS::setPalletAsPattern(pallet);
+    patternTemp = generalUtilsPS::setPalletAsPattern(pallet);
     pattern = &patternTemp;
     setTotalEffectLength();
 }
@@ -130,7 +130,7 @@ void RollingWavesPS::setTrailMode(uint8_t newTrailMode){
             //The "head" is the wave center which is at halfGrad
             halfGrad = (gradLength)/2;
             firstHalfGrad = halfGrad;
-            blendStepAdjust = gradLength % 2;
+            blendStepAdjust = mod16PS(gradLength, 2);
             //if( (gradLength % 2) != 0){
                 //blendStepAdjust = 1;
             //}
@@ -165,7 +165,7 @@ void RollingWavesPS::update(){
        
         for (uint16_t i = 0; i < numPixels; i++) {
 
-            blendStep = (cycleNum + i) % blendLimit; // what step of the wave we're on (incl spacing)
+            blendStep = addmod8(cycleNum, i, blendLimit); //(cycleNum + i) % blendLimit; // what step of the wave we're on (incl spacing)
             //If the blendStep is 0, then a wave has finished, and we need to choose the next color
             if( blendStep == 0 ){
                 //the color we're at based on the current index
@@ -209,7 +209,7 @@ void RollingWavesPS::update(){
             segDrawUtils::setPixelColor(segmentSet, pixelInfo.pixelLoc, colorOut, 0, pixelInfo.segNum, pixelInfo.lineNum);
         }
 
-        cycleNum = (cycleNum + 1) % totalCycleLength;
+        cycleNum = addMod16PS( cycleNum, 1, totalCycleLength );//(cycleNum + 1) % totalCycleLength;
         showCheckPS();
     }
 }
@@ -236,7 +236,8 @@ CRGB RollingWavesPS::desaturate(CRGB color, uint8_t step, uint8_t totalSteps) {
 //sets the color for the passed in pixel number based on the cycleNum
 //note that the pixel number is local to the segment set, not the physical led number
 void RollingWavesPS::setNextColors(uint16_t segPixelNum){
-    currentColorIndex = ( ( segPixelNum + cycleNum ) % totalCycleLength ) / blendLimit; // what color we've started from (integers always round down)
+    //(segPixelNum + cycleNum) % totalCycleLength
+    currentColorIndex = addMod16PS( segPixelNum, cycleNum, totalCycleLength ) / blendLimit; // what color we've started from (integers always round down)
     //the color we're at based on the current index
     currentPattern = patternUtilsPS::getPatternVal(pattern, currentColorIndex);
     currentColor = palletUtilsPS::getPalletColor(pallet, currentPattern);

@@ -72,23 +72,23 @@ void ShiftingSeaPS::update() {
         prevTime = currentTime;
 
         for (uint16_t i = 0; i < numPixels; i++) {
-            step = (cycleNum + offsets[i]) % totalCycleLength; // where we are in the cycle of all the colors
-            gradStep = (cycleNum + offsets[i]) % gradLength; // what step we're on between the current and next color
+            step = addMod16PS( cycleNum, offsets[i], totalCycleLength); //(cycleNum + offsets[i]) % totalCycleLength; // where we are in the cycle of all the colors
+            gradStep = addMod16PS( cycleNum, offsets[i], gradLength); //(cycleNum + offsets[i]) % gradLength; // what step we're on between the current and next color
             currentColorIndex = step / gradLength; // what color we've started from (integers always round down)
             currentColor = palletUtilsPS::getPalletColor(pallet, currentColorIndex);
             nextColor = palletUtilsPS::getPalletColor(pallet, currentColorIndex + 1); // the next color, wrapping to the start of the pallet as needed
-            color = segDrawUtils::getCrossFadeColor(currentColor, nextColor, gradStep, gradLength);
+            color = colorUtilsPS::getCrossFadeColor(currentColor, nextColor, gradStep, gradLength);
             segDrawUtils::setPixelColor(segmentSet, i, color, 0);
 
             // randomly increment the offset
             if (randomShift) {
                 if (random8(100) <= shiftThreshold) {
-                    offsets[i] = (offsets[i] + random8(1, shiftStep)) % totalCycleLength;
+                    offsets[i] = addMod16PS( offsets[i], random8(1, shiftStep), totalCycleLength ); //(offsets[i] + random8(1, shiftStep)) % totalCycleLength;
                 }
             }
         }
         // incrment the cycle, clamping it's max value to prevent any overflow
-        cycleNum = (cycleNum + 1) % totalCycleLength;
+        cycleNum = addMod16PS( cycleNum, 1, totalCycleLength); //(cycleNum + 1) % totalCycleLength;
         showCheckPS();
     }
 }

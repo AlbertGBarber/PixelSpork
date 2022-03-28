@@ -6,7 +6,7 @@
 //    Code is similar. Convert this to take a pallet?
 
 #include "Effects/EffectBasePS.h"
-#include "Effects/EffectUtils/EffectUtilsPS.h"
+#include "GeneralUtils/generalUtilsPS.h"
 
 //A direct port of pride2015 by Mark Kriegsman (https://gist.github.com/kriegsman)
 //This effect draws rainbows with an ever-changing,
@@ -57,6 +57,9 @@ class Pride2015PS : public EffectBasePS {
             hue8,
             brightdepth,
             msmultiplier;
+        
+        CRGB 
+            newColor;
 
 };
 

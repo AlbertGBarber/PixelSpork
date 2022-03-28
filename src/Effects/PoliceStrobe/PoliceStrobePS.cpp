@@ -69,7 +69,7 @@ void PoliceStrobePS::update(){
         //spilt the strip in to halves
         numPixels = segmentSet.numActiveSegLeds;
         //we add (numPixels % 2) to account for odd length strips ((numPixels % 2) is either 1 or 0)
-        halfLength = numPixels/2 + (numPixels % 2);
+        halfLength = numPixels/2 + mod16PS(numPixels, 2);
 
         //if we have not reached the number of pulses we need to do a pulse
         if(pulseCount <= numPulses && !pause){
@@ -119,7 +119,7 @@ void PoliceStrobePS::update(){
             }
         } else {
             //if we've finished a set of pulses we need to decide what to do next
-            colorNum = (colorNum + 1) % pallet->length;
+            colorNum = addMod16PS(colorNum, 1, pallet->length); //(colorNum + 1) % pallet->length;
             //after choosing the next color, if we're back at the first color
             //then we've pulsed all the colors in the current cycle
             //and we need to set the next pulse mode flags
@@ -174,13 +174,13 @@ void PoliceStrobePS::pickColor(){
         colorTemp = palletUtilsPS::getPalletColor( pallet, colorNum );
     } else if(randMode == 1 && pulseCount <= 1) {
         //choose a completely random color
-        colorTemp = segDrawUtils::randColor();
+        colorTemp = colorUtilsPS::randColor();
     } else {
         //choose a color randomly from the pattern (making sure it's not the same as the current color)
         if(pulseCount <= 1) {
             randGuess = random8(pallet->length);
             if(randGuess == prevGuess){
-                randGuess = (prevGuess + 1) % pallet->length;
+                randGuess = addmod8(prevGuess, 1, pallet->length);//(prevGuess + 1) % pallet->length;
             }
             prevGuess = randGuess;
         }

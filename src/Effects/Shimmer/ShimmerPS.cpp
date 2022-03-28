@@ -3,8 +3,11 @@
 ShimmerPS::ShimmerPS(SegmentSet &SegmentSet, uint16_t Rate):
     segmentSet(SegmentSet)
     {    
-        setSingleColor(segDrawUtils::randColor());
-        pallet->length = 0; //we want to pick random colors for all the pixels (see pickColor())
+        //we make a random pallet of one color so that 
+        //if we switch to randMode 0 then we have a pallet to use
+        setSingleColor(colorUtilsPS::randColor()); 
+        //since we're choosing colors at random, set the randMode
+        randMode = 1;
         init(Rate);
 	}
 
@@ -34,7 +37,7 @@ void ShimmerPS::init(uint16_t Rate){
 //creates an pallet of length 1 containing the passed in color
 void ShimmerPS::setSingleColor(CRGB Color){
     delete[] palletTemp.palletArr;
-    palletTemp = EffectUtilsPS::makeSingleColorpallet(Color);
+    palletTemp = palletUtilsPS::makeSingleColorpallet(Color);
     pallet = &palletTemp;
 }
 
@@ -45,19 +48,16 @@ void ShimmerPS::setPallet(palletPS *newPallet){
 
 //set a color based on the size of the pallet
 void ShimmerPS::pickColor(uint16_t pixelNum){
-    uint8_t palletLength = pallet->length;
-    switch (palletLength) {
-        case 0: // 0 pallet length, no pallet, so set colors at random
-            color = segDrawUtils::randColor();
+    switch (randMode) {
+        case 0: // we're picking from a set of colors 
+            color = palletUtilsPS::getPalletColor(pallet, random8(palletLength));
             break;
-        case 1: // pallet length one means all the pixels must be the same color
-            color = palletUtilsPS::getPalletColor(pallet, 0);
-            break;
-        default: // we're picking from a set of colors
-            color = palletUtilsPS::getPalletColor(pallet, random(palletLength));
+        default: //(mode 1) set colors at random
+            color = colorUtilsPS::randColor();
             break;
     }
     //get the pixel color to account for any color modes
+    //this also fills in pixelInfo for the pixel location
     segDrawUtils::getPixelColor(segmentSet, &pixelInfo, color, colorMode, pixelNum);
     color = pixelInfo.color;
 }
@@ -73,6 +73,7 @@ void ShimmerPS::update(){
         prevTime = currentTime;
 
         numActiveLeds = segmentSet.numActiveSegLeds;
+        palletLength = pallet->length;
         for (uint16_t i = 0; i < numActiveLeds; i++) {
             pickColor(i);
             shimmerVal = 255 - random8(shimmerMin, shimmerMax);

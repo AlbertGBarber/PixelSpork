@@ -71,8 +71,8 @@ void GlimmerPS::setupPixelArray(){
 void GlimmerPS::fillPixelArray(){
     step = 0;
     for(uint16_t i = 0; i < numPixels; i++){
-        totFadeSteps[i] = random(fadeMin, fadeMax); //target fade amount between the bgColor and the glimmer color
-        fadePixelLocs[i] = random(numActiveLeds);
+        totFadeSteps[i] = random8(fadeMin, fadeMax); //target fade amount between the bgColor and the glimmer color
+        fadePixelLocs[i] = random16(numActiveLeds);
     }
 }
 
@@ -145,7 +145,7 @@ void GlimmerPS::update(){
 
         //increment the step, we mod by fadeSteps + 1 because we want to
         //hit fadeSteps, which will finish the fade fully
-        step = (step + 1) % (fadeSteps + 1);
+        step = addmod8(step, 1, fadeSteps + 1);//(step + 1) % (fadeSteps + 1);
 
         //if we have two pixel sets then there's always going to be a set fading in
         //but if there's only one set, then that's no longer true
@@ -179,7 +179,7 @@ void GlimmerPS::update(){
 
             //determine final transition color for the fade, note that we work this out dynamically
             //to account for any color modes or changes in fadeSteps
-            targetColor = segDrawUtils::getCrossFadeColor(pixelInfo.color, color, totFadeSteps[i], fadeMax);
+            targetColor = colorUtilsPS::getCrossFadeColor(pixelInfo.color, color, totFadeSteps[i], fadeMax);
 
             //color is used as the start color for the fade, which is stored in pixelInfo (see above)
             color = pixelInfo.color;
@@ -193,7 +193,7 @@ void GlimmerPS::update(){
             } 
             
             //the final output color, blended towards the target color by the number of steps
-            color = segDrawUtils::getCrossFadeColor(color, targetColor, step, fadeSteps);
+            color = colorUtilsPS::getCrossFadeColor(color, targetColor, step, fadeSteps);
 
             segDrawUtils::setPixelColor(segmentSet, pixelInfo.pixelLoc, color, 0, pixelInfo.segNum, pixelInfo.lineNum);
         }

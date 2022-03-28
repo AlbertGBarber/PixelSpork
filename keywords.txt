@@ -26,13 +26,17 @@ RandomColorsLowRam		KEYWORD1
 # Namespace
 #######################################
 
-segDrawUtils 	KEYWORD1
-palletUtilsPS	KEYWORD1
+segDrawUtils 			KEYWORD1
+palletUtilsPS			KEYWORD1
+colorUtilsPS			KEYWORD1
+mathUtilsPS			KEYWORD1
 
 #######################################
 # Methods and Functions
 #######################################	
 
+addMod16PS 		        KEYWORD1
+mod16PS 		        KEYWORD1
 
 #######################################
 # Constants

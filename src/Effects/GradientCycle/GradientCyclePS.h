@@ -2,7 +2,8 @@
 #define GradientCyclePS_h
 
 #include "Effects/EffectBasePS.h"
-#include "Effects/EffectUtils/EffectUtilsPS.h"
+#include "GeneralUtils/generalUtilsPS.h"
+#include "MathUtils/mathUtilsPS.h"
 
 //Moves a set of color gradients along the segment set
 //the gradients can be set to follow a pattern, use a pallet, or set randomly
