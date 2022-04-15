@@ -28,20 +28,19 @@ uint8_t* patternUtilsPS::getValPtr(patternPS *pattern, uint16_t index){
 
 //randomizes the order of Vals in a pattern
 void patternUtilsPS::shuffle(patternPS *pattern){
-    uint8_t randVal, tempVal, randIndex;
-    uint8_t loopStart = pattern->length - 1;
+    uint16One = pattern->length - 1; //loop starting val
     // Start from the last element and swap
     // one by one. We don't need to run for
     // the first element that's why i > 0
-    for(int i = loopStart; i > 0; i--){
+    for(uint16_t i = uint16One; i > 0; i--){
         // Pick a random index from 0 to i
-        randIndex = random(i + 1);
+        uint16Two = random16(i + 1); //randIndex
         // Swap arr[i] with the element
         // at random index
-        tempVal = getPatternVal(pattern, i);
-        randVal = getPatternVal(pattern, randIndex);
-        setVal(pattern, tempVal, randIndex);
-        setVal(pattern, randVal, i);
+        uint8One = getPatternVal(pattern, uint16Two); //get the value at the random index
+        uint8Two = getPatternVal(pattern, i); //get the value of the current index
+        setVal(pattern, uint8Two, uint16Two); //swap the random index to the current one
+        setVal(pattern, uint8One, i); //swap current index to the random one
     }
 }
 
@@ -50,11 +49,12 @@ void patternUtilsPS::shuffle(patternPS *pattern){
 //if it does we'll just advance the index by one and return that
 //this stops the same color from being chosen again (assuming the pattern doesn't repeat)
 uint8_t patternUtilsPS::getShuffleIndex(patternPS *pattern, uint8_t currentPatternVal){
-    uint16_t indexGuess = random16(pattern->length);
-    uint8_t guessVal = patternUtilsPS::getPatternVal(pattern, indexGuess);
-    if( guessVal == currentPatternVal ){
-        return patternUtilsPS::getPatternVal(pattern, indexGuess + 1);
+    uint16One = random16(pattern->length); //guess an index
+    uint8One = patternUtilsPS::getPatternVal(pattern, uint16One); //get pattern val at the guessed index
+    //check if the guessed val is the same as the one passed in
+    if( uint8One == currentPatternVal ){
+        return patternUtilsPS::getPatternVal(pattern, uint16One + 1);
     } else {
-        return guessVal;
+        return uint8One;
     }
 }

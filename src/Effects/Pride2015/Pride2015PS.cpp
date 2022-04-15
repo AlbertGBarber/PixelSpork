@@ -26,9 +26,12 @@ void Pride2015PS::update() {
     sHue16 += deltams * beatsin88(400, 5, 9);
     brightnesstheta16 = sPseudotime;
 
-    numActiveLeds = segmentSet.numActiveSegLeds;
+    //do the subtraction here so we don't need to do it each loop
+    //@getSegmentPixel
+    //The loop limit is adjusted up by one
+    numActiveLeds = segmentSet.numActiveSegLeds - 1;
 
-    for (uint16_t i = 0; i < numActiveLeds; i++) {
+    for (uint16_t i = 0; i <= numActiveLeds; i++) {
         hue16 += hueinc16;
         hue8 = hue16 / 256;
 
@@ -41,7 +44,7 @@ void Pride2015PS::update() {
 
         newColor = CHSV(hue8, sat8, bri8);
 
-        pixelnumber = segDrawUtils::getSegmentPixel(segmentSet, (numActiveLeds - 1) - i);
+        pixelnumber = segDrawUtils::getSegmentPixel(segmentSet, numActiveLeds - i);
 
         nblend(segmentSet.leds[pixelnumber], newColor, 64);
     }

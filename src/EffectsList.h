@@ -25,3 +25,4 @@
 #include "Effects/PoliceStrobe/PoliceStrobePS.h"
 #include "Effects/StrobeSeg/StrobeSegPS.h"
 #include "Effects/Fire2012/Fire2012PS.h"
+#include "Effects/ColorWaves/ColorWavesPS.h"

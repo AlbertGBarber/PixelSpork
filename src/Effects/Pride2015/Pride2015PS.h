@@ -1,10 +1,6 @@
 #ifndef Pride2015PS_h
 #define Pride2015PS_h
 
-//TODO:
-// -- Look at ColorWavesWithPalettes : https://gist.github.com/kriegsman/8281905786e8b2632aeb
-//    Code is similar. Convert this to take a pallet?
-
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
 

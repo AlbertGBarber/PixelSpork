@@ -21,6 +21,14 @@ namespace patternUtilsPS{
         *getValPtr(patternPS *pattern, uint16_t index),
         getShuffleIndex(patternPS *pattern, uint8_t currentPatternVal);
     
+    static uint8_t
+        uint8One,
+        uint8Two;
+    
+    static uint16_t
+        uint16One,
+        uint16Two;
+    
 };
 
 #endif

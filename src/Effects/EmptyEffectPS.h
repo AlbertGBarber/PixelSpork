@@ -8,7 +8,7 @@
 #include "GeneralUtils/generalUtilsPS.h"
 //#include "MathUtils/mathUtilsPS.h"
 
-//an empty effect, copy it to use as a base to bulid effects
+//an empty effect, copy it to use as a base to build effects
 class EmptyEffectPS : public EffectBasePS {
     public:
         EmptyEffectPS(SegmentSet &SegmentSet, uint16_t Rate);  
