@@ -1,5 +1,5 @@
-#ifndef Fire2012PS_h
-#define Fire2012PS_h
+#ifndef Fire2012SegPS_h
+#define Fire2012SegPS_h
 
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
@@ -42,7 +42,7 @@
     //CRGB firePallet_arr[] = { CRGB::Red, CRGB{255, 143, 0}, CRGB{255, 255, 100} };
     //palletPS firePallet = {firePallet_arr, SIZE(firePallet_arr)};
 
-    //Fire2012PS(mainSegments, &firePallet, 0, 50, 90, true, 70);
+    //Fire2012SegPS(mainSegments, &firePallet, 0, 50, 90, true, 70);
     //Does a blended fire using the firePallet with a blank background
     //cooling is set to 50 and sparking is set to 90
     //The fire updates at 70ms
@@ -61,11 +61,11 @@
 //Functions:
     //reset() -- Resets the effect, use this if you change any segment lengths
     //update() -- updates the effect
-class Fire2012PS : public EffectBasePS {
+class Fire2012SegPS : public EffectBasePS {
     public:
-        Fire2012PS(SegmentSet &SegmentSet, palletPS *Pallet, CRGB BgColor, uint8_t Cooling, uint8_t Sparking, bool Blend, uint16_t Rate);  
+        Fire2012SegPS(SegmentSet &SegmentSet, palletPS *Pallet, CRGB BgColor, uint8_t Cooling, uint8_t Sparking, bool Blend, uint16_t Rate);  
         
-        ~Fire2012PS();
+        ~Fire2012SegPS();
 
         SegmentSet 
             &segmentSet; 

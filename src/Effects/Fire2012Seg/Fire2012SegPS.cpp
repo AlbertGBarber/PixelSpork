@@ -1,6 +1,6 @@
-#include "Fire2012PS.h"
+#include "Fire2012SegPS.h"
 
-Fire2012PS::Fire2012PS(SegmentSet &SegmentSet, palletPS *Pallet, CRGB BgColor, uint8_t Cooling, uint8_t Sparking, bool Blend, uint16_t Rate):
+Fire2012SegPS::Fire2012SegPS(SegmentSet &SegmentSet, palletPS *Pallet, CRGB BgColor, uint8_t Cooling, uint8_t Sparking, bool Blend, uint16_t Rate):
     segmentSet(SegmentSet), pallet(Pallet), cooling(Cooling), sparking(Sparking), blend(Blend)
     {    
         //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
@@ -11,14 +11,14 @@ Fire2012PS::Fire2012PS(SegmentSet &SegmentSet, palletPS *Pallet, CRGB BgColor, u
         reset();
 	}
 
-Fire2012PS::~Fire2012PS(){
+Fire2012SegPS::~Fire2012SegPS(){
     delete[] heat;
     delete[] heatSegStarts;
 }
 
 //resets the effect and creates new heat arrays
 //call this if you change segment sets or sections
-void Fire2012PS::reset(){
+void Fire2012SegPS::reset(){
     delete[] heat;
     delete[] heatSegStarts;
 
@@ -55,7 +55,7 @@ void Fire2012PS::reset(){
 //We use a single array heat to manage multiple segments by splitting it into sections of lengths equal to the segment lengths
 //We store the start indexes of the segments in the heatSegStarts array (created in reset())
 //Within a fire colors taken from a pallet and blended together to create a smooth flame (see setPixelHeatColorPallet() for info)
-void Fire2012PS::update(){
+void Fire2012SegPS::update(){
     currentTime = millis();
 
     if( ( currentTime - prevTime ) >= *rate ) {
@@ -142,7 +142,7 @@ void Fire2012PS::update(){
 //Since blending takes a bit of processing power
 //it can be turned off using the blend flag to speed up the effect
 //this creates a more blocky fire
-void Fire2012PS::setPixelHeatColorPallet(uint16_t pixelLoc, uint8_t temperature) {
+void Fire2012SegPS::setPixelHeatColorPallet(uint16_t pixelLoc, uint8_t temperature) {
 
     //scale the temperature to match it to a pallet index
     colorIndex = scale8(temperature, palletLength);
@@ -195,7 +195,7 @@ void Fire2012PS::setPixelHeatColorPallet(uint16_t pixelLoc, uint8_t temperature)
 /* 
 //Original implementation of the setPixelHeatColorPallet()
 //Works exactly the same, but the scaling is done manually
-void Fire2012PS::setPixelHeatColorPalletOrig(uint16_t pixelLoc, uint8_t temperature) {
+void Fire2012SegPS::setPixelHeatColorPalletOrig(uint16_t pixelLoc, uint8_t temperature) {
 
     // determine which color the heat belongs to and blend it
     for (uint8_t i = 0; i <= palletLength; i++) {

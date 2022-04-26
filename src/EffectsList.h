@@ -24,5 +24,7 @@
 #include "Effects/LarsonScanner/LarsonScannerPS.h"
 #include "Effects/PoliceStrobe/PoliceStrobePS.h"
 #include "Effects/StrobeSeg/StrobeSegPS.h"
-#include "Effects/Fire2012/Fire2012PS.h"
+#include "Effects/Fire2012Seg/Fire2012SegPS.h"
 #include "Effects/ColorWaves/ColorWavesPS.h"
+#include "Effects/RainSeg/RainSegPS.h"
+#include "Effects/RainSegLine/RainSegLinePS.h"

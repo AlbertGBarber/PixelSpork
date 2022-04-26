@@ -11,11 +11,16 @@ void particleUtilsPS::resetParticle(particlePS *particle){
     particle->lastUpdateTime = 0;
 }
 
+//resets a given particle in a particle set back to it's starting position and sets it's update time to 0
+void particleUtilsPS::resetParticle(particleSetPS *particleSet, uint8_t partNum){
+    resetParticle(particleSet->particleArr[partNum]);
+}
+
 //resets a set of particles back to their starting position and sets their update time to 0
 void particleUtilsPS::resetParticleset(particleSetPS *particleSet){
     particleSetLength = particleSet->length;
     for(uint8_t i = 0; i < particleSetLength; i++ ){
-        resetParticle( particleSet->particleArr[i] );
+        resetParticle(particleSet, i);
     }
 }       
 
@@ -56,15 +61,27 @@ void particleUtilsPS::randomizeParticleSet(particleSetPS *particleSet, uint16_t 
                                        uint8_t trailRange, uint8_t bounce, uint8_t colorIndex, bool randColor){
     particleSetLength = particleSet->length;
     for(uint8_t i = 0; i < particleSetLength; i++ ){
-        setParticleSetPosition(particleSet, i, maxPosition, true);
-        setParticleSetDirection(particleSet, i, direction);
-        setParticleSetSpeed(particleSet, i, baseSpeed, speedRange);
-        setParticleSetSize(particleSet, i, size, sizeRange);
-        setParticleSetTrailType(particleSet, i, trailType);
-        setParticleSetTrailSize(particleSet, i, trailSize, trailRange);
-        setParticleSetBounce(particleSet, i, bounce);
-        setParticleSetColor(particleSet, i, colorIndex, randColor);
+        randomizeParticle(particleSet, i, maxPosition, direction, baseSpeed, speedRange, size, 
+                          sizeRange, trailType, trailSize, trailRange, bounce, colorIndex, randColor);
     }
+}
+
+//Randomizes the properties of a particle (that is a member of a particle set)
+//The option names are the same as used in the individual setParticle functions and do the same things
+//ie maxPosition will be passed to setParticleSetPositions() as the maxPosition input
+//See each of the individual functions for what the options do
+void particleUtilsPS::randomizeParticle(particleSetPS *particleSet, uint8_t partNum, uint16_t maxPosition, uint8_t direction, uint16_t baseSpeed, 
+                                       uint16_t speedRange, uint16_t size, uint16_t sizeRange, uint8_t trailType, uint8_t trailSize, 
+                                       uint8_t trailRange, uint8_t bounce, uint8_t colorIndex, bool randColor){
+
+    setParticleSetPosition(particleSet, partNum, maxPosition, true);
+    setParticleSetDirection(particleSet, partNum, direction);
+    setParticleSetSpeed(particleSet, partNum, baseSpeed, speedRange);
+    setParticleSetSize(particleSet, partNum, size, sizeRange);
+    setParticleSetTrailType(particleSet, partNum, trailType);
+    setParticleSetTrailSize(particleSet, partNum, trailSize, trailRange);
+    setParticleSetBounce(particleSet, partNum, bounce);
+    setParticleSetColor(particleSet, partNum, colorIndex, randColor);
 }
 
 //sets a single property for all the particles in a set
@@ -154,7 +171,7 @@ void particleUtilsPS::setParticleSetSize(particleSetPS *particleSet, uint8_t par
     if(size == 0){
         size = 1;
     }
-    particleSet->particleArr[partNum]->size = size + random(range + 1);
+    particleSet->particleArr[partNum]->size = size + random16(range + 1);
 }
 
 //sets the type of a particle's trail (see particle.h for trail types)
@@ -228,7 +245,7 @@ void particleUtilsPS::setParticleSetTrailSize(particleSetPS *particleSet, uint8_
     if( trailSize == 0 ){
         trailSize = 1;
     }
-    particleSet->particleArr[partNum]->trailSize = trailSize + random(range + 1);
+    particleSet->particleArr[partNum]->trailSize = trailSize + random8(range + 1);
 }
 
 //sets a particle's bounc ebehavior on the passed in bounce value
@@ -263,6 +280,29 @@ void particleUtilsPS::deleteAllParticles(particleSetPS *particleSet){
     for(uint8_t i = 0; i < particleSetLength; i++ ){
         deleteParticle(particleSet, i);
     }
+}
+
+//for gettint particle trail colors
+//returns a blended color towards the target color based on the input steps and totalSteps
+//step == totalSteps is fully blended
+//Note that we offset totalSteps by 1, so we never reach full blend (since it would produce background pixels)
+//the maximum brightness is scaled by dimPow
+//dimPow 0 will produce a normal linear gradient, but for more shimmery waves we can dial the bightness down
+//dimpow of 80 gives a good effect
+//The body of the particle will still be drawn at full brightness since it's drawn seperately 
+CRGB particleUtilsPS::getTrailColor(CRGB color, CRGB targetColor, uint8_t step, uint8_t totalSteps, int8_t dimPow) {
+    
+    //dimRatio = ( (uint16_t)step * dimPow ) / (totalSteps + 1) ;
+    
+    //alternate dimming formula for more aggressive dimming (set dimPow between -127 and 127)
+    //basically subtracts a term from the step value to simiulate an increase in dimming
+    //the subtraction term decreases as we get closer to totalSteps, so we don't bug out and over run
+    dimRatio = ( (uint16_t)step * (255 - dimPow) ) / (totalSteps + 1) + dimPow; 
+
+    //ratio = dim8_video(ratio); 
+    //dimRatio = triwave8( 128 * (uint16_t)step / (totalSteps) );
+
+    return colorUtilsPS::getCrossFadeColor(color, targetColor, dimRatio);
 }
 
 /* uint8_t particleUtilsPS::getTrailBitwisePack(bool noTrails, bool oneTrail, bool twoTrail, bool revTrail, bool infTrail){

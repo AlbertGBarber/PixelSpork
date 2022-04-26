@@ -86,7 +86,7 @@
     //BgColor -- The background color used for the effect
     //numParticles -- The number of particles that will be created for the effect
     //Direction -- The direction of the particle's motion (pass in any number > 1 to set it randomly)
-    //baseSpeed -- The maximum speed of the particles
+    //baseSpeed -- The minimum speed of the particles
     //speedRange -- The amount the speed may vary up from the base speed ( ie baseSpeed + random(range) )
     //size -- The minimum size of the particles (min value 1)
     //sizeRange -- The amount the size can vary from the base size (ie size + random(range))
@@ -200,6 +200,8 @@ class ParticlesPS : public EffectBasePS {
             dimRatio;
 
         uint16_t 
+            speed,
+            updateRate = 0, //initilized to 0 to garrentee an initial update
             position,
             size,
             modAmmount,
@@ -209,8 +211,6 @@ class ParticlesPS : public EffectBasePS {
             getTrailLedLoc(bool trailDirect, uint8_t trailPixelNum, uint16_t modAmmount);
 
         unsigned long
-            speed,
-            updateRate = 0, //initilized to 0 to garrentee an initial update
             currentTime,
             prevTime = 0;
         

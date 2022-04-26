@@ -142,7 +142,7 @@ void ParticlesPS::update(){
 
             //if enough time has passed, we need to move the particle
             movePart = ( ( currentTime - particlePtr->lastUpdateTime ) >= speed );
-            //if the particle needs to move, move it are record the time
+            //if the particle needs to move, move it and record the time
             if(movePart) {
                 particlePtr->lastUpdateTime = currentTime;
                 moveParticle(particlePtr);
@@ -174,7 +174,7 @@ void ParticlesPS::update(){
             }
 
             //if we have trails, draw them
-            //if it has one, we draw the trail in front of the particle first, followed by the one behind it
+            //if it has two, we draw the trail in front of the particle first, followed by the one behind it
             //this gets the correct look when bouncing with two trails
             if (trailType != 0 && trailType < 4) {
                 //draw a trail, extending positively or negativly, dimming with each step, wrapping according to the modAmmount
@@ -277,36 +277,14 @@ void ParticlesPS::setTrailColor(uint16_t trailLedLocation, uint8_t trailPixelNum
     //get the physical pixel location and color
     segDrawUtils::getPixelColor(segmentSet, &pixelInfo, colorOut, colorMode, trailLedLocation);
     //blend the color into the background according to where we are in the trail
-    pixelInfo.color = desaturate(pixelInfo.color, trailPixelNum, trailSize);
+    colorEnd = segDrawUtils::getPixelColor(segmentSet, pixelInfo.pixelLoc, *bgColor, bgColorMode, pixelInfo.segNum, pixelInfo.lineNum);
+    pixelInfo.color = particleUtilsPS::getTrailColor(pixelInfo.color, colorEnd, trailPixelNum, trailSize, dimPow);
     //output the color
     if(blend){
         segmentSet.leds[pixelInfo.pixelLoc] += pixelInfo.color;
     } else {
         segmentSet.leds[pixelInfo.pixelLoc] = pixelInfo.color;
     }                 
-}
-
-//returns a blended color towards the background color based on the input steps and totalSteps
-//step == totalSteps is fully blended
-//Note that we offset totalSteps by 1, so we never reach full blend (since it would produce background pixels)
-//the maximum brightness is scaled by dimPow
-//dimPow 0 will produce a normal linear gradient, but for more shimmery waves we can dial the bightness down
-//dimpow of 80 gives a good effect
-//The body of the particle will still be drawn at full brightness since it's drawn seperatly 
-CRGB ParticlesPS::desaturate(CRGB color, uint8_t step, uint8_t totalSteps) {
-    
-    colorEnd = segDrawUtils::getPixelColor(segmentSet, pixelInfo.pixelLoc, *bgColor, bgColorMode, pixelInfo.segNum, pixelInfo.lineNum);
-    //dimRatio = ( (uint16_t)step * dimPow ) / (totalSteps + 1) ;
-    
-    //alternate dimming formula for more aggressive dimming (set dimPow between -127 and 127)
-    //basically subtracts a term from the step value to simiulate an increase in dimming
-    //the subtraction term decreases as we get closer to totalSteps, so we don't bug out and over run
-    dimRatio = ( (uint16_t)step * (255 - dimPow) ) / (totalSteps + 1) + dimPow; 
-
-    //ratio = dim8_video(ratio); 
-    //dimRatio = triwave8( 128 * (uint16_t)step / (totalSteps) );
-
-    return colorUtilsPS::getCrossFadeColor(color, colorEnd, dimRatio);
 }
 
 //returns the position of a trail pixel(local to the segment) based on the trail direction, and the mod ammount

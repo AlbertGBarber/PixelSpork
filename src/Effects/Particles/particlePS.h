@@ -43,4 +43,26 @@ struct particlePS {
   unsigned long lastUpdateTime = 0; //the last time the particle was moved
 } ;
 
+//a struct for holding an array of particles
+//most of the time you are manipulating these rather than individual particles directly
+//most of the utility functions in particleUtilsPS.h focus on working with particles in particleSets
+//to declare particleSet:
+    //particlePS *particleArr[] = { &particle1, &particle2, etc}; //can leave this blank and fill it in using buildParticleSet() below
+    //particleSetPS particleSet = {particleArr, SIZE(particleArr)};
+struct particleSetPS {
+    particlePS **particleArr; //pointer to an array of particle pointers
+    uint8_t length; //the size of the particle array (num of particles)
+
+    //returns the pointer to a particle at the specified index
+    particlePS *getParticle(uint8_t index){
+        return particleArr[index % length];
+    };
+
+    //sets particle in the array to the passed in particle at the specified index
+    void setParticle(particlePS *particle, uint8_t index){
+        particleArr[index % length] = particle;
+    };
+
+};
+
 #endif
