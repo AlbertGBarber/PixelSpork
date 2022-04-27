@@ -2,6 +2,7 @@
 #define RainSegLinePS_h
 
 //TODO: -- Try to make core common functions for this and RainSegPS?
+//      -- Add alternating direction mode?
 
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"

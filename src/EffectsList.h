@@ -25,6 +25,7 @@
 #include "Effects/PoliceStrobe/PoliceStrobePS.h"
 #include "Effects/StrobeSeg/StrobeSegPS.h"
 #include "Effects/Fire2012Seg/Fire2012SegPS.h"
+#include "Effects/Fire2012SegLine/Fire2012SegLinePS.h"
 #include "Effects/ColorWaves/ColorWavesPS.h"
 #include "Effects/RainSeg/RainSegPS.h"
 #include "Effects/RainSegLine/RainSegLinePS.h"

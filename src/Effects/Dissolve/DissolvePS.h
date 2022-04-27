@@ -13,7 +13,7 @@
 //Includes various options for color selection (see modes) 
 //Colors can be choosen using a pallet and pattern, or selected randomly
 //The effect can be accelerated to set more leds at once by adjusting spawnRateInc
-//Once a morpoh is finished, the effect can be set to pause for a period using the hangTime variable
+//Once a morph is finished, the effect can be set to pause for a period using the hangTime variable
 
 //Example calls: 
     //uint8_t pattern_arr = {0, 1, 4};
