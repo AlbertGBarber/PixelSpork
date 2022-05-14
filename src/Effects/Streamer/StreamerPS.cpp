@@ -27,7 +27,7 @@ StreamerPS::StreamerPS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t ColorLe
 StreamerPS::StreamerPS(SegmentSet &SegmentSet, CRGB Color, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate):
     segmentSet(SegmentSet), fadeSteps(FadeSteps)
     {    
-        palletTemp = palletUtilsPS::makeSingleColorpallet(Color);
+        palletTemp = palletUtilsPS::makeSingleColorPallet(Color);
         pallet = &palletTemp;
         setPalletAsPattern(ColorLength, Spacing);
         init(BgColor, Rate);

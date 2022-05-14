@@ -41,6 +41,11 @@ struct particlePS {
   //the below varaibles are generally not set manually, and are used to keep track of the state of the particle
   uint16_t position = startPosition; //the current position of the particle in the segmentSet (not the actual location on the strip!)
   unsigned long lastUpdateTime = 0; //the last time the particle was moved
+
+  //for decaying particles
+  //life is in ms
+  uint16_t life = 3000;
+  uint16_t maxLife = life;
 } ;
 
 //a struct for holding an array of particles

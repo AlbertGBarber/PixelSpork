@@ -86,10 +86,11 @@
     //The total number of strobe cycles will be equal to the pallet length (because newColor was not set)
     //The background will not be filled after each pulse cycle
 
-    //StrobeSegPS(ringSegments, CRGB:Blue, CRGB::Red, 5, 0, false, true, false, true, false, 40);
+    //StrobeSegPS(ringSegments, CRGB(CRGB:Blue), CRGB(CRGB::Red), 5, 0, false, true, false, true, false, 40);
     //Will do a set of strobes in blue and strobe modes 1 and 3.
     //The background is red, there are 5 pulses per strobe with 40ms between each
     //The pause time is 0
+    //!!If using pre-build FastLED colors you need to pass them as CRGB( *color code* )
 
     //StrobeSegPS(ringSegments, 4, 0, 3, 0, false, true, false, false, false, 100);
     //setNewColorBool(true); (sets newColor flag)

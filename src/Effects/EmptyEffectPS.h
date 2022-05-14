@@ -1,9 +1,6 @@
 #ifndef EmptyEffectPS_h
 #define EmptyEffectPS_h
 
-//#include "SegmentFiles.h"
-//#include "palletFiles.h"
-
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
 //#include "MathUtils/mathUtilsPS.h"

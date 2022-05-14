@@ -305,6 +305,13 @@ CRGB particleUtilsPS::getTrailColor(CRGB color, CRGB targetColor, uint8_t step, 
     return colorUtilsPS::getCrossFadeColor(color, targetColor, dimRatio);
 }
 
+//a quick function for getting direction multipliers based on a bool
+//returns either 1 or -1
+//uses the convention that true is forward (1) and false is backwards (-1)
+int8_t particleUtilsPS::getDirectStep(bool direction){
+    return direction - !direction;
+}
+
 /* uint8_t particleUtilsPS::getTrailBitwisePack(bool noTrails, bool oneTrail, bool twoTrail, bool revTrail, bool infTrail){
     uint8_t val;
     if(noTrails){

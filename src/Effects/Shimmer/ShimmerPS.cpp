@@ -37,7 +37,7 @@ void ShimmerPS::init(uint16_t Rate){
 //creates an pallet of length 1 containing the passed in color
 void ShimmerPS::setSingleColor(CRGB Color){
     delete[] palletTemp.palletArr;
-    palletTemp = palletUtilsPS::makeSingleColorpallet(Color);
+    palletTemp = palletUtilsPS::makeSingleColorPallet(Color);
     pallet = &palletTemp;
 }
 

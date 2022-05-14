@@ -19,16 +19,16 @@
 //There is also a shorthand call to do the effect with a pallet of randomly choosen colors
 
 //Example call:
-//   ColorWavesPS(mainSegments, pallet) -- That's it
-//   ColorWavesPS(mainSegments, numColors) -- does the effect with a pallet or random colors (numColors = pallet length)
-
+//   ColorWavesPS(mainSegments, pallet, Rate) -- That's it
+//   ColorWavesPS(mainSegments, numColors, Rate) -- does the effect with a pallet or random colors (numColors = pallet length)
+//   Rate should be 80+, but may depend on brightness and your strip length
 //Functions:
 //   call update() to update the effect
 class ColorWavesPS : public EffectBasePS {
     public:
-        ColorWavesPS(SegmentSet &SegmentSet, palletPS *Pallet);  
+        ColorWavesPS(SegmentSet &SegmentSet, palletPS *Pallet, uint16_t Rate);  
 
-        ColorWavesPS(SegmentSet &SegmentSet, uint8_t numColors);
+        ColorWavesPS(SegmentSet &SegmentSet, uint8_t numColors, uint16_t Rate);
 
         ~ColorWavesPS();
 
@@ -76,7 +76,7 @@ class ColorWavesPS : public EffectBasePS {
             newColor;
         
         void
-            init();
+            init(uint16_t Rate);
 };
 
 #endif

@@ -45,7 +45,7 @@ void TwinklePS::init(uint8_t FadeInSteps, uint8_t FadeOutSteps, CRGB BgColor, ui
 //creates an pallet of length 1 containing the passed in color
 void TwinklePS::setSingleColor(CRGB Color){
     delete[] palletTemp.palletArr;
-    palletTemp = palletUtilsPS::makeSingleColorpallet(Color);
+    palletTemp = palletUtilsPS::makeSingleColorPallet(Color);
     pallet = &palletTemp;
 }
 

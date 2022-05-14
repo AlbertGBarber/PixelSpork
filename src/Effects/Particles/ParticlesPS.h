@@ -189,8 +189,7 @@ class ParticlesPS : public EffectBasePS {
         //most of these vars are storage for particle properties
         int8_t
             trailDirectionAdj,
-            directStep,
-            getDirectStep(bool direction);
+            directStep;
 
         uint8_t
             trailType,

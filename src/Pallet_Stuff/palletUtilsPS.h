@@ -27,7 +27,8 @@ namespace palletUtilsPS{
         getPalletGradColor(palletPS *pallet, uint16_t num, uint16_t offset, uint16_t totalLength, uint16_t gradLength);
     
     palletPS
-        makeSingleColorpallet(CRGB Color),
+        makeSingleColorPallet(CRGB Color),
+        makeSingleColorPallet(CRGB Color, uint8_t length),
         makeRandomPallet(uint8_t length);
 
     static uint8_t

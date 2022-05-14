@@ -9,11 +9,12 @@ StrobeSegPS::StrobeSegPS(SegmentSet &SegmentSet, palletPS *Pallet, CRGB BgColor,
 	}
 
 //constructor for single color
+//!!If using pre-build FastLED colors you need to pass them as CRGB( *color code* )
 StrobeSegPS::StrobeSegPS(SegmentSet &SegmentSet, CRGB Color, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, 
                         bool SegEach, bool SegDual, bool SegLine, bool SegLineDual, bool SegAll, uint16_t Rate):
     segmentSet(SegmentSet), numPulses(NumPulses), pauseTime(PauseTime), segEach(SegEach), segDual(SegDual), segLineDual(SegLineDual), segLine(SegLine), segAll(SegAll)
     {    
-        palletTemp = palletUtilsPS::makeSingleColorpallet(Color);
+        palletTemp = palletUtilsPS::makeSingleColorPallet(Color);
         pallet = &palletTemp;
         init(BgColor, Rate);
 	}

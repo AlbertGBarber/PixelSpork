@@ -27,7 +27,7 @@ StreamerFastPS::StreamerFastPS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t
 StreamerFastPS::StreamerFastPS(SegmentSet &SegmentSet, CRGB Color, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint16_t Rate):
     segmentSet(SegmentSet)
     {    
-        palletTemp = palletUtilsPS::makeSingleColorpallet(Color);
+        palletTemp = palletUtilsPS::makeSingleColorPallet(Color);
         pallet = &palletTemp;
         setPalletAsPattern(ColorLength, Spacing);
         init(BgColor, Rate);

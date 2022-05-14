@@ -254,8 +254,7 @@ class RainSegPS : public EffectBasePS {
             *trailEndColors, //used to store the last colors of each trail, so the background color can be set
             colorEnd,
             colorOut,
-            colorTemp,
-            desaturate(CRGB color, CRGB targetColor, uint8_t step, uint8_t totalSteps);
+            colorTemp;
         
         void
             init(uint16_t Rate, CRGB BgColor),

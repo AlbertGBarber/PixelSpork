@@ -38,7 +38,7 @@ RainSegPS::RainSegPS(SegmentSet &SegmentSet, CRGB Color, CRGB BgColor, bool BgPr
         sizeRange = 0;
         trailRange = 0;
         //make a single colored pallet
-        palletTemp = palletUtilsPS::makeSingleColorpallet(Color);
+        palletTemp = palletUtilsPS::makeSingleColorPallet(Color);
         pallet = &palletTemp;
         init(Rate, BgColor);
 	}
@@ -55,7 +55,7 @@ RainSegPS::RainSegPS(SegmentSet &SegmentSet, CRGB Color, CRGB BgColor, bool BgPr
     {    
         trailType = 6; //we're picking from the boolean trail options, this is indicated by trailType 6
         //make a single colored pallet
-        palletTemp = palletUtilsPS::makeSingleColorpallet(Color);
+        palletTemp = palletUtilsPS::makeSingleColorPallet(Color);
         pallet = &palletTemp;
         init(Rate, BgColor);
 	}
@@ -252,7 +252,6 @@ void RainSegPS::update(){
                     partTrailSize = particlePtr->trailSize; //the length of the trail(s) of the particle (only applies if the pixel has a trail)
                     
                     colorOut = palletUtilsPS::getPalletColor(pallet, particlePtr->colorIndex);
-
                     //calculate the maximum position the particle can have before all of it is off the segment
                     totPartSize = partTrailSize + partSize;
 
@@ -287,7 +286,7 @@ void RainSegPS::update(){
 
                     //if we have 4 trails or more, we are in infinite trails mode, so we don't touch the previous leds
                     //otherwise we need to set the last pixel in the trail to the background
-                    if (partTrailType < 4 && (!fillBG || blend)) {
+                    if (partTrailType < 4 && (!fillBG && !blend)) {
                         //get the physical pixel location and the color it's meant to be
                         //if we don't have trails, we just need to turn off the first trail pixel
                         //otherwise we need to switch the pixel at the end of the trail
@@ -434,7 +433,7 @@ void RainSegPS::drawParticlePixel(uint16_t trailLedLocation, uint8_t trailPixelN
 uint16_t RainSegPS::getTrailLedLoc(bool trailDirect, uint8_t trailPixelNum, uint16_t maxPosition) { 
     //get the multiplier for the direction (1 or -1)
     //sets if the trail will be drawn forwards or backwards
-    trailDirectionAdj = trailDirect - !trailDirect;
+    trailDirectionAdj = particleUtilsPS::getDirectStep(trailDirect);
 
     //since we draw the body of the particle behind the lead pixel, 
     //we need to offset rear trails by the body size

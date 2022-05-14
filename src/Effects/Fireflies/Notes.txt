@@ -1,0 +1,5 @@
+Might want to use noise to move the fireflys
+https://github.com/atuline/FastLED-Demos/tree/master/inoise8_mover
+
+The look at?:
+https://github.com/atuline/FastLED-Demos/blob/master/ripples/ripples.ino

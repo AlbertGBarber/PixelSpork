@@ -9,12 +9,24 @@
 #include "pins_arduino.h"
 #endif
 
+//returns the maximum of the two inputs
 #if !defined(max)
 #define max(a, b) ((a) > (b) ? (a) : (b))
 #endif
 
+//returns the minimum of the two inputs
 #if !defined(min)
 #define min(a, b) ((a) < (b) ? (a) : (b))
+#endif
+
+//Digital unsigned subtraction macro. if result <0, then => 0. Otherwise, take on fixed value.
+#if !defined(qsubd)
+#define qsubd(x, b)  ((x>b)?b:0) 
+#endif
+
+//Analog Unsigned subtraction macro. if result <0, then => 0
+#if !defined(qsuba)                          
+#define qsuba(x, b)  ((x>b)?x-b:0)   
 #endif
 
 #if !defined(SIZE)

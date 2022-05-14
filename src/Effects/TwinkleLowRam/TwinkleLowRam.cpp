@@ -47,7 +47,7 @@ void TwinkleLowRamPS::setPallet(palletPS *newPallet){
 //creates an pallet of length 1 containing the passed in color
 void TwinkleLowRamPS::setSingleColor(CRGB Color){
     delete[] palletTemp.palletArr;
-    palletTemp = palletUtilsPS::makeSingleColorpallet(Color);
+    palletTemp = palletUtilsPS::makeSingleColorPallet(Color);
     pallet = &palletTemp;
 }
 

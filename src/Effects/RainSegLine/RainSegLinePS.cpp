@@ -38,7 +38,7 @@ RainSegLinePS::RainSegLinePS(SegmentSet &SegmentSet, CRGB Color, CRGB BgColor, b
         sizeRange = 0;
         trailRange = 0;
         //make a single colored pallet
-        palletTemp = palletUtilsPS::makeSingleColorpallet(Color);
+        palletTemp = palletUtilsPS::makeSingleColorPallet(Color);
         pallet = &palletTemp;
         init(Rate, BgColor);
 	}
@@ -55,7 +55,7 @@ RainSegLinePS::RainSegLinePS(SegmentSet &SegmentSet, CRGB Color, CRGB BgColor, b
     {    
         trailType = 6; //we're picking from the boolean trail options, this is indicated by trailType 6
         //make a single colored pallet
-        palletTemp = palletUtilsPS::makeSingleColorpallet(Color);
+        palletTemp = palletUtilsPS::makeSingleColorPallet(Color);
         pallet = &palletTemp;
         init(Rate, BgColor);
 	}

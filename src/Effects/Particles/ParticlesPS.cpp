@@ -149,11 +149,11 @@ void ParticlesPS::update(){
             }
 
             //get the multiplier for the direction (1 or -1)
-            directStep = getDirectStep(direction);
+            directStep = particleUtilsPS::getDirectStep(direction);
 
             //if we have 4 trails or more, we are in infinite trails mode, so we don't touch the previous leds
             //otherwise we need to set the last pixel in the trail to the background
-            if (trailType < 4 && (!fillBG || blend) ) {
+            if (trailType < 4 && (!fillBG && !blend) ) {
                 //if we don't have trails, we just need to turn off the first trail pixel
                 //otherwise we need to switch the pixel at the end of the trail
                 if (trailType == 0 || trailType == 3) {
@@ -230,13 +230,6 @@ void ParticlesPS::update(){
     }
 }
 
-//a quick function for getting direction multipliers based on a bool
-//returns either 1 or -1
-//uses the convention that true is forward (1) and false is backwards (-1)
-int8_t ParticlesPS::getDirectStep(bool direction){
-    return direction - !direction;
-}
-
 //Moves the particle according to it's direction
 //also handles bounce behavior
 //when bouncing, the whole particle body is reversed, so it's head position is 
@@ -245,7 +238,7 @@ void ParticlesPS::moveParticle(particlePS *particlePtr) {
     position = particlePtr->position;
 
     //get the multiplier for the direction (1 or -1)
-    directStep = getDirectStep(direction);
+    directStep = particleUtilsPS::getDirectStep(direction);
 
     //get the next position of the particle 
     //if we're bouncing, then the particle can step outside of the strip
@@ -293,7 +286,7 @@ void ParticlesPS::setTrailColor(uint16_t trailLedLocation, uint8_t trailPixelNum
 uint16_t ParticlesPS::getTrailLedLoc(bool trailDirect, uint8_t trailPixelNum, uint16_t modAmmount) { 
     //get the multiplier for the direction (1 or -1)
     //sets if the trail will be drawn forwards or backwards
-    trailDirectionAdj = getDirectStep(trailDirect);
+    trailDirectionAdj = particleUtilsPS::getDirectStep(trailDirect);
 
     //since we draw the body of the particle behind the lead pixel, 
     //we need to offset rear trails by the body size

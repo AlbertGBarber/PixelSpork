@@ -17,11 +17,12 @@
 //If you have any questions about how it works, direct them to Mark Kriegsman
 
 //Example call:
-//   Pride2015PS(mainSegments) -- That's it
+//   Pride2015PS(mainSegments, Rate) -- That's it
+//   The Rate should be 60 or greater depending on your strip length
 //   call update() to update the effect
 class Pride2015PS : public EffectBasePS {
     public:
-        Pride2015PS(SegmentSet &SegmentSet);  
+        Pride2015PS(SegmentSet &SegmentSet, uint16_t Rate);  
 
         SegmentSet 
             &segmentSet; 

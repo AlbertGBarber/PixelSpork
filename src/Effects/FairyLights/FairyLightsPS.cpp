@@ -72,7 +72,7 @@ void FairyLightsPS::setNumTwinkles(uint8_t newNumTwinkles){
 //binds it to the temp pallet to keep it in scope
 void FairyLightsPS::setSingleColor(CRGB Color){
     delete[] palletTemp.palletArr;
-    palletTemp = palletUtilsPS::makeSingleColorpallet(Color);
+    palletTemp = palletUtilsPS::makeSingleColorPallet(Color);
     pallet = &palletTemp;
 }
 

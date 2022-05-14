@@ -69,6 +69,9 @@ namespace particleUtilsPS{
                         bool oneTrail, bool twoTrail, bool revTrail, bool infTrail),
         setTrailRand(particleSetPS *particleSet, uint8_t partNum, bool noTrails, 
                     bool oneTrail, bool twoTrail, bool revTrail, bool infTrail);
+                
+    int8_t
+        getDirectStep(bool direction);
 
     //for setting colors of particles       
     CRGB
