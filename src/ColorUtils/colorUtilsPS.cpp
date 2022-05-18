@@ -5,7 +5,9 @@ using namespace colorUtilsPS;
 
 //returns a random color
 CRGB colorUtilsPS::randColor(){
-    return CRGB( random8(), random8(), random8() );
+    return CHSV( random8(), 255, 255 );
+    //return CRGB( random(256), random(256), random(256) );
+    //return CRGB( random8(), random8(), random8() );
 }
 
 //Input a value 0 to 255 to get a color value.
