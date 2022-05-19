@@ -31,6 +31,7 @@
 #include "Effects/RainSeg/RainSegPS.h"
 #include "Effects/RainSegLine/RainSegLinePS.h"
 #include "Effects/Pacifica/PacificaPS.h"
+#include "Effects/PacificaSegLine/PacificaSegLinePS.h"
 #include "Effects/Lava/LavaPS.h"
 #include "Effects/Plasma/PlasmaPS.h"
 #include "Effects/Noise16/Noise16PS.h"

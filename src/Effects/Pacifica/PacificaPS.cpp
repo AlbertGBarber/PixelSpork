@@ -6,26 +6,26 @@ PacificaPS::PacificaPS(SegmentSet &SegmentSet, uint16_t Rate):
         //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
         bindSegPtrPS();
         bindClassRatesPS();
-        CRGB BgColor = CRGB( 2, 6, 10);
+        CRGB BgColor = CRGB( 2, 6, 10 );
         //CRGB BgColor = CRGB(10, 0, 0); //for lava colors
         bindBGColorPS();
         //We can pre-allocate the number of gradient steps between the pallet colors
         //This speeds up execution
-        totBlendLength = numSteps * pacificaPallet1.length;
+        totBlendLength = numSteps * pacificaPal1PS.length;
 	}
 
 void PacificaPS::update(){
     currentTime = millis();
 
     //if it's time to update the effect, do so
-    if( ( currentTime - prevTime ) >= *rate ) {
+    deltams = currentTime - prevTime;
+    if( ( deltams ) >= *rate ) {
         prevTime = currentTime;
 
         numSegs = segmentSet.numSegs;
 
         // Increment the four "color index start" counters, one for each wave layer.
         // Each is incremented at a different speed, and the speeds vary over time.
-        deltams = currentTime - prevTime;
         speedfactor1 = beatsin16(3, 179, 269);
         speedfactor2 = beatsin16(4, 179, 269);
         deltams1 = (deltams * speedfactor1) / 256;
@@ -38,13 +38,12 @@ void PacificaPS::update(){
 
         //Clear out the LED array to a dim background blue-green
         segDrawUtils::fillSegSetColor(segmentSet, *bgColor, 0);
-        //fill_solid( leds, NUM_LEDS, CRGB( 2, 6, 10));
 
         //Render each of four layers, with different scales and speeds, that vary over time
-        doOneLayer( &pacificaPallet1, sCIStart1, beatsin16( 3, 11 * 256, 14 * 256), beatsin8( 10, 70, 130), 0-beat16( 301) ); //10
-        doOneLayer( &pacificaPallet2, sCIStart2, beatsin16( 4,  6 * 256,  9 * 256), beatsin8( 17, 40, 80), beat16( 401) ); //17
-        doOneLayer( &pacificaPallet3, sCIStart3, 6 * 256, beatsin8( 9, 10, 38 ), 0-beat16(503)); //9
-        doOneLayer( &pacificaPallet3, sCIStart4, 5 * 256, beatsin8( 8, 10, 28 ), beat16(601)); //8
+        doOneLayer( &pacificaPal1PS, sCIStart1, beatsin16( 3, 11 * 256, 14 * 256 ), beatsin8( 10, 70, 130 ), 0-beat16(301) ); //10
+        doOneLayer( &pacificaPal2PS, sCIStart2, beatsin16( 4,  6 * 256,  9 * 256) , beatsin8( 17, 40, 80 ), beat16(401) ); //17
+        doOneLayer( &pacificaPal3PS, sCIStart3, 6 * 256, beatsin8( 9, 10, 38 ), 0-beat16(503)); //9
+        doOneLayer( &pacificaPal3PS, sCIStart4, 5 * 256, beatsin8( 8, 10, 28 ), beat16(601)); //8
 
         //Add brighter 'whitecaps' where the waves lines up more
         addWhitecaps();
@@ -82,7 +81,7 @@ void PacificaPS::doOneLayer(palletPS *pallet, uint16_t cistart, uint16_t wavesca
     }
 }
 
-// Add extra 'white' to areas where the four layers of light have lined up brightly
+//Add extra 'white' to areas where the four layers of light have lined up brightly
 void PacificaPS::addWhitecaps(){
     basethreshold = beatsin8( 9, 55, 65);
     wave = beat8( 7 );

@@ -120,7 +120,7 @@ void PrideWPalSegLine2PS::update(){
         numSteps = gradLength * pallet->length;
 
         //For each segment line do the following:
-        for (uint8_t i = 0; i < numLines; i++) {
+        for (uint16_t i = 0; i < numLines; i++) {
             
             //update the brightness wave for each line
             brightnesstheta16 += briDirectMult * brightnessthetainc16;
@@ -151,7 +151,7 @@ void PrideWPalSegLine2PS::update(){
                 newColor = CHSV(hue8, sat8, bri8);
             }
                     
-            for (uint16_t j = 0; j < numSegs; j++) {
+            for (uint8_t j = 0; j < numSegs; j++) {
                 //get the physical pixel location based on the line and seg numbers
                 pixelnumber = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, j, numLines - i - 1);
                     

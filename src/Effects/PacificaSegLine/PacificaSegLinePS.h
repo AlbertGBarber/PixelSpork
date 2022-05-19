@@ -1,32 +1,42 @@
-#ifndef PacificaPS_h
-#define PacificaPS_h
+#ifndef PacificaSegLinePS_h
+#define PacificaSegLinePS_h
 
 //TODO: -- Add lava pallet as an option?
 
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
 //The source of the pallets for the effect
-#include "pacificaPalletPS.h"
+#include "Effects/Pacifica/pacificaPalletPS.h"
 
 /*
 
-  "Pacifica"
+ "Pacifica" (segLine version)
   Gentle, blue-green ocean waves.
   By Mark Kriegsman and Mary Corey March.
   For Dan.
 
-
-An effect based on the pacific code here: https://github.com/FastLED/FastLED/blob/master/examples/Pacifica/Pacifica.ino
+An effect based on the pacific code here: https://github.com/FastLED/FastLED/blob/master/examples/PacificaSegLine/PacificaSegLine.ino
 A gentle effect of blue-green ocean waves rolling across the strip
+This version of Pacifica differs from the normal because we draw the colors along seg lines
+This produces uniform waves that shift across the whole segment set
+
 The effect runs as is; there's no customization
 Almost all of the code is directly copied from the original linked above
+(with modifications by me to work with segment sets)
 If you have any questions about how it works, please direct them to Mark Kriegsman
 
-The pallets can be found in "pacificaPallet.h"
+The pallets can be found in "Effects/Pacifica/pacificaPallet.h"
 
-Recommend brightness >80 and rate > 20ms
+Recommend brightness > 80 and rate > 20ms
 For low brightness values I recommend turing off dithering using
 FastLED.setDither(0);
+
+I've made the addWhiteCaps() function optional. You can turn it on by setting addWhiteCaps true
+It brightnes the areas where waves meet. 
+For all segment shapes except matricies the code will now do this automatically.
+So you should only need to turn addWhiteCaps() on for matricies
+I've also added a constant thresholdMax value that caps the white cap light level
+To prevent them from getting too white
 
 The effect is a bit computationally heavy
 
@@ -34,28 +44,44 @@ Technically, I've made the background color a pointer so you can bind it externa
 You probably shouldn't do this tho, b/c it heavily influences the effect
 
 Example calls: 
-    PacificaPS(mainSegments, 40);
-    That's it, updates at 40ms
+    PacificaSegLinePS(ringSegments, 40);
+    //That's it, updates at 40ms
+    //(addWhiteCaps is default false)
+
+    PacificaSegLinePS(ringSegments, true, 40);
+    //Sets addWhiteCaps to true, updates at 40ms
 
 Functions:
     update() -- updates the effect 
 
+Other Settings:
+    addWhiteCaps (default false) -- If true, the addWhiteCaps() function will  be called as part of the update cycle
+    thresholdMax (default 230) -- caps the white cap light level to prevent pixels from getting too white
+                                  as part of the addWhiteCaps() function
 */
-class PacificaPS : public EffectBasePS {
+class PacificaSegLinePS : public EffectBasePS {
     public:
-        PacificaPS(SegmentSet &SegmentSet, uint16_t Rate);  
+        //Normal constructor
+        PacificaSegLinePS(SegmentSet &SegmentSet, uint16_t Rate);  
+
+        //constructor with addWhiteCaps setting
+        PacificaSegLinePS(SegmentSet &SegmentSet, bool AddWhiteCaps, uint16_t Rate);
 
         SegmentSet 
             &segmentSet; 
         
+        bool
+            addWhiteCaps = false;
+        
         uint8_t 
             //Produces a total blend length of 240 for the whole pallet, matches the original code
-            numSteps = 240 / pacificaPal1PS.length;
+            numSteps = 240 / pacificaPal1PS.length,
+            thresholdMax = 230; //cap on light level for addWhiteCaps(), stops colors from going full white
         
         CRGB 
             bgColorOrig,
            *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a pallet color)
-        
+
         void 
             update(void);
     
@@ -78,8 +104,8 @@ class PacificaPS : public EffectBasePS {
             overage2;
 
         uint16_t 
+            numLines,
             totBlendLength,
-            totSegLen,
             pixelNum,
             sCIStart1,
             sCIStart2,
@@ -99,6 +125,7 @@ class PacificaPS : public EffectBasePS {
             colorOut;
         
         void 
+            init(uint16_t Rate),
             doOneLayer( palletPS *pallet, uint16_t cistart, uint16_t wavescale, uint8_t bri, uint16_t ioff),
             addWhitecaps(),
             deepenColors();
