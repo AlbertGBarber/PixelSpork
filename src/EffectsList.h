@@ -37,3 +37,4 @@
 #include "Effects/Noise16/Noise16PS.h"
 #include "Effects/NoiseSegLine/NoiseSegLinePS.h"
 #include "Effects/Fireworks/FireworksPS.h"
+#include "Effects/Fireflies/FirefliesPS.h"

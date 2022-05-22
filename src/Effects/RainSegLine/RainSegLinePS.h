@@ -6,7 +6,7 @@
 
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
-#include "Effects/Particles/particleUtilsPS.h"
+#include "Effects/Particles/Particle_Stuff/particleUtilsPS.h"
 
 //Like RainSeg, but the drops spawn and move along the segment set lines (perpendicular to the segments)
 //An effect for prodcing a random set of falling particles, like rain, or the classic "Matrix" code animation

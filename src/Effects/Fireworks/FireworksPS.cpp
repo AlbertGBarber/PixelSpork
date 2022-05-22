@@ -1,6 +1,6 @@
 #include "FireworksPS.h"
 
-//Coonstructor for effect with pallet
+//Constructor for effect with pallet
 FireworksPS::FireworksPS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t MaxNumFireworks, uint8_t MaxNumSparks, 
                          uint8_t SpawnChance, uint16_t LifeBase, uint8_t SpeedDecay, uint16_t Rate, uint16_t SpeedRange):
     segmentSet(SegmentSet), pallet(Pallet), spawnChance(SpawnChance), lifeBase(LifeBase), speedDecay(SpeedDecay), speedRange(SpeedRange)
@@ -8,7 +8,7 @@ FireworksPS::FireworksPS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t MaxNu
         init(MaxNumFireworks, MaxNumSparks, Rate);
 	}
 
-//constructor for effect with pallet of random colors
+//Constructor for effect with pallet of random colors
 FireworksPS::FireworksPS(SegmentSet &SegmentSet, uint16_t numColors, uint8_t MaxNumFireworks, uint8_t MaxNumSparks, 
                          uint8_t SpawnChance, uint16_t LifeBase, uint8_t SpeedDecay, uint16_t Rate, uint16_t SpeedRange):
     segmentSet(SegmentSet), spawnChance(SpawnChance), lifeBase(LifeBase), speedDecay(SpeedDecay), speedRange(SpeedRange)
@@ -77,18 +77,17 @@ void FireworksPS::setupFireworks(uint8_t newMaxNumFireworks, uint8_t newMaxNumSp
         }
     }
 
-    //set the background if we found an active particle
-    //to clear the segment set
+    //set the background if we found an active particle to clear the segment set
     if( clearStrip || fillBG || blend ){
         segDrawUtils::fillSegSetColor(segmentSet, *bgColor, bgColorMode);
     }
 
-    //must always have at least 1 drop spawning
+    //must always have at least 1 firework spawning
     if(newMaxNumSparks == 0){
         newMaxNumSparks = 1;
     }
 
-    //must always have at least 1 drop spawning
+    //must always have at least 1 spark spawning
     if(newMaxNumFireworks == 0){
         newMaxNumFireworks = 1;
     }
@@ -409,10 +408,10 @@ void FireworksPS::spawnFirework(uint8_t fireworkNum){
         particlePtr->position = spawnPos;
 
         //Set the particles life in porportion to its speed, so faster particles live longer,
-        //capped by lifeBase + random(lifeRange) so stop really speedy particles from living too long
+        //capped by lifeBase + random16(lifeRange) so stop really speedy particles from living too long
         //I think this looks good, but if you want a more even decay you could just use lifeBase + random16(lifeRange)
         //assuming you set lifeRange to something small like 500
-        particlePtr->maxLife = min( (maxSpeed - particlePtr->speed) * 10, lifeBase + random(lifeRange) ); 
+        particlePtr->maxLife = min( (maxSpeed - particlePtr->speed) * 10, lifeBase + random16(lifeRange) ); 
         //lifeBase + random16(lifeRange); ->alternate, more even formula
         particlePtr->life = particlePtr->maxLife;
 

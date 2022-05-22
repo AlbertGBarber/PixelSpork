@@ -4,8 +4,7 @@
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
 #include "MathUtils/mathUtilsPS.h"
-
-#include "particleUtilsPS.h"
+#include "Particle_Stuff/particleUtilsPS.h"
 
 //An effect for updating a set of particles
 //Copying the explanation of particles from particleUtilsPS.h:

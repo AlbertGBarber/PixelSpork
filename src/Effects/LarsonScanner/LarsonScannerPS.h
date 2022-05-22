@@ -3,7 +3,6 @@
 
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
-
 #include "Effects/Particles/ParticlesPS.h"
 
 //This effect is intended to be a short-hand for re-creating some classic scanner effects (cylon, Kit)

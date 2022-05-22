@@ -3,7 +3,7 @@
 
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
-#include "Effects/Particles/particleUtilsPS.h"
+#include "Effects/Particles/Particle_Stuff/particleUtilsPS.h"
 
 //An effect for prodcing a random set of falling particles, like rain, or the classic "Matrix" code animation
 //Drops spawn at the start of each segment in the segment set and "fall down" to the end of the segment

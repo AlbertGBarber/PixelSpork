@@ -9,7 +9,7 @@
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
 #include "MathUtils/mathUtilsPS.h"
-#include "Effects/Particles/particleUtilsPS.h"
+#include "Effects/Particles/Particle_Stuff/particleUtilsPS.h"
 
 //A 1D firework simulation inpired heavily by https://www.reddit.com/r/arduino/comments/c3sd46/i_made_this_fireworks_effect_for_my_led_strips/
 //Spawns multiple fireworks across the strip that explode into a series of sparks
