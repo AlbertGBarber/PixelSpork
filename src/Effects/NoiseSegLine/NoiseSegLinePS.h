@@ -1,6 +1,8 @@
 #ifndef NoiseSegLinePS_h
 #define NoiseSegLinePS_h
 
+//TODO -- add background color?
+
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
 
@@ -101,12 +103,16 @@
     //cMode -- The color mode of the effect (see inputs guide above)
     //rotateHue (default true) -- sets if the noise center will be offset over time (see inputs guide above)
     //ihue (default 0) -- The position of the noise center, is automatically adjusted if rotateHue is on
-    //        But you can also set if yourself to a specific value if needed (see inputs guide above)
+    //                    But you can also set if yourself to a specific value if needed (see inputs guide above)
 
 //Functions:
     //setupNoiseArray() -- Creates the array for storing the noise (will be matrix of uint8_t's, numLines x numSegs)
     //                     Only call this if you change what segmentSet the effect is on
     //update() -- updates the effect 
+
+//Notes:
+    //!!Do NOT set the scale directly after turning on shiftScale
+    //if you do, be sure to adjust scaleTarget = scale
 class NoiseSegLinePS : public EffectBasePS {
     public:
 

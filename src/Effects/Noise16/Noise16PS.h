@@ -124,6 +124,7 @@ class Noise16PS : public EffectBasePS {
             numSegs;
 
         uint16_t
+            pixelCount = 0,
             index,
             shift_x,
             shift_y,

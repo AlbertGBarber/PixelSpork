@@ -96,6 +96,7 @@ class LavaPS : public EffectBasePS {
             numSegs;
 
         uint16_t
+            pixelCount = 0,
             index,
             totBlendLength,
             totSegLen,

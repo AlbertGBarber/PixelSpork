@@ -227,7 +227,7 @@ void segDrawUtils::drawSegLineSimpleSection(SegmentSet &segmentSet, uint8_t star
 // in other words, will return a pixel such that you can draw a straight line accross all segments, using the longest segment as the basis
 uint16_t segDrawUtils::getPixelNumFromLineNum(SegmentSet &segmentSet, uint16_t maxSegLength, uint8_t segNum, uint16_t lineNum) { 
     //This formula dedicated to my father, who saved me from many hours of head-scratching in an instant
-    return getSegmentPixel(segmentSet, segNum, (lineNum * uint16_t(segmentSet.getTotalSegLength(segNum)) / maxSegLength)); 
+    return getSegmentPixel(segmentSet, segNum, ( (lineNum * segmentSet.getTotalSegLength(segNum)) / maxSegLength) ); 
 }
 
 //returns the line number (based on the max segment length) of a pixel in a segment set

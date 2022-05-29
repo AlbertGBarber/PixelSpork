@@ -59,7 +59,8 @@ void LavaPS::update(){
 
     if( ( currentTime - prevTime ) >= *rate ) {
         prevTime = currentTime;
-        
+        pixelCount = 0;
+
         numSegs = segmentSet.numSegs;
         totBlendLength = blendSteps * pallet->length;
         //run over each of the leds in the segment set and set a noise/color value
@@ -71,8 +72,8 @@ void LavaPS::update(){
                 pixelNum = segDrawUtils::getSegmentPixel(segmentSet, i, j);
 
                 //do some noise magic to get a brightness val and color index
-                brightness = inoise8(pixelNum * brightnessScale, currentTime/5);
-                index = inoise8(pixelNum * blendScale, currentTime/10);
+                brightness = inoise8(pixelCount * brightnessScale, currentTime/5);
+                index = inoise8(pixelCount * blendScale, currentTime/10);
 
                 //scale color index to be somewhere between 0 and totBlendLength to put it somewhere in the blended pallet
                 index = scale16by8( totBlendLength, index ); //colorIndex * totBlendLength /255;   
@@ -80,7 +81,9 @@ void LavaPS::update(){
                 //get the blended color from the pallet and set it's brightness
                 colorOut = palletUtilsPS::getPalletGradColor(pallet, index, 0, totBlendLength, blendSteps);
                 nscale8x3(colorOut.r, colorOut.g, colorOut.b, brightness);
-                segmentSet.leds[pixelNum] = colorOut;
+                segDrawUtils::setPixelColor(segmentSet, pixelNum, colorOut, 0, 0, 0);
+
+                pixelCount++;
             }
         }
         showCheckPS();

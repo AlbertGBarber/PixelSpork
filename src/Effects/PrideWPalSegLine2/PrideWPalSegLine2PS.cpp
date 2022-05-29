@@ -1,8 +1,8 @@
 #include "PrideWPalSegLine2PS.h"
 
 //constructor for rainbow mode
-PrideWPalSegLine2PS::PrideWPalSegLine2PS(SegmentSet &SegmentSet, bool BriDirect, bool RandomBriInc, uint16_t Rate):
-    segmentSet(SegmentSet), briDirect(BriDirect)
+PrideWPalSegLine2PS::PrideWPalSegLine2PS(SegmentSet &SegmentSet, bool Direct, bool RandomBriInc, uint16_t Rate):
+    segmentSet(SegmentSet), direct(Direct)
     {   
         prideMode = true; 
         //we make a random pallet so we get gradSteps correctly (needed for program, but not used for rainbow)
@@ -13,16 +13,16 @@ PrideWPalSegLine2PS::PrideWPalSegLine2PS(SegmentSet &SegmentSet, bool BriDirect,
 	}
 
 //constructor for pallet input
-PrideWPalSegLine2PS::PrideWPalSegLine2PS(SegmentSet &SegmentSet, palletPS *Pallet, bool BriDirect, bool RandomBriInc, uint16_t Rate):
-    segmentSet(SegmentSet), pallet(Pallet), briDirect(BriDirect)
+PrideWPalSegLine2PS::PrideWPalSegLine2PS(SegmentSet &SegmentSet, palletPS *Pallet, bool Direct, bool RandomBriInc, uint16_t Rate):
+    segmentSet(SegmentSet), pallet(Pallet), direct(Direct)
     {    
         prideMode = false; 
         init(RandomBriInc, Rate);
 	}
 
 //constructor for making a random pallet
-PrideWPalSegLine2PS::PrideWPalSegLine2PS(SegmentSet &SegmentSet, uint8_t numColors, bool BriDirect, bool RandomBriInc, uint16_t Rate):
-    segmentSet(SegmentSet), briDirect(BriDirect)
+PrideWPalSegLine2PS::PrideWPalSegLine2PS(SegmentSet &SegmentSet, uint8_t numColors, bool Direct, bool RandomBriInc, uint16_t Rate):
+    segmentSet(SegmentSet), direct(Direct)
     {    
         prideMode = false; 
         palletTemp = palletUtilsPS::makeRandomPallet(numColors);
@@ -31,11 +31,11 @@ PrideWPalSegLine2PS::PrideWPalSegLine2PS(SegmentSet &SegmentSet, uint8_t numColo
 	}
 
 //constructor with inputs for all main variables
-PrideWPalSegLine2PS::PrideWPalSegLine2PS(SegmentSet &SegmentSet, palletPS *Pallet, bool BriDirect, uint8_t GradLength, 
+PrideWPalSegLine2PS::PrideWPalSegLine2PS(SegmentSet &SegmentSet, palletPS *Pallet, bool Direct, uint8_t GradLength, 
                                             uint8_t BrightDepthMin, uint8_t BrightDepthMax, uint16_t BriThetaFreq, 
                                             uint8_t BriThetaInc16Min, uint8_t BriThetaInc16Max, uint8_t HueChangeMin, 
                                             uint8_t HueChangeMax, uint16_t Rate):
-    segmentSet(SegmentSet), pallet(Pallet), briDirect(BriDirect), gradLength(GradLength), brightDepthMin(BrightDepthMin), 
+    segmentSet(SegmentSet), pallet(Pallet), direct(Direct), gradLength(GradLength), brightDepthMin(BrightDepthMin), 
     brightDepthMax(BrightDepthMax), briThetaFreq(BriThetaFreq), briThetaInc16Min(BriThetaInc16Min), 
     briThetaInc16Max(BriThetaInc16Max), hueChangeMin(HueChangeMin), hueChangeMax(HueChangeMax)
     {
@@ -55,8 +55,8 @@ void PrideWPalSegLine2PS::init(bool RandomBriInc, uint16_t Rate){
     bindSegPtrPS();
     bindClassRatesPS();
     if(RandomBriInc){
-        randomizeBriInc( 15, 25, 30, 40 );
-        randomizeBriFreq( 200, 500 );
+        randomizeBriInc( 15, 25, 35, 60 );
+        randomizeBriFreq( 250, 600 );
     }
 }
 
@@ -78,18 +78,23 @@ void PrideWPalSegLine2PS::randomizeBriFreq( uint16_t briFreqMin, uint16_t briFre
 //Updates the effect
 //The effect consists of two parts: A set of brightness waves and a set of color waves
 //These are both take from the original Pride2015 by Mark Kriegsman
-//In the original code both the waves were applied in the same direction along the strip
-//In this effect I've done the same, but expanded the waves to be along whole segment lines
-//So the segment set has a set of shifting color waves that run across it
-//I've also made it so you can reverse the direction of the brightness waves
+//In the original sketch both the waves were applied in the same direction along the strip
+//However, for segment sets I've applied the color waves radially and the brightness waves along segment lines
+//So the brightness varies along each segment, while the color radiates out segment by segment
+//This closely mimics Jason Coons Pride code running on his Fibonacci spirals
+//(although I think this is a conincidence since the codes work differently)
 //I've also combined the code from Mark's colorwaves and pride2015 into one function
 //since they are so similar.
 //I don't know exactly how all the waves work in the effect, but overall:
 //Each Update cycle we:
     //Update various brightnes and hue values from their waves
-    //Then, for each line, we fetch a color using the brightness and hue
-    //(while also incrementing brightness and color as we go)
-    //We then color all the pixels on the line
+    //Then for each segment we fetch a color based on the segment number and hue
+    //This color will be applied to the whole segment, but have it's brightness modified
+        //For each segment we walk across each of the segment lines (pixels)
+        //and vary the brightness acording to various wave values, 
+        //modifying the segment color with the brightness
+//Each cycle the colors are shifted outwards (or inwards) while 
+//the brightness wave shifts clockwise round the segment set
 void PrideWPalSegLine2PS::update(){
     currentTime = millis();
     deltams = currentTime - prevTime;
@@ -98,8 +103,8 @@ void PrideWPalSegLine2PS::update(){
 
         //update various wave values
         //for those with input variables, their purpose is described in the Inputs Guide in the .h file
-        sat8 = beatsin88(87, 220, 250);    
-        brightdepth = beatsin88(341, brightDepthMin, brightDepthMax); 
+        sat8 = beatsin88(87, 220, 250);
+        brightdepth = beatsin88(342, brightDepthMin, brightDepthMax);
         brightnessthetainc16 = beatsin88(briThetaFreq, (briThetaInc16Min * 256), (briThetaInc16Max * 256));
         msmultiplier = beatsin88(147, 23, 60);
 
@@ -109,9 +114,6 @@ void PrideWPalSegLine2PS::update(){
         sPseudotime += deltams * msmultiplier;
         sHue16 += deltams * beatsin88(400, hueChangeMin, hueChangeMax);
         brightnesstheta16 = sPseudotime;
-
-        //sets the brightness waves to either move forward or backward across the segments
-        briDirectMult = briDirect - !briDirect; //1 or -1
         
         //fetch some core vars
         //we re-fetch these in case the segment set or pallet has changed
@@ -119,43 +121,64 @@ void PrideWPalSegLine2PS::update(){
         numLines = segmentSet.maxSegLength;
         numSteps = gradLength * pallet->length;
 
-        //For each segment line do the following:
-        for (uint16_t i = 0; i < numLines; i++) {
-            
-            //update the brightness wave for each line
-            brightnesstheta16 += briDirectMult * brightnessthetainc16;
-            b16 = sin16(brightnesstheta16) + 32768;
-
-            bri16 = (uint32_t)((uint32_t)b16 * (uint32_t)b16) / 65536;
-            bri8 = (uint32_t)(((uint32_t)bri16) * brightdepth) / 65536;
-            bri8 += (255 - brightdepth);
-
+        //For each segment we first get a color for the whole segment
+        //then for each segment line in the segment we modify the color by the brightness 
+        //to create the brightness waves
+        for (uint8_t i = 0; i < numSegs; i++) {
             //get the next color hue
             hue16 += hueinc16;
             hue8 = hue16 / 256;
 
-            //If we're not drawing rainbows we need to get a color from the pallet
+            //if we're not drawing rainbows we need to get a color from the pallet
             //other wise the hue is constrained to 256
             if(!prideMode){
+                //dunno exactly what this code is doing
                 h16_128 = hue16 >> 7;
                 if(h16_128 & 0x100) {
                     hue8 = 255 - (h16_128 >> 1);
                 } else {
                     hue8 = h16_128 >> 1;
                 }
-                //get the blended color from the pallet mapped into numSteps based on the hue
+                //returns the blended color from the pallet mapped into numSteps
                 index = scale16by8( numSteps, hue8 );
                 newColor = palletUtilsPS::getPalletGradColor(pallet, index, 0, numSteps, gradLength);
-                nscale8x3(newColor.r, newColor.g, newColor.b, bri8);
-            } else{
-                newColor = CHSV(hue8, sat8, bri8);
             }
-                    
-            for (uint8_t j = 0; j < numSegs; j++) {
+
+            //for each of the lines in the segment, get a new brighness value
+            //and use it to modify the segment color
+            for (uint16_t j = 0; j < numLines; j++) {
+                
+                //update the brightness wave for each line
+                brightnesstheta16  += brightnessthetainc16;
+                b16 = sin16(brightnesstheta16) + 32768;
+
+                bri16 = (uint32_t)((uint32_t)b16 * (uint32_t)b16) / 65536;
+                bri8 = (uint32_t)(((uint32_t)bri16) * brightdepth) / 65536;
+                bri8 += (255 - brightdepth);
+                
+                //if we're in pride mode the brightness is a direct input into the CHSV
+                //otherwise we need to modify our existing color
+                if(prideMode){
+                    colorOut = CHSV(hue8, sat8, bri8);
+                } else {
+                    //the segment color is coppied into colorOut
+                    //because nscale8x3 directly modifys the color
+                    colorOut = newColor;
+                    nscale8x3(colorOut.r, colorOut.g, colorOut.b, bri8);
+                }
+
+                //for shifting the colors either inwards or outwards
+                if(direct){
+                    segOut = i;
+                } else {
+                    segOut = numSegs - i - 1;
+                }
+
                 //get the physical pixel location based on the line and seg numbers
-                pixelnumber = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, j, numLines - i - 1);
-                    
-                nblend(segmentSet.leds[pixelnumber], newColor, 128);
+                pixelnumber = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, segOut, numLines - j - 1);
+                
+                //output a the color
+                nblend(segmentSet.leds[pixelnumber], colorOut, 128);
             }
         }          
         showCheckPS();

@@ -183,7 +183,7 @@ void NoiseSegLinePS::mapNoiseSegsWithPalette(){
                     colorOut = CHSV(ihue + (colorIndex>>2), 255, colorIndex );
                     break;
             }
-            segmentSet.leds[pixelNum] = colorOut;
+            segDrawUtils::setPixelColor(segmentSet, pixelNum, colorOut, 0, 0, 0); 
         }
     }
 
@@ -199,7 +199,7 @@ void NoiseSegLinePS::mapNoiseSegsWithPalette(){
 //Shifts the scale towards the targetScale by one step (this keeps things smooth)
 //If it's reached the target scale, pick a new target to shift to
 //!!Do NOT set the scale directly after turning on shiftScale
-//if you do, be sure to adjust scaleTarget == scale
+//if you do, be sure to adjust scaleTarget = scale
 void NoiseSegLinePS::setShiftScale(){
     if(scale == scaleTarget){
         //get a new target scale

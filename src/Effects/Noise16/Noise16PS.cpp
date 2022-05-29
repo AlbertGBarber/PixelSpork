@@ -63,6 +63,7 @@ void Noise16PS::update(){
 
     if( ( currentTime - prevTime ) >= *rate ) {
         prevTime = currentTime;
+        pixelCount = 0;
 
         //get noise inputs for the current cycle
         shift_x = getShiftVal( x_mode, x_val );
@@ -75,13 +76,12 @@ void Noise16PS::update(){
         for (uint8_t i = 0; i < numSegs; i++) {
             totSegLen = segmentSet.getTotalSegLength(i);
             for(uint16_t j = 0; j < totSegLen; j++){
-
                 //get the current pixel's location in the segment set
                 pixelNum = segDrawUtils::getSegmentPixel(segmentSet, i, j);
                 
                 //scale x and y noise inputs for the current pixel
-                real_x = (pixelNum + shift_x) * blendScale;
-                real_y = (pixelNum + shift_y) * blendScale;
+                real_x = (pixelCount + shift_x) * blendScale;
+                real_y = (pixelCount + shift_y) * blendScale;
                 
                 //get the noise data and scale it down
                 noise = inoise16(real_x, real_y, real_z) >> 8;
@@ -93,7 +93,9 @@ void Noise16PS::update(){
                 //get the blended color from the pallet and set it's brightness
                 colorOut = palletUtilsPS::getPalletGradColor(pallet, index, 0, totBlendLength, blendSteps);
                 nscale8x3( colorOut.r, colorOut.g, colorOut.b, bri);
-                segmentSet.leds[pixelNum] = colorOut;
+                segDrawUtils::setPixelColor(segmentSet, pixelNum, colorOut, 0, 0, 0); 
+
+                pixelCount++;
             }
         }
         showCheckPS();

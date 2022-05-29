@@ -40,12 +40,18 @@ CRGB colorUtilsPS::getCrossFadeColor(CRGB startColor, CRGB endColor, uint8_t rat
     //the commented code after is an alternative way to do it, but yeilds the same result in most cases
     return blend( startColor, endColor, ratio );
 
-    // CRGB result;
-    // result.r = startColor.r + ( (int16_t)( endColor.r - startColor.r ) * ratio) ) / 255;
-    // result.g = startColor.g + ( (int16_t)( endColor.g - startColor.g ) * ratio) ) / 255;
-    // result.b = startColor.b + ( (int16_t)( endColor.b - startColor.b ) * ratio) ) / 255;
-
-    // return CRGB(result.r, result.g, result.b);
+    /*
+    if( ratio == 0 ) {
+        return startColor;
+    } else if( ratio == 255 ) {
+        return endColor;
+    } else {
+       colorFinal.r = startColor.r + ( (int16_t)( endColor.r - startColor.r ) * ratio) / 255;
+       colorFinal.g = startColor.g + ( (int16_t)( endColor.g - startColor.g ) * ratio) / 255;
+       colorFinal.g = startColor.b + ( (int16_t)( endColor.b - startColor.b ) * ratio) / 255;;
+       return colorFinal;
+    }
+    */
 }
 
 //returns an interpolated value between two 8 bit uint's according to the ratio
