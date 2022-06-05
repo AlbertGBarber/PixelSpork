@@ -1,14 +1,14 @@
 #include "TwinklePS.h"
 
 //pallet based constructor
-TwinklePS::TwinklePS(SegmentSet &SegmentSet, palletPS *Pallet, uint16_t NumPixels, CRGB BgColor, uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate):
+TwinklePS::TwinklePS(SegmentSet &SegmentSet, palletPS *Pallet, CRGB BgColor, uint16_t NumPixels, uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate):
     segmentSet(SegmentSet), pallet(Pallet), numPixels(NumPixels)
     {    
         init(FadeInSteps, FadeOutSteps, BgColor, Rate);
 	}
 
 //single color constructor
-TwinklePS::TwinklePS(SegmentSet &SegmentSet, CRGB Color, uint16_t NumPixels, CRGB BgColor, uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate):
+TwinklePS::TwinklePS(SegmentSet &SegmentSet, CRGB Color, CRGB BgColor, uint16_t NumPixels, uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate):
     segmentSet(SegmentSet), numPixels(NumPixels)
     {    
         setSingleColor(Color);
@@ -16,7 +16,7 @@ TwinklePS::TwinklePS(SegmentSet &SegmentSet, CRGB Color, uint16_t NumPixels, CRG
 	}
 
 //random colors constructor
-TwinklePS::TwinklePS(SegmentSet &SegmentSet, uint16_t NumPixels, CRGB BgColor, uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate):
+TwinklePS::TwinklePS(SegmentSet &SegmentSet, CRGB BgColor, uint16_t NumPixels, uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate):
     segmentSet(SegmentSet), numPixels(NumPixels)
     {    
         //we make a random pallet of one color so that 
@@ -127,14 +127,19 @@ void TwinklePS::setNumPixels(uint16_t newNumPixels){
 
 //updates the effect
 //How it works:
-    //If we're in startup mode, then we limit how much of the pixel arrays we read from
-    //incrementing the amount as we fill the array in after each cycle, until we've covered the whole array
+    //On each update cycle we spawn a new pixel for each numPixels and put it at the start of the ledArray
+    //while moving all the old pixels one step forward in the ledArray
+    //The pixel's index in the ledArray indicates the fade step it's on, while the value is it's location
 
     //We run through all the pixels in the array and set their color based on the fade level (the array column index)
     //we run through the column's backwards, so that if there's overlapping pixels, we always put out the brightest level
     //If we're on the zeroth column, we choose a new color and pixel location
     //after each cycle we shift the array entries over by one (no wrapping)
     //so each led is picked, then shifted along the array, fading in and out as it goes
+    
+    //For the first set of cycles, we don't have a full array of pixels in the ledArray
+    //We're in "startup mode", so we limit how much of the pixel arrays we read from
+    //incrementing the amount as we fill the array in after each cycle, until we've covered the whole array
 void TwinklePS::update(){
     currentTime = millis();
 

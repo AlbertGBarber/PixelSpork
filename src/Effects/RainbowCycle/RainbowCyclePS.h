@@ -61,9 +61,9 @@ class RainbowCyclePS : public EffectBasePS {
             ledCount = 0,
             numSegs,
             numLeds,
-            totLen,
+            totSegLen,
             maxCycleLength,
-            ledLoc;
+            pixelNum;
         
         unsigned long
             currentTime,

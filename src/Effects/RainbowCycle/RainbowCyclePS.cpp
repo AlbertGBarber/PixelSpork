@@ -58,8 +58,8 @@ void RainbowCyclePS::update(){
         //for each segment, set each pixel in the segment to the appropriate rainbow color
         //we must call getSegmentPixel(segmentSet, i, j) to account for reversed segments
         for (uint8_t i = 0; i < numSegs; i++) {
-            totLen = segmentSet.getTotalSegLength(i);
-            for(uint16_t j = 0; j < totLen; j++){
+            totSegLen = segmentSet.getTotalSegLength(i);
+            for(uint16_t j = 0; j < totSegLen; j++){
                 ledCount++;
                 //we always need to make a rainbow of length # of steps
                 //this is determined using (stepVal + ledCount) % length * (256 / length)
@@ -79,9 +79,9 @@ void RainbowCyclePS::update(){
 
                 //get the actual pixel address, and set it
                 //color mode is 0 because we are working out the rainbow color ourselves
-                ledLoc = segDrawUtils::getSegmentPixel(segmentSet, i, j);
+                pixelNum = segDrawUtils::getSegmentPixel(segmentSet, i, j);
                 //set the color, segNum and lineNum don't matter for this since we're always in colorMode 0
-                segDrawUtils::setPixelColor(segmentSet, ledLoc, color, 0, 0, 0);
+                segDrawUtils::setPixelColor(segmentSet, pixelNum, color, 0, 0, 0);
             }
         }
         showCheckPS();
