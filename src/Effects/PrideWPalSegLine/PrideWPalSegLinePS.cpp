@@ -154,8 +154,9 @@ void PrideWPalSegLinePS::update(){
             for (uint8_t j = 0; j < numSegs; j++) {
                 //get the physical pixel location based on the line and seg numbers
                 pixelnumber = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, j, numLines - i - 1);
-                    
-                nblend(segmentSet.leds[pixelnumber], newColor, 128);
+                if(pixelnumber != dLed){ //avoid outputing to dummy leds
+                    nblend(segmentSet.leds[pixelnumber], newColor, 128);
+                }
             }
         }          
         showCheckPS();

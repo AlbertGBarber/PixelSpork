@@ -40,3 +40,6 @@
 #include "Effects/NoiseGradSegLine/NoiseGradSegLinePS.h"
 #include "Effects/Fireworks/FireworksPS.h"
 #include "Effects/Fireflies/FirefliesPS.h"
+#include "Effects/EdgeBurstSL/EdgeBurstSLPS.h"
+#include "Effects/ColorMeltSL/ColorMeltSLPS.h"
+#include "Effects/RainbowFontsSL/RainbowFontsSLPS.h"

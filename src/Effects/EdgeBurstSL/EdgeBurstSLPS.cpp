@@ -1,0 +1,141 @@
+#include "EdgeBurstSLPS.h"
+
+//Constructor for rainbow mode
+EdgeBurstSLPS::EdgeBurstSLPS(SegmentSet &SegmentSet, uint8_t BurstFreq, uint16_t Rate):
+    segmentSet(SegmentSet), burstFreq(BurstFreq)
+    {    
+        init(Rate);
+        rainbowMode = true;
+
+        //We create a random pallet in case rainbow mode is turned off without setting a pallet
+        //This won't be used while rainbowMode is true
+        palletTemp = palletUtilsPS::makeRandomPallet(3);
+        pallet = &palletTemp; 
+	}
+
+//Constructor for colors from pallet
+EdgeBurstSLPS::EdgeBurstSLPS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t BurstFreq, uint16_t Rate):
+    segmentSet(SegmentSet), burstFreq(BurstFreq), pallet(Pallet)
+    {    
+        init(Rate);
+	}
+
+//Constructor for a randomly created pallet
+//RandomizePal = true will randomize the pallet for each wave
+EdgeBurstSLPS::EdgeBurstSLPS(SegmentSet &SegmentSet, uint8_t numColors, bool RandomizePal, uint8_t BurstFreq, uint16_t Rate):
+    segmentSet(SegmentSet), burstFreq(BurstFreq), randomizePal(RandomizePal)
+    {    
+        init(Rate);
+
+        palletTemp = palletUtilsPS::makeRandomPallet(numColors);
+        pallet = &palletTemp; 
+	}
+
+EdgeBurstSLPS::~EdgeBurstSLPS(){
+    delete[] palletTemp.palletArr;
+}
+
+//initialize core vars
+void EdgeBurstSLPS::init(uint16_t Rate){
+    //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
+    bindSegPtrPS();
+    bindClassRatesPS();
+        
+    //minimum burst freq is 1
+    if(burstFreq < 1){
+        burstFreq = 1;
+    }
+}
+
+/*
+    Original code:
+    export function beforeRender(delta) {
+        t1 = triangle(time(.1))
+    }
+    export function render(index) {
+        f = index/pixelCount
+        edge = clamp(triangle(f) + t1 * 4 - 2, 0, 1)
+        v = triangle(edge)
+        h = edge * edge - .2
+        s = 1
+        hsv(h, s, v)
+    }
+ */
+
+//Updates the effect
+//To be honest I don't really know how the waves work
+//But the main driver is t1
+void EdgeBurstSLPS::update(){
+    currentTime = millis();
+
+    if( ( currentTime - prevTime ) >= *rate ) {
+        prevTime = currentTime;
+
+        //fetch some core vars
+        //we re-fetch these in case the segment set or pallet has changed
+        numSegs = segmentSet.numSegs;
+        numLines = segmentSet.maxSegLength;
+
+        //Get the blend length for each color in the pallet
+        //(using 255 steps across the whole pallet)
+        //We do this so we only need to do it once per cycle
+        blendLength = 255 / pallet->length;
+        
+        beatVal = beat8(burstFreq);
+        t1 = triwave8(beatVal);
+
+        //We want to change the wave spawn point after a wave has finished
+        //A wave ends/starts every half cycle of the triwave8 above
+        //So we want to set the offset every time the wave passes through the mid-point (128)
+        //Unfortunatly, the wave doesn't usually hit 128 exactly due to the frequency
+        //So we need to catch it after is passes through, but then only set the offset once
+        //hence the flipFlop boolean, which stops us from setting the offset more than once each half cycle
+        if(beatVal > 128 && !offsetFlipFlop){
+            pickRandStart();
+        } else if(beatVal < 128 && offsetFlipFlop){
+            pickRandStart();
+        }
+
+        //set a color for each line and then color in all the pixels on the line
+        for (uint16_t i = 0; i < numLines; i++) {
+
+            f = (uint32_t)(i * 255) / numLines;
+            //note really sure how burstPause works, but it seems to easily adjust the time between waves
+            edge = triwave8(f) + t1 * burstPause - (burstPause / 2 * 255);
+            edge = clamp8PS(edge, 0, 255);
+            v = triwave8( uint8_t(edge) );
+            h = edge * edge / 255 - 51;
+
+            //If we're in rainbow mode, pick a color using th HSV color wheel
+            //Otherwise pick a color from the pallet. Note that we use 255 blend steps for the whole pallet.
+            //We also need to dim the color by v.
+            if(rainbowMode){
+                colorOut = CHSV(h, 255, v);
+            } else {
+                colorOut = palletUtilsPS::getPalletGradColor(pallet, h, 0, 255, blendLength);
+                nscale8x3(colorOut.r, colorOut.g, colorOut.b, v);
+            }
+
+            for (uint8_t j = 0; j < numSegs; j++) {
+                //get the physical pixel location based on the line and seg numbers
+                //and then write out the color
+                //Note that the actual line written to is offset and wraps
+                pixelNum = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, j, addMod16PS(i, offset, numLines) );
+                segDrawUtils::setPixelColor(segmentSet, pixelNum, colorOut, 0, 0, 0);
+            }
+
+        }
+        showCheckPS();
+    }
+}
+
+//randomizes the wave start point (the offset)
+//sets the flipFlop so we know not to set the offset more than once per wave cycle
+//If randomizePal is true, the colors in palletTemp will be set randomly
+void EdgeBurstSLPS::pickRandStart(){
+    offsetFlipFlop = !offsetFlipFlop;
+    offset = random16(numLines);
+    if(randomizePal){
+        palletUtilsPS::randomize(&palletTemp);
+    }
+}

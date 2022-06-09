@@ -16,6 +16,7 @@ NoiseSegLinePS::NoiseSegLinePS(SegmentSet &SegmentSet, palletPS *Pallet, uint16_
 
 NoiseSegLinePS::~NoiseSegLinePS(){
     delete[] noise;
+    delete[] palletTemp.palletArr;
 }
 
 //Sets up the initial effect values and other key variables

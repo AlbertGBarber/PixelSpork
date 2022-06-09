@@ -21,12 +21,12 @@
 
 //Digital unsigned subtraction macro. if result <0, then => 0. Otherwise, take on fixed value.
 #if !defined(qsubd)
-#define qsubd(x, b)  ((x>b)?b:0) 
+#define qsubd(x, b) ((x>b)?b:0) 
 #endif
 
 //Analog Unsigned subtraction macro. if result <0, then => 0
 #if !defined(qsuba)                          
-#define qsuba(x, b)  ((x>b)?x-b:0)   
+#define qsuba(x, b) ((x>b)?x-b:0)   
 #endif
 
 #if !defined(SIZE)
@@ -43,5 +43,10 @@ uint16_t mod16PS(uint16_t num1, uint16_t num2);;
 //adds the two numbers togther and returns the mod of the result from a third number
 //!!ONLY works with unsigned numbers
 uint16_t addMod16PS(uint16_t num1, uint16_t num2, uint16_t modNum);
+
+//Clamps the input to be between the input min and max
+//ie if the input is less than min you get min, if it's greater than max you get max
+//The input is an int16_t to allow negative numbers, but the min and max must be 0 - 255
+uint8_t clamp8PS(int16_t in, uint8_t min, uint8_t max);
 
 #endif
