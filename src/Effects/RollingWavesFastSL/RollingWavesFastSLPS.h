@@ -122,10 +122,13 @@ Notes:
 */
 class RollingWavesFastSLPS : public EffectBasePS {
     public:
+        //Constructor with pattern
         RollingWavesFastSLPS(SegmentSet &SegmentSet, patternPS *Pattern, palletPS *Pallet, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate); 
 
+        //Constuctor with pallet as pattern
         RollingWavesFastSLPS(SegmentSet &SegmentSet, palletPS *Pallet, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate);
 
+        //Constructor with random colors
         RollingWavesFastSLPS(SegmentSet &SegmentSet, uint8_t NumColors, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate);
 
         ~RollingWavesFastSLPS();

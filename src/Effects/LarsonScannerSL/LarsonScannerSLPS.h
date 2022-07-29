@@ -26,11 +26,11 @@ the background color of the scannerInst is bound to the background color set in 
 The background color is a pointer, so you can bind it externally as needed
 
 Three scanner types are built in:
- 0: Like the classic cylon scanner, one particle with two trails moving back and forth
- 1: Like the cylon scanner, but only using one trail
- 2: Like one of the Kit Knight Rider scanners: two particles with single trails
-    That move back and forth, intersecting in the center of the strip
-    (note that this mode uses blend, see ParticlesPS.h for details)
+    0: Like the classic cylon scanner, one particle with two trails moving back and forth
+    1: Like the cylon scanner, but only using one trail
+    2: Like one of the Kit Knight Rider scanners: two particles with single trails
+        That move back and forth, intersecting in the center of the strip
+        (note that this mode uses blend, see ParticlesPS.h for details)
 
 by default all the scanner particles will bounce back at either strip end
 You can change this by calling setBounce( newBounceVal );

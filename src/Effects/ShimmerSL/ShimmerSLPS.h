@@ -55,11 +55,14 @@ Other Settings:
 class ShimmerSLPS : public EffectBasePS {
     public:
 
-        ShimmerSLPS(SegmentSet &SegmentSet, uint8_t ShimmerSLMin, uint8_t ShimmerSLMax, uint16_t Rate);
+        //Constructor using a random shimmer color
+        ShimmerSLPS(SegmentSet &SegmentSet, uint8_t ShimmerMin, uint8_t ShimmerMax, uint16_t Rate);
 
-        ShimmerSLPS(SegmentSet &SegmentSet, CRGB ShimmerSLColor, uint8_t ShimmerSLMin, uint8_t ShimmerSLMax, uint16_t Rate);  
+        //Constructor using a set shimmer color
+        ShimmerSLPS(SegmentSet &SegmentSet, CRGB ShimmerColor, uint8_t ShimmerMin, uint8_t ShimmerMax, uint16_t Rate);  
 
-        ShimmerSLPS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t ShimmerSLMin, uint8_t ShimmerSLMax, uint16_t Rate);
+        //Constuctor for colors randomly choosen from pallet
+        ShimmerSLPS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t ShimmerMin, uint8_t ShimmerMax, uint16_t Rate);
 
         ~ShimmerSLPS();
 
@@ -69,8 +72,8 @@ class ShimmerSLPS : public EffectBasePS {
         uint8_t
             randMode = 0,
             colorMode = 0,
-            ShimmerSLMin,
-            ShimmerSLMax;
+            shimmerMin,
+            shimmerMax;
         
         palletPS
             palletTemp,
@@ -88,7 +91,7 @@ class ShimmerSLPS : public EffectBasePS {
         uint8_t
             numSegs,
             palletLength,
-            ShimmerSLVal;
+            shimmerVal;
         
         uint16_t
             numLines,

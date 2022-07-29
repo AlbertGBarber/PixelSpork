@@ -66,7 +66,6 @@ Other Settings:
     shiftStep (default 1, min 1) -- The maximum value (is choosen randomly) of the offset increment if the shiftThreshold is met
 
 Notes:
-
 */
 class ShiftingSeaSLPS : public EffectBasePS {
     public:

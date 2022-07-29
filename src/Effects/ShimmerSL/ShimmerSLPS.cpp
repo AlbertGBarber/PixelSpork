@@ -1,7 +1,8 @@
 #include "ShimmerSLPS.h"
 
-ShimmerSLPS::ShimmerSLPS(SegmentSet &SegmentSet, uint8_t ShimmerSLMin, uint8_t ShimmerSLMax, uint16_t Rate):
-    segmentSet(SegmentSet), ShimmerSLMin(ShimmerSLMin), ShimmerSLMax(ShimmerSLMax)
+//Constructor using a random shimmer color
+ShimmerSLPS::ShimmerSLPS(SegmentSet &SegmentSet, uint8_t ShimmerMin, uint8_t ShimmerMax, uint16_t Rate):
+    segmentSet(SegmentSet), shimmerMin(ShimmerSLMin), shimmerMax(ShimmerMax)
     {    
         //we make a random pallet of one color so that 
         //if we switch to randMode 0 then we have a pallet to use
@@ -11,15 +12,17 @@ ShimmerSLPS::ShimmerSLPS(SegmentSet &SegmentSet, uint8_t ShimmerSLMin, uint8_t S
         init(Rate);
 	}
 
-ShimmerSLPS::ShimmerSLPS(SegmentSet &SegmentSet, CRGB ShimmerSLColor, uint8_t ShimmerSLMin, uint8_t ShimmerSLMax, uint16_t Rate):
-    segmentSet(SegmentSet), ShimmerSLMin(ShimmerSLMin), ShimmerSLMax(ShimmerSLMax)
+//Constructor using a set shimmer color
+ShimmerSLPS::ShimmerSLPS(SegmentSet &SegmentSet, CRGB ShimmerColor, uint8_t ShimmerMin, uint8_t ShimmerMax, uint16_t Rate):
+    segmentSet(SegmentSet), shimmerMin(ShimmerMin), shimmerMax(ShimmerMax)
     {    
-        setSingleColor(ShimmerSLColor);
+        setSingleColor(ShimmerColor);
         init(Rate);
 	}
 
-ShimmerSLPS::ShimmerSLPS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t ShimmerSLMin, uint8_t ShimmerSLMax, uint16_t Rate):
-    segmentSet(SegmentSet), pallet(Pallet), ShimmerSLMin(ShimmerSLMin), ShimmerSLMax(ShimmerSLMax)
+//Constuctor for colors randomly choosen from pallet
+ShimmerSLPS::ShimmerSLPS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t ShimmerMin, uint8_t ShimmerMax, uint16_t Rate):
+    segmentSet(SegmentSet), pallet(Pallet), shimmerMin(ShimmerMin), shimmerMax(ShimmerMax)
     {    
        init(Rate);
 	}
@@ -70,14 +73,14 @@ void ShimmerSLPS::update(){
         palletLength = pallet->length;
 
         for (uint16_t i = 0; i < numLines; i++) {
-            ShimmerSLVal = 255 - random8(ShimmerSLMin, ShimmerSLMax);
+            shimmerVal = 255 - random8(shimmerMin, shimmerMax);
             color = pickColor();
 
             for(uint8_t j = 0; j < numSegs; j++){
                 pixelNum = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, j, i);
 
                 colorOut = segDrawUtils::getPixelColor(segmentSet, pixelNum, color, colorMode, j, i);
-                nscale8x3(colorOut.r, colorOut.g, colorOut.b, ShimmerSLVal);
+                nscale8x3(colorOut.r, colorOut.g, colorOut.b, shimmerVal);
                 segmentSet.leds[pixelNum] = colorOut;
             }
         }

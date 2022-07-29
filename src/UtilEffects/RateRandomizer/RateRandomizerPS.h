@@ -3,37 +3,38 @@
 
 #include "Effects/EffectBasePS.h"
 
-//Utility that produces a random offset from a base number
-//ie with a base number of 80 and and offset range of +/- 20, the output could be any number between 60 and 100
-//Useful for varying the update rate of effects randomly, to add some extra variation
+/* 
+Utility that produces a random offset from a base number
+ie with a base number of 80 and and offset range of +/- 20, the output could be any number between 60 and 100
+Useful for varying the update rate of effects randomly, to add some extra variation
 
-//Generally it's useful to use the same base number as the rate of your effect
-//Picking any update rate for the RateRandomizer that is double or more that the base rate generally looks good
+Generally it's useful to use the same base number as the rate of your effect
+Picking any update rate for the RateRandomizer that is double or more that the base rate generally looks good
 
-//The baseRate and rate are both pointers, so you can point them to external variables
-//ie baseRate = &yourRate
+The baseRate and rate are both pointers, so you can point them to external variables
+ie baseRate = &yourRate
 
-//The randomized rate is stored in outputRate. Use &outputRate to bind it to an effect rate.
+The randomized rate is stored in outputRate. Use &outputRate to bind it to an effect rate.
 
-//Example calls: 
-    //RateRandomizerPS(80, -10, 10, 300);
-    //Produces a rate choosen randomly using base of 80, and upper and lower bounds of +/- 10 
-    //so the output will be vary from 70 to 90
-    //the output rate will change every 300ms
+Example calls: 
+    RateRandomizerPS(80, -10, 10, 300);
+    Produces a rate choosen randomly using base of 80, and upper and lower bounds of +/- 10 
+    so the output will be vary from 70 to 90
+    the output rate will change every 300ms
 
-//Constructor Inputs:
-    //BaseRate -- The base rate that the random rate is added/subtracted from
-    //RateRangeMin (int16_t, so it can be negative) -- The lowest possible random amount to be added to the baseRate
-    //RateRangeMax (int16_t, so it can be negative) -- The highest possible random amount to be added to the baseRate
-    //Rate -- The update rate (ms)
+Constructor Inputs:
+    BaseRate -- The base rate that the random rate is added/subtracted from
+    RateRangeMin (int16_t, so it can be negative) -- The lowest possible random amount to be added to the baseRate
+    RateRangeMax (int16_t, so it can be negative) -- The highest possible random amount to be added to the baseRate
+    Rate -- The update rate (ms)
 
-//Functions:
-    //resetToBaseRate() -- resets the outputRate to the baseRate
-    //update() -- updates the effect
+Functions:
+    resetToBaseRate() -- resets the outputRate to the baseRate
+    update() -- updates the effect
 
-//Other Settings:
-    //active (default true) -- If false, the effect will be blocked from updating
-
+Other Settings:
+    active (default true) -- If false, the effect will be blocked from updating
+*/
 class RateRandomizerPS : public EffectBasePS {
     public:
         RateRandomizerPS(uint16_t BaseRate, int16_t RateRangeMin, int16_t RateRangeMax, uint16_t Rate);  

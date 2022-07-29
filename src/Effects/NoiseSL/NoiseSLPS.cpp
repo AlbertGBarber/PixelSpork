@@ -1,5 +1,6 @@
 #include "NoiseSLPS.h"
 
+//Constuctor for randomly generated pallet
 NoiseSLPS::NoiseSLPS(SegmentSet &SegmentSet, uint8_t numColors, uint16_t BlendSteps, uint16_t ScaleBase, uint16_t ScaleRange, uint16_t Speed,  uint16_t Rate):
     segmentSet(SegmentSet), blendSteps(BlendSteps), scaleBase(ScaleBase), scaleRange(ScaleRange), speed(Speed)
     {    
@@ -8,6 +9,7 @@ NoiseSLPS::NoiseSLPS(SegmentSet &SegmentSet, uint8_t numColors, uint16_t BlendSt
         pallet = &palletTemp; 
 	}
 
+//Constructor using pallet
 NoiseSLPS::NoiseSLPS(SegmentSet &SegmentSet, palletPS *Pallet, uint16_t BlendSteps, uint16_t ScaleBase, uint16_t ScaleRange, uint16_t Speed, uint16_t Rate):
     segmentSet(SegmentSet), pallet(Pallet), blendSteps(BlendSteps), scaleBase(ScaleBase), scaleRange(ScaleRange), speed(Speed)
     {

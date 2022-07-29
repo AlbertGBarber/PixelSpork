@@ -156,10 +156,12 @@ Notes:
 */
 class ParticlesSLPS : public EffectBasePS {
     public:
+        //Constructor for having the effect generate a set of particles
         ParticlesSLPS(SegmentSet &SegmentSet, palletPS *Pallet, CRGB BgColor, uint8_t numParticles, uint8_t direction, 
                     uint16_t baseSpeed, uint16_t speedRange, uint16_t size, uint16_t sizeRange, uint8_t trailType, 
                     uint8_t trailSize, uint8_t trailRange, uint8_t bounce, uint8_t colorIndex, bool randColor);  
-                
+
+        //Constructor for using a passed in set of particles
         ParticlesSLPS(SegmentSet &SegmentSet, particleSetPS *ParticleSet, palletPS *Pallet, CRGB BgColor);
 
         ~ParticlesSLPS();

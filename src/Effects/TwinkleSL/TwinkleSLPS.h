@@ -74,8 +74,10 @@ class TwinkleSLPS : public EffectBasePS {
     public:
         //Constructor for a full pallet effect
         TwinkleSLPS(SegmentSet &SegmentSet, palletPS *Pallet, CRGB BgColor, uint16_t numTwinkles, uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate);  
+        
         //Constructor for a using a single color
         TwinkleSLPS(SegmentSet &SegmentSet, CRGB Color, CRGB BgColor, uint16_t numTwinkles, uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate);
+        
         //Constructor for choosing all colors at random
         TwinkleSLPS(SegmentSet &SegmentSet, CRGB BgColor, uint16_t numTwinkles, uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate);
 

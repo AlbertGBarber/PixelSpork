@@ -11,33 +11,35 @@
 
 #include "Effects/EffectBasePS.h"
 
-//A class for fading effects in and out, like when a song fades out at it's end
-//useful for smoothly transitioning between effects
-//(although blending directly to the next effect(s) would be better, it is far more complicated
-// and would probably require a whole frame buffer for each effect, taking far too much memory)
+/* 
+A class for fading effects in and out, like when a song fades out at it's end
+useful for smoothly transitioning between effects
+(although blending directly to the next effect(s) would be better, it is far more complicated
+and would probably require a whole frame buffer for each effect, taking far too much memory)
 
-//Usage:
-//Takes an array of effects and its length (like EffectGroupPS), a direction, and a time length (ms)
-//the effects are then all either dimmed to a minimum value (default is set below in class def),
-//or brightened from the minimum value to their original brightness over the time length
-//direction = true will do a brighten, while false will dim
-//it assumes that the supplied segments are already set to their regular brightness
-//(ie, you do not need to pre-adjust them to the fade starting point)
+Usage:
+Takes an array of effects and its length (like EffectGroupPS), a direction, and a time length (ms)
+the effects are then all either dimmed to a minimum value (default is set below in class def),
+or brightened from the minimum value to their original brightness over the time length
+direction = true will do a brighten, while false will dim
+it assumes that the supplied segments are already set to their regular brightness
+(ie, you do not need to pre-adjust them to the fade starting point)
 
-//To update the fade, call update(), the default update rate is 20ms
-//You can reset the fade to use a new set of effects, or to just restart the current fade
-//using the two reset() functions
+To update the fade, call update(), the default update rate is 20ms
+You can reset the fade to use a new set of effects, or to just restart the current fade
+using the two reset() functions
 
-//the minimum brightness is set via minBrightness
-//the udpate rate is set by the rate var (in ms), default is 20ms (set in class def)
-//the active flag turns the fade on/off (stopping mid fade is not the best, since the brightnesses are not reset)
-//the done flag will be set when a fade is complete
-//the started flag will be set when a fade has started (is not reset when done)
+the minimum brightness is set via minBrightness
+the udpate rate is set by the rate var (in ms), default is 20ms (set in class def)
+the active flag turns the fade on/off (stopping mid fade is not the best, since the brightnesses are not reset)
+the done flag will be set when a fade is complete
+the started flag will be set when a fade has started (is not reset when done)
 
-//Notes:
-//DO NOT call update if the effect group array is empty, you will crash
-//Don't mess with the maxBrightness, minBrightness, runTime, or the *origBrightness_arr array
-//while the fade is running
+Notes:
+DO NOT call update if the effect group array is empty, you will crash
+Don't mess with the maxBrightness, minBrightness, runTime, or the *origBrightness_arr array
+while the fade is running 
+*/
 
 class EffectFaderPS {
 

@@ -20,47 +20,49 @@
 //TODO:
 //-- Add ability to store a callback function ptr, would be called when group finishes
 
-// EffectBasePS *effArray[] = {&effectInstanceName1, &effectInstanceName2, etc } // example of an effect group array
+/* 
+EffectBasePS *effArray[] = {&effectInstanceName1, &effectInstanceName2, etc } // example of an effect group array
 
-// Takes an array of effects, and calls their update functions together
-// useful for compactly handling effects over multiple segmentSets
-// It is given a run time limit (in ms) or can be told to run infinitly
-// pass 0 as RunTime in the constructor to set the effects to run infinitly
-//(or you can set the infinite flag later)
-// after the run time limit is reached the effects will not be updated and the "done" flag will be set
-// useful for effects based around triggered events
+Takes an array of effects, and calls their update functions together
+useful for compactly handling effects over multiple segmentSets
+It is given a run time limit (in ms) or can be told to run infinitly
+pass 0 as RunTime in the constructor to set the effects to run infinitly
+(or you can set the infinite flag later)
+after the run time limit is reached the effects will not be updated and the "done" flag will be set
+useful for effects based around triggered events
 
-// to update the effects, call the EffectGroup's update() function
-// effects will be updated in order matching their placement in the array
-// so if you have multiple effects on one segment, make sure the order is correct to prevent overwriting the wrong effect
-// the first time you call the update function, the "started" flag will be set
+to update the effects, call the EffectGroup's update() function
+effects will be updated in order matching their placement in the array
+so if you have multiple effects on one segment, make sure the order is correct to prevent overwriting the wrong effect
+the first time you call the update function, the "started" flag will be set
 
-// you may adjust the effect group by calling setGroup() (see class for details)
-// this will also reset all the time vars and flags by calling reset()
+you may adjust the effect group by calling setGroup() (see class for details)
+this will also reset all the time vars and flags by calling reset()
 
-//Fader Useage:
-//By default the effect group creates an effect fader (see EffectFaderPS for details)
-//The fader will fade the effects in the effect group in as the group starts, and then fade them out again as the group reaches it's run time
-//the fade in and out can be turned on and off using the fadeIn and fadeOut flags
-//The fader has a run time of fadeRunTime
-//By default the run time is set to 0 and the fader is inactive
-//You can turn on the fader by calling setupFader(), this will also reset the fader, so don't call it mid fade
-//You can also overload the effect group's constructor with the fade time (see class for details),
-//which will setup the fader automatically
-//The EffectFaderPS object can be accessed via the effectFader pointer
-//By default effects will fade in, but not out when infinite is turned on
+Fader Useage:
+By default the effect group creates an effect fader (see EffectFaderPS for details)
+The fader will fade the effects in the effect group in as the group starts, and then fade them out again as the group reaches it's run time
+the fade in and out can be turned on and off using the fadeIn and fadeOut flags
+The fader has a run time of fadeRunTime
+By default the run time is set to 0 and the fader is inactive
+You can turn on the fader by calling setupFader(), this will also reset the fader, so don't call it mid fade
+You can also overload the effect group's constructor with the fade time (see class for details),
+which will setup the fader automatically
+The EffectFaderPS object can be accessed via the effectFader pointer
+By default effects will fade in, but not out when infinite is turned on
 
-//Removing the Fader to conserve memory:
-//   *The effect fader class takes up quite a lot of program memory (6% on an Arduino Nano/Uno) 
-//    so you can entierly exclude the fader by adding #define NO_EFADE_PS above your #include PixelStrip2 in you .ino sketch
-//    this prevents you from ever having a fade native to an effect group, but you can still define on elsewhere 
-//    (although I'm not sure why you would, since you'd pay the memory price anyway)
+Removing the Fader to conserve memory:
+  *The effect fader class takes up quite a lot of program memory (6% on an Arduino Nano/Uno) 
+   so you can entierly exclude the fader by adding #define NO_EFADE_PS above your #include PixelStrip2 in you .ino sketch
+   this prevents you from ever having a fade native to an effect group, but you can still define on elsewhere 
+   (although I'm not sure why you would, since you'd pay the memory price anyway)
 
-//The above is also why this class is fully in the header file (the .cpp file just has a commented out version of the class)
-//This is because the Arduino compiler compiles .cpp files seperatly to your .ino sketch, so the NO_EFADE_PS flag
-//in the .ino file is not visible to the .cpp file, causing the EffectFaderPS functions to be included
-//however .h files are added inline to the .ino sketch, so by keeping everything in the .h file
-//all of the EffectFaderPS bits are removed at compile time.
+The above is also why this class is fully in the header file (the .cpp file just has a commented out version of the class)
+This is because the Arduino compiler compiles .cpp files seperatly to your .ino sketch, so the NO_EFADE_PS flag
+in the .ino file is not visible to the .cpp file, causing the EffectFaderPS functions to be included
+however .h files are added inline to the .ino sketch, so by keeping everything in the .h file
+all of the EffectFaderPS bits are removed at compile time. 
+*/
 class EffectGroupPS {
 public:
     uint8_t 

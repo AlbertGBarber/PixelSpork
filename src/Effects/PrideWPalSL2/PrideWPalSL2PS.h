@@ -123,12 +123,16 @@ Other Settings (see Inputs Guide for more info on most vars):
 */
 class PrideWPalSL2PS : public EffectBasePS {
     public:
+        //Constructor for rainbow mode
         PrideWPalSL2PS(SegmentSet &SegmentSet, bool Direct, bool RandomBriInc, uint16_t Rate);
 
+        //Constructor for pallet input
         PrideWPalSL2PS(SegmentSet &SegmentSet, palletPS *Pallet, bool Direct, bool RandomBriInc, uint16_t Rate);  
 
+        //Constructor for making a random pallet
         PrideWPalSL2PS(SegmentSet &SegmentSet, uint8_t numColors, bool Direct, bool RandomBriInc, uint16_t Rate);
 
+        //Constructor with inputs for all main variables
         PrideWPalSL2PS(SegmentSet &SegmentSet, palletPS *Pallet, bool Direct, uint8_t GradLength, 
                               uint8_t BrightDepthMin, uint8_t BrightDepthMax, uint16_t BriThetaFreq, 
                               uint8_t BriThetaInc16Min, uint8_t BriThetaInc16Max, uint8_t HueChangeMin, 

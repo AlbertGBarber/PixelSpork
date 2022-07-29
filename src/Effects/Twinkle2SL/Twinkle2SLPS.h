@@ -122,7 +122,6 @@ Notes:
     allow editing of its length (see note at end of inputs guide). 
     The more twinkles you have, the larger the twinkleSet is, so watch your memory usage.
     For more on twinkle sets see twinkleStart.h
-    
 */
 class Twinkle2SLPS : public EffectBasePS {
     public:
