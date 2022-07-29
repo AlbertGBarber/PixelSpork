@@ -12,7 +12,7 @@
 
 //for explanation see segmentSet.h
 struct segmentSection {
-  uint16_t startPixel; //65536 for dummy pixel
+  uint16_t startPixel;
   int16_t length;
   //support for direction of segment section, not implemented elsewhere
   //avoid using due to large increase in memory usage

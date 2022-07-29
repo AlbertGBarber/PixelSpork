@@ -14,8 +14,15 @@
 #include "PaletteFiles.h"
 #include "MathUtils/mathUtilsPS.h"
 
-//The value to indicate a dummy led (max of uint16_t)
-//Pixels with this value will be ignored by set color setting functions
+//dLed is used to indicate a dummy led (max of uint16_t)
+//Pixels with this value will be ignored by color setting functions
+//This is critical for handling cases where you try to find the address of a pixel
+//that doesn't exist in the segment set
+//ex for a segment set with 300 pixels, trying to get the address of the 301st
+//We must be able to return a location that is impossible for all segment sets
+//(we can't just return 301 because that could be an actual address in the segment set)
+//Hence we use the constant dLed as a global impossible address marker
+//This limits the maximum segment set length to 65434, but that's still waaay more pixels than any current MC can handle
 #define dLed 65535
 
 //utility functions for finding the physical pixel number(i.e. it's strip location) of segment pixels

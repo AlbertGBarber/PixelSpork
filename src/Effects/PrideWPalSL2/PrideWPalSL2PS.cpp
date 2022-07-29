@@ -178,9 +178,7 @@ void PrideWPalSL2PS::update(){
                 pixelnumber = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, segOut, numLines - j - 1);
                 
                 //output a the color 
-                if(pixelnumber != dLed){ //avoid outputing to dummy leds
-                    nblend(segmentSet.leds[pixelnumber], colorOut, 128);
-                }
+                nblend(segmentSet.leds[pixelnumber], colorOut, 128);
             }
         }          
         showCheckPS();
