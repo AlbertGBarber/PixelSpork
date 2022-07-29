@@ -209,16 +209,14 @@ void segDrawUtils::drawSegLineSection(SegmentSet &segmentSet, uint8_t startSeg, 
 
 // draws a segment line of one color, does not need a pallet or pattern, passing -1 as the color will do a rainbow based on the Wheel() function
 void segDrawUtils::drawSegLineSimple(SegmentSet &segmentSet, uint16_t lineNum, CRGB color, uint8_t colorMode) {
-    numSegs = segmentSet.numSegs;
-    drawSegLineSimpleSection(segmentSet, 0, numSegs - 1, lineNum, color, colorMode);
+    drawSegLineSimpleSection(segmentSet, 0, segmentSet.numSegs - 1, lineNum, color, colorMode);
 }
 
-// draws a segment line of one color betweeb startSeg and endSeg (including endSeg)
+// draws a segment line of one color between startSeg and endSeg (including endSeg)
 // does not need a pallet or pattern,
 void segDrawUtils::drawSegLineSimpleSection(SegmentSet &segmentSet, uint8_t startSeg, uint8_t endSeg, uint16_t lineNum, CRGB color, uint8_t colorMode) {
-    maxSegLength = segmentSet.maxSegLength;
     for (uint8_t i = startSeg; i <= endSeg; i++) { // for each segment, set the color, if we're in rainbow mode, set the rainbow color
-        pixelNum = getPixelNumFromLineNum(segmentSet, maxSegLength, i, lineNum);
+        pixelNum = getPixelNumFromLineNum(segmentSet, segmentSet.maxSegLength, i, lineNum);
         setPixelColor(segmentSet, pixelNum, color, colorMode, i, lineNum);
     }
 } 
@@ -387,7 +385,7 @@ CRGB segDrawUtils::getPixelColor(SegmentSet &segmentSet, uint16_t pixelNum, CRGB
     //while for all pallet gradients it's whatever colorModeDom is
     if(colorMode < 7){
         offsetMax = 255;
-        colorFinal = colorUtilsPS::wheel( (colorModeNum * 255) / colorModeDom, segmentSet.gradOffset,  segmentSet.rainbowSatur, segmentSet.rainbowVal );
+        colorFinal = colorUtilsPS::wheel( (colorModeNum * 255) / colorModeDom, segmentSet.gradOffset, segmentSet.rainbowSatur, segmentSet.rainbowVal );
     } else{
         offsetMax = colorModeDom;
         colorFinal = palletUtilsPS::getPalletGradColor(segmentSet.gradPallet, colorModeNum, segmentSet.gradOffset, colorModeDom);      
@@ -412,6 +410,39 @@ void segDrawUtils::setGradOffset(SegmentSet &segmentSet, uint16_t offsetMax){
             step = segmentSet.offsetDirect - !segmentSet.offsetDirect; //either 1 or -1
             segmentSet.offsetUpdateTime = currentTime;
             segmentSet.gradOffset = addMod16PS(segmentSet.gradOffset, offsetMax + step, offsetMax);
+        }
+    }
+}
+
+//fades an entire segment set to black by a certain percentage (out of 255)
+//uses FastLED's fadeToBlackBy function
+void segDrawUtils::fadeSegSetToBlackBy(SegmentSet &segmentSet, uint8_t val){
+    for(uint8_t i = 0; i < segmentSet.numSegs; i++){
+        fadeSegToBlackBy(segmentSet, i, val);
+    }
+}
+
+//fades an entire segment to black by a certain percentage (out of 255)
+//uses FastLED's fadeToBlackBy function
+void segDrawUtils::fadeSegToBlackBy(SegmentSet &segmentSet, uint8_t segNum, uint8_t val) {
+    numSec = segmentSet.getTotalNumSec(segNum);
+    // run through segment's sections, fetch the startPixel and length of each, then color each pixel
+    for (uint8_t i = 0; i < numSec; i++) {
+        fadeSegSecToBlackBy(segmentSet, segNum, i, val);
+    }
+}
+
+//fades an entire segment section to black by a certain percentage (out of 255)
+//(ex: a segment section has three sub sections: {1, 4} , {8, 3}, {14, 8}) (so 4 pixels starting at 1, 3 starting at 8, and 8 starting at 14)
+//this function fades one section to black
+//uses FastLED's fadeToBlackBy function
+void segDrawUtils::fadeSegSecToBlackBy(SegmentSet &segmentSet, uint8_t segNum, uint16_t secNum, uint8_t val){
+    secStartPixel = segmentSet.getSecStartPixel(segNum, secNum);
+    if(secStartPixel != dLed){
+        secLength = segmentSet.getSecLength(segNum, secNum);
+        step = (secLength > 0) - (secLength < 0); // account for negative lengths
+        for (int16_t i = secStartPixel; i != (secStartPixel + secLength); i += step) {
+            segmentSet.leds[i].fadeToBlackBy(val);
         }
     }
 }

@@ -1,11 +1,10 @@
 #include "colorUtilsPS.h"
 
-
 using namespace colorUtilsPS;
 
 //returns a random color
 CRGB colorUtilsPS::randColor(){
-    return CHSV( random8(), 255, 255 );
+    return CHSV( random8(), random8(100, 255), 255 );
     //return CRGB( random(256), random(256), random(256) );
     //return CRGB( random8(), random8(), random8() );
 }

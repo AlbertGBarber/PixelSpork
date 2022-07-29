@@ -40,10 +40,10 @@ namespace segDrawUtils{
         setPixelColor(SegmentSet &segmentSet, uint16_t segPixelNum, uint8_t segNum, CRGB color, uint8_t colorMode),
         setPixelColor(SegmentSet &segmentSet, uint16_t pixelNum, CRGB color, uint8_t colorMode, uint8_t segNum, uint16_t lineNum),
         getPixelColor(SegmentSet &segmentSet, pixelInfoPS *pixelInfo, CRGB color, uint8_t colorMode, uint16_t segPixelNum),
+        setGradOffset(SegmentSet &segmentSet, uint16_t offsetMax),
         fadeSegSetToBlackBy(SegmentSet &segmentSet, uint8_t val),
         fadeSegToBlackBy(SegmentSet &segmentSet, uint8_t segNum, uint8_t val),
-        fadeSegSecToBlackBy(SegmentSet &segmentSet, uint8_t segNum, uint16_t secNum, uint8_t val),
-        setGradOffset(SegmentSet &segmentSet, uint16_t offsetMax);
+        fadeSegSecToBlackBy(SegmentSet &segmentSet, uint8_t segNum, uint16_t secNum, uint8_t val);
     
     uint8_t 
         getLineNumFromPixelNum(SegmentSet &segmentSet, uint16_t segPixelNum),

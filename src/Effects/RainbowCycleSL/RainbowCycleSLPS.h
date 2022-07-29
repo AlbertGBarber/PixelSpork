@@ -1,25 +1,33 @@
-#ifndef RainbowCyclePS_h
-#define RainbowCyclePS_h
-
-//TODO
-    //Add spacing setting? -> use streamer effect + colorMode + segment rainbow shifting instead?
+#ifndef RainbowCycleSLPS_h
+#define RainbowCycleSLPS_h
     
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
 #include "MathUtils/mathUtilsPS.h"
 
 /*
-A classic effect
-Moves repeating rainbows of a set length along a segmentSet
-shifts the rainbows in along the segmentSet in the passed in direction at the passed in rate
+Draws a repeated rainbow of a set length repeatedly along segment lines
+shifts the rainbows in along the segmentSet liens in the passed in direction at the passed in rate
 maximum length of the rainbow is 255 (b/c rgb are byte representations)
 suggested min length is 5 (ie red, yellow, green, blue, indigo/violet)
 
-This is the 1D version of the effect. See RainbowCycleSL.h for a segment line 2D version.
-Comparing the two may help you learn how drawing on segment lines works.
+This is the 2D version of rainbowCycle (although if you pass in a 1D segment the results will be the same)
+For most effects I would combine the two effects for one that just works on segment lines
+But since this is a very basic effect I wanted to keep it more user friendly, so I kept the 1D version of the effect
+
+You also don't really need this effect at all, since the segment rainbow effects are built into
+the library's colorModes. So you could just make a BGRateFill effect with color mode 4
+Then change the segment's gradLineVal to set the rainbow length, set the offsetRate to set the speed
+set runOffset to true, and change the offsetDirect if needed. 
+ie: //mainSegments.runOffset = true;
+      mainSegments.gradLineVal = 30;
+      mainSegments.offsetRateOrig = 80;
+      mainSegments.offsetDirect = true;
+This would also let you change to different color modes on the fly
+But this is maybe too complicated for learners.
 
 Example call: 
-    RainbowCyclePS(mainSegments, 30, true, 80); 
+    RainbowCycleSLPS(mainSegments, 30, true, 80); 
     Will draw rainbows of length 30, moving towards the end of the segmentSet, at 80ms
 
 Constructor Inputs:
@@ -41,9 +49,9 @@ Reference Vars (do not set these directly):
 
 Notes: 
 */
-class RainbowCyclePS : public EffectBasePS {
+class RainbowCycleSLPS : public EffectBasePS {
     public:
-        RainbowCyclePS(SegmentSet &SegmentSet, uint8_t Length, bool Direction, uint16_t Rate); 
+        RainbowCycleSLPS(SegmentSet &SegmentSet, uint8_t Length, bool Direction, uint16_t Rate); 
         //length fixed at 255 max, b/c that's the maximum length of a rainbow
 
         SegmentSet 
@@ -54,7 +62,7 @@ class RainbowCyclePS : public EffectBasePS {
             value = 255,
             length; //reference only, call setLength() to change the rainbow length
         
-        bool 
+        bool
             direct; //reference only, call setDirect() to change the rainbow direction
         
         void 
@@ -72,12 +80,8 @@ class RainbowCyclePS : public EffectBasePS {
         
         uint16_t
             cycleCount,
-            ledCount = 0,
-            numSegs,
-            numLeds,
-            totSegLen,
-            maxCycleLength,
-            pixelNum;
+            numLines,
+            maxCycleLength;
         
         uint32_t
             stepVal;

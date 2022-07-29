@@ -40,11 +40,14 @@ void RainbowFontsSLPS::update(){
 
             colorOut = CHSV(c, 255, 255);
 
+            //reverse the line number so that the effect moves positivly along the strip
+            lineNum = numLines - i - 1;
+
             for (uint8_t j = 0; j < numSegs; j++) {
                 //get the physical pixel location based on the line and seg numbers
                 //and then write out the color
                 //Note that the actual line written to is offset and wraps
-                pixelNum = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, j,  numLines - i - 1);
+                pixelNum = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, j,  lineNum);
                 segDrawUtils::setPixelColor(segmentSet, pixelNum, colorOut, 0, 0, 0);
             }
 

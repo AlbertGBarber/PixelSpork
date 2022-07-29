@@ -1,19 +1,24 @@
-#ifndef RainSegPS_h
-#define RainSegPS_h
+#ifndef RainSLPS_h
+#define RainSLPS_h
+
+//TODO: -- Try to make core common functions for this and RainSegPS?
+//      -- Add alternating direction mode?
 
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
 #include "Effects/ParticlesSL/Particle_Stuff/particleUtilsPS.h"
 
+//Like RainSeg, but the drops spawn and move along the segment set lines (perpendicular to the segments)
 //An effect for prodcing a random set of falling particles, like rain, or the classic "Matrix" code animation
-//Drops spawn at the start of each segment in the segment set and "fall down" to the end of the segment
+//You can set the drops to spawn at either the first or last segment
+//They will then "fall" towards the last or first segment respecitvely
 //This effect uses particles as the drops. See particlePS.h and particleUtilsPS.h for more details
 //There are numerous options for the drops: trail type, speed, size, etc
 //There are also more general settings for how often drops spawn, how the background is drawn,
 //and if the drops should blend together if they pass over each other.
 //You can also configure each drop's properties to be choosen at random from ranges.
 
-//drop colors can either be a static color or picked randomly from a pallet
+//Drop colors can either be a static color or picked randomly from a pallet
 
 //This effect is fully compatible with color modes, and the bgColor is a pointer, so you can bind it
 //to an external color variable
@@ -38,19 +43,20 @@
     //There is a similar constructor for using a single color, just replace the pallet with a color in th
     //constructor
 
-    //RainSegPS(mainSegments, &pallet3, CRGB::Red, true, 10, 4, 1, 1, 5, 80);
+    //RainSLPS(mainSegments, &pallet3, CRGB::Red, true, 10, 4, 1, 1, 5, 80, true);
     //Will spawn drops on the mainSegment set, picking colors from pallet3
     //The background is red, and it will be pre-filled before the drops spawn
     //The drops have a spawn chance of 10/100 (10% chance of spawing each update cycle)
     //There is a maximum of 4 drops running concurrently on each segment
     //The drops have a single trailing trail of length 5
     //The drops move with a base speed of 80ms
+    //Drops will spawn at the first segment and move towards the last
     //bgColorMode = 6; => will cycle the background through the rainbow (see segDrawUtils::getPixelColor())
 
     //A more extensive constructor will all the options for drops
     //Also comes as a pallet variant; replace the color with a pallet in the constructor
 
-    //RainSegPS(mainSegments, CRGB::Green, 0, false, 10, 4, 1, 3, 2, 4, true, true, false, false, false, 60, 40);
+    //RainSLPS(mainSegments, CRGB::Green, 0, false, 10, 4, 1, 3, 2, 4, true, true, false, false, false, 60, 40, false);
     //Will spawn green drops on the mainSegment set
     //The background is off, and it will not be pre-filled before the drops spawn
     //The drops have a spawn chance of 10/100 (10% chance of spawing each update cycle)
@@ -59,6 +65,7 @@
     //The drops have minimum trail size of 2 with a range of 4 (if they have them)
     //Drops can spawn with no trails or a single trial, and will not
     //spawn with double, reversed, or infinite trails
+     //Drops will spawn at the last segment and move towards the first
     //Drops will have a base speed of 60ms and a speed range of 40ms 
 
 //Constructor inputs for creating a particle set:
@@ -83,6 +90,7 @@
     //infTrail (optional, default false) -- Used with trailType 6, allows drops with infinite trails
     //Rate -- The minimum speed of the drops
     //SpeedRange -- The amount the speed may vary up from the Rate ( ie Rate + random(range) )
+    //Direct -- The direction the drops will fall
  
 //Trail Modes:
 //Taken from particlePS.h:
@@ -136,29 +144,29 @@
 //Notes:
     //you can change the drop variables (speed, size, the ranges) on the fly. As drops spawn they will use the 
     //new values
-class RainSegPS : public EffectBasePS {
+class RainSLPS : public EffectBasePS {
     public:
         //constructor for pallet colors, no range options
-        RainSegPS(SegmentSet &SegmentSet, palletPS *Pallet, CRGB BgColor, bool BgPrefill, uint8_t SpawnChance, 
-                    uint8_t MaxNumDrops, uint16_t Size, uint8_t TrailMode, uint8_t TrailSize, uint16_t Rate);
+        RainSLPS(SegmentSet &SegmentSet, palletPS *Pallet, CRGB BgColor, bool BgPrefill, uint8_t SpawnChance, 
+                    uint8_t MaxNumDrops, uint16_t Size, uint8_t TrailMode, uint8_t TrailSize, uint16_t Rate, bool Direct);
         
         //constructor for pallet colors with range and trail options
-        RainSegPS(SegmentSet &SegmentSet, palletPS *Pallet, CRGB BgColor, bool BgPrefill, uint8_t SpawnChance, 
+        RainSLPS(SegmentSet &SegmentSet, palletPS *Pallet, CRGB BgColor, bool BgPrefill, uint8_t SpawnChance, 
                     uint8_t MaxNumDrops, uint16_t Size, uint16_t SizeRange, uint8_t TrailSize,
                     uint8_t TrailRange, bool NoTrails, bool OneTrail, bool TwoTrail, bool RevTrail, 
-                    bool InfTrail, uint16_t Rate, uint16_t SpeedRange);
+                    bool InfTrail, uint16_t Rate, uint16_t SpeedRange, bool Direct);
         
         //constructor for single color, no range options
-        RainSegPS(SegmentSet &SegmentSet, CRGB Color, CRGB BgColor, bool BgPrefill, uint8_t SpawnChance, 
-                    uint8_t MaxNumDrops, uint16_t Size, uint8_t TrailType, uint8_t TrailSize, uint16_t Rate);
+        RainSLPS(SegmentSet &SegmentSet, CRGB Color, CRGB BgColor, bool BgPrefill, uint8_t SpawnChance, 
+                    uint8_t MaxNumDrops, uint16_t Size, uint8_t TrailType, uint8_t TrailSize, uint16_t Rate, bool Direct);
 
         //constructor for single colors with range and trail options        
-        RainSegPS(SegmentSet &SegmentSet, CRGB Color, CRGB BgColor, bool BgPrefill, uint8_t SpawnChance, 
+        RainSLPS(SegmentSet &SegmentSet, CRGB Color, CRGB BgColor, bool BgPrefill, uint8_t SpawnChance, 
                     uint8_t MaxNumDrops, uint16_t Size, uint16_t SizeRange, uint8_t TrailSize,
                     uint8_t TrailRange, bool NoTrails, bool OneTrail, bool TwoTrail, bool RevTrail, 
-                    bool InfTrail, uint16_t Rate, uint16_t SpeedRange);
+                    bool InfTrail, uint16_t Rate, uint16_t SpeedRange, bool Direct);
         
-        ~RainSegPS();
+        ~RainSLPS();
 
         SegmentSet 
             &segmentSet; 
@@ -181,6 +189,7 @@ class RainSegPS : public EffectBasePS {
             sizeRange = 0;
         
         bool
+            direct,
             bgPrefill,
             fillBG = false,
             blend = false,
@@ -216,7 +225,7 @@ class RainSegPS : public EffectBasePS {
             trailDirectionAdj;
 
         uint8_t
-            numSegs = 0, //for first init function call
+            numSegs,
             partTrailType,
             partTrailSize,
             posOffset,
@@ -224,6 +233,7 @@ class RainSegPS : public EffectBasePS {
             dimRatio;
 
         uint16_t 
+            numLines = 0, //for first init function call
             pixelPosTemp,
             particleIndex,
             totPartSize,
@@ -234,8 +244,7 @@ class RainSegPS : public EffectBasePS {
             partSize,
             maxPosition,
             trailLedLocation,
-            sectionEnd,
-            sectionStart = 0,
+            getParticlePixelLoc(uint16_t trailLedLocation, uint8_t lineNum),
             getTrailLedLoc(bool trailDirect, uint8_t trailPixelNum, uint16_t maxPosition);
 
         unsigned long
@@ -254,11 +263,12 @@ class RainSegPS : public EffectBasePS {
             *trailEndColors, //used to store the last colors of each trail, so the background color can be set
             colorEnd,
             colorOut,
-            colorTemp;
+            colorTemp,
+            desaturate(CRGB color, CRGB targetColor, uint8_t step, uint8_t totalSteps);
         
         void
             init(uint16_t Rate, CRGB BgColor),
-            setDropSpawnPos(particlePS *particlePtr, uint8_t segNum),
+            setDropSpawnPos(particlePS *particlePtr),
             moveParticle(particlePS *particlePtr),
             drawParticlePixel(uint16_t trailLedLocation, uint8_t trailPixelNum, uint8_t trailSize, uint8_t segNum, bool bodyPixel),
             spawnParticle(uint8_t particleIndex, uint8_t segNum);

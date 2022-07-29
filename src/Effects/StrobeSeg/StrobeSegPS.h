@@ -16,9 +16,9 @@
 
 //Strobe Modes:
     //0: Strobe each segment in the set one at a time, the direction can be set, and it can be set to reverse after each cycle
-    //1: Strobe every other segment
+    //1: Strobe every other segment, alternating
     //2: Strobe each segment line one at a time, the direction can be set, and it can be set to reverse after each cycle
-    //3: Strobe every other segment line (radial)
+    //3: Strobe every other segment line, alternating
     //4: Strobe all segs at once 
 
 //You can configure any combination of the modes to fire one after another

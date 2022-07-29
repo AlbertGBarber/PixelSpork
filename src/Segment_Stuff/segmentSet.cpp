@@ -26,35 +26,39 @@ void SegmentSet::resetGradVals(){
 	gradSegVal = numSegs;
 }
 
-//returns the maxium length across all the segments
+//returns the maxium length across all active segments
 uint16_t SegmentSet::getMaxSegLength(void){
-  uint16_t maxSegLength = 0;
-  uint16_t totalLength;
-  //walk across all the segments
-  //if the segment length is greater than the current maxSegLength, store it as the maxSegLength
-  for(int i = 0; i < numSegs; i++ ){
-	  totalLength = getTotalSegLength(i);
-	  if( totalLength > maxSegLength ){
-		maxSegLength = totalLength;
-	  }
-  }
-  return maxSegLength;
+  	uint16_t maxSegLength = 0;
+  	uint16_t totalLength;
+  	//walk across all the segments
+  	//if the segment length is greater than the current maxSegLength, store it as the maxSegLength
+  	for(uint8_t i = 0; i < numSegs; i++ ){
+		if(getSegActive(i)){
+			totalLength = getTotalSegLength(i);
+			if( totalLength > maxSegLength ){
+				maxSegLength = totalLength;
+			}
+		}
+  	}
+	//record the segment with the maximum segment length
+	segNumMaxSegLength = getsegNumMaxSegLength();
+  	return maxSegLength;
 }
 
 //returns the segment number that has the maxium length across all the segments
 uint16_t SegmentSet::getsegNumMaxSegLength(void){
-  uint16_t totalLength;
-  //walk across all the segments
-  //if the segment length is equal to the maxSegLength, return it
-  for(int i = 0; i < numSegs; i++ ){
-	  totalLength = getTotalSegLength(i);
-	  //if we find the segment with the right length, break out of the loop and return it
-	  if( totalLength == maxSegLength ){
-		segNumMaxSegLength = i;
-		break; 
-	  }
-  }
-  return segNumMaxSegLength;
+  	uint16_t totalLength;
+  	//walk across all the segments
+  	//if the segment length is equal to the maxSegLength, return it
+  	for(int i = 0; i < numSegs; i++ ){
+	  	totalLength = getTotalSegLength(i);
+	  	//if we find the segment with the right length, break out of the loop and return it
+	  	if( totalLength == maxSegLength ){
+			segNumMaxSegLength = i;
+			break; 
+	  	}
+  	}
+  	return segNumMaxSegLength;
 }
 
 //returns the total number of leds in the segment set that in active segments
