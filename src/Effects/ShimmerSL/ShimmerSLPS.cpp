@@ -2,7 +2,7 @@
 
 //Constructor using a random shimmer color
 ShimmerSLPS::ShimmerSLPS(SegmentSet &SegmentSet, uint8_t ShimmerMin, uint8_t ShimmerMax, uint16_t Rate):
-    segmentSet(SegmentSet), shimmerMin(ShimmerSLMin), shimmerMax(ShimmerMax)
+    segmentSet(SegmentSet), shimmerMin(ShimmerMin), shimmerMax(ShimmerMax)
     {    
         //we make a random pallet of one color so that 
         //if we switch to randMode 0 then we have a pallet to use
