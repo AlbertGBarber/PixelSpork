@@ -1,23 +1,23 @@
 #include "NoiseWavesSLPS.h"
 
-//Constructor with pallet
-NoiseWavesSLPS::NoiseWavesSLPS(SegmentSet &SegmentSet, palletPS *Pallet, CRGB BgColor, uint16_t BlendScale, uint8_t PhaseScale, uint8_t FreqScale, uint16_t Rate):
-    segmentSet(SegmentSet), pallet(Pallet), blendScale(BlendScale), phaseScale(PhaseScale), freqScale(FreqScale)
+//Constructor with palette
+NoiseWavesSLPS::NoiseWavesSLPS(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint16_t BlendScale, uint8_t PhaseScale, uint8_t FreqScale, uint16_t Rate):
+    segmentSet(SegmentSet), palette(Palette), blendScale(BlendScale), phaseScale(PhaseScale), freqScale(FreqScale)
     {    
         init(BgColor, Rate);
     }
 
-//Constructor with randomly generated pallet
+//Constructor with randomly generated palette
 NoiseWavesSLPS::NoiseWavesSLPS(SegmentSet &SegmentSet, uint8_t numColors, CRGB BgColor, uint16_t BlendScale, uint8_t PhaseScale, uint8_t FreqScale, uint16_t Rate):
     segmentSet(SegmentSet), blendScale(BlendScale), phaseScale(PhaseScale), freqScale(FreqScale)
     {    
-        palletTemp = palletUtilsPS::makeRandomPallet(numColors);
-        pallet = &palletTemp;
+        paletteTemp = paletteUtilsPS::makeRandomPalette(numColors);
+        palette = &paletteTemp;
         init(BgColor, Rate);
 	}
 
 NoiseWavesSLPS::~NoiseWavesSLPS(){
-    delete[] palletTemp.palletArr;
+    delete[] paletteTemp.paletteArr;
 }
 
 //Initializes core common varaibles
@@ -59,10 +59,10 @@ void NoiseWavesSLPS::update(){
         prevTime = currentTime;
 
         freqCounter = 0;
-        //re-fetch some core variables incase the pallet has changed
+        //re-fetch some core variables incase the palette has changed
         numSegs = segmentSet.numSegs;
         numLines = segmentSet.maxSegLength;
-        totBlendLength = blendSteps * pallet->length;
+        totBlendLength = blendSteps * palette->length;
 
         //Get a phase value for our waves using noise
         //The offset keeps the waves moving across the strip
@@ -78,7 +78,7 @@ void NoiseWavesSLPS::update(){
             //Get a color based on some noise
             //For the color index we add an offset the increments each cycle
             //Noise values tend to fall around the center of the 255 range, so by adding
-            //a moving offset we make sure that we see all the pallet colors and keeps the effect varying
+            //a moving offset we make sure that we see all the palette colors and keeps the effect varying
             index = inoise8( i * blendScale, currentTime/blendSpeed ) + offset;
 
             //Get a brightness based on a cos wave with noisy inputs
@@ -90,10 +90,10 @@ void NoiseWavesSLPS::update(){
             //Also we add 10 to the freqCounter to make sure we have a noticable frequency at all times
             bri = cos8( (freqCounter + 10) * inoise8( currentTime/10 ) / freqScale + noisePhase ); //remove freqCounter for neat blinking
 
-            //get the blended color from the pallet
+            //get the blended color from the palette
             //scale the index to the length of all the color blends combined
             colorIndex = scale16by8( totBlendLength, index );
-            colorOut = palletUtilsPS::getPalletGradColor(pallet, colorIndex, 0, totBlendLength, blendSteps);
+            colorOut = paletteUtilsPS::getPaletteGradColor(palette, colorIndex, 0, totBlendLength, blendSteps);
 
             //take the line color and brightness and apply it to all the seg pixels on the line
             for(uint16_t j = 0; j < numSegs; j++){
@@ -133,9 +133,9 @@ void NoiseWavesPS::update(){
 
         freqCounter = 0;
         pixelCount = 0;
-        //re-fetch some core variables incase the pallet has changed
+        //re-fetch some core variables incase the palette has changed
         numSegs = segmentSet.numSegs;
-        totBlendLength = blendSteps * pallet->length;
+        totBlendLength = blendSteps * palette->length;
 
         //Get a phase value for our waves using noise
         //The offset keeps the waves moving across the strip
@@ -156,7 +156,7 @@ void NoiseWavesPS::update(){
                 //Get a color based on some noise
                 //For the color index we add an offset the increments each cycle
                 //Noise values tend to fall around the center of the 255 range, so by adding
-                //a moving offset we make sure that we see all the pallet colors and keeps the effect varying
+                //a moving offset we make sure that we see all the palette colors and keeps the effect varying
                 index = inoise8( pixelCount * blendScale, currentTime/blendSpeed ) + offset;// beatsin16(4, 0, totBlendLength /2);
                 
                 //Get a brightness based on a cos wave with noisy inputs
@@ -170,9 +170,9 @@ void NoiseWavesPS::update(){
 
                 //cos8(pixelCount * 30 + bandStart );
                 
-                //get the blended color from the pallet
+                //get the blended color from the palette
                 colorIndex = scale16by8( totBlendLength, index ); //scale the index to the length of all the color blends combined
-                colorOut = palletUtilsPS::getPalletGradColor(pallet, colorIndex, 0, totBlendLength, blendSteps);
+                colorOut = paletteUtilsPS::getPaletteGradColor(palette, colorIndex, 0, totBlendLength, blendSteps);
 
                 //nscale8x3( colorOut.r, colorOut.g, colorOut.b, bri); //scaling for if you want to switch to a blank bg
 

@@ -2,7 +2,7 @@
 #define ShiftingSeaSLPS_h
 
 //TODO:
-//  -- Add option to use a pattern based on a pallet?
+//  -- Add option to use a pattern based on a palette?
 
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
@@ -10,15 +10,15 @@
 #include "Utils/ShiftingSeaUtilsPS.h"
 
 /*
-Cycles each line of a segment set through a pallet of colors. Each segment line is given an random 
-offset to place it somewhere mid-fade between the pallet colors, so the result is a shifting sea of pallet colors. 
+Cycles each line of a segment set through a palette of colors. Each segment line is given an random 
+offset to place it somewhere mid-fade between the palette colors, so the result is a shifting sea of palette colors. 
 There are two modes: 0, where the offsets are choosen randomly from any point of fading between any 
-two consecutive colors of the pallet (so the overall output is a mix of the pallet colors)
+two consecutive colors of the palette (so the overall output is a mix of the palette colors)
 or mode 1, where the offsets are choosen randomly from the fade between the first and second colors
 in mode 1, the lines will all generally shift from color to color, but some will be ahead of others, creating a varied look.
 You can specify a grouping for the lines, this will set the offsets of consecutive pixels to be the same
 the number of lines grouped together is choosen randomly (up to the grouping amount)
-This makes the effect more uniform, and may look better with larger pallets or segments sets
+This makes the effect more uniform, and may look better with larger palettes or segments sets
 By default, once the offsets are set, they do not change. This can make the effect look a bit repetitive
 to counter this, you can turn on random shifting, which will increment the offset of a line
 by up to shiftStep (default 1) if a random threshold is met
@@ -35,8 +35,8 @@ So if you are short on ram, you might not be able to run this!
 For a similar effect you could try Lava or one of the other noise effects
 
 Example call: 
-    ShiftingSeaSLPS(mainSegments, &pallet1, 20, 0, 3, 40);
-    Will shift through the colors of pallet1, with 20 steps between each shift, using mode 0
+    ShiftingSeaSLPS(mainSegments, &palette1, 20, 0, 3, 40);
+    Will shift through the colors of palette1, with 20 steps between each shift, using mode 0
     grouping pixels by 3, at a rate of 40ms
 
     ShiftingSeaSLPS(mainSegments, 4, 15, 1, 1, 60);
@@ -44,8 +44,8 @@ Example call:
     grouping pixels by 1, at a rate of 60ms
 
 Inputs:
-    pallet (optional, see constructors) -- The pallet from which colors will be choosen
-    numColors (optional, see constructors) -- The length of the randonly created pallet used for the effect
+    palette (optional, see constructors) -- The palette from which colors will be choosen
+    numColors (optional, see constructors) -- The length of the randonly created palette used for the effect
     gradLength -- (max 255) the number of steps to fade from one color to the next
     sMode -- The mode of the effect, either 0, or 1: 0 for the offsets to be picked between any two colors
                                                    1 for the offsets to be picked from between the first two colors
@@ -69,10 +69,10 @@ Notes:
 */
 class ShiftingSeaSLPS : public EffectBasePS {
     public:
-        //Constructor for effect with pallet
-        ShiftingSeaSLPS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t GradLength, uint8_t Smode, uint8_t Grouping, uint16_t Rate);  
+        //Constructor for effect with palette
+        ShiftingSeaSLPS(SegmentSet &SegmentSet, palettePS *Palette, uint8_t GradLength, uint8_t Smode, uint8_t Grouping, uint16_t Rate);  
 
-        //Constructor for effect with randomly created pallet
+        //Constructor for effect with randomly created palette
         ShiftingSeaSLPS(SegmentSet& SegmentSet, uint8_t NumColors, uint8_t GradLength, uint8_t Smode, uint8_t Grouping, uint16_t Rate);
 
         //destructor
@@ -95,9 +95,9 @@ class ShiftingSeaSLPS : public EffectBasePS {
         bool
             randomShift = false;
         
-        palletPS
-            palletTemp,
-            *pallet;
+        palettePS
+            paletteTemp,
+            *palette;
         
         void
             setMode(uint8_t newMode),

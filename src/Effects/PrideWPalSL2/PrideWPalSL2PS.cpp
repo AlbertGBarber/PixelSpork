@@ -5,37 +5,37 @@ PrideWPalSL2PS::PrideWPalSL2PS(SegmentSet &SegmentSet, bool Direct, bool RandomB
     segmentSet(SegmentSet), direct(Direct)
     {   
         prideMode = true; 
-        //we make a random pallet so we get gradSteps correctly (needed for program, but not used for rainbow)
+        //we make a random palette so we get gradSteps correctly (needed for program, but not used for rainbow)
         //and just in case rainbow mode is turned off
-        palletTemp = palletUtilsPS::makeRandomPallet(4);
-        pallet = &palletTemp;
+        paletteTemp = paletteUtilsPS::makeRandomPalette(4);
+        palette = &paletteTemp;
         init(RandomBriInc, Rate);
 	}
 
-//constructor for pallet input
-PrideWPalSL2PS::PrideWPalSL2PS(SegmentSet &SegmentSet, palletPS *Pallet, bool Direct, bool RandomBriInc, uint16_t Rate):
-    segmentSet(SegmentSet), pallet(Pallet), direct(Direct)
+//constructor for palette input
+PrideWPalSL2PS::PrideWPalSL2PS(SegmentSet &SegmentSet, palettePS *Palette, bool Direct, bool RandomBriInc, uint16_t Rate):
+    segmentSet(SegmentSet), palette(Palette), direct(Direct)
     {    
         prideMode = false; 
         init(RandomBriInc, Rate);
 	}
 
-//constructor for making a random pallet
+//constructor for making a random palette
 PrideWPalSL2PS::PrideWPalSL2PS(SegmentSet &SegmentSet, uint8_t numColors, bool Direct, bool RandomBriInc, uint16_t Rate):
     segmentSet(SegmentSet), direct(Direct)
     {    
         prideMode = false; 
-        palletTemp = palletUtilsPS::makeRandomPallet(numColors);
-        pallet = &palletTemp;
+        paletteTemp = paletteUtilsPS::makeRandomPalette(numColors);
+        palette = &paletteTemp;
         init(RandomBriInc, Rate);
 	}
 
 //constructor with inputs for all main variables
-PrideWPalSL2PS::PrideWPalSL2PS(SegmentSet &SegmentSet, palletPS *Pallet, bool Direct, uint8_t GradLength, 
+PrideWPalSL2PS::PrideWPalSL2PS(SegmentSet &SegmentSet, palettePS *Palette, bool Direct, uint8_t GradLength, 
                                             uint8_t BrightDepthMin, uint8_t BrightDepthMax, uint16_t BriThetaFreq, 
                                             uint8_t BriThetaInc16Min, uint8_t BriThetaInc16Max, uint8_t HueChangeMin, 
                                             uint8_t HueChangeMax, uint16_t Rate):
-    segmentSet(SegmentSet), pallet(Pallet), direct(Direct), gradLength(GradLength), brightDepthMin(BrightDepthMin), 
+    segmentSet(SegmentSet), palette(Palette), direct(Direct), gradLength(GradLength), brightDepthMin(BrightDepthMin), 
     brightDepthMax(BrightDepthMax), briThetaFreq(BriThetaFreq), briThetaInc16Min(BriThetaInc16Min), 
     briThetaInc16Max(BriThetaInc16Max), hueChangeMin(HueChangeMin), hueChangeMax(HueChangeMax)
     {
@@ -44,7 +44,7 @@ PrideWPalSL2PS::PrideWPalSL2PS(SegmentSet &SegmentSet, palletPS *Pallet, bool Di
     }
 
 PrideWPalSL2PS::~PrideWPalSL2PS(){
-    delete[] palletTemp.palletArr;
+    delete[] paletteTemp.paletteArr;
 }
 
 //Initializes core variables and also picks random values for briThetaInc16 and briThetaFreq if randomBriInc is true
@@ -116,10 +116,10 @@ void PrideWPalSL2PS::update(){
         brightnesstheta16 = sPseudotime;
         
         //fetch some core vars
-        //we re-fetch these in case the segment set or pallet has changed
+        //we re-fetch these in case the segment set or palette has changed
         numSegs = segmentSet.numSegs;
         numLines = segmentSet.maxSegLength;
-        numSteps = gradLength * pallet->length;
+        numSteps = gradLength * palette->length;
 
         //For each segment we first get a color for the whole segment
         //then for each segment line in the segment we modify the color by the brightness 
@@ -129,7 +129,7 @@ void PrideWPalSL2PS::update(){
             hue16 += hueinc16;
             hue8 = hue16 / 256;
 
-            //if we're not drawing rainbows we need to get a color from the pallet
+            //if we're not drawing rainbows we need to get a color from the palette
             //other wise the hue is constrained to 256
             if(!prideMode){
                 //dunno exactly what this code is doing
@@ -139,9 +139,9 @@ void PrideWPalSL2PS::update(){
                 } else {
                     hue8 = h16_128 >> 1;
                 }
-                //returns the blended color from the pallet mapped into numSteps
+                //returns the blended color from the palette mapped into numSteps
                 index = scale16by8( numSteps, hue8 );
-                newColor = palletUtilsPS::getPalletGradColor(pallet, index, 0, numSteps, gradLength);
+                newColor = paletteUtilsPS::getPaletteGradColor(palette, index, 0, numSteps, gradLength);
             }
 
             //for each of the lines in the segment, get a new brighness value

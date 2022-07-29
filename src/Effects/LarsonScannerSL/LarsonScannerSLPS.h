@@ -17,7 +17,7 @@ You may access it like: yourScannedName->scannerInst->reset();
 
 The LarsonScannerSL instance also creates it's own particleSet
 To adjust the particles you can access it via yourLarsonScannerSL->particleSet
-Same thing with the pallet
+Same thing with the palette
 
 This effect does provide some pass-through functions for adjusting some things like the 
 trail length, particle size, etc
@@ -71,7 +71,7 @@ Other Settings:
     trailLength -- The The length of the trails, for reference only. Change it using the setTrailLength() function.
     eyeSize -- The length of the scan particle's body (not trail), for reference only. Change it using the setEyeSize() function.
     bounce (default true) -- The bounce property of the scan particles, for reference only. Change it using the setBounce() function.
-    pallet -- The pallet than will be used for the particle color (this is always a single length pallet since scanners are a single color)
+    palette -- The palette than will be used for the particle color (this is always a single length palette since scanners are a single color)
     *scannerInst -- The local ParticlePS instance
     particleSet -- The particleSet used to store the scan particles (and passed to the ParticlePS instance)
 */
@@ -96,10 +96,10 @@ class LarsonScannerSLPS : public EffectBasePS {
 
         CRGB 
             bgColorOrig,
-            *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a pallet color)
+            *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
         
-        palletPS
-            pallet; //pallet used for ParticlePS instance
+        palettePS
+            palette; //palette used for ParticlePS instance
         
         ParticlesSLPS
             *scannerInst; //pointer to the ParticlePS instance

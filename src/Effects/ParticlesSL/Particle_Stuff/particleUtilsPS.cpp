@@ -94,7 +94,7 @@ void particleUtilsPS::randomizeParticle(particleSetPS *particleSet, uint8_t part
 //  4: The trail types of the particles
 //  5: The trail lengths particles
 //  6 The bounce property of the particles
-//  7: The pallet color index of the particles (pass the pallet length as opt2 to choose randomly from the pallet)
+//  7: The palette color index of the particles (pass the palette length as opt2 to choose randomly from the palette)
 //This function basically just calls one of the setParticleSet() functions below
 //The inputs opt1, opt2, otp3 are used as the inputs for the setParticleSet() functions in the same order as they appear
 //So see those functions for exact explanations of their inputs
@@ -258,8 +258,8 @@ void particleUtilsPS::setParticleSetBounce(particleSetPS *particleSet, uint8_t p
 }
 
 //sets a particle's colorIndex to the passed in value
-//If you want the color to be randomly picked from a pallet
-//pass in the pallet's length as colorIndex and set randColor as true
+//If you want the color to be randomly picked from a palette
+//pass in the palette's length as colorIndex and set randColor as true
 void particleUtilsPS::setParticleSetColor(particleSetPS *particleSet, uint8_t partNum, uint8_t colorIndex, bool randColor){
     if(randColor){
         colorIndex = random8(colorIndex);

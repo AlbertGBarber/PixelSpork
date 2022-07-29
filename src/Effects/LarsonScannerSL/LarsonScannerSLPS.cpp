@@ -9,7 +9,7 @@ LarsonScannerSLPS::LarsonScannerSLPS(SegmentSet &SegmentSet, uint8_t ScanType, C
         //bind background color pointer
         bindBGColorPS();
         //create an instance of ParticlsPS to animate the particles for the scanner
-        scannerInst = new ParticlesSLPS(segmentSet, &particleSet, &pallet, BgColor);
+        scannerInst = new ParticlesSLPS(segmentSet, &particleSet, &palette, BgColor);
         //bind the ParticlesSLPS instance background color to point to the LarsonScannerSLPS's background color
         scannerInst->bgColor = bgColor;
         setColor(scanColor);
@@ -18,7 +18,7 @@ LarsonScannerSLPS::LarsonScannerSLPS(SegmentSet &SegmentSet, uint8_t ScanType, C
 
 LarsonScannerSLPS::~LarsonScannerSLPS(){
     delete[] scannerInst;
-    delete[] pallet.palletArr;
+    delete[] palette.paletteArr;
     particleUtilsPS::deleteAllParticles(&particleSet);
     delete[] particleSet.particleArr;
 }
@@ -35,8 +35,8 @@ void LarsonScannerSLPS::setColorMode(uint8_t colorMode, bool bgColorMode){
 
 //changes the color of the particles
 void LarsonScannerSLPS::setColor(CRGB color){
-    delete[] pallet.palletArr;
-    pallet = palletUtilsPS::makeSingleColorPallet(color);
+    delete[] palette.paletteArr;
+    palette = paletteUtilsPS::makeSingleColorPalette(color);
 }
 
 //sets the bounce property on the scanner particles

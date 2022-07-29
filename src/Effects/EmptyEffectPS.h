@@ -17,7 +17,7 @@ class EmptyEffectPS : public EffectBasePS {
         //use BgColor in constructor
         //CRGB 
             //bgColorOrig,
-           //*bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a pallet color)
+           //*bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
         
         void 
             update(void);

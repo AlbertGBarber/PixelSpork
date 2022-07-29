@@ -1,23 +1,23 @@
 #include "PlasmaSLPS.h"
 
-//Constructor for effect with pallet
-PlasmaSLPS::PlasmaSLPS(SegmentSet &SegmentSet, palletPS *Pallet, uint16_t BlendSteps, bool Randomize, uint16_t Rate):
-    segmentSet(SegmentSet), pallet(Pallet), blendSteps(BlendSteps), randomize(Randomize)
+//Constructor for effect with palette
+PlasmaSLPS::PlasmaSLPS(SegmentSet &SegmentSet, palettePS *Palette, uint16_t BlendSteps, bool Randomize, uint16_t Rate):
+    segmentSet(SegmentSet), palette(Palette), blendSteps(BlendSteps), randomize(Randomize)
     {    
         init(Rate);
 	}
 
-//Constructor for effect with randomly chosen pallet
+//Constructor for effect with randomly chosen palette
 PlasmaSLPS::PlasmaSLPS(SegmentSet &SegmentSet, uint8_t numColors, uint16_t BlendSteps, bool Randomize, uint16_t Rate):
     segmentSet(SegmentSet), blendSteps(BlendSteps), randomize(Randomize)
     {    
-        palletTemp = palletUtilsPS::makeRandomPallet(numColors);
-        pallet = &palletTemp;
+        paletteTemp = paletteUtilsPS::makeRandomPalette(numColors);
+        palette = &paletteTemp;
         init(Rate);
 	}
 
 PlasmaSLPS::~PlasmaSLPS(){
-    delete[] palletTemp.palletArr;
+    delete[] paletteTemp.paletteArr;
 }
 
 //sets up variables for the effect
@@ -72,7 +72,7 @@ void PlasmaSLPS::update(){
         phaseWave2 = beatsin8(7 + pAdj2, -64, 64);
 
         numLines = segmentSet.maxSegLength;
-        totBlendLength = blendSteps * pallet->length;
+        totBlendLength = blendSteps * palette->length;
 
         //run over each of the lines in the segement set and set a color value
         for (uint16_t i = 0; i < numLines; i++) {
@@ -83,11 +83,11 @@ void PlasmaSLPS::update(){
             //If colorIndex < current value of beatsin8(), then bright = 0. Otherwise, bright = colorIndex.
             brightness = qsuba( colorIndex, beatsin8(briFreq, 0, briRange) );
                 
-            //scale color index to be somewhere between 0 and totBlendLength to put it somewhere in the blended pallet
+            //scale color index to be somewhere between 0 and totBlendLength to put it somewhere in the blended palette
             colorIndex = scale16by8( totBlendLength, colorIndex ); //colorIndex * totBlendLength /255;                        
 
-            //get the blended color from the pallet and set it's brightness
-            colorOut = palletUtilsPS::getPalletGradColor(pallet, colorIndex, 0, totBlendLength, blendSteps);
+            //get the blended color from the palette and set it's brightness
+            colorOut = paletteUtilsPS::getPaletteGradColor(palette, colorIndex, 0, totBlendLength, blendSteps);
             //colorOut = colorUtilsPS::getCrossFadeColor(colorOut, 0, 255 - brightness);
             nscale8x3(colorOut.r, colorOut.g, colorOut.b, brightness);
 

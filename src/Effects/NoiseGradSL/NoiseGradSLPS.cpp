@@ -1,27 +1,27 @@
 #include "NoiseGradSLPS.h"
 
-//Constructor with pallet
-NoiseGradSLPS::NoiseGradSLPS(SegmentSet &SegmentSet, palletPS *Pallet, CRGB BgColor, uint16_t BlendStepsBase, 
+//Constructor with palette
+NoiseGradSLPS::NoiseGradSLPS(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint16_t BlendStepsBase, 
                                        uint16_t BlendStepsRange, uint8_t PhaseScale, uint8_t FreqScale, uint8_t BriScale, 
                                        uint16_t BlendRate, uint16_t Rate):
-    segmentSet(SegmentSet), pallet(Pallet), blendStepsBase(BlendStepsBase), blendStepsRange(BlendStepsRange), phaseScale(PhaseScale), freqScale(FreqScale), briScale(BriScale)
+    segmentSet(SegmentSet), palette(Palette), blendStepsBase(BlendStepsBase), blendStepsRange(BlendStepsRange), phaseScale(PhaseScale), freqScale(FreqScale), briScale(BriScale)
     {    
         init(BgColor, BlendRate, Rate);
 	}
 
-//Constructor with randomly generated pallet
+//Constructor with randomly generated palette
 NoiseGradSLPS::NoiseGradSLPS(SegmentSet &SegmentSet, uint8_t numColors, CRGB BgColor, uint16_t BlendStepsBase, 
                                        uint16_t BlendStepsRange, uint8_t PhaseScale, uint8_t FreqScale, uint8_t BriScale,
                                        uint16_t BlendRate, uint16_t Rate):
     segmentSet(SegmentSet), blendStepsBase(BlendStepsBase), blendStepsRange(BlendStepsRange), phaseScale(PhaseScale), freqScale(FreqScale), briScale(BriScale)
     {    
-        palletTemp = palletUtilsPS::makeRandomPallet(numColors);
-        pallet = &palletTemp;
+        paletteTemp = paletteUtilsPS::makeRandomPalette(numColors);
+        palette = &paletteTemp;
         init(BgColor, BlendRate, Rate);
 	}
 
 NoiseGradSLPS::~NoiseGradSLPS(){
-    delete[] palletTemp.palletArr;
+    delete[] paletteTemp.paletteArr;
 }
 
 //Initializes core common varaibles
@@ -65,7 +65,7 @@ void NoiseGradSLPS::init(CRGB BgColor, uint16_t BlendRate, uint16_t Rate){
 }
 
 //Updates the effect
-//The effect consists of two parts: a pallet gradient wave and brightness zones, both controlled by noise
+//The effect consists of two parts: a palette gradient wave and brightness zones, both controlled by noise
 //The gradient waves shift across the segment lines using a cos() function where the phase uses noise
 //This produces a gradient that shifts in random bursts along the segments
 //Meanwhile we shift the number of gradient blend steps to a new value every so often. 
@@ -80,7 +80,7 @@ void NoiseGradSLPS::update(){
     if( ( currentTime - prevTime ) >= *rate ) {
         prevTime = currentTime;
         
-        //Shift the number of steps taken for the pallet gradient
+        //Shift the number of steps taken for the palette gradient
         //We only want to do this at most once every blendRate ms, but then do so quickly
         //This lets the effect stay calm for a while, and then quickly shift to a new look
         //We only want to shift if blendStepsRange > 0, since otherwise we'd just be shifting to the same value
@@ -96,20 +96,20 @@ void NoiseGradSLPS::update(){
         //re-fetch some core variables
         numSegs = segmentSet.numSegs;
         numLines = segmentSet.maxSegLength;
-        totBlendLength = blendSteps * pallet->length;
+        totBlendLength = blendSteps * palette->length;
 
         //Get a phase value for our waves using noise
         //The offset keeps the waves moving across the strip
         noisePhase = inoise8( currentTime/phaseScale, currentTime/20 ) + phaseOffset;
 
         //Get the output of the cos() wave, using the noise as the phase to keep it shifting along
-        //and convert it to somewhere in the pallet gradient
+        //and convert it to somewhere in the palette gradient
         index = cos8( currentTime/freqScale + noisePhase );
         colorIndex = scale16by8( totBlendLength, index );
 
-        //To shift the colors across the segments we change the offset value in getPalletGradColor()
+        //To shift the colors across the segments we change the offset value in getPaletteGradColor()
         //To get the offset we use colorOffset + colorIndex where colorOffset cycles from 0 to totBlendLength
-        //This ensures that the whole pallet is seen.
+        //This ensures that the whole palette is seen.
         //Unfortunatly just adding the offsets togther shifts the colors in reverse across the segments
         //To shift them forward, we need to subtract the offsets, but we need to keep everything positive
         //so we use the mod formula below. Adding 2 * totBlendLength ensures that we stay positive, but doesn't
@@ -140,10 +140,10 @@ void NoiseGradSLPS::update(){
                 bri = 255;
             }
 
-            //get the blended pallet color of each line based on the line number and the offset we caluclated for this cycle
-            colorOut = palletUtilsPS::getPalletGradColor(pallet, i, colorOffsetTot, totBlendLength, blendSteps);
+            //get the blended palette color of each line based on the line number and the offset we caluclated for this cycle
+            colorOut = paletteUtilsPS::getPaletteGradColor(palette, i, colorOffsetTot, totBlendLength, blendSteps);
 
-            //color each segment pixel in the blended pallet color
+            //color each segment pixel in the blended palette color
             for(uint16_t j = 0; j < numSegs; j++){
                 //get the current pixel's location in the segment set
                 pixelNum = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, j, i);

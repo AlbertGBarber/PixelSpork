@@ -11,8 +11,8 @@
 An effect to strobe a strip to mimic police lights, with some additional options
 A strobe is a rapid blinking of light.
 
-The base constuctor takes two colors, but you can optionally pass in a pallet instead
-The are a few options for randomly choosing the strobe colors from the pallet
+The base constuctor takes two colors, but you can optionally pass in a palette instead
+The are a few options for randomly choosing the strobe colors from the palette
 
 Strobe Modes:
     0: Pulse half the segmentSet in each color (alternating halves and colors), then pulse each color on the whole segmentSet
@@ -21,7 +21,7 @@ Strobe Modes:
 
 The strobe of each color will continue for a set number of on/off cycles (ie making the strobe)
 
-If using a pallet, all the colors will be cycled through before reseting 
+If using a palette, all the colors will be cycled through before reseting 
 For mode 0, this means all the colors will be strobed in halves, then strobed on the full strip
 
 The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
@@ -52,16 +52,16 @@ Example calls:
     The background is blank
     There is no pause between the cycles
 
-    PoliceStrobeSLPS(mainSegments, &pallet1, CRGB:Purple, 4, 500, 0, 50);
+    PoliceStrobeSLPS(mainSegments, &palette1, CRGB:Purple, 4, 500, 0, 50);
     A more dynamic strobe
-    Will strobe all the colors in the pallet1, with 4 pulses at 50ms each
+    Will strobe all the colors in the palette1, with 4 pulses at 50ms each
     strobe mode 0 is used, so the strobe will alternate between strobing halfs of the strip
     and the whole strip
     There is a 500ms pause between cycles
     The background color is purple
  
 Constructor Inputs:
-    Pallet(optional, see constructors) -- Used for making a strobe from a specific pallet
+    Palette(optional, see constructors) -- Used for making a strobe from a specific palette
     ColorOne(optional, see constructors) -- Used for making a dual color strobe
     ColorTwo(optional, see constructors) -- Used for making a dual color strobe
     BgColor -- The color between strobe pulses. It is a pointer, so it can be tied to an external variable
@@ -79,22 +79,22 @@ Other Settings:
     bgColorMode (default 0) -- sets the color mode for the background (see segDrawUtils::setPixelColor)
     fillBG (default true) -- flag to fill the background after each set of pulses
     fillBGOnPause (default true) -- flag to fill the background during each pause
-    randMode (default 0) -- Sets how colors are choosen from the pallet
-                        -- 0: Colors will be choosen from the pallet in order (not random)
-                        -- 1: Colors will be choosen completly at random (not using the pallet)
-                        -- 2: Colors will be choosen randomly from the pallet, same color will not be choosen in a row
+    randMode (default 0) -- Sets how colors are choosen from the palette
+                        -- 0: Colors will be choosen from the palette in order (not random)
+                        -- 1: Colors will be choosen completly at random (not using the palette)
+                        -- 2: Colors will be choosen randomly from the palette, same color will not be choosen in a row
 
 Flags:
     pause -- set true if a pause is active
 
 Reference Vars (read only, don't change these unless you know what you're doing):
-    colorNum -- the pallet index of the color currently being pulsed
+    colorNum -- the palette index of the color currently being pulsed
 
 Notes:
-    When using the dual color constructor option, the colors will be formed into a pallet within the effect
-    This is stored as palletTemp and is then bound to the effect pallet.
-    So if you want to change the colors, you'll have to change them in palletTemp.
-    palletUtilsPS::setColor(<your strobe effect name>->palletTemp, <your new color>,  color index (0 or 1)); 
+    When using the dual color constructor option, the colors will be formed into a palette within the effect
+    This is stored as paletteTemp and is then bound to the effect palette.
+    So if you want to change the colors, you'll have to change them in paletteTemp.
+    paletteUtilsPS::setColor(<your strobe effect name>->paletteTemp, <your new color>,  color index (0 or 1)); 
 */
 class PoliceStrobeSLPS : public EffectBasePS {
     public:
@@ -102,8 +102,8 @@ class PoliceStrobeSLPS : public EffectBasePS {
         //Constructor for a traditional two color strobe
         PoliceStrobeSLPS(SegmentSet &SegmentSet, CRGB ColorOne, CRGB ColorTwo, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, uint8_t PulseMode, uint16_t Rate);  
 
-        //Constructor for using any pallet for the colors
-        PoliceStrobeSLPS(SegmentSet &SegmentSet, palletPS *Pallet, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, uint8_t PulseMode, uint16_t Rate);
+        //Constructor for using any palette for the colors
+        PoliceStrobeSLPS(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, uint8_t PulseMode, uint16_t Rate);
 
         ~PoliceStrobeSLPS();
 
@@ -117,7 +117,7 @@ class PoliceStrobeSLPS : public EffectBasePS {
             pauseEvery = false;
         
         uint8_t 
-            colorNum = 0, //pallet index of the color currently being pulsed
+            colorNum = 0, //palette index of the color currently being pulsed
             randMode = 0,
             pulseMode,
             numPulses,
@@ -129,11 +129,11 @@ class PoliceStrobeSLPS : public EffectBasePS {
         
         CRGB 
             bgColorOrig,
-           *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a pallet color)
+           *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
         
-        palletPS
-            palletTemp,
-            *pallet; //the pallet used for the strobe colors
+        palettePS
+            paletteTemp,
+            *palette; //the palette used for the strobe colors
         
         void 
             reset(),

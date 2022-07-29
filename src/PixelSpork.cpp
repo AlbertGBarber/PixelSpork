@@ -3,7 +3,7 @@
 // improvments TODO:
 //. write an exponential dimming function (and allow trail length setting on patternSweep) (done, but exp dimming might be off)
 //. change dimming function to always use crossfade function, need to make funct to return bg color
-//. allow switching pallets on the fly --> wont be needed with nodelay rewrite
+//. allow switching palettes on the fly --> wont be needed with nodelay rewrite
 //. BgColor setting code is repeated a few times --> make into funct? (done)
 //. allow setting bg as a gradient? (done)
 //. allow using bg gradient for the main color in patternSweep, colorSpin, and colorWipe functions (done)
@@ -14,11 +14,11 @@
 //. rewrite splitColor to return array of rgb comps (done)
 //. allow setting of zero point for fireV2 (done, along with changing the color)
 //. look at fire, update it
-//. rewrite crossfadeRandomPattern to take a pallet (need a search function to make pallets)
+//. rewrite crossfadeRandomPattern to take a palette (need a search function to make palettes)
 //. rewrite patterSweep to set last pixels off instead of redrawing whole BG each time (done)
 //. rewrite patterSweep patterns to include -1, 1 instead of 1, 0 for direction
 //. allow pattern sweep to contain different trail types in one pattern
-//. check if palletLength is needed in color wipe functs (done)
+//. check if paletteLength is needed in color wipe functs (done)
 //. check limits on color wipe functs
 //. let you choose direction for pattern sweep rand
 //. make dimming variables global, including the pattenSweep rainbow adjustments
@@ -60,9 +60,9 @@
 //. radial color wipe funct (done)
 //. a static waves function (ie a BG that doesn't change as waves move), write like a radial patternSweep (done? sonar?)
 //. random color waves function (done)
-//. color spin simple pallet rand (easier to gen a random pallet seperatly)
-//. simple steamer where it takes a pallet, no pattern (like simpleWaves)
-//. shooter that takes only one color (maybe use the palletLength for the color and a mode?) (right now, you need to make a one length pallet)
+//. color spin simple palette rand (easier to gen a random palette seperatly)
+//. simple steamer where it takes a palette, no pattern (like simpleWaves)
+//. shooter that takes only one color (maybe use the paletteLength for the color and a mode?) (right now, you need to make a one length palette)
 //. a gradient segment function that repeats the same gradient down each segment (done)
 //. add a rainbow mode to shooter seg where the rainbow is destributed down the seg (done?)
 //. gradientSweep rainbow (needs direction setting in segment definition) (not needed, colorSpin can do this?)

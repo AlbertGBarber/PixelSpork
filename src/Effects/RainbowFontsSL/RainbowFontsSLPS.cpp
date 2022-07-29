@@ -23,7 +23,7 @@ void RainbowFontsSLPS::update(){
         prevTime = currentTime;
 
         //fetch some core vars
-        //we re-fetch these in case the segment set or pallet has changed
+        //we re-fetch these in case the segment set or palette has changed
         numSegs = segmentSet.numSegs;
         numLines = segmentSet.maxSegLength;
         

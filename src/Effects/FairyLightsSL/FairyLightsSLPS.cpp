@@ -2,9 +2,9 @@
 
 //see update() for how the effect works
 
-//pallet based constructor
-FairyLightsSLPS::FairyLightsSLPS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode, uint16_t Rate):
-    segmentSet(SegmentSet), pallet(Pallet), numTwinkles(NumTwinkles), tmode(Tmode)
+//palette based constructor
+FairyLightsSLPS::FairyLightsSLPS(SegmentSet &SegmentSet, palettePS *Palette, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode, uint16_t Rate):
+    segmentSet(SegmentSet), palette(Palette), numTwinkles(NumTwinkles), tmode(Tmode)
     {    
         init(BGColor, Rate);
 	}
@@ -22,8 +22,8 @@ FairyLightsSLPS::FairyLightsSLPS(SegmentSet &SegmentSet, uint8_t NumTwinkles, CR
     segmentSet(SegmentSet), numTwinkles(NumTwinkles), tmode(Tmode)
     {    
         init(BGColor, Rate);
-        //we make a random pallet of one color so that 
-        //if we switch to randMode 0 then we have a pallet to use
+        //we make a random palette of one color so that 
+        //if we switch to randMode 0 then we have a palette to use
         setSingleColor(colorUtilsPS::randColor()); 
         //since we're choosing colors at random, set the randMode
         randMode = 1;
@@ -31,7 +31,7 @@ FairyLightsSLPS::FairyLightsSLPS(SegmentSet &SegmentSet, uint8_t NumTwinkles, CR
 
 //destructor
 FairyLightsSLPS::~FairyLightsSLPS(){
-    delete[] palletTemp.palletArr;
+    delete[] paletteTemp.paletteArr;
     delete[] twinkleSet;
     delete[] colorSet;
 }
@@ -70,12 +70,12 @@ void FairyLightsSLPS::setNumTwinkles(uint8_t newNumTwinkles){
     genPixelSet();
 }
 
-//creates an pallet of length 1 containing the passed in color
-//binds it to the temp pallet to keep it in scope
+//creates an palette of length 1 containing the passed in color
+//binds it to the temp palette to keep it in scope
 void FairyLightsSLPS::setSingleColor(CRGB Color){
-    delete[] palletTemp.palletArr;
-    palletTemp = palletUtilsPS::makeSingleColorPallet(Color);
-    pallet = &palletTemp;
+    delete[] paletteTemp.paletteArr;
+    paletteTemp = paletteUtilsPS::makeSingleColorPalette(Color);
+    palette = &paletteTemp;
 }
 
 //Updates the effect
@@ -91,7 +91,7 @@ void FairyLightsSLPS::update(){
 
     if( ( currentTime - prevTime ) >= *rate ) {
         prevTime = currentTime;
-        palletLength = pallet->length;
+        paletteLength = palette->length;
         //by default, we only touch the twinkle at the current cycleNum
         //but for rainbow or gradient backgrounds that a cycling
         //you want to redraw the whole thing
@@ -118,11 +118,11 @@ void FairyLightsSLPS::update(){
     }
 }
 
-//Pick a color based on the size of the pallet and random modes
+//Pick a color based on the size of the palette and random modes
 CRGB FairyLightsSLPS::pickColor(){
     switch (randMode) {
         case 0: // we're picking from a set of colors 
-            color = palletUtilsPS::getPalletColor(pallet, random8(palletLength));
+            color = paletteUtilsPS::getPaletteColor(palette, random8(paletteLength));
             break;
         default: //(mode 1) set colors at random
             color = colorUtilsPS::randColor();

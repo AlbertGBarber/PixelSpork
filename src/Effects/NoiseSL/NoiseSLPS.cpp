@@ -1,24 +1,24 @@
 #include "NoiseSLPS.h"
 
-//Constuctor for randomly generated pallet
+//Constuctor for randomly generated palette
 NoiseSLPS::NoiseSLPS(SegmentSet &SegmentSet, uint8_t numColors, uint16_t BlendSteps, uint16_t ScaleBase, uint16_t ScaleRange, uint16_t Speed,  uint16_t Rate):
     segmentSet(SegmentSet), blendSteps(BlendSteps), scaleBase(ScaleBase), scaleRange(ScaleRange), speed(Speed)
     {    
         init(Rate);    
-        palletTemp = palletUtilsPS::makeRandomPallet(numColors);
-        pallet = &palletTemp; 
+        paletteTemp = paletteUtilsPS::makeRandomPalette(numColors);
+        palette = &paletteTemp; 
 	}
 
-//Constructor using pallet
-NoiseSLPS::NoiseSLPS(SegmentSet &SegmentSet, palletPS *Pallet, uint16_t BlendSteps, uint16_t ScaleBase, uint16_t ScaleRange, uint16_t Speed, uint16_t Rate):
-    segmentSet(SegmentSet), pallet(Pallet), blendSteps(BlendSteps), scaleBase(ScaleBase), scaleRange(ScaleRange), speed(Speed)
+//Constructor using palette
+NoiseSLPS::NoiseSLPS(SegmentSet &SegmentSet, palettePS *Palette, uint16_t BlendSteps, uint16_t ScaleBase, uint16_t ScaleRange, uint16_t Speed, uint16_t Rate):
+    segmentSet(SegmentSet), palette(Palette), blendSteps(BlendSteps), scaleBase(ScaleBase), scaleRange(ScaleRange), speed(Speed)
     {
         init(Rate);
     }
 
 NoiseSLPS::~NoiseSLPS(){
     delete[] noise;
-    delete[] palletTemp.palletArr;
+    delete[] paletteTemp.paletteArr;
 }
 
 //Sets up the initial effect values and other key variables
@@ -73,8 +73,8 @@ void NoiseSLPS::update(){
     if( ( currentTime - prevTime ) >= *rate ) {
         prevTime = currentTime;
 
-        //recalculate the blend length in case the pallet changed
-        totBlendLength = blendSteps * pallet->length;
+        //recalculate the blend length in case the palette changed
+        totBlendLength = blendSteps * palette->length;
         
         //shift towards the target scale value, or get a new target
         setShiftScale();
@@ -164,11 +164,11 @@ void NoiseSLPS::mapNoiseSegsWithPalette(){
             switch (cMode){
                 default:
                 case 0:
-                    //For mode 0 we set the color from the pallet
-                    //Scale color index to be somewhere between 0 and totBlendLength to put it somewhere in the blended pallet
+                    //For mode 0 we set the color from the palette
+                    //Scale color index to be somewhere between 0 and totBlendLength to put it somewhere in the blended palette
                     colorIndex = scale16by8( totBlendLength, colorIndex + ihue ); //colorIndex * totBlendLength /255;   
                     //get the resulting blended color and dim it by bri
-                    colorOut = palletUtilsPS::getPalletGradColor(pallet, colorIndex, 0, totBlendLength, blendSteps);
+                    colorOut = paletteUtilsPS::getPaletteGradColor(palette, colorIndex, 0, totBlendLength, blendSteps);
                     nscale8x3(colorOut.r, colorOut.g, colorOut.b, bri);
                     break;
                 case 1:
@@ -193,7 +193,7 @@ void NoiseSLPS::mapNoiseSegsWithPalette(){
     //shift the hue offset
     //helps deal with the fact that most noise tends to fall
     //in the middle of the range, so we have a shifting offset to help 
-    //expose all the colors in a pallet/rainbow
+    //expose all the colors in a palette/rainbow
     if(rotateHue){
         ihue++;
     }

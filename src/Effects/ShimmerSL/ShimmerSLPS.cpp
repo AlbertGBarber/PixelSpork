@@ -4,8 +4,8 @@
 ShimmerSLPS::ShimmerSLPS(SegmentSet &SegmentSet, uint8_t ShimmerMin, uint8_t ShimmerMax, uint16_t Rate):
     segmentSet(SegmentSet), shimmerMin(ShimmerMin), shimmerMax(ShimmerMax)
     {    
-        //we make a random pallet of one color so that 
-        //if we switch to randMode 0 then we have a pallet to use
+        //we make a random palette of one color so that 
+        //if we switch to randMode 0 then we have a palette to use
         setSingleColor(colorUtilsPS::randColor()); 
         //since we're choosing colors at random, set the randMode
         randMode = 1;
@@ -20,15 +20,15 @@ ShimmerSLPS::ShimmerSLPS(SegmentSet &SegmentSet, CRGB ShimmerColor, uint8_t Shim
         init(Rate);
 	}
 
-//Constuctor for colors randomly choosen from pallet
-ShimmerSLPS::ShimmerSLPS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t ShimmerMin, uint8_t ShimmerMax, uint16_t Rate):
-    segmentSet(SegmentSet), pallet(Pallet), shimmerMin(ShimmerMin), shimmerMax(ShimmerMax)
+//Constuctor for colors randomly choosen from palette
+ShimmerSLPS::ShimmerSLPS(SegmentSet &SegmentSet, palettePS *Palette, uint8_t ShimmerMin, uint8_t ShimmerMax, uint16_t Rate):
+    segmentSet(SegmentSet), palette(Palette), shimmerMin(ShimmerMin), shimmerMax(ShimmerMax)
     {    
        init(Rate);
 	}
 
 ShimmerSLPS::~ShimmerSLPS(){
-    delete[] palletTemp.palletArr;
+    delete[] paletteTemp.paletteArr;
 }
 
 void ShimmerSLPS::init(uint16_t Rate){
@@ -37,19 +37,19 @@ void ShimmerSLPS::init(uint16_t Rate){
     bindClassRatesPS();
 }
 
-//creates an pallet of length 1 containing the passed in color
+//creates an palette of length 1 containing the passed in color
 void ShimmerSLPS::setSingleColor(CRGB Color){
-    delete[] palletTemp.palletArr;
-    palletTemp = palletUtilsPS::makeSingleColorPallet(Color);
-    pallet = &palletTemp;
+    delete[] paletteTemp.paletteArr;
+    paletteTemp = paletteUtilsPS::makeSingleColorPalette(Color);
+    palette = &paletteTemp;
 }
 
-//set a color based on the size of the pallet
+//set a color based on the size of the palette
 CRGB ShimmerSLPS::pickColor(){
     switch (randMode) {
         case 0: // we're picking from a set of colors 
         default:
-            color = palletUtilsPS::getPalletColor(pallet, random8(palletLength));
+            color = paletteUtilsPS::getPaletteColor(palette, random8(paletteLength));
             break;
         case 1:
             color = colorUtilsPS::randColor();
@@ -70,7 +70,7 @@ void ShimmerSLPS::update(){
 
         numLines = segmentSet.maxSegLength;
         numSegs = segmentSet.numSegs;
-        palletLength = pallet->length;
+        paletteLength = palette->length;
 
         for (uint16_t i = 0; i < numLines; i++) {
             shimmerVal = 255 - random8(shimmerMin, shimmerMax);

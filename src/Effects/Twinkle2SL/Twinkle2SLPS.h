@@ -8,7 +8,7 @@
 /*
 Fades sets of randomly chosen segment lines in and out (like FastLED TwinkleFox)
 The effect gives you a lot of options to customize how the pixels fade in and out and how they group together
-The color of the pixels be set to a single color, chosen randomly, of picked from a pallet 
+The color of the pixels be set to a single color, chosen randomly, of picked from a palette 
 The amount of fade in and out steps are controlled by fadeInSteps, fadeOutSteps, fadeinRange, and fadeOutRange
 The maximium possible number of segment lines that can be colored at one time is numTwinkles
 With each pixel having a set spawn chance.
@@ -77,8 +77,8 @@ Example call:
     There are 3 fade in and 4 fade out steps with ranges of 2 and 5 respectivly
     The effect upates at a rate of 70ms
 
-    Twinkle2SLPS(mainSegments, &pallet1, 0, 8, 100, 2, 0, 6, 0, 60);
-    Will choose 8 pixels each cycle to fade to/from colors from pallet1, using a blank background, 
+    Twinkle2SLPS(mainSegments, &palette1, 0, 8, 100, 2, 0, 6, 0, 60);
+    Will choose 8 pixels each cycle to fade to/from colors from palette1, using a blank background, 
     There is a 100% chance an inactive pixel will become active each cycle
     There are 2 fade in and 6 fade out steps with ranges of 0 and 0 respectivly
     The effect upates at a rate of 60ms
@@ -91,7 +91,7 @@ Example call:
     The effect upates at a rate of 80ms
 
 Constructor Inputs:
-    pallet(optional, see constructors) -- the pallet from which colors will be choosen randomly
+    palette(optional, see constructors) -- the palette from which colors will be choosen randomly
     color(optional, see constructors) -- the color that the randomly choosen pixels will be set to
     numTwinkles -- The amount of random pixels choosen each cycle 
     bgColor -- The color of the background, this is what pixels will fade to and from
@@ -112,7 +112,7 @@ Other Settings:
     colorMode (default 0) -- sets the color mode for the random pixels (see segDrawUtils::setPixelColor)
     bgColorMode (default 0) -- sets the color mode for the background (see segDrawUtils::setPixelColor)
     randMode (default 0) -- sets how colors will be picked
-                            0: Picks colors from the pallet
+                            0: Picks colors from the palette
                             1: Picks colors at random
     fillBG (default false) -- sets the background to be redrawn every cycle, useful for bgColorModes that are dynamic
     limitSpawing -- Limits the twinkles so that only one new one can become active per update cycle (see inputs guide above)
@@ -125,8 +125,8 @@ Notes:
 */
 class Twinkle2SLPS : public EffectBasePS {
     public:
-        //Constructor for a full pallet effect
-        Twinkle2SLPS(SegmentSet &SegmentSet, palletPS *Pallet, CRGB BgColor, uint16_t NumTwinkles, uint8_t SpawnChance, 
+        //Constructor for a full palette effect
+        Twinkle2SLPS(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint16_t NumTwinkles, uint8_t SpawnChance, 
                    uint8_t FadeInSteps, uint8_t FadeInRange, uint8_t FadeOutSteps, uint8_t FadeOutRange, uint16_t Rate); 
 
         //Constructor for a using a single color
@@ -145,7 +145,7 @@ class Twinkle2SLPS : public EffectBasePS {
 
         CRGB 
             bgColorOrig,
-            *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a pallet color)
+            *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
 
         bool 
             limitSpawing = false,
@@ -166,9 +166,9 @@ class Twinkle2SLPS : public EffectBasePS {
         SegmentSet 
             &segmentSet; 
         
-        palletPS
-            palletTemp,
-            *pallet;
+        palettePS
+            paletteTemp,
+            *palette;
         
         twinkleSetPS 
             *twinkleSet,

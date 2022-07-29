@@ -1,12 +1,12 @@
 #ifndef PacificaSLPS_h
 #define PacificaSLPS_h
 
-//TODO: -- Add lava pallet as an option?
+//TODO: -- Add lava palette as an option?
 
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
-//The source of the pallets for the effect
-#include "Effects/Pacifica/pacificaPalletPS.h"
+//The source of the palettes for the effect
+#include "Effects/Pacifica/pacificaPalettePS.h"
 
 /*
 
@@ -25,7 +25,7 @@ Almost all of the code is directly copied from the original linked above
 (with modifications by me to work with segment sets)
 If you have any questions about how it works, please direct them to Mark Kriegsman
 
-The pallets can be found in "Effects/Pacifica/pacificaPallet.h"
+The palettes can be found in "Effects/Pacifica/pacificaPalette.h"
 
 Recommend brightness > 80 and rate > 20ms
 For low brightness values I recommend turing off dithering using
@@ -74,13 +74,13 @@ class PacificaSLPS : public EffectBasePS {
             addWhiteCaps = false;
         
         uint8_t 
-            //Produces a total blend length of 240 for the whole pallet, matches the original code
+            //Produces a total blend length of 240 for the whole palette, matches the original code
             numSteps = 240 / pacificaPal1PS.length,
             thresholdMax = 230; //cap on light level for addWhiteCaps(), stops colors from going full white
         
         CRGB 
             bgColorOrig,
-           *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a pallet color)
+           *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
 
         void 
             update(void);
@@ -126,7 +126,7 @@ class PacificaSLPS : public EffectBasePS {
         
         void 
             init(uint16_t Rate),
-            doOneLayer( palletPS *pallet, uint16_t cistart, uint16_t wavescale, uint8_t bri, uint16_t ioff),
+            doOneLayer( palettePS *palette, uint16_t cistart, uint16_t wavescale, uint8_t bri, uint16_t ioff),
             addWhitecaps(),
             deepenColors();
 };

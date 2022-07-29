@@ -4,8 +4,8 @@
 LavaPS::LavaPS(SegmentSet &SegmentSet, uint16_t Rate):
     segmentSet(SegmentSet)
     {    
-        palletTemp = {lavalPallet_arr, SIZE(lavalPallet_arr)};
-        pallet = &palletTemp;
+        paletteTemp = {lavalPalette_arr, SIZE(lavalPalette_arr)};
+        palette = &paletteTemp;
         blendSteps = 150;
         blendScale = 80;
         init(Rate);
@@ -15,36 +15,36 @@ LavaPS::LavaPS(SegmentSet &SegmentSet, uint16_t Rate):
 LavaPS::LavaPS(SegmentSet &SegmentSet, uint16_t BlendSteps, uint16_t BlendScale, uint16_t Rate):
     segmentSet(SegmentSet), blendSteps(BlendSteps), blendScale(BlendScale)
     {    
-        palletTemp = {lavalPallet_arr, SIZE(lavalPallet_arr)};
-        pallet = &palletTemp;
+        paletteTemp = {lavalPalette_arr, SIZE(lavalPalette_arr)};
+        palette = &paletteTemp;
         init(Rate);
 	}
 
-//constructor for a custom pallet
-LavaPS::LavaPS(SegmentSet &SegmentSet, palletPS *Pallet, uint16_t BlendSteps, uint16_t BlendScale, uint16_t Rate):
-    segmentSet(SegmentSet), pallet(Pallet), blendSteps(BlendSteps), blendScale(BlendScale)
+//constructor for a custom palette
+LavaPS::LavaPS(SegmentSet &SegmentSet, palettePS *Palette, uint16_t BlendSteps, uint16_t BlendScale, uint16_t Rate):
+    segmentSet(SegmentSet), palette(Palette), blendSteps(BlendSteps), blendScale(BlendScale)
     {    
-        palletTemp = {lavalPallet_arr, SIZE(lavalPallet_arr)};
+        paletteTemp = {lavalPalette_arr, SIZE(lavalPalette_arr)};
         init(Rate);
 	}
 
-//constructor for a custom pallet
+//constructor for a custom palette
 LavaPS::LavaPS(SegmentSet &SegmentSet, uint8_t numColors, uint16_t BlendSteps, uint16_t BlendScale, uint16_t Rate):
     segmentSet(SegmentSet), blendSteps(BlendSteps), blendScale(BlendScale)
     {    
-        palletTemp = palletUtilsPS::makeRandomPallet(numColors);
-        pallet = &palletTemp;
-        //since we're created a random pallet using new, we'll need to flag it for
+        paletteTemp = paletteUtilsPS::makeRandomPalette(numColors);
+        palette = &paletteTemp;
+        //since we're created a random palette using new, we'll need to flag it for
         //deletion at in the destructor
-        randPalletCreated = true;
+        randPaletteCreated = true;
         init(Rate);
 	}
 
 LavaPS::~LavaPS(){
-    //Only delete the temp pallet color array if it was created randomly
+    //Only delete the temp palette color array if it was created randomly
     //otherwise we'd be deleting the lava colors array
-    if(randPalletCreated){
-        delete[] palletTemp.palletArr;
+    if(randPaletteCreated){
+        delete[] paletteTemp.paletteArr;
     }
 }
 
@@ -62,7 +62,7 @@ void LavaPS::update(){
         pixelCount = 0;
 
         numSegs = segmentSet.numSegs;
-        totBlendLength = blendSteps * pallet->length;
+        totBlendLength = blendSteps * palette->length;
         //run over each of the leds in the segment set and set a noise/color value
         for (uint8_t i = 0; i < numSegs; i++) {
             totSegLen = segmentSet.getTotalSegLength(i);
@@ -75,11 +75,11 @@ void LavaPS::update(){
                 brightness = inoise8(pixelCount * brightnessScale, currentTime/5);
                 index = inoise8(pixelCount * blendScale, currentTime/10);
 
-                //scale color index to be somewhere between 0 and totBlendLength to put it somewhere in the blended pallet
+                //scale color index to be somewhere between 0 and totBlendLength to put it somewhere in the blended palette
                 index = scale16by8( totBlendLength, index ); //colorIndex * totBlendLength /255;   
 
-                //get the blended color from the pallet and set it's brightness
-                colorOut = palletUtilsPS::getPalletGradColor(pallet, index, 0, totBlendLength, blendSteps);
+                //get the blended color from the palette and set it's brightness
+                colorOut = paletteUtilsPS::getPaletteGradColor(palette, index, 0, totBlendLength, blendSteps);
                 nscale8x3(colorOut.r, colorOut.g, colorOut.b, brightness);
                 segDrawUtils::setPixelColor(segmentSet, pixelNum, colorOut, 0, 0, 0);
 

@@ -1,22 +1,22 @@
 #include "FirefliesSLPS.h"
 
-//Constructor for effect with pallet
-FirefliesSLPS::FirefliesSLPS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t MaxNumFireflies, uint8_t SpawnChance, 
+//Constructor for effect with palette
+FirefliesSLPS::FirefliesSLPS(SegmentSet &SegmentSet, palettePS *Palette, uint8_t MaxNumFireflies, uint8_t SpawnChance, 
                          uint16_t LifeBase, uint16_t LifeRange, uint16_t SpeedBase, uint16_t SpeedRange, uint16_t Rate):
-    segmentSet(SegmentSet), pallet(Pallet), spawnChance(SpawnChance), lifeBase(LifeBase), 
+    segmentSet(SegmentSet), palette(Palette), spawnChance(SpawnChance), lifeBase(LifeBase), 
     lifeRange(LifeRange), speedBase(SpeedBase), speedRange(SpeedRange)
     {    
         init(MaxNumFireflies, Rate);
 	}
 
-//Constructor for effect with pallet of random colors
+//Constructor for effect with palette of random colors
 FirefliesSLPS::FirefliesSLPS(SegmentSet &SegmentSet, uint8_t numColors, uint8_t MaxNumFireflies, uint8_t SpawnChance, 
                          uint16_t LifeBase, uint16_t LifeRange, uint16_t SpeedBase, uint16_t SpeedRange, uint16_t Rate):
     segmentSet(SegmentSet), spawnChance(SpawnChance), lifeBase(LifeBase), 
     lifeRange(LifeRange), speedBase(SpeedBase), speedRange(SpeedRange)
     {    
-        palletTemp = palletUtilsPS::makeRandomPallet(numColors);
-        pallet = &palletTemp;
+        paletteTemp = paletteUtilsPS::makeRandomPalette(numColors);
+        palette = &paletteTemp;
         init(MaxNumFireflies, Rate);
 	}
 
@@ -27,8 +27,8 @@ FirefliesSLPS::FirefliesSLPS(SegmentSet &SegmentSet, CRGB Color, uint8_t MaxNumF
     segmentSet(SegmentSet), spawnChance(SpawnChance), lifeBase(LifeBase), 
     lifeRange(LifeRange), speedBase(SpeedBase), speedRange(SpeedRange)
     {    
-        palletTemp = palletUtilsPS::makeSingleColorPallet(Color);
-        pallet = &palletTemp;
+        paletteTemp = paletteUtilsPS::makeSingleColorPalette(Color);
+        palette = &paletteTemp;
         init(MaxNumFireflies, Rate);
 	}
 
@@ -38,7 +38,7 @@ FirefliesSLPS::~FirefliesSLPS(){
     delete[] particleSetTemp.particleArr;
     delete[] trailEndColors;
     delete[] particlePrevPos;
-    delete[] palletTemp.palletArr;
+    delete[] paletteTemp.paletteArr;
 }
 
 //common initilzation function for core vars
@@ -97,7 +97,7 @@ void FirefliesSLPS::setupFireflies(uint8_t newMaxNumFireflies){
     //as the range of the particle's motion
     numLines = segmentSet.maxSegLength;
     particleSetTemp = particleUtilsPS::buildParticleSet(maxNumFireflies, numLines, true, speedBase, speedRange, 1, 0, 
-                                                        0, 0, 0, false, pallet->length, true);
+                                                        0, 0, 0, false, palette->length, true);
     particleSet = &particleSetTemp;
 
     //set all the Fireflies to inactive, ready to be spawned
@@ -140,8 +140,8 @@ void FirefliesSLPS::update(){
             //if the particle is alive, we need to update it
             if(partLife > 0){
                         
-                //get the particle's color from the pallet
-                colorOut = palletUtilsPS::getPalletColor(pallet, particlePtr->colorIndex);
+                //get the particle's color from the palette
+                colorOut = paletteUtilsPS::getPaletteColor(palette, particlePtr->colorIndex);
 
                 //update the particle's location
                 moveParticle(particlePtr, i);
@@ -327,7 +327,7 @@ void FirefliesSLPS::spawnFirefly(uint8_t partNum){
 
     //randomize the particle properties (position is only up to numLines)
     particleUtilsPS::randomizeParticle(particleSet, partNum, numLines, true, speedBase, speedRange, 
-                                       1, 0, 0, 0, 0, false, pallet->length, true);    
+                                       1, 0, 0, 0, 0, false, palette->length, true);    
            
     //reset the particle and set its new spawn location
     particlePtr = particleSet->particleArr[partNum];

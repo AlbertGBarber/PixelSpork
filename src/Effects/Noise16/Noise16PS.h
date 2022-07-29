@@ -16,7 +16,7 @@ But these seemed like they moved to fast for me
 
 For an alternate noise effect, see LavaPS
 
-colors are based on an input pallet
+colors are based on an input palette
 
 I don't fully understand how everything in this effect works, but based on testing I've written an input guide below:
 
@@ -43,7 +43,7 @@ It's something to do with the oscilations of the two timing effects lining up I 
 
 Example calls: 
     Noise16PS(mainSegments, 4, 40, 500, 2, 1, 0, 2, 100, 0, 40);
-    Will produce a noise effect with a pallet of 4 randomly choosen colors
+    Will produce a noise effect with a palette of 4 randomly choosen colors
     There are 20 blend steps between each color
     An overall scaling value of 500 is applied to the noise
     The noise has the following inputs:
@@ -52,8 +52,8 @@ Example calls:
         z is mode 0, so is static at 0;
     The effect updates at 40ms
     
-    Noise16PS(mainSegments, &pallet1, 20, 600, 1, 0, 2, 40, 10, 5, 60);
-    Will produce a noise effect using colors from pallet1
+    Noise16PS(mainSegments, &palette1, 20, 600, 1, 0, 2, 40, 10, 5, 60);
+    Will produce a noise effect using colors from palette1
     There are 40 blend steps between each color
     An overall scaling value of 600 is applied to the noise
     The noise has the following inputs:
@@ -63,9 +63,9 @@ Example calls:
     The effect updates at 60ms
 
 Constructor inputs: 
-    pallet (optional, see constructors) -- A custom pallet passed to the effect, the default is the 
-                                          lava colors pallet encoded below
-    numColors (optional, see constructors) -- How many colors will be in the randomly created pallet
+    palette (optional, see constructors) -- A custom palette passed to the effect, the default is the 
+                                          lava colors palette encoded below
+    numColors (optional, see constructors) -- How many colors will be in the randomly created palette
     blendSteps -- Sets how many steps are used to blend between each color
                  Basically changes how fast the colors blend
                  Between 20 - 100 looks good
@@ -85,11 +85,11 @@ Functions:
 */
 class Noise16PS : public EffectBasePS {
     public:
-        //Constructor with pallet
-        Noise16PS(SegmentSet &SegmentSet, palletPS *Pallet, uint16_t BlendSteps, uint16_t BlendScale,
+        //Constructor with palette
+        Noise16PS(SegmentSet &SegmentSet, palettePS *Palette, uint16_t BlendSteps, uint16_t BlendScale,
                   uint8_t X_mode, uint8_t Y_mode, uint8_t Z_mode, uint16_t X_val, uint16_t Y_val, uint16_t Z_val, uint16_t Rate);
 
-        //Constructor with randomly generated pallet
+        //Constructor with randomly generated palette
         Noise16PS(SegmentSet &SegmentSet, uint8_t numColors, uint16_t BlendSteps, uint16_t BlendScale,
                   uint8_t X_mode, uint8_t Y_mode, uint8_t Z_mode, uint16_t X_val, uint16_t Y_val, uint16_t Z_val, uint16_t Rate);
 
@@ -110,9 +110,9 @@ class Noise16PS : public EffectBasePS {
             z_val,
             blendScale; // the "zoom factor" for the noise
         
-        palletPS 
-            palletTemp,
-            *pallet;
+        palettePS 
+            paletteTemp,
+            *palette;
 
         void 
             update(void);

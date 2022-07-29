@@ -6,7 +6,7 @@
 #include "MathUtils/mathUtilsPS.h"
 
 /*
-An effect where pallet colors are drawn as a gradient across segment lines
+An effect where palette colors are drawn as a gradient across segment lines
 The graident is shifted based on the output of a noise function,
 while the brightness is randomly set in blobs across the segment lines.
 
@@ -19,11 +19,11 @@ You can change the variables freely, although this may result in jumps in the ef
 
 Inputs guide:
     Overall the effect has two components:
-        1) A graident of pallet colors that shifts along the segment set in random jumps
+        1) A graident of palette colors that shifts along the segment set in random jumps
         2) Spots of brightness that grow and change with time
     
     Blend settings: 
-        1) blendStepsBase: The minimum number of gradient steps between pallet colors. The actual number of steps is
+        1) blendStepsBase: The minimum number of gradient steps between palette colors. The actual number of steps is
                            stored in blendSteps, which is shifted over time (unless blendStepsRange is 0)
         2) blendStepsRange: The maxium amount added to blendStepBase. Sets the upper limit for blendSteps
                             ie blendSteps = blendStepBase + random(blendStepsRange);
@@ -59,20 +59,20 @@ Example calls:
     uint8_t minBase = 3;
     uint8_t maxBase = ringSegments.maxSegLength / numColors - minBase;
     NoiseGradSLPS(ringSegments, numColors, 0, minBase, maxBase, 10, 20, 30, 5000, 80);
-    For this example, I'm showing you how to set the blendStepsRange so that you have one complete pallet gradient 
+    For this example, I'm showing you how to set the blendStepsRange so that you have one complete palette gradient 
     fit into the segment set. This tends to look good because you always have all the colors showing, and they'll
     either spread out into one full wave, or make multiple smaller waves as the blendSteps shifts.
     In my instance the ringSegments have a maximum length of 24, so maxBase is 5.
-    Will produce an effect using a pallet of 3 random colors
+    Will produce an effect using a palette of 3 random colors
     The background is blank.
     There are a minimum of 3 blendSteps and range of 5 for a maximum blendSteps of 8
     The phaseScale is 10, the freqScale is 20, and the briScale is 30.
     The blendSteps will be shifted every 5000ms (5 sec).
     The effect updates at 80ms.
     
-    NoiseGradSLPS(ringSegments, &pallet1, 0, 8, 16, 5, 20, 10, 3000, 80);
+    NoiseGradSLPS(ringSegments, &palette1, 0, 8, 16, 5, 20, 10, 3000, 80);
     NoiseGradSLPS.bgColorMode = 6;
-    Will produce an effect using colors from pallet1
+    Will produce an effect using colors from palette1
     The background is blank (but using bgColorMode of 6, ie a shifting rainbow)
     There are a minimum of 8 blendSteps and range of 16 for a maximum blendSteps of 24
     The phaseScale is 5, the freqScale is 20, and the briScale is 10.
@@ -80,11 +80,11 @@ Example calls:
     The effect updates at 80ms.
    
 Constructor inputs: 
-    pallet (optional, see constructors) -- A custom pallet passed to the effect, the default is the 
-                                           lava colors pallet encoded below
-    numColors (optional, see constructors) -- How many colors will be in the randomly created pallet
+    palette (optional, see constructors) -- A custom palette passed to the effect, the default is the 
+                                           lava colors palette encoded below
+    numColors (optional, see constructors) -- How many colors will be in the randomly created palette
     BgColor --  The color of the background pixels.
-    blendStepsBase -- The minimum number of gradient steps between pallet colors. (See Inputs Guide above)
+    blendStepsBase -- The minimum number of gradient steps between palette colors. (See Inputs Guide above)
     blendStepsRange -- The maxium amount added to blendStepBase for shifting. (See Inputs Guide above)
     phaseScale -- Sets how must the gradient wobbles. Must be greater than 0. (See Inputs Guide above)
     freqScale -- Sets how long the waves are. Must be greater than 0. (See Inputs Guide above)
@@ -96,7 +96,7 @@ Constructor inputs:
 Other Settings:
     bgColorMode (default 0) -- sets the color mode for the spacing pixels (see segDrawUtils::setPixelColor)
     briFreq (default 5) -- Sets how quickly the brightness changes. Smaller value => faster change. Min value of 1.
-    blendSteps (defaulted to 10, but set in init() ) -- How many steps are taken to blend between pallet colors
+    blendSteps (defaulted to 10, but set in init() ) -- How many steps are taken to blend between palette colors
                                                         Automatically set when shifting.
     doBrightness (default true) -- Turns the brightness spots on/off. 
 
@@ -105,11 +105,11 @@ Functions:
 */
 class NoiseGradSLPS : public EffectBasePS {
     public:
-        //Constructor with pallet
-        NoiseGradSLPS(SegmentSet &SegmentSet, palletPS *Pallet, CRGB BgColor, uint16_t BlendStepsBase, uint16_t BlendStepsRange,
+        //Constructor with palette
+        NoiseGradSLPS(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint16_t BlendStepsBase, uint16_t BlendStepsRange,
                            uint8_t PhaseScale, uint8_t FreqScale, uint8_t BriScale, uint16_t BlendRate, uint16_t Rate);  
 
-        //Constructor with randomly generated pallet
+        //Constructor with randomly generated palette
         NoiseGradSLPS(SegmentSet &SegmentSet, uint8_t numColors, CRGB BgColor, uint16_t BlendStepsBase, uint16_t BlendStepsRange,
                            uint8_t PhaseScale, uint8_t FreqScale, uint8_t BriScale, uint16_t BlendRate, uint16_t Rate);
         
@@ -139,11 +139,11 @@ class NoiseGradSLPS : public EffectBasePS {
 
         CRGB 
             bgColorOrig,
-           *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a pallet color)
+           *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
         
-        palletPS 
-            palletTemp,
-            *pallet;
+        palettePS 
+            paletteTemp,
+            *palette;
 
         void 
             update(void);

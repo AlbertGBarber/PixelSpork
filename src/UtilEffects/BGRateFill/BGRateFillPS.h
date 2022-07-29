@@ -2,7 +2,7 @@
 #define BGRateFillPS_h
 
 #include "SegmentFiles.h"
-#include "palletFiles.h"
+#include "paletteFiles.h"
 
 #include "Effects/EffectBasePS.h"
 

@@ -33,7 +33,7 @@ half-way along the strip, that then expands and reflects back.
 The effect is mostly the same as the orignal, but I've made it so that the start point 
 of the waves is picked randomly from the number of lines for each wave. 
 This adds some nice variation to the effect.
-I've also added the ability to use a pallet for the wave colors. You can have them be choosen randomly for each wave.
+I've also added the ability to use a palette for the wave colors. You can have them be choosen randomly for each wave.
 I've also allowed you to adjust the pause time factor between waves.
 I have this set to 2 (the original was 4), which makes the pause time very short.
 
@@ -44,17 +44,17 @@ Rainbow colors are controlled by rainbowMode, true will do rainbows.
 
 Randomize Notes:
 
-    The randomize pallet option is set by randomizePal. Note that the effect stores a *pallet
-    and a palletTemp. If you pass in your own pallet, *pallet is bound to your pallet, otherwise
-    I bind *pallet to palletTemp (which is set to a random set of colors)
-    Randomizing a pallet changes the colors in a pallet directly, so you probably don't want it happening to 
-    your passed in pallet. So I've coded the randomize to only work on the palletTemp.
-    If you always want a random pallet, this is no problem, just call the random pallet constructor, but if
-    you wanted to switch from your pallet to random pallets you need to bind *pallet to palletTemp and give 
-    palletTemp a set length.
+    The randomize palette option is set by randomizePal. Note that the effect stores a *palette
+    and a paletteTemp. If you pass in your own palette, *palette is bound to your palette, otherwise
+    I bind *palette to paletteTemp (which is set to a random set of colors)
+    Randomizing a palette changes the colors in a palette directly, so you probably don't want it happening to 
+    your passed in palette. So I've coded the randomize to only work on the paletteTemp.
+    If you always want a random palette, this is no problem, just call the random palette constructor, but if
+    you wanted to switch from your palette to random palettes you need to bind *palette to paletteTemp and give 
+    paletteTemp a set length.
     Do this with: 
-    <your effect instance name>->palletTemp.length = <a length value>
-    <your effect instance name>->pallet = <your effect instance name>->&palletTemp;
+    <your effect instance name>->paletteTemp.length = <a length value>
+    <your effect instance name>->palette = <your effect instance name>->&paletteTemp;
 
 Example calls: 
 
@@ -62,19 +62,19 @@ Example calls:
     Will do a a ranibow edge burst with a burst freq of 15
     The effect updates at 80ms
 
-    EdgeBurstSLPS(ringSegments, &pallet1, 10, 80);
-    Will do a an edge burst using colors from pallet1 with a burst freq of 10
+    EdgeBurstSLPS(ringSegments, &palette1, 10, 80);
+    Will do a an edge burst using colors from palette1 with a burst freq of 10
     The effect updates at 80ms
 
     EdgeBurstSLPS(ringSegments, 3, true, 10, 80);
-    Will do a an edge burst using a pallet of 3 random colors with a burst freq of 10
-    The pallet colors will be randomly picked for each wave
+    Will do a an edge burst using a palette of 3 random colors with a burst freq of 10
+    The palette colors will be randomly picked for each wave
     The effect updates at 80ms
 
 Constructor inputs: 
-    pallet (optional, see constructors) -- A custom pallet passed to the effect for colors
-    numColors (optional, see constructors) -- How many colors will be in the randomly created pallet
-    randomizePal (optional, see constructors) -- Only for the random color constructor. If true, random pallet colors
+    palette (optional, see constructors) -- A custom palette passed to the effect for colors
+    numColors (optional, see constructors) -- How many colors will be in the randomly created palette
+    randomizePal (optional, see constructors) -- Only for the random color constructor. If true, random palette colors
                                                  will be choosen for each wave
                                                  (see randomize note on this setting above)
     burstFreq (min value 1) -- How fast the bursts happen and move, recommend value of 5 - 30
@@ -98,11 +98,11 @@ class EdgeBurstSLPS : public EffectBasePS {
         //Constructor for rainbow mode
         EdgeBurstSLPS(SegmentSet &SegmentSet, uint8_t BurstFreq, uint16_t Rate);  
 
-        //Constructor for colors from pallet
-        EdgeBurstSLPS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t BurstFreq, uint16_t Rate);
+        //Constructor for colors from palette
+        EdgeBurstSLPS(SegmentSet &SegmentSet, palettePS *Palette, uint8_t BurstFreq, uint16_t Rate);
 
-        //Constructor for a randomly created pallet
-        //RandomizePal = true will randomize the pallet for each wave
+        //Constructor for a randomly created palette
+        //RandomizePal = true will randomize the palette for each wave
         EdgeBurstSLPS(SegmentSet &SegmentSet, uint8_t numColors, bool RandomizePal, uint8_t BurstFreq, uint16_t Rate);
 
         ~EdgeBurstSLPS();
@@ -118,9 +118,9 @@ class EdgeBurstSLPS : public EffectBasePS {
             randomizePal = true,
             rainbowMode = false;
         
-        palletPS
-            palletTemp,
-            *pallet;
+        palettePS
+            paletteTemp,
+            *palette;
 
         void 
             update(void);

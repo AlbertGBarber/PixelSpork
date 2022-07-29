@@ -12,7 +12,7 @@
 /* 
 Morphs the segment set from one color to the next by setting each segment line one at a time at random
 Includes various options for color selection (see modes) 
-Colors can be choosen using a pallet and pattern, or selected randomly
+Colors can be choosen using a palette and pattern, or selected randomly
 The effect can be accelerated to set more lines at once by adjusting spawnRateInc
 By default we start by spawning one segment line at a time, increasing the number every spawnRateInc ms
 so the spawing steadily accelerates. This helps keep the spawing consistent, since we're picking at random
@@ -31,12 +31,12 @@ Each segment line will be filled in, rather than each pixel.
 Example calls: 
     uint8_t pattern_arr = {0, 1, 4};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-    DissolveSLPS(mainSegments, &pattern, pallet, 0, 150, 70);
-    Will dissolve from color 0 in the pallet to color 1, to color 4, etc using dMode 0 (see below) 
+    DissolveSLPS(mainSegments, &pattern, palette, 0, 150, 70);
+    Will dissolve from color 0 in the palette to color 1, to color 4, etc using dMode 0 (see below) 
     with the number of leds set on one cycle increasing every 150ms with the effect updating every 70ms
 
-    DissolveSLPS(mainSegments, pallet, 4, 100, 100);
-    Will dissolve from one pallet color to the next using dMode 4 (see below) 
+    DissolveSLPS(mainSegments, palette, 4, 100, 100);
+    Will dissolve from one palette color to the next using dMode 4 (see below) 
     with the number of leds set on one cycle increasing every 100ms with the effect updating every 100ms
 
     DissolveSLPS(mainSegments, 3, 150, 70);
@@ -51,23 +51,23 @@ dModes:
     3: Each dissolve is a solid color choosen at random
     4: Each dissolve is a solid color choosen randomly from the pattern
 
-You should be able switch freely between dModes on the fly (the random modes will set up a random pallet/pattern as a fallback)
+You should be able switch freely between dModes on the fly (the random modes will set up a random palette/pattern as a fallback)
 
 You can freely use colorModes from segDrawUtils::setPixelColor(), but they don't make much sense
 unless you are running an offset in the segmentSet or using colorModes 5 or 6.
 
 Constructor Inputs
-    pattern(optional, see constructors) -- A pattern is struct made from a 1-d array of pallet indexes ie {0, 1, 3, 6, 7} 
+    pattern(optional, see constructors) -- A pattern is struct made from a 1-d array of palette indexes ie {0, 1, 3, 6, 7} 
                                           and the length of the array 
                                           (see patternPS.h)   
-    pallet(optional, see constructors) -- The repository of colors used in the pattern, or can be used as the pattern itself
+    palette(optional, see constructors) -- The repository of colors used in the pattern, or can be used as the pattern itself
     dMode -- The dMode that will be used for the dissolves (see above)
     spawnRateInc -- The rate increase at which the total number of leds that are set each cycle (ms)
                    Setting this closeish (up to double?) to the update rate looks the best
     Rate -- update rate (ms)
 
 Functions:
-    setPalletAsPattern() -- Sets the effect pattern to match the current pallet
+    setPaletteAsPattern() -- Sets the effect pattern to match the current palette
     resetPixelArray() -- effectivly restarts the current dissolve
     update() -- updates the effect
 
@@ -89,10 +89,10 @@ Notes:
 class DissolveSLPS : public EffectBasePS {
     public:
         //constructor for pattern
-        DissolveSLPS(SegmentSet &SegmentSet, patternPS *Pattern, palletPS *Pallet, uint8_t DMode, uint16_t SpawnRateInc, uint16_t Rate); 
+        DissolveSLPS(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, uint8_t DMode, uint16_t SpawnRateInc, uint16_t Rate); 
 
-        //constructor for pallet as pattern
-        DissolveSLPS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t DMode, uint16_t SpawnRateInc, uint16_t Rate); 
+        //constructor for palette as pattern
+        DissolveSLPS(SegmentSet &SegmentSet, palettePS *Palette, uint8_t DMode, uint16_t SpawnRateInc, uint16_t Rate); 
         
         //constructor for randomly choosen colors (should only use dMode 2 or 3 with this constructor)
         DissolveSLPS(SegmentSet &SegmentSet, uint8_t DMode, uint16_t SpawnRateInc, uint16_t Rate);
@@ -123,12 +123,12 @@ class DissolveSLPS : public EffectBasePS {
             patternTemp,
             *pattern;
 
-        palletPS
-            palletTemp,
-            *pallet;
+        palettePS
+            paletteTemp,
+            *palette;
         
         void
-            setPalletAsPattern(),
+            setPaletteAsPattern(),
             resetPixelArray(),
             update(void);
     

@@ -9,8 +9,8 @@
 /* 
 A 1D simulation of fireflies: a set of twinkling particles moving in random patterns across the strip
 You have options for the number of particles, how fast they move, how long the live for and how often they spawn
-Firefly colors can be set to a single color or picked randomly from a pallet
-You also have the option of having the constructor make a random pallet for you
+Firefly colors can be set to a single color or picked randomly from a palette
+You also have the option of having the constructor make a random palette for you
 
 In general you can change most variables on the fly except for maxnumFireflies
 You can also turn the twinking off
@@ -74,24 +74,24 @@ Example calls:
     The effect updates at 80ms
     !!When using a single color constructor, if you use a pre-build FastLED color make sure you pass in as
     CRGB(*colorCode*), ex CRGB(CRGB::Red)
-    Otherwise it will get confused and call the random pallet constructor
+    Otherwise it will get confused and call the random palette constructor
 
-    FirefliesSLPS(mainSegments, &pallet1, 5, 20, 3000, 4000, 6, 14, 70);
-    Will do a set of fireflies using colors from pallet1
+    FirefliesSLPS(mainSegments, &palette1, 5, 20, 3000, 4000, 6, 14, 70);
+    Will do a set of fireflies using colors from palette1
     There are a maximum of 5 fireflies active at one time, and each has a 20 percent chance of spawning per cycle
     The fireflies have a base life of 3000ms, with a range of 4000ms (for a max life of 7000ms)
     The fireflies have a base speed of 6, with a range of 14 (for a max speed of 20)
     The effect updates at 70ms
 
     FirefliesSLPS(mainSegments, 2, 20, 5, 3000, 3000, 2, 5, 80);
-    Will do a set of fireflies using a random pallet of 2 colors
+    Will do a set of fireflies using a random palette of 2 colors
     There are a maximum of 20 fireflies active at one time, and each has a 5 percent chance of spawning per cycle
     The fireflies have a base life of 3000ms, with a range of 3000ms (for a max life of 6000ms)
     The fireflies have a base speed of 2, with a range of 5 (for a max speed of 7)
     The effect updates at 80ms
 
 Constructor Inputs:
-    Pallet(optional, see constructors) -- The set of colors that firefly colors will be picked from
+    Palette(optional, see constructors) -- The set of colors that firefly colors will be picked from
     NumColors (optional, see contructors) -- The number of randomly choosen colors for fireflys
     Color (optional, see contructors) -- A single color for all the fireflys
     MaxNumfireflies -- The maximum number of simultaneous fireflies  that can be active at one time
@@ -125,11 +125,11 @@ Other Settings:
 */
 class FirefliesSLPS : public EffectBasePS {
     public:
-        //Constructor for effect with pallet
-        FirefliesSLPS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t MaxNumFireflies, uint8_t SpawnChance, 
+        //Constructor for effect with palette
+        FirefliesSLPS(SegmentSet &SegmentSet, palettePS *Palette, uint8_t MaxNumFireflies, uint8_t SpawnChance, 
                     uint16_t LifeBase, uint16_t LifeRange, uint16_t SpeedBase, uint16_t SpeedRange, uint16_t Rate);
 
-        //Constructor for effect with pallet of random colors
+        //Constructor for effect with palette of random colors
         FirefliesSLPS(SegmentSet &SegmentSet, uint8_t numColors, uint8_t MaxNumFireflies, uint8_t SpawnChance, 
                     uint16_t LifeBase, uint16_t LifeRange, uint16_t SpeedBase, uint16_t SpeedRange, uint16_t Rate); 
 
@@ -163,11 +163,11 @@ class FirefliesSLPS : public EffectBasePS {
 
         CRGB 
             bgColorOrig,
-            *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a pallet color)
+            *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
 
-        palletPS
-            palletTemp,
-            *pallet;
+        palettePS
+            paletteTemp,
+            *palette;
 
         particleSetPS 
             *particleSet, //the particle set used in the effect

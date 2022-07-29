@@ -9,16 +9,16 @@
 #include "pins_arduino.h"
 #endif
 
-#include "PalletFiles.h"
+#include "PaletteFiles.h"
 #include "PatternFiles.h"
 #include "ColorUtils/colorUtilsPS.h"
 
 //namespace for general functions that are used in multiple effects
 //but don't fit into color or math catagories
-//or require both pallet and patterns
+//or require both palette and patterns
 namespace generalUtilsPS {
 
     patternPS
-        setPalletAsPattern(palletPS *pallet);
+        setPaletteAsPattern(palettePS *palette);
 };
 #endif

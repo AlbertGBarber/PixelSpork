@@ -36,7 +36,7 @@ struct particlePS {
   uint8_t trailType; //the type of trail for the particle (see above for types)
   uint8_t trailSize; //the length of the trail(s) of the particle (only applies if the pixel has a trail)
   bool bounce; //sets if the particle wraps to the beginning of the segmentSet once it reaches the end, or if it reverses direction (it bounces)
-  uint8_t colorIndex; //all particles use a pallet for color, this is the index of the color in the pallet
+  uint8_t colorIndex; //all particles use a palette for color, this is the index of the color in the palette
 
   //the below varaibles are generally not set manually, and are used to keep track of the state of the particle
   uint16_t position = startPosition; //the current position of the particle in the segmentSet (not the actual location on the strip!)

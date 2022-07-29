@@ -8,7 +8,7 @@
 
 /*
 An effect based on the PlasmaSL.ino code by Andrew Tuline found here: https://github.com/atuline/FastLED-Demos/blob/master/PlasmaSL/PlasmaSL.ino
-Uses two moving waves to blend a set of pallet colors together
+Uses two moving waves to blend a set of palette colors together
 
 The effect is controlled by two frequency and phase values for the two waves, 
 Changing these changes where the waves meet and how the colors blend
@@ -68,16 +68,16 @@ Example calls:
     and the freqs and phases being randomized 
     It will update every 80ms
 
-    PlasmaSLPS(mainSegments, &pallet1, 80, false, 40);
-    Will do a PlasmaSL effect using colors from pallet1
+    PlasmaSLPS(mainSegments, &palette1, 80, false, 40);
+    Will do a PlasmaSL effect using colors from palette1
     with 80 blend steps between each color
     and the freqs and phases are not randomized
     It will update every 40ms
 
 Constructor inputs: 
-    pallet (optional, see constructors) -- A custom pallet passed to the effect, the default is the 
-                                           lava colors pallet encoded below
-    numColors (optional, see constructors) -- How many colors will be in the randomly created pallet
+    palette (optional, see constructors) -- A custom palette passed to the effect, the default is the 
+                                           lava colors palette encoded below
+    numColors (optional, see constructors) -- How many colors will be in the randomly created palette
     blendSteps -- Sets how many steps are used to blend between each color
                   Basically changes how fast the colors blend
                   Between 20 - 100 looks good
@@ -103,10 +103,10 @@ Other Settings:
 class PlasmaSLPS : public EffectBasePS {
     public:
 
-        //Constructor for effect with pallet
-        PlasmaSLPS(SegmentSet &SegmentSet, palletPS *Pallet, uint16_t BlendSteps, bool Randomize, uint16_t Rate); 
+        //Constructor for effect with palette
+        PlasmaSLPS(SegmentSet &SegmentSet, palettePS *Palette, uint16_t BlendSteps, bool Randomize, uint16_t Rate); 
 
-        //Constructor for effect with randomly chosen pallet
+        //Constructor for effect with randomly chosen palette
         PlasmaSLPS(SegmentSet &SegmentSet, uint8_t numColors, uint16_t BlendSteps, bool Randomize, uint16_t Rate);
 
         ~PlasmaSLPS();
@@ -139,9 +139,9 @@ class PlasmaSLPS : public EffectBasePS {
         bool 
             randomize;
         
-        palletPS
-            palletTemp,
-            *pallet;
+        palettePS
+            paletteTemp,
+            *palette;
 
         void 
             randomizeFreq(uint8_t freqMin, uint8_t freqMax),

@@ -1,29 +1,29 @@
 #include "Noise16PS.h"
 
-//constructor with pallet
-Noise16PS::Noise16PS(SegmentSet &SegmentSet, palletPS *Pallet, uint16_t BlendSteps, uint16_t BlendScale,
+//constructor with palette
+Noise16PS::Noise16PS(SegmentSet &SegmentSet, palettePS *Palette, uint16_t BlendSteps, uint16_t BlendScale,
                     uint8_t X_mode, uint8_t Y_mode, uint8_t Z_mode, uint16_t X_val, uint16_t Y_val, uint16_t Z_val, 
                     uint16_t Rate):
-    segmentSet(SegmentSet), pallet(Pallet), blendSteps(BlendSteps), blendScale(BlendScale), 
+    segmentSet(SegmentSet), palette(Palette), blendSteps(BlendSteps), blendScale(BlendScale), 
     x_mode(X_mode), y_mode(Y_mode), z_mode(Z_mode), x_val(X_val), y_val(Y_val), z_val(Z_val)
     {    
         init(Rate);
 	}
 
-//constructor with randomly generated pallet
+//constructor with randomly generated palette
 Noise16PS::Noise16PS(SegmentSet &SegmentSet, uint8_t numColors, uint16_t BlendSteps, uint16_t BlendScale,
                     uint8_t X_mode, uint8_t Y_mode, uint8_t Z_mode, uint16_t X_val, uint16_t Y_val, uint16_t Z_val, 
                     uint16_t Rate):
     segmentSet(SegmentSet), blendSteps(BlendSteps), blendScale(BlendScale), 
     x_mode(X_mode), y_mode(Y_mode), z_mode(Z_mode), x_val(X_val), y_val(Y_val), z_val(Z_val)
     { 
-        palletTemp = palletUtilsPS::makeRandomPallet(numColors);
-        pallet = &palletTemp;   
+        paletteTemp = paletteUtilsPS::makeRandomPalette(numColors);
+        palette = &paletteTemp;   
         init(Rate);
 	}
 
 Noise16PS::~Noise16PS(){
-    delete[] palletTemp.palletArr;
+    delete[] paletteTemp.paletteArr;
 }
 
 void Noise16PS::init(uint16_t Rate){
@@ -71,7 +71,7 @@ void Noise16PS::update(){
         real_z = getShiftVal( z_mode, z_val );
     
         numSegs = segmentSet.numSegs;
-        totBlendLength = blendSteps * pallet->length;
+        totBlendLength = blendSteps * palette->length;
         //run over each of the leds in the segment set and set a noise/color value
         for (uint8_t i = 0; i < numSegs; i++) {
             totSegLen = segmentSet.getTotalSegLength(i);
@@ -90,8 +90,8 @@ void Noise16PS::update(){
                 index = scale16by8( totBlendLength, sin8( noise * 3 ));
                 bri = noise; //inoise8(real_x, currentTime/5); //
                 
-                //get the blended color from the pallet and set it's brightness
-                colorOut = palletUtilsPS::getPalletGradColor(pallet, index, 0, totBlendLength, blendSteps);
+                //get the blended color from the palette and set it's brightness
+                colorOut = paletteUtilsPS::getPaletteGradColor(palette, index, 0, totBlendLength, blendSteps);
                 nscale8x3( colorOut.r, colorOut.g, colorOut.b, bri);
                 segDrawUtils::setPixelColor(segmentSet, pixelNum, colorOut, 0, 0, 0); 
 

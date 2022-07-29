@@ -18,7 +18,7 @@ The effect is different from PrideWPalSL because the colors move along the segme
 Just try it out and you'll see what I mean
 
 This effect includes code for doing the original Pride2015 with rainbows
-and using a custom pallet for colors
+and using a custom palette for colors
 
 In adapting the effect for segment lines, I've had to change some of the 
 wave inputs from the original Pride2015 to get a good look
@@ -32,11 +32,11 @@ and should also look nice, and will mean every instance of this effect will be d
 You can change these variables on the fly, but doing so will probably cause the effect to "jump"
 
 Inputs guide:
-    This guide will focus on using a pallet, since all the variables effect it
+    This guide will focus on using a palette, since all the variables effect it
     The rainbow mode is more of an "as-is", where I don't expect people to change the variables
     Overall the effect has two components:
         1) Waves of varing brightness that rotate around the segment and shift in length/intensity with time
-        2) Waves of pallet colors that rotate around the segment and shift in length with time
+        2) Waves of palette colors that rotate around the segment and shift in length with time
     The brightness waves can be set to either rotate with or contra to the colors
     
     Brightness wave settings: 
@@ -57,7 +57,7 @@ Inputs guide:
                       so there's no default, but the true gives you the orignal look from Mark's code.
         
     Color change settings: 
-        1) hueChangeMin and hueChangeMax: Sets the minimum and maxium shifts for colors in the pallet. This effects
+        1) hueChangeMin and hueChangeMax: Sets the minimum and maxium shifts for colors in the palette. This effects
                                           how quickly colors will change and shift. The defaults for these are 5 and 9. 
                                           The actual shift value will vary between the min and max over time.
                                           Keeping these both low will produce a slow shift.
@@ -78,19 +78,19 @@ Example calls:
     (the orginal effect by Mark)
 
     PrideWPalSLPS(ringSegments, 4, false, true, 80);
-    Will do an effect using 4 random colors (in a randonly generated pallet)
+    Will do an effect using 4 random colors (in a randonly generated palette)
     The brightness waves will move opposite to the colors
     The brightness wave values will be randomized, see init() for the ranges
     The effect updates at 80ms
 
-    PrideWPalSLPS(ringSegments, &pallet1, true, true, 80);
-    Will do an effect using colors from pallet1
+    PrideWPalSLPS(ringSegments, &palette1, true, true, 80);
+    Will do an effect using colors from palette1
     The brightness waves will move with the colors
     The brightness wave values will be randomized, see init() for the ranges
     The effect updates at 80ms
 
-    PrideWPalSLPS(ringSegments, &pallet1, true, 20, 120, 250, 350, 20, 40, 3, 7, 60);
-    Will do an effect using colors from pallet1
+    PrideWPalSLPS(ringSegments, &palette1, true, 20, 120, 250, 350, 20, 40, 3, 7, 60);
+    Will do an effect using colors from palette1
     The brightness waves will move with the colors
     Colors will shift using 20 steps to blend the colors
     The brightDepth will vary from 120 to 250
@@ -99,8 +99,8 @@ Example calls:
     The effect updates at 60ms
 
 Constructor inputs: 
-    pallet (optional, see constructors) -- A custom pallet passed to the effect
-    numColors (optional, see constructors) -- How many colors will be in the randomly created pallet
+    palette (optional, see constructors) -- A custom palette passed to the effect
+    numColors (optional, see constructors) -- How many colors will be in the randomly created palette
     briDirect -- Sets if the brightness waves move with or against the colors, true is with
     randomBriInc -- Set to true will randomize briThetaInc16 min and max, and the briThetaFreq
                     See init() for the ranges
@@ -121,7 +121,7 @@ Functions:
     update() -- updates the effect 
 
 Other Settings (see Inputs Guide for more info on most vars):
-    prideMode (default false, set automatically by constructor) -- If true, a rainbow will be used for colors instead of a pallet
+    prideMode (default false, set automatically by constructor) -- If true, a rainbow will be used for colors instead of a palette
     brightDepthMin (default 100) -- The minimum value of brightDepth
     brightDepthMax (default 224) -- The maximum value of brightDepth
     briThetaInc16Min (default 25) -- The minimum value of briThetaInc16
@@ -129,21 +129,21 @@ Other Settings (see Inputs Guide for more info on most vars):
     briThetaFreq (default 250) -- The frequency that briThetaInc16 changes at
     hueChangeMin (default 5) -- The minimum value of hueInc
     hueChangeMax (default 9) -- The maximum value of hueInc
-    gradLength (default 20) -- How many gradient steps between pallet colors (not used for rainbow)
+    gradLength (default 20) -- How many gradient steps between palette colors (not used for rainbow)
 */
 class PrideWPalSLPS : public EffectBasePS {
     public:
         //constructor for rainbow mode
         PrideWPalSLPS(SegmentSet &SegmentSet, bool BriDirect, bool RandomBriInc, uint16_t Rate);
 
-        //constructor for pallet input
-        PrideWPalSLPS(SegmentSet &SegmentSet, palletPS *Pallet, bool BriDirect, bool RandomBriInc, uint16_t Rate);  
+        //constructor for palette input
+        PrideWPalSLPS(SegmentSet &SegmentSet, palettePS *Palette, bool BriDirect, bool RandomBriInc, uint16_t Rate);  
 
-        //constructor for making a random pallet
+        //constructor for making a random palette
         PrideWPalSLPS(SegmentSet &SegmentSet, uint8_t numColors, bool BriDirect, bool RandomBriInc, uint16_t Rate);
 
         //constructor with inputs for all main variables
-        PrideWPalSLPS(SegmentSet &SegmentSet, palletPS *Pallet, bool BriDirect, uint8_t GradLength, 
+        PrideWPalSLPS(SegmentSet &SegmentSet, palettePS *Palette, bool BriDirect, uint8_t GradLength, 
                               uint8_t BrightDepthMin, uint8_t BrightDepthMax, uint16_t BriThetaFreq, 
                               uint8_t BriThetaInc16Min, uint8_t BriThetaInc16Max, uint8_t HueChangeMin, 
                               uint8_t HueChangeMax, uint16_t Rate);
@@ -166,9 +166,9 @@ class PrideWPalSLPS : public EffectBasePS {
             gradLength = 20, //How many gradient steps to shift colors
             briThetaFreq = 203; //203 //how long we spend transitioning through waves
         
-        palletPS
-            palletTemp,
-            *pallet;
+        palettePS
+            paletteTemp,
+            *palette;
         
         bool
             briDirect,

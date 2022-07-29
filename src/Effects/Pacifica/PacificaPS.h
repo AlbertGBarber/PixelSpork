@@ -1,12 +1,12 @@
 #ifndef PacificaPS_h
 #define PacificaPS_h
 
-//TODO: -- Add lava pallet as an option?
+//TODO: -- Add lava palette as an option?
 
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
-//The source of the pallets for the effect
-#include "pacificaPalletPS.h"
+//The source of the palettes for the effect
+#include "pacificaPalettePS.h"
 
 /*
 
@@ -22,7 +22,7 @@ The effect runs as is; there's no customization
 Almost all of the code is directly copied from the original linked above
 If you have any questions about how it works, please direct them to Mark Kriegsman
 
-The pallets can be found in "pacificaPallet.h"
+The palettes can be found in "pacificaPalette.h"
 
 Recommend brightness >80 and rate > 20ms
 For low brightness values I recommend turing off dithering using
@@ -49,12 +49,12 @@ class PacificaPS : public EffectBasePS {
             &segmentSet; 
         
         uint8_t 
-            //Produces a total blend length of 240 for the whole pallet, matches the original code
+            //Produces a total blend length of 240 for the whole palette, matches the original code
             numSteps = 240 / pacificaPal1PS.length;
         
         CRGB 
             bgColorOrig,
-           *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a pallet color)
+           *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
         
         void 
             update(void);
@@ -99,7 +99,7 @@ class PacificaPS : public EffectBasePS {
             colorOut;
         
         void 
-            doOneLayer( palletPS *pallet, uint16_t cistart, uint16_t wavescale, uint8_t bri, uint16_t ioff),
+            doOneLayer( palettePS *palette, uint16_t cistart, uint16_t wavescale, uint8_t bri, uint16_t ioff),
             addWhitecaps(),
             deepenColors();
 };

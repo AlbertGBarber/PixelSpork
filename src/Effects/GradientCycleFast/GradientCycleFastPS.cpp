@@ -1,33 +1,33 @@
 #include "GradientCycleFastPS.h"
 
 //constructor with pattern
-GradientCycleFastPS::GradientCycleFastPS(SegmentSet &SegmentSet, patternPS *Pattern, palletPS *Pallet, uint8_t GradLength, uint16_t Rate):
-    segmentSet(SegmentSet), pattern(Pattern), pallet(Pallet), gradLength(GradLength)
+GradientCycleFastPS::GradientCycleFastPS(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, uint8_t GradLength, uint16_t Rate):
+    segmentSet(SegmentSet), pattern(Pattern), palette(Palette), gradLength(GradLength)
     {    
         init(Rate);
 	}
 
-//constuctor with pallet as pattern
-GradientCycleFastPS::GradientCycleFastPS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t GradLength, uint16_t Rate):
-    segmentSet(SegmentSet), pallet(Pallet), gradLength(GradLength)
+//constuctor with palette as pattern
+GradientCycleFastPS::GradientCycleFastPS(SegmentSet &SegmentSet, palettePS *Palette, uint8_t GradLength, uint16_t Rate):
+    segmentSet(SegmentSet), palette(Palette), gradLength(GradLength)
     {    
-        setPalletAsPattern();
+        setPaletteAsPattern();
         init(Rate);
 	}
 
-//constructor with pallet of randomly choosen colors
+//constructor with palette of randomly choosen colors
 //(does not set randColors or randColor mode)
 GradientCycleFastPS::GradientCycleFastPS(SegmentSet &SegmentSet, uint8_t NumColors, uint8_t GradLength, uint16_t Rate):
     segmentSet(SegmentSet), gradLength(GradLength)
     {    
-        palletTemp = palletUtilsPS::makeRandomPallet(NumColors);
-        pallet = &palletTemp;
-        setPalletAsPattern();
+        paletteTemp = paletteUtilsPS::makeRandomPalette(NumColors);
+        palette = &paletteTemp;
+        setPaletteAsPattern();
         init(Rate);
 	}
 
 GradientCycleFastPS::~GradientCycleFastPS(){
-    delete[] palletTemp.palletArr;
+    delete[] paletteTemp.paletteArr;
     delete[] patternTemp.patternArr;
 }
 
@@ -43,11 +43,11 @@ void GradientCycleFastPS::reset(){
     initFillDone = false;
 }
 
-//sets the pattern to match the current pallet
-//ie for a pallet length 5, the pattern would be 
+//sets the pattern to match the current palette
+//ie for a palette length 5, the pattern would be 
 //{0, 1, 2, 3, 4}
-void GradientCycleFastPS::setPalletAsPattern(){
-    patternTemp = generalUtilsPS::setPalletAsPattern(pallet);
+void GradientCycleFastPS::setPaletteAsPattern(){
+    patternTemp = generalUtilsPS::setPaletteAsPattern(palette);
     pattern = &patternTemp;
 }
 
@@ -56,9 +56,9 @@ void GradientCycleFastPS::setPattern(patternPS *newPattern){
     pattern = newPattern;
 }
 
-//binds the pallet to a new one
-void GradientCycleFastPS::setPallet(palletPS* newPallet){
-    pallet = newPallet;
+//binds the palette to a new one
+void GradientCycleFastPS::setPalette(palettePS* newPalette){
+    palette = newPalette;
 }
 
 //We need to pre-fill the strip with the first set of gradients
@@ -67,7 +67,7 @@ void GradientCycleFastPS::initalFill(){
     cycleNum = 0;
     patternCount = 0;
     nextPattern = patternUtilsPS::getPatternVal(pattern, 0);
-    nextColor = palletUtilsPS::getPalletColor(pallet, nextPattern );
+    nextColor = paletteUtilsPS::getPaletteColor(palette, nextPattern );
 
     //numPixels is the loop limit below, so we subtract 1
     numPixels = segmentSet.numActiveSegLeds - 1;
@@ -169,13 +169,13 @@ void GradientCycleFastPS::pickNextColor(){
         //if we're not choosing a random color, we need to pick the next color in the pattern
         nextPattern = patternUtilsPS::getPatternVal(pattern, patternCount);
         //the next color, wrapping to the start of the pattern as needed
-        nextColor = palletUtilsPS::getPalletColor(pallet, nextPattern );
+        nextColor = paletteUtilsPS::getPaletteColor(palette, nextPattern );
     } else if(randMode == 1){
         //choose a completely random color
         nextColor = colorUtilsPS::randColor();
     } else {
         //choose a color randomly from the pattern (making sure it's not the same as the current color)
         nextPattern = patternUtilsPS::getShuffleIndex(pattern, currentPattern);
-        nextColor = palletUtilsPS::getPalletColor( pallet, nextPattern );  
+        nextColor = paletteUtilsPS::getPaletteColor( palette, nextPattern );  
     }
 }

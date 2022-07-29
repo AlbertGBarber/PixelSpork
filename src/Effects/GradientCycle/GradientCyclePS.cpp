@@ -1,17 +1,17 @@
 #include "GradientCyclePS.h"
 
 //constructor with pattern
-GradientCyclePS::GradientCyclePS(SegmentSet &SegmentSet, patternPS *Pattern, palletPS *Pallet, uint8_t GradLength, uint16_t Rate):
-    segmentSet(SegmentSet), pattern(Pattern), pallet(Pallet), gradLength(GradLength)
+GradientCyclePS::GradientCyclePS(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, uint8_t GradLength, uint16_t Rate):
+    segmentSet(SegmentSet), pattern(Pattern), palette(Palette), gradLength(GradLength)
     {    
         init(Rate);
 	}
 
-//constuctor with pallet as pattern
-GradientCyclePS::GradientCyclePS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t GradLength, uint16_t Rate):
-    segmentSet(SegmentSet), pallet(Pallet), gradLength(GradLength)
+//constuctor with palette as pattern
+GradientCyclePS::GradientCyclePS(SegmentSet &SegmentSet, palettePS *Palette, uint8_t GradLength, uint16_t Rate):
+    segmentSet(SegmentSet), palette(Palette), gradLength(GradLength)
     {    
-        setPalletAsPattern();
+        setPaletteAsPattern();
         init(Rate);
 	}
 
@@ -19,14 +19,14 @@ GradientCyclePS::GradientCyclePS(SegmentSet &SegmentSet, palletPS *Pallet, uint8
 GradientCyclePS::GradientCyclePS(SegmentSet &SegmentSet, uint8_t NumColors, uint8_t GradLength, uint16_t Rate):
     segmentSet(SegmentSet), gradLength(GradLength)
     {    
-        palletTemp = palletUtilsPS::makeRandomPallet(NumColors);
-        pallet = &palletTemp;
-        setPalletAsPattern();
+        paletteTemp = paletteUtilsPS::makeRandomPalette(NumColors);
+        palette = &paletteTemp;
+        setPaletteAsPattern();
         init(Rate);
 	}
 
 GradientCyclePS::~GradientCyclePS(){
-    delete[] palletTemp.palletArr;
+    delete[] paletteTemp.paletteArr;
     delete[] patternTemp.patternArr;
 }
 
@@ -53,18 +53,18 @@ void GradientCyclePS::setPattern(patternPS *newPattern){
     setTotalEffectLength();
 }
 
-//binds the pallet to a new one
-//don't need to change the totalCycleLength since the pallet is referenced
+//binds the palette to a new one
+//don't need to change the totalCycleLength since the palette is referenced
 //only indirectly though the pattern
-void GradientCyclePS::setPallet(palletPS* newPallet){
-    pallet = newPallet;
+void GradientCyclePS::setPalette(palettePS* newPalette){
+    palette = newPalette;
 }
 
-//sets the pattern to match the current pallet
-//ie for a pallet length 5, the pattern would be 
+//sets the pattern to match the current palette
+//ie for a palette length 5, the pattern would be 
 //{0, 1, 2, 3, 4}
-void GradientCyclePS::setPalletAsPattern(){
-    patternTemp = generalUtilsPS::setPalletAsPattern(pallet);
+void GradientCyclePS::setPaletteAsPattern(){
+    patternTemp = generalUtilsPS::setPaletteAsPattern(palette);
     pattern = &patternTemp;
     setTotalEffectLength();
 }
@@ -118,8 +118,8 @@ void GradientCyclePS::setnextColors(uint16_t pixelNum){
     currentColorIndex = step / gradLength; // what color we've started from (integers always round down)
     //the color we're at based on the current index
     currentPattern = patternUtilsPS::getPatternVal(pattern, currentColorIndex);
-    currentColor = palletUtilsPS::getPalletColor(pallet, currentPattern);
+    currentColor = paletteUtilsPS::getPaletteColor(palette, currentPattern);
     //the next color, wrapping to the start of the pattern as needed
     nextPattern = patternUtilsPS::getPatternVal(pattern, currentColorIndex + 1);
-    nextColor = palletUtilsPS::getPalletColor(pallet, nextPattern);
+    nextColor = paletteUtilsPS::getPaletteColor(palette, nextPattern);
 }

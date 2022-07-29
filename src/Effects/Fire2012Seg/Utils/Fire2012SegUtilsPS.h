@@ -9,18 +9,18 @@
 #include "pins_arduino.h"
 #endif
 
-#include "PalletFiles.h"
+#include "PaletteFiles.h"
 #include "ColorUtils/colorUtilsPS.h"
 
 //common functions for Fire2012 (and possibly other) effects
 namespace Fire2012SegUtilsPS {
 
     CRGB
-        getPixelHeatColorPallet(palletPS *pallet, uint8_t palletLength, uint8_t palletSecLen, CRGB *bgColor, uint8_t temperature,  bool blend);
+        getPixelHeatColorPalette(palettePS *palette, uint8_t paletteLength, uint8_t paletteSecLen, CRGB *bgColor, uint8_t temperature,  bool blend);
 
     static uint8_t
         secHeatLimit,
-        palletlength,
+        palettelength,
         colorIndex;
     
     static bool

@@ -1,10 +1,10 @@
 #include "ParticlesSLPS.h"
 
 //constructor for automatically making a particle set according to the passed in options
-ParticlesSLPS::ParticlesSLPS(SegmentSet &SegmentSet, palletPS *Pallet, CRGB BgColor, uint8_t numParticles, uint8_t direction, uint16_t baseSpeed, 
+ParticlesSLPS::ParticlesSLPS(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint8_t numParticles, uint8_t direction, uint16_t baseSpeed, 
                         uint16_t speedRange, uint16_t size, uint16_t sizeRange, uint8_t trailType, uint8_t trailSize, 
                         uint8_t trailRange, uint8_t bounce, uint8_t colorIndex, bool randColor):
-    segmentSet(SegmentSet), pallet(Pallet)
+    segmentSet(SegmentSet), palette(Palette)
     {    
         init(BgColor);
         numLines = segmentSet.maxSegLength;
@@ -16,8 +16,8 @@ ParticlesSLPS::ParticlesSLPS(SegmentSet &SegmentSet, palletPS *Pallet, CRGB BgCo
     }
 
 //constructor for using a particle set you've already made
-ParticlesSLPS::ParticlesSLPS(SegmentSet &SegmentSet, particleSetPS *ParticleSet, palletPS *Pallet, CRGB BgColor):
-    segmentSet(SegmentSet), particleSet(ParticleSet), pallet(Pallet)
+ParticlesSLPS::ParticlesSLPS(SegmentSet &SegmentSet, particleSetPS *ParticleSet, palettePS *Palette, CRGB BgColor):
+    segmentSet(SegmentSet), particleSet(ParticleSet), palette(Palette)
     {    
         init(BgColor);
         trailEndColors = new CRGB[particleSet->length];
@@ -137,7 +137,7 @@ void ParticlesSLPS::update(){
                 updateRate = speed;
             }
             
-            partColor = palletUtilsPS::getPalletColor(pallet, particlePtr->colorIndex);
+            partColor = paletteUtilsPS::getPaletteColor(palette, particlePtr->colorIndex);
 
             //partciles run from 0 to the maximum segment line number (numLines), either bouncing or wrapping depending on mode
             //if we're bouncing, we don't want anything to wrap past the end/start of the segment lines

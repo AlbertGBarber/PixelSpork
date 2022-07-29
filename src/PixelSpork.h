@@ -18,7 +18,7 @@
 
 #include "PatternFiles.h"
 
-#include "PalletFiles.h"
+#include "PaletteFiles.h"
 
 #include "EffectsList.h"
 

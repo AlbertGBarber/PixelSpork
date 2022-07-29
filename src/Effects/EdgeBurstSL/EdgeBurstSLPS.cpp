@@ -7,32 +7,32 @@ EdgeBurstSLPS::EdgeBurstSLPS(SegmentSet &SegmentSet, uint8_t BurstFreq, uint16_t
         init(Rate);
         rainbowMode = true;
 
-        //We create a random pallet in case rainbow mode is turned off without setting a pallet
+        //We create a random palette in case rainbow mode is turned off without setting a palette
         //This won't be used while rainbowMode is true
-        palletTemp = palletUtilsPS::makeRandomPallet(3);
-        pallet = &palletTemp; 
+        paletteTemp = paletteUtilsPS::makeRandomPalette(3);
+        palette = &paletteTemp; 
 	}
 
-//Constructor for colors from pallet
-EdgeBurstSLPS::EdgeBurstSLPS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t BurstFreq, uint16_t Rate):
-    segmentSet(SegmentSet), burstFreq(BurstFreq), pallet(Pallet)
+//Constructor for colors from palette
+EdgeBurstSLPS::EdgeBurstSLPS(SegmentSet &SegmentSet, palettePS *Palette, uint8_t BurstFreq, uint16_t Rate):
+    segmentSet(SegmentSet), burstFreq(BurstFreq), palette(Palette)
     {    
         init(Rate);
 	}
 
-//Constructor for a randomly created pallet
-//RandomizePal = true will randomize the pallet for each wave
+//Constructor for a randomly created palette
+//RandomizePal = true will randomize the palette for each wave
 EdgeBurstSLPS::EdgeBurstSLPS(SegmentSet &SegmentSet, uint8_t numColors, bool RandomizePal, uint8_t BurstFreq, uint16_t Rate):
     segmentSet(SegmentSet), burstFreq(BurstFreq), randomizePal(RandomizePal)
     {    
         init(Rate);
 
-        palletTemp = palletUtilsPS::makeRandomPallet(numColors);
-        pallet = &palletTemp; 
+        paletteTemp = paletteUtilsPS::makeRandomPalette(numColors);
+        palette = &paletteTemp; 
 	}
 
 EdgeBurstSLPS::~EdgeBurstSLPS(){
-    delete[] palletTemp.palletArr;
+    delete[] paletteTemp.paletteArr;
 }
 
 //initialize core vars
@@ -72,14 +72,14 @@ void EdgeBurstSLPS::update(){
         prevTime = currentTime;
 
         //fetch some core vars
-        //we re-fetch these in case the segment set or pallet has changed
+        //we re-fetch these in case the segment set or palette has changed
         numSegs = segmentSet.numSegs;
         numLines = segmentSet.maxSegLength;
 
-        //Get the blend length for each color in the pallet
-        //(using 255 steps across the whole pallet)
+        //Get the blend length for each color in the palette
+        //(using 255 steps across the whole palette)
         //We do this so we only need to do it once per cycle
-        blendLength = 255 / pallet->length;
+        blendLength = 255 / palette->length;
         
         beatVal = beat8(burstFreq);
         t1 = triwave8(beatVal);
@@ -107,12 +107,12 @@ void EdgeBurstSLPS::update(){
             h = edge * edge / 255 - 51;
 
             //If we're in rainbow mode, pick a color using th HSV color wheel
-            //Otherwise pick a color from the pallet. Note that we use 255 blend steps for the whole pallet.
+            //Otherwise pick a color from the palette. Note that we use 255 blend steps for the whole palette.
             //We also need to dim the color by v.
             if(rainbowMode){
                 colorOut = CHSV(h, 255, v);
             } else {
-                colorOut = palletUtilsPS::getPalletGradColor(pallet, h, 0, 255, blendLength);
+                colorOut = paletteUtilsPS::getPaletteGradColor(palette, h, 0, 255, blendLength);
                 nscale8x3(colorOut.r, colorOut.g, colorOut.b, v);
             }
 
@@ -131,11 +131,11 @@ void EdgeBurstSLPS::update(){
 
 //randomizes the wave start point (the offset)
 //sets the flipFlop so we know not to set the offset more than once per wave cycle
-//If randomizePal is true, the colors in palletTemp will be set randomly
+//If randomizePal is true, the colors in paletteTemp will be set randomly
 void EdgeBurstSLPS::pickRandStart(){
     offsetFlipFlop = !offsetFlipFlop;
     offset = random16(numLines);
     if(randomizePal){
-        palletUtilsPS::randomize(&palletTemp);
+        paletteUtilsPS::randomize(&paletteTemp);
     }
 }

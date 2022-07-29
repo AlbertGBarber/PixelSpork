@@ -62,9 +62,9 @@ class TheaterChaseSLPS : public EffectBasePS {
         
         CRGB 
             colorOrig,
-            *color, //color is a pointer so it can be tied to an external variable if needed (such as a pallet color)
+            *color, //color is a pointer so it can be tied to an external variable if needed (such as a palette color)
             bgColorOrig,
-            *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a pallet color)
+            *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
     
         void
             setLitLength(uint8_t newLitlength),

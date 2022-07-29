@@ -7,30 +7,30 @@ ColorMeltSLPS::ColorMeltSLPS(SegmentSet &SegmentSet, uint8_t MeltFreq, uint8_t P
         rainbowMode = true;
         init(Rate);
 
-        //We create a random pallet in case rainbow mode is turned off without setting a pallet
+        //We create a random palette in case rainbow mode is turned off without setting a palette
         //This won't be used while rainbowMode is true
-        palletTemp = palletUtilsPS::makeRandomPallet(3);
-        pallet = &palletTemp; 
+        paletteTemp = paletteUtilsPS::makeRandomPalette(3);
+        palette = &paletteTemp; 
 	}
 
-//Constructor for colors from pallet
-ColorMeltSLPS::ColorMeltSLPS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t MeltFreq, uint8_t PhaseFreq, uint16_t Rate):
-    segmentSet(SegmentSet), pallet(Pallet), meltFreq(MeltFreq), phaseFreq(PhaseFreq)
+//Constructor for colors from palette
+ColorMeltSLPS::ColorMeltSLPS(SegmentSet &SegmentSet, palettePS *Palette, uint8_t MeltFreq, uint8_t PhaseFreq, uint16_t Rate):
+    segmentSet(SegmentSet), palette(Palette), meltFreq(MeltFreq), phaseFreq(PhaseFreq)
     {    
         init(Rate);
 	}
 
-//Constructor for a randomly created pallet
+//Constructor for a randomly created palette
 ColorMeltSLPS::ColorMeltSLPS(SegmentSet &SegmentSet, uint8_t numColors, uint8_t MeltFreq, uint8_t PhaseFreq, uint16_t Rate):
     segmentSet(SegmentSet), meltFreq(MeltFreq), phaseFreq(PhaseFreq)
     {    
         init(Rate);
-        palletTemp = palletUtilsPS::makeRandomPallet(numColors);
-        pallet = &palletTemp; 
+        paletteTemp = paletteUtilsPS::makeRandomPalette(numColors);
+        palette = &paletteTemp; 
 	}
 
 ColorMeltSLPS::~ColorMeltSLPS(){
-    delete[] palletTemp.palletArr;
+    delete[] paletteTemp.paletteArr;
 }
 
 void ColorMeltSLPS::init(uint16_t Rate){
@@ -73,7 +73,7 @@ void ColorMeltSLPS::update(){
         prevTime = currentTime;
         
         //fetch some core vars
-        //we re-fetch these in case the segment set or pallet has changed
+        //we re-fetch these in case the segment set or palette has changed
         numSegs = segmentSet.numSegs;
         numLines = segmentSet.maxSegLength;
 
@@ -86,10 +86,10 @@ void ColorMeltSLPS::update(){
             phase = beat8(phaseFreq);
         }
 
-        //Get the blend length for each color in the pallet
-        //(using 255 steps across the whole pallet)
+        //Get the blend length for each color in the palette
+        //(using 255 steps across the whole palette)
         //We do this so we only need to do it once per cycle
-        blendLength = 255 / pallet->length;
+        blendLength = 255 / palette->length;
 
         //set a color for each line and then color in all the pixels on the line
         for (uint16_t i = 0; i < numLines; i++) {
@@ -102,12 +102,12 @@ void ColorMeltSLPS::update(){
             v = v * v / 255;
 
             //If we're in rainbow mode, pick a color using th HSV color wheel
-            //Otherwise pick a color from the pallet. Note that we use 255 blend steps for the whole pallet.
+            //Otherwise pick a color from the palette. Note that we use 255 blend steps for the whole palette.
             //We also need to dim the color by v.
             if(rainbowMode){
                 colorOut = CHSV(c1 + t2, 255, v);
             } else {
-                colorOut = palletUtilsPS::getPalletGradColor(pallet, c1 + t2, 0, 255, blendLength);
+                colorOut = paletteUtilsPS::getPaletteGradColor(palette, c1 + t2, 0, 255, blendLength);
                 nscale8x3(colorOut.r, colorOut.g, colorOut.b, v);
             }
 

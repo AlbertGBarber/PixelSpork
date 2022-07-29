@@ -4,7 +4,7 @@
 #include "FastLED.h"
 #include "segmentSection.h"
 #include "segment.h"
-#include "Pallet_Stuff/palletPS.h"
+#include "Palette_Stuff/palettePS.h"
 //TODO:
 //-- Scrap turning off segments, full behavior too hard to implement, current behavior is confusing
 //-- Add function somewhere to automatically sync a rainbow or gradent across multiple segment sets
@@ -169,11 +169,11 @@ SegmentSet segmentset0 = {leds, numLeds, SIZE(segment_array), segment_array};
 
 //Rainbows and Gradients
 //Many effects support the color modes used in segDrawUtils::getPixelColor() 
-//These modes allow you to easily set effects to use a rainbow of colors or a specific pallet gradient
+//These modes allow you to easily set effects to use a rainbow of colors or a specific palette gradient
 //The variables that control the rainbow/gradient are specific to each segmentSet:
 
-	gradPallet --The pallet of colors used for the gradient. Set this to what ever pallet you like.
-				 By default it is tied to palletTemp, which is a pallet of green and purple
+	gradPalette --The palette of colors used for the gradient. Set this to what ever palette you like.
+				 By default it is tied to paletteTemp, which is a palette of green and purple
 	gradLenVal -- The gradient length for color modes 1 & 7 (default val is the number of leds in the segment set)
 	gradSegVal -- The gradient length for color modes 3 & 9 (default val is the number of segments in the segmentSet)
 	gradLineVal -- The gradient length for color modes 4 & 10 (defaulted val is the length of the longest segment (maxSeglength) )\
@@ -290,9 +290,9 @@ class SegmentSet {
 	    CRGB
 	  	 	*leds; //pointer to the FastLed leds array
 		
-		palletPS //pallets for gradients
-			palletTemp,
-			*gradPallet;
+		palettePS //palettes for gradients
+			paletteTemp,
+			*gradPalette;
 
 	  	void
 		  	resetGradVals(),

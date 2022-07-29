@@ -31,7 +31,7 @@ so we'd use beat8(9) in place of time(0.1);
 /*
 An effect based on the RainbowMelt pattern in PixelBlaze which produces rainbow bands that
 shift in an out. Basically a whole mess of rainbows.
-You can also supply your own colors with a pallet.
+You can also supply your own colors with a palette.
 The effect is mostly the same as the orignal, but I've added the ability to change the
 melting frequency to speed up or slow down the melts, and also to slowly shift the melts accross the 
 strip.
@@ -49,20 +49,20 @@ Example calls:
     Rainbow colors will be used
     The effect updates at 80ms
 
-    ColorMeltSLPS(mainSegments, &pallet1, 9, 0, 80);
+    ColorMeltSLPS(mainSegments, &palette1, 9, 0, 80);
     Will do a melt with a meltFreq of 9 and a phaseFreq of 0
-    Colors from pallet1 will be used
+    Colors from palette1 will be used
     Because the phaseFreq is 0, phaseEnable will be set false as part of the constructor
     The effect updates at 80ms
 
     ColorMeltSLPS(mainSegments, 3, 9, 1, 80);
     Will do a melt with a meltFreq of 9 and a phaseFreq of 1
-    A pallet of 3 random colors will be used
+    A palette of 3 random colors will be used
     The effect updates at 80ms
 
 Constructor inputs: 
-    pallet (optional, see constructors) -- A custom pallet passed to the effect for colors
-    numColors (optional, see constructors) -- How many colors will be in the randomly created pallet
+    palette (optional, see constructors) -- A custom palette passed to the effect for colors
+    numColors (optional, see constructors) -- How many colors will be in the randomly created palette
     meltFreq -- How fast the melts happen, recommend value of 8 - 20, (min 1)
     phaseFreq -- How quickly the melts are shifted arround, can cause weirdness
                  Recommend values between 1 - 5
@@ -84,10 +84,10 @@ class ColorMeltSLPS : public EffectBasePS {
         //Constructor for rainbow mode
         ColorMeltSLPS(SegmentSet &SegmentSet, uint8_t MeltFreq, uint8_t PhaseFreq, uint16_t Rate);  
 
-        //Constructor for colors from pallet
-        ColorMeltSLPS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t MeltFreq, uint8_t PhaseFreq, uint16_t Rate);
+        //Constructor for colors from palette
+        ColorMeltSLPS(SegmentSet &SegmentSet, palettePS *Palette, uint8_t MeltFreq, uint8_t PhaseFreq, uint16_t Rate);
 
-        //Constructor for a randomly created pallet
+        //Constructor for a randomly created palette
         ColorMeltSLPS(SegmentSet &SegmentSet, uint8_t numColors, uint8_t MeltFreq, uint8_t PhaseFreq, uint16_t Rate);
 
         ~ColorMeltSLPS();
@@ -103,9 +103,9 @@ class ColorMeltSLPS : public EffectBasePS {
             rainbowMode = false,
             phaseEnable = true;
 
-        palletPS
-            palletTemp,
-            *pallet;
+        palettePS
+            paletteTemp,
+            *palette;
         
         void 
             update(void);

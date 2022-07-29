@@ -14,7 +14,7 @@ There are also more general settings for how often drops spawn, how the backgrou
 and if the drops should blend together if they pass over each other.
 You can also configure each drop's properties to be choosen at random from ranges.
 
-drop colors can either be a static color or picked randomly from a pallet
+drop colors can either be a static color or picked randomly from a palette
 
 This effect is fully compatible with color modes, and the bgColor is a pointer, so you can bind it
 to an external color variable
@@ -36,11 +36,11 @@ Example calls:
 
     A "quick" constructor without options for size, trail, or speed ranges and only one trail type supported
     These are all default to 0
-    There is a similar constructor for using a single color, just replace the pallet with a color in th
+    There is a similar constructor for using a single color, just replace the palette with a color in th
     constructor
 
-    RainSegPS(mainSegments, &pallet3, CRGB::Red, true, 10, 4, 1, 1, 5, 80);
-    Will spawn drops on the mainSegment set, picking colors from pallet3
+    RainSegPS(mainSegments, &palette3, CRGB::Red, true, 10, 4, 1, 1, 5, 80);
+    Will spawn drops on the mainSegment set, picking colors from palette3
     The background is red, and it will be pre-filled before the drops spawn
     The drops have a spawn chance of 10/100 (10% chance of spawing each update cycle)
     There is a maximum of 4 drops running concurrently on each segment
@@ -49,7 +49,7 @@ Example calls:
     bgColorMode = 6; => will cycle the background through the rainbow (see segDrawUtils::getPixelColor())
 
     A more extensive constructor will all the options for drops
-    Also comes as a pallet variant; replace the color with a pallet in the constructor
+    Also comes as a palette variant; replace the color with a palette in the constructor
 
     RainSegPS(mainSegments, CRGB::Green, 0, false, 10, 4, 1, 3, 2, 4, true, true, false, false, false, 60, 40);
     Will spawn green drops on the mainSegment set
@@ -63,8 +63,8 @@ Example calls:
     Drops will have a base speed of 60ms and a speed range of 40ms 
 
 Constructor inputs for creating a particle set:
-    pallet(optional) -- The pallet than will be used for the particle colors 
-    color(optional) -- Used in place of a pallet to spawn drops in a single color
+    palette(optional) -- The palette than will be used for the particle colors 
+    color(optional) -- Used in place of a palette to spawn drops in a single color
     BgColor -- The background color used for the effect
     BgPrefill -- If set, then the background will be filled in when the effect first runs
                 Otherwise the drops will fill it in as they move along
@@ -140,12 +140,12 @@ Notes:
 */
 class RainSegPS : public EffectBasePS {
     public:
-        //constructor for pallet colors, no range options
-        RainSegPS(SegmentSet &SegmentSet, palletPS *Pallet, CRGB BgColor, bool BgPrefill, uint8_t SpawnChance, 
+        //constructor for palette colors, no range options
+        RainSegPS(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, bool BgPrefill, uint8_t SpawnChance, 
                     uint8_t MaxNumDrops, uint16_t Size, uint8_t TrailMode, uint8_t TrailSize, uint16_t Rate);
         
-        //constructor for pallet colors with range and trail options
-        RainSegPS(SegmentSet &SegmentSet, palletPS *Pallet, CRGB BgColor, bool BgPrefill, uint8_t SpawnChance, 
+        //constructor for palette colors with range and trail options
+        RainSegPS(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, bool BgPrefill, uint8_t SpawnChance, 
                     uint8_t MaxNumDrops, uint16_t Size, uint16_t SizeRange, uint8_t TrailSize,
                     uint8_t TrailRange, bool NoTrails, bool OneTrail, bool TwoTrail, bool RevTrail, 
                     bool InfTrail, uint16_t Rate, uint16_t SpeedRange);
@@ -198,11 +198,11 @@ class RainSegPS : public EffectBasePS {
 
         CRGB 
             bgColorOrig,
-           *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a pallet color)
+           *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
         
-        palletPS
-            palletTemp,
-            *pallet;
+        palettePS
+            paletteTemp,
+            *palette;
 
         particleSetPS 
             *particleSet, //the particle set used in the effect

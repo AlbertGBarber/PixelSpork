@@ -1,20 +1,20 @@
 #include "FireworksPS.h"
 
-//Constructor for effect with pallet
-FireworksPS::FireworksPS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t MaxNumFireworks, uint8_t MaxNumSparks, 
+//Constructor for effect with palette
+FireworksPS::FireworksPS(SegmentSet &SegmentSet, palettePS *Palette, uint8_t MaxNumFireworks, uint8_t MaxNumSparks, 
                          uint8_t SpawnChance, uint16_t LifeBase, uint8_t SpeedDecay, uint16_t Rate, uint16_t SpeedRange):
-    segmentSet(SegmentSet), pallet(Pallet), spawnChance(SpawnChance), lifeBase(LifeBase), speedDecay(SpeedDecay), speedRange(SpeedRange)
+    segmentSet(SegmentSet), palette(Palette), spawnChance(SpawnChance), lifeBase(LifeBase), speedDecay(SpeedDecay), speedRange(SpeedRange)
     {    
         init(MaxNumFireworks, MaxNumSparks, Rate);
 	}
 
-//Constructor for effect with pallet of random colors
+//Constructor for effect with palette of random colors
 FireworksPS::FireworksPS(SegmentSet &SegmentSet, uint16_t numColors, uint8_t MaxNumFireworks, uint8_t MaxNumSparks, 
                          uint8_t SpawnChance, uint16_t LifeBase, uint8_t SpeedDecay, uint16_t Rate, uint16_t SpeedRange):
     segmentSet(SegmentSet), spawnChance(SpawnChance), lifeBase(LifeBase), speedDecay(SpeedDecay), speedRange(SpeedRange)
     {    
-        palletTemp = palletUtilsPS::makeRandomPallet(numColors);
-        pallet = &palletTemp;
+        paletteTemp = paletteUtilsPS::makeRandomPalette(numColors);
+        palette = &paletteTemp;
         init(MaxNumFireworks, MaxNumSparks, Rate);
 	}
 
@@ -24,8 +24,8 @@ FireworksPS::FireworksPS(SegmentSet &SegmentSet, CRGB Color, uint8_t MaxNumFirew
  uint8_t SpawnChance, uint16_t LifeBase, uint8_t SpeedDecay, uint16_t Rate, uint16_t SpeedRange):
     segmentSet(SegmentSet), spawnChance(SpawnChance), lifeBase(LifeBase), speedDecay(SpeedDecay), speedRange(SpeedRange)
     {    
-        palletTemp = palletUtilsPS::makeSingleColorPallet(Color);
-        pallet = &palletTemp;
+        paletteTemp = paletteUtilsPS::makeSingleColorPalette(Color);
+        palette = &paletteTemp;
         init(MaxNumFireworks, MaxNumSparks, Rate);
 	}
 
@@ -34,7 +34,7 @@ FireworksPS::~FireworksPS(){
     delete[] particleSetTemp.particleArr;
     delete[] fireWorkActive;
     delete[] trailEndColors;
-    delete[] palletTemp.palletArr;
+    delete[] paletteTemp.paletteArr;
 }
 
 //common initilzation function for core vars
@@ -107,7 +107,7 @@ void FireworksPS::setupFireworks(uint8_t newMaxNumFireworks, uint8_t newMaxNumSp
     delete[] particleSetTemp.particleArr;
 
     particleSetTemp = particleUtilsPS::buildParticleSet(numParticles, 0, true, *rate, speedRange, size, sizeRange, 
-                                                        0, 0, 0, false, pallet->length, true);
+                                                        0, 0, 0, false, palette->length, true);
     particleSet = &particleSetTemp;
 
     //set all the fireworks to inactive, ready to be spawned
@@ -189,8 +189,8 @@ void FireworksPS::update(){
                         partSize = particlePtr->size; //the length of the main body of the particle
                         partMaxLife = particlePtr->maxLife; //the particle's maximum life
                         
-                        //get the particle's color from the pallet
-                        colorOut = palletUtilsPS::getPalletColor(pallet, particlePtr->colorIndex);
+                        //get the particle's color from the palette
+                        colorOut = paletteUtilsPS::getPaletteColor(palette, particlePtr->colorIndex);
 
                         //The maxPosition is the maxium position of the particle 
                         //This includes a "phantom zone" off the strip of size partSize
@@ -376,7 +376,7 @@ void FireworksPS::spawnFirework(uint8_t fireworkNum){
 
     //if all the particles are to be the same color, pick it here
     if(!randSparkColors){
-        randColorIndex = random8(pallet->length);
+        randColorIndex = random8(palette->length);
     }
 
     //For each particle in the firework, randomize its properties
@@ -389,7 +389,7 @@ void FireworksPS::spawnFirework(uint8_t fireworkNum){
         initDirect = !initDirect; //swap the particle direction
         //if each of the particles is to have a random color, pick it here
         if(randSparkColors){
-            randColorIndex = random8(pallet->length);
+            randColorIndex = random8(palette->length);
         }
 
         //To ensure that we have an evenish spread of particles

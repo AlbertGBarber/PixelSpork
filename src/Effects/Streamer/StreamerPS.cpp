@@ -1,25 +1,25 @@
  #include "StreamerPS.h"
 
-//constructor for using the passed in pattern and pallet for the streamer
-StreamerPS::StreamerPS(SegmentSet &SegmentSet, patternPS *Pattern, palletPS *Pallet, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate):
-    segmentSet(SegmentSet), pattern(Pattern), pallet(Pallet), fadeSteps(FadeSteps)
+//constructor for using the passed in pattern and palette for the streamer
+StreamerPS::StreamerPS(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate):
+    segmentSet(SegmentSet), pattern(Pattern), palette(Palette), fadeSteps(FadeSteps)
     {    
         init(BgColor, Rate);
 	}
 
-//constructor for building the streamer pattern from the passed in pattern and the pallet, using the passed in colorLength and spacing
-StreamerPS::StreamerPS(SegmentSet &SegmentSet, patternPS *Pattern, palletPS *Pallet, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate):
-    segmentSet(SegmentSet), pallet(Pallet), fadeSteps(FadeSteps)
+//constructor for building the streamer pattern from the passed in pattern and the palette, using the passed in colorLength and spacing
+StreamerPS::StreamerPS(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate):
+    segmentSet(SegmentSet), palette(Palette), fadeSteps(FadeSteps)
     {    
         setPatternAsPattern(Pattern, ColorLength, Spacing);
         init(BgColor, Rate);
 	}
 
-//constructor for building a streamer using all the colors in the passed in pallet, using the colorLength and spacing for each color
-StreamerPS::StreamerPS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate):
-    segmentSet(SegmentSet), pallet(Pallet), fadeSteps(FadeSteps)
+//constructor for building a streamer using all the colors in the passed in palette, using the colorLength and spacing for each color
+StreamerPS::StreamerPS(SegmentSet &SegmentSet, palettePS *Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate):
+    segmentSet(SegmentSet), palette(Palette), fadeSteps(FadeSteps)
     {    
-        setPalletAsPattern(ColorLength, Spacing);
+        setPaletteAsPattern(ColorLength, Spacing);
         init(BgColor, Rate);
 	}
 
@@ -27,15 +27,15 @@ StreamerPS::StreamerPS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t ColorLe
 StreamerPS::StreamerPS(SegmentSet &SegmentSet, CRGB Color, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate):
     segmentSet(SegmentSet), fadeSteps(FadeSteps)
     {    
-        palletTemp = palletUtilsPS::makeSingleColorPallet(Color);
-        pallet = &palletTemp;
-        setPalletAsPattern(ColorLength, Spacing);
+        paletteTemp = paletteUtilsPS::makeSingleColorPalette(Color);
+        palette = &paletteTemp;
+        setPaletteAsPattern(ColorLength, Spacing);
         init(BgColor, Rate);
 	}
 
 //destructor
 StreamerPS::~StreamerPS(){
-    delete[] palletTemp.palletArr;
+    delete[] paletteTemp.paletteArr;
     delete[] patternTemp.patternArr;
 }
 
@@ -74,22 +74,22 @@ void StreamerPS::setPatternAsPattern(patternPS *inputPattern, uint8_t colorLengt
     pattern = &patternTemp;
 }
 
-//sets the current pallet to be the streamer pattern (using all colors in the pallet)
+//sets the current palette to be the streamer pattern (using all colors in the palette)
 //using the passed in colorLength and spacing
-//ex: for pallet of lenth 3, and a colorLength of 2, and spacing of 1
+//ex: for palette of lenth 3, and a colorLength of 2, and spacing of 1
 //the final streamer pattern would be : {0, 0, 255, 1, 1, 255, 2, 2, 255}
-void StreamerPS::setPalletAsPattern(uint8_t colorLength, uint8_t spacing){
+void StreamerPS::setPaletteAsPattern(uint8_t colorLength, uint8_t spacing){
     uint8_t repeatLength = (colorLength + spacing);
-    uint8_t palletlength = pallet->length;
-    uint16_t totalPatternLength = palletlength * repeatLength; //the total length taken up by a single color and spacing
+    uint8_t palettelength = palette->length;
+    uint16_t totalPatternLength = palettelength * repeatLength; //the total length taken up by a single color and spacing
     //create new storage for the pattern array
     delete[] patternTemp.patternArr;
     uint8_t *pattern_arr = new uint8_t[totalPatternLength];
 
-    //for each color in the pallet, we fill in the color and spacing for the output pattern
-    for(uint16_t i = 0; i < palletlength; i++){
-        //for each color in the pallet we run over the length of the color and spacing
-        //for the indexes up to color length, we set them as the current pallet index
+    //for each color in the palette, we fill in the color and spacing for the output pattern
+    for(uint16_t i = 0; i < palettelength; i++){
+        //for each color in the palette we run over the length of the color and spacing
+        //for the indexes up to color length, we set them as the current palette index
         //after that we set them as spacing (255)
         for(uint8_t j = 0; j < repeatLength; j++){
             if(j < colorLength){
@@ -160,7 +160,7 @@ CRGB StreamerPS::getNextColor(uint16_t pixelNum){
         pixelInfo.color = *bgColor;
         segDrawUtils::getPixelColor(segmentSet, &pixelInfo, pixelInfo.color, bgColorMode, pixelNum);
     } else {
-        pixelInfo.color = palletUtilsPS::getPalletColor(pallet, nextPattern);
+        pixelInfo.color = paletteUtilsPS::getPaletteColor(palette, nextPattern);
         segDrawUtils::getPixelColor(segmentSet, &pixelInfo, pixelInfo.color, colorMode, pixelNum);
     }
     return pixelInfo.color;
@@ -173,7 +173,7 @@ CRGB StreamerPS::getNextColor(uint16_t pixelNum){
 //we make the color of the next pixel the target of the current one
 //so we only need to find one color for each pixel each cycle
 //Once the fade is finished, the whole cycle advances by one, and then the fades begin again
-//The colors are re-fetched each cycle to account for color modes and pallet blending
+//The colors are re-fetched each cycle to account for color modes and palette blending
 void StreamerPS::updateFade(){
 
     nextPattern = patternUtilsPS::getPatternVal(pattern, cycleCount);

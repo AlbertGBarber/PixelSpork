@@ -1,17 +1,17 @@
 #include "RollingWavesSLPS.h"
 
 //constructor with pattern
-RollingWavesSLPS::RollingWavesSLPS(SegmentSet &SegmentSet, patternPS *Pattern, palletPS *Pallet, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate):
-    segmentSet(SegmentSet), pattern(Pattern), pallet(Pallet), gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)
+RollingWavesSLPS::RollingWavesSLPS(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate):
+    segmentSet(SegmentSet), pattern(Pattern), palette(Palette), gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)
     {    
         init(BGColor,Rate);
 	}
 
-//constuctor with pallet as pattern
-RollingWavesSLPS::RollingWavesSLPS(SegmentSet &SegmentSet, palletPS *Pallet, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate):
-    segmentSet(SegmentSet), pallet(Pallet), gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)
+//constuctor with palette as pattern
+RollingWavesSLPS::RollingWavesSLPS(SegmentSet &SegmentSet, palettePS *Palette, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate):
+    segmentSet(SegmentSet), palette(Palette), gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)
     {    
-        setPalletAsPattern();
+        setPaletteAsPattern();
         init(BGColor, Rate);
 	}
 
@@ -19,14 +19,14 @@ RollingWavesSLPS::RollingWavesSLPS(SegmentSet &SegmentSet, palletPS *Pallet, CRG
 RollingWavesSLPS::RollingWavesSLPS(SegmentSet &SegmentSet, uint8_t NumColors, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate):
     segmentSet(SegmentSet), gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)
     {    
-        palletTemp = palletUtilsPS::makeRandomPallet(NumColors);
-        pallet = &palletTemp;
-        setPalletAsPattern();
+        paletteTemp = paletteUtilsPS::makeRandomPalette(NumColors);
+        palette = &paletteTemp;
+        setPaletteAsPattern();
         init(BGColor, Rate);
 	}
 
 RollingWavesSLPS::~RollingWavesSLPS(){
-    delete[] palletTemp.palletArr;
+    delete[] paletteTemp.paletteArr;
     delete[] patternTemp.patternArr;
 }
 
@@ -64,11 +64,11 @@ void RollingWavesSLPS::setPattern(patternPS *newPattern){
     setTotalEffectLength();
 }
 
-//sets the pattern to match the current pallet
-//ie for a pallet length 5, the pattern would be 
+//sets the pattern to match the current palette
+//ie for a palette length 5, the pattern would be 
 //{0, 1, 2, 3, 4}
-void RollingWavesSLPS::setPalletAsPattern(){
-    patternTemp = generalUtilsPS::setPalletAsPattern(pallet);
+void RollingWavesSLPS::setPaletteAsPattern(){
+    patternTemp = generalUtilsPS::setPaletteAsPattern(palette);
     pattern = &patternTemp;
     setTotalEffectLength();
 }
@@ -151,7 +151,7 @@ void RollingWavesSLPS::update(){
         prevTime = currentTime;
 
         //fetch some core vars
-        //we re-fetch these in case the segment set or pallet has changed
+        //we re-fetch these in case the segment set or palette has changed
         numSegs = segmentSet.numSegs;
         numLines = segmentSet.maxSegLength;
         
@@ -242,5 +242,5 @@ void RollingWavesSLPS::setNextColors(uint16_t segPixelNum){
     currentColorIndex = addMod16PS( segPixelNum, cycleNum, totalCycleLength ) / blendLimit; // what color we've started from (integers always round down)
     //the color we're at based on the current index
     currentPattern = patternUtilsPS::getPatternVal(pattern, currentColorIndex);
-    currentColor = palletUtilsPS::getPalletColor(pallet, currentPattern);
+    currentColor = paletteUtilsPS::getPaletteColor(palette, currentPattern);
 }

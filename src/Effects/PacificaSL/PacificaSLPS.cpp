@@ -21,7 +21,7 @@ void PacificaSLPS::init(uint16_t Rate){
     CRGB BgColor = CRGB( 2, 6, 10 );
     //CRGB BgColor = CRGB(10, 0, 0); //for lava colors
     bindBGColorPS();
-    //We can pre-allocate the number of gradient steps between the pallet colors
+    //We can pre-allocate the number of gradient steps between the palette colors
     //This speeds up execution
     totBlendLength = numSteps * pacificaPal1PS.length;
 }
@@ -84,7 +84,7 @@ void PacificaSLPS::update(){
 }
 
 //Add one layer of waves into the led array
-void PacificaSLPS::doOneLayer(palletPS *pallet, uint16_t cistart, uint16_t wavescale, uint8_t bri, uint16_t ioff){
+void PacificaSLPS::doOneLayer(palettePS *palette, uint16_t cistart, uint16_t wavescale, uint8_t bri, uint16_t ioff){
     ci = cistart;
     waveangle = ioff;
     wavescale_half = (wavescale / 2) + 20;
@@ -97,8 +97,8 @@ void PacificaSLPS::doOneLayer(palletPS *pallet, uint16_t cistart, uint16_t waves
         ci += cs;
         sindex16 = sin16( ci ) + 32768;
         index = scale16( sindex16, totBlendLength );
-        //returns the blended color from the pallet mapped into numSteps
-        colorOut = palletUtilsPS::getPalletGradColor(pallet, index, 0, totBlendLength, numSteps);
+        //returns the blended color from the palette mapped into numSteps
+        colorOut = paletteUtilsPS::getPaletteGradColor(palette, index, 0, totBlendLength, numSteps);
         nscale8x3(colorOut.r, colorOut.g, colorOut.b, bri);
 
         //output the color to all the line segment pixels

@@ -1,8 +1,8 @@
 #include "TwinkleSLPS.h"
 
-//pallet based constructor
-TwinkleSLPS::TwinkleSLPS(SegmentSet &SegmentSet, palletPS *Pallet, CRGB BgColor, uint16_t NumTwinkles, uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate):
-    segmentSet(SegmentSet), pallet(Pallet), numTwinkles(NumTwinkles)
+//palette based constructor
+TwinkleSLPS::TwinkleSLPS(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint16_t NumTwinkles, uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate):
+    segmentSet(SegmentSet), palette(Palette), numTwinkles(NumTwinkles)
     {    
         init(FadeInSteps, FadeOutSteps, BgColor, Rate);
 	}
@@ -19,8 +19,8 @@ TwinkleSLPS::TwinkleSLPS(SegmentSet &SegmentSet, CRGB Color, CRGB BgColor, uint1
 TwinkleSLPS::TwinkleSLPS(SegmentSet &SegmentSet, CRGB BgColor, uint16_t NumTwinkles, uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate):
     segmentSet(SegmentSet), numTwinkles(NumTwinkles)
     {    
-        //we make a random pallet of one color so that 
-        //if we switch to randMode 0 then we have a pallet to use
+        //we make a random palette of one color so that 
+        //if we switch to randMode 0 then we have a palette to use
         setSingleColor(colorUtilsPS::randColor()); 
         //since we're choosing colors at random, set the randMode
         randMode = 1;
@@ -28,7 +28,7 @@ TwinkleSLPS::TwinkleSLPS(SegmentSet &SegmentSet, CRGB BgColor, uint16_t NumTwink
 	}
 
 TwinkleSLPS::~TwinkleSLPS(){
-    delete[] palletTemp.palletArr;
+    delete[] paletteTemp.paletteArr;
     deleteTwinkleArrays();
 }
 
@@ -42,11 +42,11 @@ void TwinkleSLPS::init(uint8_t FadeInSteps, uint8_t FadeOutSteps, CRGB BgColor, 
     reset();
 }
 
-//creates an pallet of length 1 containing the passed in color
+//creates an palette of length 1 containing the passed in color
 void TwinkleSLPS::setSingleColor(CRGB Color){
-    delete[] palletTemp.palletArr;
-    palletTemp = palletUtilsPS::makeSingleColorPallet(Color);
-    pallet = &palletTemp;
+    delete[] paletteTemp.paletteArr;
+    paletteTemp = paletteUtilsPS::makeSingleColorPalette(Color);
+    palette = &paletteTemp;
 }
 
 //creates the 2D arrays for storing the random twinkle locations (relative to the segmentSet) and their colors
@@ -148,7 +148,7 @@ void TwinkleSLPS::update(){
      
         numSegs = segmentSet.numSegs;
         numLines = segmentSet.maxSegLength;
-        palletLength = pallet->length;
+        paletteLength = palette->length;
 
         //startup settings to limit how much of the array is written out
         //since the arrays start un-initilized
@@ -212,11 +212,11 @@ void TwinkleSLPS::update(){
     }
 }
 
-//set a color based on the size of the pallet and random mode
+//set a color based on the size of the palette and random mode
 CRGB TwinkleSLPS::pickColor(){
     switch (randMode) {
         case 0: // we're picking from a set of colors 
-            twinkleColor = palletUtilsPS::getPalletColor(pallet, random8(palletLength));
+            twinkleColor = paletteUtilsPS::getPaletteColor(palette, random8(paletteLength));
             break;
         default: //(mode 1) set colors at random
             twinkleColor = colorUtilsPS::randColor();

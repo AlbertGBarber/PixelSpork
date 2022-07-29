@@ -7,7 +7,7 @@
 /* 
 Colors a number of segment lines on at a time, turning them off depending on the mode choosen
 Meant to be similar to classic twinkling fairy lights
-The color of the lines (twinkles) be set to a single color, chosen randomly, of picked from a pallet 
+The color of the lines (twinkles) be set to a single color, chosen randomly, of picked from a palette 
 Just run an example and you'll see what I mean
 
 The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
@@ -29,8 +29,8 @@ tModes:
     Mode 2: Each cycle, a new twinkle is turned on while an old is turned off (first on first off)
 
 Example calls: 
-    FairyLightsSLPS(mainSegments, pallet, 8, 0, 0, 150);
-    Will choose 8 lines to cycle to/from colors choosen from the pallet, using a blank background, 
+    FairyLightsSLPS(mainSegments, palette, 8, 0, 0, 150);
+    Will choose 8 lines to cycle to/from colors choosen from the palette, using a blank background, 
     Each line will be turned on one at a time, before reseting them all at once (mode 0), with 150ms between each cycle
 
     FairyLightsSLPS(mainSegments, CRGB::Red, 10, CRGB::Blue, 1, 100);
@@ -43,7 +43,7 @@ Example calls:
     Each cycle, a new line will be turned on, while an old is turned off (mode 2), with 80ms in between each cycle
 
 Constructor Inputs:
-    Pallet(optional, see constructors) -- the pallet from which colors will be choosen randomly
+    Palette(optional, see constructors) -- the palette from which colors will be choosen randomly
     Color(optional, see constructors) -- the color that the randomly choosen twinkles will be set to
     NumTwinkles -- The amount of random twinkles choosen for twinkling
     BgColor -- The color of the background, this is what twinkles will fade to and from
@@ -61,7 +61,7 @@ Other Settings:
     colorMode (default 0) -- sets the color mode for the random twinkles (see segDrawUtils::setPixelColor)
     bgColorMode (default 0) -- sets the color mode for the background (see segDrawUtils::setPixelColor)
     randMode (default 0) -- sets how colors will be picked
-                           0: Picks colors from the pallet
+                           0: Picks colors from the palette
                            1: Picks colors at random
     fillBG (default false) -- sets the background to be redrawn every cycle, useful for bgColorModes that are dynamic
     reDrawAll (default false) -- Will re-draw all the twinkles each cycle, is slower than default, but you need this if you want to layer this effect with another
@@ -72,8 +72,8 @@ Reference Vars:
 */
 class FairyLightsSLPS : public EffectBasePS {
     public:
-        //pallet based constructor
-        FairyLightsSLPS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode, uint16_t Rate);
+        //palette based constructor
+        FairyLightsSLPS(SegmentSet &SegmentSet, palettePS *Palette, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode, uint16_t Rate);
         
         //single color constructor
         FairyLightsSLPS(SegmentSet &SegmentSet, CRGB Color, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode, uint16_t Rate);
@@ -100,10 +100,10 @@ class FairyLightsSLPS : public EffectBasePS {
         
         CRGB
             bgColorOrig = 0,
-            *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a pallet color)
+            *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
         
-        palletPS
-            *pallet;
+        palettePS
+            *palette;
 
         bool
             reDrawAll = false,
@@ -123,7 +123,7 @@ class FairyLightsSLPS : public EffectBasePS {
             prevTime = 0;
         
         uint8_t
-            palletLength,
+            paletteLength,
             cycleLimit,
             loopStart,
             loopEnd;
@@ -131,8 +131,8 @@ class FairyLightsSLPS : public EffectBasePS {
         uint16_t
             numLines;
         
-        palletPS
-            palletTemp;
+        palettePS
+            paletteTemp;
         
         CRGB 
             color,

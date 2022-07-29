@@ -1,7 +1,7 @@
 #include "Fire2012SLPS.h"
 
-Fire2012SLPS::Fire2012SLPS(SegmentSet &SegmentSet, palletPS *Pallet, CRGB BgColor, uint8_t Cooling, uint8_t Sparking, bool Blend, uint16_t Rate, bool Direct):
-    segmentSet(SegmentSet), pallet(Pallet), cooling(Cooling), sparking(Sparking), blend(Blend), direct(Direct)
+Fire2012SLPS::Fire2012SLPS(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint8_t Cooling, uint8_t Sparking, bool Blend, uint16_t Rate, bool Direct):
+    segmentSet(SegmentSet), palette(Palette), cooling(Cooling), sparking(Sparking), blend(Blend), direct(Direct)
     {    
         //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
         bindSegPtrPS();
@@ -34,13 +34,13 @@ void Fire2012SLPS::reset(){
 
 //Updates the effect
 //This code has been adapted from https://www.tweaking4all.com/hardware/arduino/adruino-led-strip-effects/#fire
-//to work with segments and pallets
+//to work with segments and palettes
 //Overall the effect manages a heat array of uint8_t's, with each pixel in the segment set being having it's own 
 //heat (temperature) value
 //These heat values are heated and cooled with each update cycle, producing the flame effect
 //Each segment line has it's own seperate fire simulation
 //We use a single array heat to manage multiple segments by splitting it into sections of lengths equal to the number of segments
-//Within a fire, colors taken from a pallet and blended together to create a smooth flame (see setPixelHeatColorPallet() for info)
+//Within a fire, colors taken from a palette and blended together to create a smooth flame (see setPixelHeatColorPalette() for info)
 void Fire2012SLPS::update(){
     currentTime = millis();
 
@@ -48,14 +48,14 @@ void Fire2012SLPS::update(){
         prevTime = currentTime;
 
         //Before We loop
-        //work out some pallet vars to be used in getPixelHeatColorPallet
+        //work out some palette vars to be used in getPixelHeatColorPalette
         //setting them here is more efficent since they only need to be set once per update cycle
-        //(we check them each update incase the pallet has changed)
-        palletLength = pallet->length;
-        //palletLimit = palletLength - 1;
-        //For color blending, we need to divide the temperature range (0 - 255) into sections of the pallet
-        //we divide by palletLength + 1 because we need to include a section for the background
-        palletSecLen = 255 / (palletLength + 1); 
+        //(we check them each update incase the palette has changed)
+        paletteLength = palette->length;
+        //paletteLimit = paletteLength - 1;
+        //For color blending, we need to divide the temperature range (0 - 255) into sections of the palette
+        //we divide by paletteLength + 1 because we need to include a section for the background
+        paletteSecLen = 255 / (paletteLength + 1); 
 
         //For each segment line do the following:
         for (uint8_t i = 0; i < numLines; i++) {
@@ -90,7 +90,7 @@ void Fire2012SLPS::update(){
                 //heat[heatIndex] = heat[heatIndex] + random8(160, 255);
             }
 
-            //Step 4. For each flame, convert heat to pallet colors colors and output
+            //Step 4. For each flame, convert heat to palette colors colors and output
             //Also adjust for the direction of the flame
             for (uint16_t j = 0; j < numSegs; j++) {
 
@@ -104,7 +104,7 @@ void Fire2012SLPS::update(){
                 //get the physical pixel location based on the line and seg numbers
                 ledLoc = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, segNum, i);
                 //write out the temeprature color
-                colorOut = Fire2012SegUtilsPS::getPixelHeatColorPallet(pallet, palletLength, palletSecLen, 
+                colorOut = Fire2012SegUtilsPS::getPixelHeatColorPalette(palette, paletteLength, paletteSecLen, 
                                                                        bgColor, heat[j + heatSecStart], blend);
 
                 segDrawUtils::setPixelColor(segmentSet, ledLoc, colorOut, 0, 0, 0);    

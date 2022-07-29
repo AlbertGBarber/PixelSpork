@@ -14,9 +14,9 @@
 //(and allows you to do shinanigans by changing the length artificially)
 //See patternUtils.h for interacting with patterns
 
-//generally a pattern will be paired with a pallet in an effect, where the 
-//pattern entrys will be the indecies of the colors in the pallet
-//ie pattern of {0, 1, 4} would corrospond to the first, second, and fifth colors in the pallet
+//generally a pattern will be paired with a palette in an effect, where the 
+//pattern entrys will be the indecies of the colors in the palette
+//ie pattern of {0, 1, 4} would corrospond to the first, second, and fifth colors in the palette
 
 //note that the patternArr is a pointer to an array of CRGB colors
 //this is b/c structs don't allow you to have variable length arrays

@@ -10,7 +10,7 @@ A version of NoiseWavesPS, but applied along segment lines
 produces varying colors with waves of brightness that both move and 
 grow/shrink across thesegment lines with time using noise
 The are various setting to control waves and colors, explained in the Inputs guide below.
-The effect requires a pallet for colors, or it can generate on randomly for you.
+The effect requires a palette for colors, or it can generate on randomly for you.
 
 This effect is NOT compatible with color modes, but the background color is.
 
@@ -19,7 +19,7 @@ You can change the variables freely, although this may result in jumps in the ef
 Inputs guide:
     Overall the effect has two components:
         1) Waves of varing brightness that shift randonly across the segment lines while growing and shrinking with time
-        2) Spots of pallet colors that grow and change with time
+        2) Spots of palette colors that grow and change with time
     
     Brightness wave settings: 
         The brightness wave is generated using a cos() where the frequency and phase are set based on noise functions
@@ -55,17 +55,17 @@ Example calls:
     (even at the slowest the waves still move pretty quick)
     The effect updates at 80ms
     
-    NoiseWavesSLPS(ringSegments, &pallet1, 0, 10, 2, 10, 80);
-    Will produce an effect using colors from pallet1
+    NoiseWavesSLPS(ringSegments, &palette1, 0, 10, 2, 10, 80);
+    Will produce an effect using colors from palette1
     The background is blank
     The blend scale is 30, while the phaseScale is 5 and the freqScale is 7
     The produces large waves that shift quickly
     The effect updates at 40ms
 
 Constructor inputs: 
-    pallet (optional, see constructors) -- A custom pallet passed to the effect, the default is the 
-                                           lava colors pallet encoded below
-    numColors (optional, see constructors) -- How many colors will be in the randomly created pallet
+    palette (optional, see constructors) -- A custom palette passed to the effect, the default is the 
+                                           lava colors palette encoded below
+    numColors (optional, see constructors) -- How many colors will be in the randomly created palette
     BgColor --  The color of the background pixels
     blendScale -- Sets how "zoomed-in" the noise is. (See Inputs Guide above)
     phaseScale -- Changes how fast the waves move. Must be greater than 0. (See Inputs Guide above)
@@ -83,10 +83,10 @@ Functions:
 */
 class NoiseWavesSLPS : public EffectBasePS {
     public:
-        //Constructor with pallet
-        NoiseWavesSLPS(SegmentSet &SegmentSet, palletPS *Pallet, CRGB BgColor, uint16_t BlendScale, uint8_t PhaseScale, uint8_t FreqScale, uint16_t Rate);  
+        //Constructor with palette
+        NoiseWavesSLPS(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint16_t BlendScale, uint8_t PhaseScale, uint8_t FreqScale, uint16_t Rate);  
         
-        //Constructor with randomly generated pallet
+        //Constructor with randomly generated palette
         NoiseWavesSLPS(SegmentSet &SegmentSet, uint8_t numColors, CRGB BgColor, uint16_t BlendScale, uint8_t PhaseScale, uint8_t FreqScale, uint16_t Rate);
 
         ~NoiseWavesSLPS();
@@ -106,11 +106,11 @@ class NoiseWavesSLPS : public EffectBasePS {
 
         CRGB 
             bgColorOrig,
-           *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a pallet color)
+           *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
         
-        palletPS 
-            palletTemp,
-            *pallet;
+        palettePS 
+            paletteTemp,
+            *palette;
 
         void 
             update(void);

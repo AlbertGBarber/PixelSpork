@@ -5,23 +5,23 @@ PoliceStrobeSLPS::PoliceStrobeSLPS(SegmentSet &SegmentSet, CRGB ColorOne, CRGB C
     segmentSet(SegmentSet), numPulses(NumPulses), pauseTime(PauseTime), pulseMode(PulseMode)
     {    
         init(BgColor, Rate);
-        //create a dual color pallet for the tow strobe colors
-        CRGB *newPallet_arr = new CRGB[2];
-        newPallet_arr[0] = ColorOne;
-        newPallet_arr[1] = ColorTwo;
-        palletTemp = {newPallet_arr, 2};
-        pallet = &palletTemp;
+        //create a dual color palette for the tow strobe colors
+        CRGB *newPalette_arr = new CRGB[2];
+        newPalette_arr[0] = ColorOne;
+        newPalette_arr[1] = ColorTwo;
+        paletteTemp = {newPalette_arr, 2};
+        palette = &paletteTemp;
 	}
 
-//constructor for using any pallet for the colors
-PoliceStrobeSLPS::PoliceStrobeSLPS(SegmentSet &SegmentSet, palletPS *Pallet, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, uint8_t PulseMode, uint16_t Rate):
-    segmentSet(SegmentSet), pallet(Pallet), numPulses(NumPulses), pauseTime(PauseTime), pulseMode(PulseMode)
+//constructor for using any palette for the colors
+PoliceStrobeSLPS::PoliceStrobeSLPS(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, uint8_t PulseMode, uint16_t Rate):
+    segmentSet(SegmentSet), palette(Palette), numPulses(NumPulses), pauseTime(PauseTime), pulseMode(PulseMode)
     {    
         init(BgColor, Rate); 
 	}
 
 PoliceStrobeSLPS::~PoliceStrobeSLPS(){
-    delete[] palletTemp.palletArr;
+    delete[] paletteTemp.paletteArr;
 }
 
 //restarts the effect
@@ -123,7 +123,7 @@ void PoliceStrobeSLPS::update(){
             }
         } else {
             //if we've finished a set of pulses we need to decide what to do next
-            colorNum = addMod16PS(colorNum, 1, pallet->length); //(colorNum + 1) % pallet->length;
+            colorNum = addMod16PS(colorNum, 1, palette->length); //(colorNum + 1) % palette->length;
             //after choosing the next color, if we're back at the first color
             //then we've pulsed all the colors in the current cycle
             //and we need to set the next pulse mode flags
@@ -175,19 +175,19 @@ void PoliceStrobeSLPS::startPause(){
 //at the start of a set of pulses
 void PoliceStrobeSLPS::pickColor(){
     if(randMode == 0){
-        colorTemp = palletUtilsPS::getPalletColor( pallet, colorNum );
+        colorTemp = paletteUtilsPS::getPaletteColor( palette, colorNum );
     } else if(randMode == 1 && pulseCount <= 1) {
         //choose a completely random color
         colorTemp = colorUtilsPS::randColor();
     } else {
         //choose a color randomly from the pattern (making sure it's not the same as the current color)
         if(pulseCount <= 1) {
-            randGuess = random8(pallet->length);
+            randGuess = random8(palette->length);
             if(randGuess == prevGuess){
-                randGuess = addmod8(prevGuess, 1, pallet->length);//(prevGuess + 1) % pallet->length;
+                randGuess = addmod8(prevGuess, 1, palette->length);//(prevGuess + 1) % palette->length;
             }
             prevGuess = randGuess;
         }
-        colorTemp = palletUtilsPS::getPalletColor( pallet, randGuess );
+        colorTemp = paletteUtilsPS::getPaletteColor( palette, randGuess );
     }
 }

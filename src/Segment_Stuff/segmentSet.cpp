@@ -9,12 +9,12 @@ SegmentSet::SegmentSet(struct CRGB *segLeds, uint16_t segAllLeds, Segment **segm
 		numActiveSegLeds = getNumActiveSegLeds();
 		resetGradVals();
 		
-		//create a default gradient pallet
-		CRGB *newPallet_arr = new CRGB[2];
-        newPallet_arr[0] = CRGB(230, 15, 230); //purple
-        newPallet_arr[1] = CRGB(0, 200, 0); //green
-        palletTemp = {newPallet_arr, 2};
-        gradPallet = &palletTemp;
+		//create a default gradient palette
+		CRGB *newPalette_arr = new CRGB[2];
+        newPalette_arr[0] = CRGB(230, 15, 230); //purple
+        newPalette_arr[1] = CRGB(0, 200, 0); //green
+        paletteTemp = {newPalette_arr, 2};
+        gradPalette = &paletteTemp;
 
 		offsetRate = &offsetRateOrig;
 	}

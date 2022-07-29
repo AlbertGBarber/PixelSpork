@@ -1,25 +1,25 @@
 #include "StreamerFastPS.h"
 
-//constructor for using the passed in pattern and pallet for the streamer
-StreamerFastPS::StreamerFastPS(SegmentSet &SegmentSet, patternPS *Pattern, palletPS *Pallet, CRGB BgColor, uint16_t Rate):
-    segmentSet(SegmentSet), pattern(Pattern), pallet(Pallet)
+//constructor for using the passed in pattern and palette for the streamer
+StreamerFastPS::StreamerFastPS(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, CRGB BgColor, uint16_t Rate):
+    segmentSet(SegmentSet), pattern(Pattern), palette(Palette)
     {    
         init(BgColor, Rate);
 	}
 
-//constructor for building the streamer pattern from the passed in pattern and the pallet, using the passed in colorLength and spacing
-StreamerFastPS::StreamerFastPS(SegmentSet &SegmentSet, patternPS *Pattern, palletPS *Pallet, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint16_t Rate):
-    segmentSet(SegmentSet), pallet(Pallet)
+//constructor for building the streamer pattern from the passed in pattern and the palette, using the passed in colorLength and spacing
+StreamerFastPS::StreamerFastPS(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint16_t Rate):
+    segmentSet(SegmentSet), palette(Palette)
     {    
         setPatternAsPattern(Pattern, ColorLength, Spacing);
         init(BgColor, Rate);
 	}
     
-//constructor for building a streamer using all the colors in the passed in pallet, using the colorLength and spacing for each color
-StreamerFastPS::StreamerFastPS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint16_t Rate):
-    segmentSet(SegmentSet), pallet(Pallet)
+//constructor for building a streamer using all the colors in the passed in palette, using the colorLength and spacing for each color
+StreamerFastPS::StreamerFastPS(SegmentSet &SegmentSet, palettePS *Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint16_t Rate):
+    segmentSet(SegmentSet), palette(Palette)
     {    
-        setPalletAsPattern(ColorLength, Spacing);
+        setPaletteAsPattern(ColorLength, Spacing);
         init(BgColor, Rate);
 	}
 
@@ -27,14 +27,14 @@ StreamerFastPS::StreamerFastPS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t
 StreamerFastPS::StreamerFastPS(SegmentSet &SegmentSet, CRGB Color, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint16_t Rate):
     segmentSet(SegmentSet)
     {    
-        palletTemp = palletUtilsPS::makeSingleColorPallet(Color);
-        pallet = &palletTemp;
-        setPalletAsPattern(ColorLength, Spacing);
+        paletteTemp = paletteUtilsPS::makeSingleColorPalette(Color);
+        palette = &paletteTemp;
+        setPaletteAsPattern(ColorLength, Spacing);
         init(BgColor, Rate);
 	}
 
 StreamerFastPS::~StreamerFastPS(){
-    delete[] palletTemp.palletArr;
+    delete[] paletteTemp.paletteArr;
     delete[] patternTemp.patternArr;
 }
 
@@ -66,18 +66,18 @@ void StreamerFastPS::setPatternAsPattern(patternPS *inputPattern, uint8_t colorL
     pattern = &patternTemp;
 }
 
-//sets the current pallet to be the streamer pattern (using all colors in the pallet)
+//sets the current palette to be the streamer pattern (using all colors in the palette)
 //using the passed in colorLength and spacing
-//ex: for pallet of lenth 3, and a colorLength of 2, and spacing of 1
+//ex: for palette of lenth 3, and a colorLength of 2, and spacing of 1
 //the final streamer pattern would be : {0, 0, 255, 1, 1, 255, 2, 2, 255}
-void StreamerFastPS::setPalletAsPattern(uint8_t colorLength, uint8_t spacing){
+void StreamerFastPS::setPaletteAsPattern(uint8_t colorLength, uint8_t spacing){
     uint8_t repeatLength = (colorLength + spacing);
-    uint8_t palletlength = pallet->length;
-    uint16_t totalPatternLength = palletlength * repeatLength;
+    uint8_t palettelength = palette->length;
+    uint16_t totalPatternLength = palettelength * repeatLength;
     delete[] patternTemp.patternArr;
     uint8_t *pattern_arr = new uint8_t[totalPatternLength];
 
-    for(uint16_t i = 0; i < palletlength; i++){
+    for(uint16_t i = 0; i < palettelength; i++){
         for(uint8_t j = 0; j < repeatLength; j++){
             if(j < colorLength){
                 pattern_arr[i * repeatLength + j] = i;
@@ -109,14 +109,14 @@ void StreamerFastPS::init(CRGB BgColor, uint16_t Rate){
 
 //returns the color of the next streamer based on the passed in pattern index
 //if the index is 255, this notes a spacing pixel, so the bgColor is returned
-//otherwise the color is choosen either from the pallet, or randomly
+//otherwise the color is choosen either from the palette, or randomly
 //according to the randMode
 CRGB StreamerFastPS::pickStreamerColor(uint8_t patternIndex){
     if(patternIndex == 255){
         nextColor = *bgColor;
     } else if(randMode == 0){
         //the color we're at based on the current index
-        nextColor = palletUtilsPS::getPalletColor(pallet, patternIndex);
+        nextColor = paletteUtilsPS::getPaletteColor(palette, patternIndex);
     } else if(patternIndex != prevPattern){
         //if we're doing random colors, we still want to stick to the streamer lengths in the pattern
         //but replace the color with a random one 
@@ -127,8 +127,8 @@ CRGB StreamerFastPS::pickStreamerColor(uint8_t patternIndex){
             //choose a completely random color
             nextColor = colorUtilsPS::randColor();
         } else {
-            //choose a color randomly from the pallet
-            nextColor = palletUtilsPS::getPalletColor( pallet, random8(pallet->length) );
+            //choose a color randomly from the palette
+            nextColor = paletteUtilsPS::getPaletteColor( palette, random8(palette->length) );
         }
     }
     prevPattern = patternIndex; //save the current pattern value (only needed for the random color case)
@@ -163,7 +163,7 @@ void StreamerFastPS::preFill(){
 //Each update cycle, we run along the strip, coping the color of the next pixel into the current pixel
 //effectively shifting all the streamers down the strip
 //We only choose a new color for the final pixel
-//This is much faster than caculating the next pattern value for each pixel, but we cannot do fades, use color modes, or pallet blend
+//This is much faster than caculating the next pattern value for each pixel, but we cannot do fades, use color modes, or palette blend
 //note that a spacing pixel is indicated by a pattern value of 255, these pixels will be filled in with the bgColor
 void StreamerFastPS::update(){
     currentTime = millis();

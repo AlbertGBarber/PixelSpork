@@ -1,17 +1,17 @@
 #include "DissolveSLPS.h"
 
 //constructor for pattern
-DissolveSLPS::DissolveSLPS(SegmentSet &SegmentSet, patternPS *Pattern, palletPS *Pallet, uint8_t DMode, uint16_t SpawnRateInc, uint16_t Rate):
-    segmentSet(SegmentSet), pattern(Pattern), pallet(Pallet), dMode(DMode), spawnRateInc(SpawnRateInc)
+DissolveSLPS::DissolveSLPS(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, uint8_t DMode, uint16_t SpawnRateInc, uint16_t Rate):
+    segmentSet(SegmentSet), pattern(Pattern), palette(Palette), dMode(DMode), spawnRateInc(SpawnRateInc)
     {    
         init(Rate);
 	}
 
-//constructor for pallet as pattern
-DissolveSLPS::DissolveSLPS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t DMode, uint16_t SpawnRateInc, uint16_t Rate):
-    segmentSet(SegmentSet), pallet(Pallet), dMode(DMode), spawnRateInc(SpawnRateInc)
+//constructor for palette as pattern
+DissolveSLPS::DissolveSLPS(SegmentSet &SegmentSet, palettePS *Palette, uint8_t DMode, uint16_t SpawnRateInc, uint16_t Rate):
+    segmentSet(SegmentSet), palette(Palette), dMode(DMode), spawnRateInc(SpawnRateInc)
     {
-        setPalletAsPattern();
+        setPaletteAsPattern();
         init(Rate);
     }
 
@@ -19,17 +19,17 @@ DissolveSLPS::DissolveSLPS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t DMo
 DissolveSLPS::DissolveSLPS(SegmentSet &SegmentSet, uint8_t DMode, uint16_t SpawnRateInc, uint16_t Rate):
     segmentSet(SegmentSet), dMode(DMode), spawnRateInc(SpawnRateInc)
     {
-        //although we're randomly choosing colors, we still make a pallet and pattern 
-        //so that if the dMode is changed later, there's still a pallet/pattern to use
-        palletTemp = palletUtilsPS::makeRandomPallet(3);
-        pallet = &palletTemp;
-        setPalletAsPattern();
+        //although we're randomly choosing colors, we still make a palette and pattern 
+        //so that if the dMode is changed later, there's still a palette/pattern to use
+        paletteTemp = paletteUtilsPS::makeRandomPalette(3);
+        palette = &paletteTemp;
+        setPaletteAsPattern();
         init(Rate);
     }
 
 //destructor
 DissolveSLPS::~DissolveSLPS(){
-    delete[] palletTemp.palletArr;
+    delete[] paletteTemp.paletteArr;
     delete[] pixelArray;
     delete[] patternTemp.patternArr;
 }
@@ -62,11 +62,11 @@ void DissolveSLPS::resetPixelArray(){
     randColorPicked = false;
 }
 
-//sets the pattern to match the current pallet
-//ie for a pallet length 5, the pattern would be 
+//sets the pattern to match the current palette
+//ie for a palette length 5, the pattern would be 
 //{0, 1, 2, 3, 4}
-void DissolveSLPS::setPalletAsPattern(){
-    patternTemp = generalUtilsPS::setPalletAsPattern(pallet);
+void DissolveSLPS::setPaletteAsPattern(){
+    patternTemp = generalUtilsPS::setPaletteAsPattern(palette);
     pattern = &patternTemp;
 }
 
@@ -82,23 +82,23 @@ CRGB DissolveSLPS::pickColor(){
     if(dMode == 0){
         //cycle through the pattern
         currentIndex = patternUtilsPS::getPatternVal(pattern, numCycles);
-        color = palletUtilsPS::getPalletColor(pallet, currentIndex );
+        color = paletteUtilsPS::getPaletteColor(palette, currentIndex );
     } else if(dMode == 1){
         //choose colors randomly from the pattern
-        color = palletUtilsPS::getPalletColor(pallet, patternUtilsPS::getRandVal(pattern) );
+        color = paletteUtilsPS::getPaletteColor(palette, patternUtilsPS::getRandVal(pattern) );
     } else if(dMode == 2){
         //choose colors randomly
         color = colorUtilsPS::randColor();
     } else {
         //for modes 3 and 4, the colors must only be picked once, since they are choosen randomly
         //hence the ranColorPicked flag
-        //(This could also apply to mode 0, but we want to check the color each time for palletBlending)
+        //(This could also apply to mode 0, but we want to check the color each time for paletteBlending)
         if( !randColorPicked ){
             if(dMode == 3){
                 color = colorUtilsPS::randColor();
             } else if(dMode == 4) {
                 currentIndex = patternUtilsPS::getShuffleIndex(pattern, currentIndex);
-                color = palletUtilsPS::getPalletColor( pallet, currentIndex );
+                color = paletteUtilsPS::getPaletteColor( palette, currentIndex );
             }
             randColorPicked = true;
         }

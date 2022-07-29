@@ -10,7 +10,7 @@
 
 /* 
 Cross fades the entire segmentSet from one solid color to the next
-following either a pattern and pallet, a pallet alone, or using random colors
+following either a pattern and palette, a palette alone, or using random colors
 each fade is done in a specified number of steps, at a specified rate
 fades continue until the speficied number of fades is reached, or indefinitly if the flag is set
 (passing 0 for the number of fades sets the infinite flag)
@@ -20,11 +20,11 @@ see constructors below for inputs
 Example calls: 
     uint8_t pattern_arr = {0, 1, 4};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-    CrossFadeCyclePS(mainSegments, &pattern, pallet, 0, 40, 30);
-    Will fade from color 0, to color 1, to color 4 of the pallet, infinitly, taking 40 steps for each fade, with 30ms between steps
+    CrossFadeCyclePS(mainSegments, &pattern, palette, 0, 40, 30);
+    Will fade from color 0, to color 1, to color 4 of the palette, infinitly, taking 40 steps for each fade, with 30ms between steps
 
-    CrossFadeCyclePS(mainSegments, pallet, 5, 40, 30);
-    Will fade through the colors of the pallet in order until 5 fades have been completed, taking 40 steps for each fade, with 30ms between steps
+    CrossFadeCyclePS(mainSegments, palette, 5, 40, 30);
+    Will fade through the colors of the palette in order until 5 fades have been completed, taking 40 steps for each fade, with 30ms between steps
 
     CrossFadeCyclePS(mainSegments, 0, 40, 30);
     Will fade from one random color to the next infinitly, taking 40 steps for each fade, with 30ms between steps
@@ -37,18 +37,18 @@ Modes ( not set in constructor, set using mode variable ):
 Doe not accept color modes from segDrawUtils::setPixelColor();
 
 Constructor Inputs
-    Pattern(optional, see constructors) -- A pattern is struct made from a 1-d array of pallet indexes ie {0, 1, 3, 6, 7} 
+    Pattern(optional, see constructors) -- A pattern is struct made from a 1-d array of palette indexes ie {0, 1, 3, 6, 7} 
                                           and the length of the array 
                                           (see patternPS.h)                                     
-    Pallet(optional, see constructors) -- The repository of colors used in the pattern, or can be used as the pattern itself
+    Palette(optional, see constructors) -- The repository of colors used in the pattern, or can be used as the pattern itself
     NumFades -- The total number of crossfades(colors) the effect will go through, setting this to 0 will flag for infinite fades
     Steps -- How many steps for each fade
     Rate -- update rate (ms)
 
 Functions:
     setPattern(*newPattern) -- Sets the passed in pattern to be the effect pattern
-    setPallet(*newPallet) -- Sets the pallet to the passed in pallet
-    setPalletAsPattern() -- Sets the effect pattern to match the current pallet
+    setPalette(*newPalette) -- Sets the palette to the passed in palette
+    setPaletteAsPattern() -- Sets the effect pattern to match the current palette
     reset() -- restarts the effect
     update() -- updates the effect
 
@@ -61,11 +61,11 @@ Other Settings:
 */
 class CrossFadeCyclePS : public EffectBasePS {
     public:
-        //Constructor for pattern and pallet
-        CrossFadeCyclePS(SegmentSet &SegmentSet, patternPS *Pattern, palletPS *Pallet, uint16_t NumFades, uint8_t Steps, uint16_t Rate);
+        //Constructor for pattern and palette
+        CrossFadeCyclePS(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, uint16_t NumFades, uint8_t Steps, uint16_t Rate);
         
-        //Constructor for pallet as the pattern
-        CrossFadeCyclePS(SegmentSet &SegmentSet, palletPS *Pallet, uint16_t NumFades, uint8_t Steps, uint16_t Rate);  
+        //Constructor for palette as the pattern
+        CrossFadeCyclePS(SegmentSet &SegmentSet, palettePS *Palette, uint16_t NumFades, uint8_t Steps, uint16_t Rate);  
         
         //Constructor for random colors
         CrossFadeCyclePS(SegmentSet &SegmentSet, uint16_t NumFades, uint8_t Steps, uint16_t Rate);
@@ -89,13 +89,13 @@ class CrossFadeCyclePS : public EffectBasePS {
         SegmentSet 
             &segmentSet; 
 
-        palletPS
-            *pallet;
+        palettePS
+            *palette;
         
         void 
             setPattern(patternPS *newPattern),
-            setPallet(palletPS *newPallet),
-            setPalletAsPattern(),
+            setPalette(palettePS *newPalette),
+            setPaletteAsPattern(),
             reset(void),
             update(void);
     
@@ -104,8 +104,8 @@ class CrossFadeCyclePS : public EffectBasePS {
             currentTime,
             prevTime = 0;
         
-        palletPS
-            palletTemp;
+        palettePS
+            paletteTemp;
         
         patternPS
             patternTemp;

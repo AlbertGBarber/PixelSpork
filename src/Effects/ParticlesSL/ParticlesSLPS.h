@@ -51,7 +51,7 @@ and a length (the number of particles in the array)
 For example lets make a particle: particlePS particle1 = {0, true, 80, 1, 1, 5, true, 0}
 Based on particlePS.h: this is a particle that starts at pixel 0, is moving forward along the strip at a rate of 80ms,
 has a size of 1 and a single trail behind the particle of length 5. It will bounce at each end of the strip.
-It will be colored using the 0th element in whatever pallet it is matched with
+It will be colored using the 0th element in whatever palette it is matched with
 
 Now we stick it in a set: 
 particlePS *particleArr[] = { &particle1 };
@@ -78,20 +78,20 @@ This is not visually noticable, and makes coding easier. But it does mean there'
 
 Example calls: 
     using the particleSet defined above:
-    ParticlesSLPS(mainSegments, particleSet, &pallet, CRGB::Red);
+    ParticlesSLPS(mainSegments, particleSet, &palette, CRGB::Red);
     Will animate the single particle as described above, placing it on a red background
 
-    ParticlesSLPS(mainSegments, &pallet3, 0, 3, 2, 60, 50, 1, 3, 2, 3, 0, 2, pallet3.length, true);
+    ParticlesSLPS(mainSegments, &palette3, 0, 3, 2, 60, 50, 1, 3, 2, 3, 0, 2, palette3.length, true);
     Creates a set of three particles that will run on a blank background with the following properties:
     The particle directions will be choosen at random
     They will have a maximum speed of 60ms, up to 110ms (60 + 50)
     The will have a minimum size of 1, up to 4 (1 + 3)
     They will have two trails of length 3 and no variations in length
     Their bounce properties will be choosen at random
-    Their colors will be choosen at random from pallet3
+    Their colors will be choosen at random from palette3
 
 Constructor inputs for creating a particle set:
-    pallet -- The pallet than will be used for the particle colors 
+    palette -- The palette than will be used for the particle colors 
     BgColor -- The background color used for the effect
     numParticles -- The number of particles that will be created for the effect
     Direction -- The direction of the particle's motion (pass in any number > 1 to set it randomly)
@@ -106,9 +106,9 @@ Constructor inputs for creating a particle set:
     trailRange -- The amount the trailSize can vary from the base size (ie trailSize + random(range))
     bounce -- Whether the particles should reverse direction at either end of the segment set
              pass in any number > 1 to set this randomly
-    colorIndex -- The index of the color in the pallet the particles will be
-                 If setting randomly, pass in the length of the pallet
-    randColor -- If the colors are to be choosen randomly from the pallet (up to the value passed in for colorIndex)
+    colorIndex -- The index of the color in the palette the particles will be
+                 If setting randomly, pass in the length of the palette
+    randColor -- If the colors are to be choosen randomly from the palette (up to the value passed in for colorIndex)
 
 Trail Modes:
 Taken from particlePS.h:
@@ -157,12 +157,12 @@ Notes:
 class ParticlesSLPS : public EffectBasePS {
     public:
         //Constructor for having the effect generate a set of particles
-        ParticlesSLPS(SegmentSet &SegmentSet, palletPS *Pallet, CRGB BgColor, uint8_t numParticles, uint8_t direction, 
+        ParticlesSLPS(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint8_t numParticles, uint8_t direction, 
                     uint16_t baseSpeed, uint16_t speedRange, uint16_t size, uint16_t sizeRange, uint8_t trailType, 
                     uint8_t trailSize, uint8_t trailRange, uint8_t bounce, uint8_t colorIndex, bool randColor);  
 
         //Constructor for using a passed in set of particles
-        ParticlesSLPS(SegmentSet &SegmentSet, particleSetPS *ParticleSet, palletPS *Pallet, CRGB BgColor);
+        ParticlesSLPS(SegmentSet &SegmentSet, particleSetPS *ParticleSet, palettePS *Palette, CRGB BgColor);
 
         ~ParticlesSLPS();
 
@@ -182,10 +182,10 @@ class ParticlesSLPS : public EffectBasePS {
 
         CRGB 
             bgColorOrig,
-            *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a pallet color)
+            *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
         
-        palletPS
-            *pallet;
+        palettePS
+            *palette;
 
         particleSetPS 
             *particleSet, //the particle set used in the effect

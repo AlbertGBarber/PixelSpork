@@ -1,11 +1,11 @@
 
-#ifndef pacificaPalletPS_h
-#define pacificaPalletPS_h
-#include "PalletFiles.h"
+#ifndef pacificaPalettePS_h
+#define pacificaPalettePS_h
+#include "PaletteFiles.h"
 
-//I've translated the original Pacifica pallets into my pallets
+//I've translated the original Pacifica palettes into my palettes
 //These produce a very slightly different blend of colors, but it still looks good
-//I've left the original pallets as comments below, should you want to use them
+//I've left the original palettes as comments below, should you want to use them
 static CRGB 
     paPal1_arr[5] = { CRGB(0, 5, 7), CRGB(0, 3, 11), CRGB(0, 3, 25), CRGB(20, 85, 75), CRGB(40, 170, 80) },
     //paPal1_arr[16] =  { CRGB(0, 5, 7),  CRGB(0, 4, 9),  CRGB(0, 3, 11),   CRGB(0, 3, 13), 
@@ -32,7 +32,7 @@ static CRGB
     //paPal2_arr[5] = { CRGB(7, 0, 0), CRGB(11, 0, 0), CRGB(25, 0, 0), CRGB(110, 15, 6), CRGB(160, 30, 10) },
     //paPal3_arr[5] = { CRGB(8, 0, 0), CRGB(20, 0, 0), CRGB(57, 0, 0), CRGB(191, 95, 11), CRGB(184, 122, 24) };
 
-static palletPS
+static palettePS
     pacificaPal1PS = {paPal1_arr, SIZE(paPal1_arr)},
     pacificaPal2PS = {paPal2_arr, SIZE(paPal2_arr)},
     pacificaPal3PS = {paPal3_arr, SIZE(paPal3_arr)};

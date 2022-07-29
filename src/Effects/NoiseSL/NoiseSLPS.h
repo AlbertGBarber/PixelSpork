@@ -15,7 +15,7 @@ See more about noise here: https://github.com/s-marley/FastLED-basics/tree/main/
 This effect is a sort of 2D noise playground
 Overall it produces spots of color that shift and morph across the segment set
 You have a number of options for tuning the noise an how it changes through time
-The output colors can either be taken from a pallet, or set to one of two rainbow modes
+The output colors can either be taken from a palette, or set to one of two rainbow modes
 
 The effect also works well on a strip with a only a single segment (ie just one strip)
 
@@ -30,7 +30,7 @@ but based on testing I've written an input guide below:
 Inputs guide:
     When you create the effect you'll have five values to set: blendSteps, scaleBase, scaleRange, speed, and Rate
         Blending:
-        blendSteps sets how many long the gradient is between each color in the pallet. Doesn't need to be super large
+        blendSteps sets how many long the gradient is between each color in the palette. Doesn't need to be super large
         Anything between 20 and 60 will look good
 
         Scale:
@@ -55,7 +55,7 @@ Inputs guide:
         Rainbows and shifting hues:
         There are three color modes in the effect. 
         These are set by cMode:
-            0: Use the input pallet for colors
+            0: Use the input palette for colors
             1: Noise is mapped directly to the rainbow
               So any color can show up anywhere, but they will follow the rainbow gradient (red goes to orange to yellow, etc )
             2: Noise is mapped to a limited section of the rainbow
@@ -65,7 +65,7 @@ Inputs guide:
         rotateHue and iHue (default True):
         The noise that FastLED produces tends to be grouped in the middle of the range 
         While the effect does try to strech this out, 
-        it still doesn't usually hit colors at either end of the pallet
+        it still doesn't usually hit colors at either end of the palette
         So, for example using cMode 1, you'll get more yellow, green, and blue than red and purple
         because they're in the middle of the rainbow
         To mitigate this we can slowly offset the color center over time,
@@ -75,23 +75,23 @@ Inputs guide:
 
 Example calls: 
     NoiseSLPS(mainSegments, 4, 20, 20, 60, 10, 80);
-    Will produce a noise effect with a pallet of 4 randomly choosen colors
+    Will produce a noise effect with a palette of 4 randomly choosen colors
     There are 20 blend steps between each color
     A base scaling value of 20 will be applied with a range of 60 (max scale is 80)
     The speed is 10
     The effect updates at 80ms
     
-    NoiseSLPS(mainSegments, &pallet1, 40, 5, 95, 20, 80);
-    Will produce a noise effect with using colors from pallet1
+    NoiseSLPS(mainSegments, &palette1, 40, 5, 95, 20, 80);
+    Will produce a noise effect with using colors from palette1
     There are 40 blend steps between each color
     A base scaling value of 5 will be applied with a range of 95 (max scale is 100)
     The speed is 20
     The effect updates at 80ms
 
 Constructor inputs: 
-    pallet (optional, see constructors) -- A custom pallet passed to the effect, the default is the 
-                                          lava colors pallet encoded below
-    numColors (optional, see constructors) -- How many colors will be in the randomly created pallet
+    palette (optional, see constructors) -- A custom palette passed to the effect, the default is the 
+                                          lava colors palette encoded below
+    numColors (optional, see constructors) -- How many colors will be in the randomly created palette
     blendSteps -- Sets how many steps are used to blend between each color
                  Basically changes how fast the colors blend
                  Between 20 - 60 looks good
@@ -118,11 +118,11 @@ Notes:
 class NoiseSLPS : public EffectBasePS {
     public:
 
-        //Constuctor for randomly generated pallet
+        //Constuctor for randomly generated palette
         NoiseSLPS(SegmentSet &SegmentSet, uint8_t numColors, uint16_t BlendSteps, uint16_t ScaleBase, uint16_t ScaleRange, uint16_t Speed, uint16_t Rate);
 
-        //Constructor using pallet
-        NoiseSLPS(SegmentSet &SegmentSet, palletPS *Pallet, uint16_t BlendSteps, uint16_t ScaleBase, uint16_t ScaleRange, uint16_t Speed, uint16_t Rate); 
+        //Constructor using palette
+        NoiseSLPS(SegmentSet &SegmentSet, palettePS *Palette, uint16_t BlendSteps, uint16_t ScaleBase, uint16_t ScaleRange, uint16_t Speed, uint16_t Rate); 
 
         ~NoiseSLPS();
 
@@ -142,9 +142,9 @@ class NoiseSLPS : public EffectBasePS {
         bool 
             rotateHue = true;
         
-        palletPS 
-            palletTemp,
-            *pallet;
+        palettePS 
+            paletteTemp,
+            *palette;
 
         void 
             setupNoiseArray(),

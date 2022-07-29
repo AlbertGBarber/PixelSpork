@@ -13,7 +13,7 @@ Overall it looks similar to Jason Coon's Pride version as applied to his fibonac
 https://www.youtube.com/watch?list=PLUYGVM-2vDxJpEjrSeHCH8u1hxFz4qawU&v=b4lfvXZvJuk&feature=emb_title
 
 This effect includes code for doing the original Pride2015 with rainbows
-and using a custom pallet for colors
+and using a custom palette for colors
 
 In adapting the effect for segment lines, I've had to change some of the 
 wave inputs from the original Pride2015 to get a good look
@@ -27,11 +27,11 @@ and should also look nice, and will mean every instance of this effect will be d
 You can change these variables on the fly, but doing so will probably cause the effect to "jump"
 
 Inputs guide:
-    This guide will focus on using a pallet, since all the variables effect it
+    This guide will focus on using a palette, since all the variables effect it
     The rainbow mode is more of an "as-is", where I don't expect people to change the variables
     Overall the effect has two components:
         1) Waves of varing brightness that rotate clockwise around the segment and shift with time
-        2) Waves of pallet colors that shift from the center segment to the outer (or visa versa)
+        2) Waves of palette colors that shift from the center segment to the outer (or visa versa)
         These components are largly independent and have their own settings, which I will go over below:
     
     Brightness wave settings: 
@@ -49,7 +49,7 @@ Inputs guide:
                          You can find the ranges for this in init(), also see randomizeBriFreq().
         
     Color change settings: 
-        1) hueChangeMin and hueChangeMax: Sets the minimum and maxium shifts for colors in the pallet. This effects
+        1) hueChangeMin and hueChangeMax: Sets the minimum and maxium shifts for colors in the palette. This effects
                                           how quickly colors will change. The defaults for these are 3 and 7. 
                                           The actual shift value will vary between the min and max over time.
                                           Keeping these both low will produce a slow shift.
@@ -69,19 +69,19 @@ Example calls:
     The effect updates at 80ms
 
     PrideWPalSL2PS(ringSegments, 4, true, true, 80);
-    Will do an effect using 4 random colors (in a randonly generated pallet)
+    Will do an effect using 4 random colors (in a randonly generated palette)
     Colors will shift from the center to the outer segment
     The brightness wave values will be randomized, see init() for the ranges
     The effect updates at 80ms
 
-    PrideWPalSL2PS(ringSegments, &pallet1, true, true, 80);
-    Will do an effect using colors from pallet1
+    PrideWPalSL2PS(ringSegments, &palette1, true, true, 80);
+    Will do an effect using colors from palette1
     Colors will shift from the center to the outer segment
     The brightness wave values will be randomized, see init() for the ranges
     The effect updates at 80ms
 
-    PrideWPalSL2PS(ringSegments, &pallet1, true, 20, 120, 250, 350, 20, 40, 3, 7, 60);
-    Will do an effect using colors from pallet1
+    PrideWPalSL2PS(ringSegments, &palette1, true, 20, 120, 250, 350, 20, 40, 3, 7, 60);
+    Will do an effect using colors from palette1
     Colors will shift from the center to the outer segment, using 20 steps to blend the colors
     The brightDepth will vary from 120 to 250
     The briThetaInc16 will vary from 20 to 40 with a briThetaFreq of 350
@@ -89,8 +89,8 @@ Example calls:
     The effect updates at 60ms
 
 Constructor inputs: 
-    pallet (optional, see constructors) -- A custom pallet passed to the effect
-    numColors (optional, see constructors) -- How many colors will be in the randomly created pallet
+    palette (optional, see constructors) -- A custom palette passed to the effect
+    numColors (optional, see constructors) -- How many colors will be in the randomly created palette
     direct -- The direction the colors move across segments. True is from the center segment to the outer
     randomBriInc -- Set to true will randomize briThetaInc16 min and max, and the briThetaFreq
                     See init() for the ranges
@@ -111,7 +111,7 @@ Functions:
     update() -- updates the effect 
 
 Other Settings (see Inputs Guide for more info on most vars):
-    prideMode (default false, set automatically by constructor) -- If true, a rainbow will be used for colors instead of a pallet
+    prideMode (default false, set automatically by constructor) -- If true, a rainbow will be used for colors instead of a palette
     brightDepthMin (default 120) -- The minimum value of brightDepth
     brightDepthMax (default 250) -- The maximum value of brightDepth
     briThetaInc16Min (default 20) -- The minimum value of briThetaInc16
@@ -119,21 +119,21 @@ Other Settings (see Inputs Guide for more info on most vars):
     briThetaFreq (default 350) -- The frequency that briThetaInc16 changes at
     hueChangeMin (default 3) -- The minimum value of hueInc
     hueChangeMax (default 7) -- The maximum value of hueInc
-    gradLength (default 20) -- How many gradient steps between pallet colors (not used for rainbow)
+    gradLength (default 20) -- How many gradient steps between palette colors (not used for rainbow)
 */
 class PrideWPalSL2PS : public EffectBasePS {
     public:
         //Constructor for rainbow mode
         PrideWPalSL2PS(SegmentSet &SegmentSet, bool Direct, bool RandomBriInc, uint16_t Rate);
 
-        //Constructor for pallet input
-        PrideWPalSL2PS(SegmentSet &SegmentSet, palletPS *Pallet, bool Direct, bool RandomBriInc, uint16_t Rate);  
+        //Constructor for palette input
+        PrideWPalSL2PS(SegmentSet &SegmentSet, palettePS *Palette, bool Direct, bool RandomBriInc, uint16_t Rate);  
 
-        //Constructor for making a random pallet
+        //Constructor for making a random palette
         PrideWPalSL2PS(SegmentSet &SegmentSet, uint8_t numColors, bool Direct, bool RandomBriInc, uint16_t Rate);
 
         //Constructor with inputs for all main variables
-        PrideWPalSL2PS(SegmentSet &SegmentSet, palletPS *Pallet, bool Direct, uint8_t GradLength, 
+        PrideWPalSL2PS(SegmentSet &SegmentSet, palettePS *Palette, bool Direct, uint8_t GradLength, 
                               uint8_t BrightDepthMin, uint8_t BrightDepthMax, uint16_t BriThetaFreq, 
                               uint8_t BriThetaInc16Min, uint8_t BriThetaInc16Max, uint8_t HueChangeMin, 
                               uint8_t HueChangeMax, uint16_t Rate);
@@ -156,9 +156,9 @@ class PrideWPalSL2PS : public EffectBasePS {
             gradLength = 20, //How many gradient steps to shift colors
             briThetaFreq = 350; //203 //how long we spend transitioning through waves
         
-        palletPS
-            palletTemp,
-            *pallet;
+        palettePS
+            paletteTemp,
+            *palette;
         
         bool
             direct,

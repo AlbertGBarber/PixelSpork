@@ -8,7 +8,7 @@
 #include "MathUtils/mathUtilsPS.h"
 
 /*
-Repeats a set of waves along the segment set according to the input pattern and pallet
+Repeats a set of waves along the segment set according to the input pattern and palette
 Each wave is a gradient that shifts towards black (off)
 The waves are configured to rise and fall across a set length (the gradLength var)
 They can be set to only have a rise, fall, or both using the trailMode var
@@ -30,14 +30,14 @@ passing in a segmentSet with only one segment containing the whole strip.
 Example calls: 
     uint8_t pattern_arr = {0, 1, 4};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-    RollingWavesSLPS(mainSegments, &pattern, &pallet, 0, 7, 1, 0, 100);
+    RollingWavesSLPS(mainSegments, &pattern, &palette, 0, 7, 1, 0, 100);
     Will do a set of waves according to the pattern, with a blank background
     each wave will be 7 pixels long, using both types of trails
     there will be zero spacing between the waves
     The effect will update at a 100ms update rate
 
-    RollingWavesSLPS(mainSegments, &pallet, 0, 9, 0, 2, 80);
-    Will do a set of waves matching the input pallet with an blank background
+    RollingWavesSLPS(mainSegments, &palette, 0, 9, 0, 2, 80);
+    Will do a set of waves matching the input palette with an blank background
     Each wave will be 9 pixels long, the wave will consist of the trailing portion only
     There will be two spaces inbetween each wave,
     The effect will update at 80ms
@@ -49,10 +49,10 @@ Example calls:
     The effect will update at 80ms
 
 Constructor Inputs:
-    pattern(optional, see constructors) -- A pattern is struct made from a 1-d array of pallet indexes ie {0, 1, 3, 6, 7} 
+    pattern(optional, see constructors) -- A pattern is struct made from a 1-d array of palette indexes ie {0, 1, 3, 6, 7} 
                                           and the length of the array 
                                           (see patternPS.h)   
-    pallet(optional, see constructors) -- The repository of colors used in the pattern, or can be used as the pattern itself
+    palette(optional, see constructors) -- The repository of colors used in the pattern, or can be used as the pattern itself
     numColors (optional, see contructors) -- The number of randomly choosen colors for the gradients
     BgColor -- The color of the spacing pixels. It is a pointer, so it can be tied to an external variable
     gradLength -- How many steps for each gradient
@@ -78,7 +78,7 @@ Functions:
     setTotalEffectLength() -- Calculates the total length of all the waves in the pattern (incl spacing), you shouldn't need to call this
     setPattern(*newPattern) -- Sets the passed in pattern to be the effect pattern
                               Will force setTotalEffectLength() call, so may cause effect to jump
-    setPalletAsPattern() -- Sets the effect pattern to match the current pallet (calls setTotalEffectLength())
+    setPaletteAsPattern() -- Sets the effect pattern to match the current palette (calls setTotalEffectLength())
     setGradLength(newGradLength) -- Changes the gradlength to the specified value, adjusting the length of the waves (calls setTotalEffectLength())
     setSpacing(newSpacing) -- Changes the spacing to the specified value, (calls setTotalEffectLength())
     setTrailMode(newTrailMode) -- Changes the trail mode used for the waves
@@ -93,16 +93,16 @@ Other Settings:
                                     120 sets a good balance of brightness, will not dimming most colors to 0 before the end of the wave
 
 Notes:
-    If using the pallet as the pattern, if you change the pallet, you'll need to change the pattern as well
-    (unless the pallets are the same length)
+    If using the palette as the pattern, if you change the palette, you'll need to change the pattern as well
+    (unless the palettes are the same length)
 */
 class RollingWavesSLPS : public EffectBasePS {
     public:
         //Constructor with pattern
-        RollingWavesSLPS(SegmentSet &SegmentSet, patternPS *Pattern, palletPS *Pallet, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate); 
+        RollingWavesSLPS(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate); 
 
-        //Constuctor with pallet as pattern
-        RollingWavesSLPS(SegmentSet &SegmentSet, palletPS *Pallet, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate);
+        //Constuctor with palette as pattern
+        RollingWavesSLPS(SegmentSet &SegmentSet, palettePS *Palette, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate);
 
         //Constructor with random colors
         RollingWavesSLPS(SegmentSet &SegmentSet, uint8_t NumColors, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate);
@@ -123,15 +123,15 @@ class RollingWavesSLPS : public EffectBasePS {
         
         CRGB 
             bgColorOrig,
-           *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a pallet color)
+           *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
 
         patternPS
             patternTemp,
             *pattern;
 
-        palletPS
-            palletTemp,
-            *pallet;
+        palettePS
+            paletteTemp,
+            *palette;
 
         SegmentSet 
             &segmentSet; 
@@ -141,7 +141,7 @@ class RollingWavesSLPS : public EffectBasePS {
             setSpacing(uint8_t newSpacing),
             setPattern(patternPS *newPattern),
             setTrailMode(uint8_t newTrailMode),
-            setPalletAsPattern(),
+            setPaletteAsPattern(),
             setTotalEffectLength(),
             update(void);
     

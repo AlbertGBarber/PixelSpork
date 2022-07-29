@@ -11,19 +11,19 @@ Code modified from https://www.tweaking4all.com/hardware/arduino/adruino-led-str
 Draws a a random fire along each segment in the segment set
 Each segment has it's own fire, but the settings are shared accross the set to keep the fires consistent
 
-The fire colors are based on a pallet and a background color
+The fire colors are based on a palette and a background color
 The background color will be the coldest color, and is usually blank
-It is input seperately from the pallet because most pallets don't include a blank color
-The pallet should be ordered from the coldest to the hottest color
-ie, the first color in the pallet will be used for the coldest parts of the fire
+It is input seperately from the palette because most palettes don't include a blank color
+The palette should be ordered from the coldest to the hottest color
+ie, the first color in the palette will be used for the coldest parts of the fire
 while the last color will be used for the hottest
 
-Pallets can be of any length, although 3 - 4 colors seems to work best for normal fires
+Palettes can be of any length, although 3 - 4 colors seems to work best for normal fires
 try { CRGB::Red, CRGB{255, 143, 0}, CRGB{255, 255, 100} } for a tranditional fire
 { CRGB{225, 0, 127}, CRGB{123, 7, 197}, CRGB{238, 130, 238} } for a pink/purple fire
 or { CRGB{16, 124, 126 }, CRGB{ 43, 208, 17 }, CRGB{120, 212, 96} } for a green/blue fire
 
-To produce a smoother fire, the pallet colors can be blended between based on temperature
+To produce a smoother fire, the palette colors can be blended between based on temperature
 This does take more processing power, and can be turned off using the "blend" flag
 
 The other variables determine how the fire is drawn:
@@ -41,16 +41,16 @@ Note that the effect stores a uint8_t value for each led in the segment set
 so watch your memory usage
 
 Example calls: 
-    CRGB firePallet_arr[] = { CRGB::Red, CRGB{255, 143, 0}, CRGB{255, 255, 100} };
-    palletPS firePallet = {firePallet_arr, SIZE(firePallet_arr)};
+    CRGB firePalette_arr[] = { CRGB::Red, CRGB{255, 143, 0}, CRGB{255, 255, 100} };
+    palettePS firePalette = {firePalette_arr, SIZE(firePalette_arr)};
 
-    Fire2012SegPS(mainSegments, &firePallet, 0, 50, 90, true, 70);
-    Does a blended fire using the firePallet with a blank background
+    Fire2012SegPS(mainSegments, &firePalette, 0, 50, 90, true, 70);
+    Does a blended fire using the firePalette with a blank background
     cooling is set to 50 and sparking is set to 90
     The fire updates at 70ms
  
 Constructor Inputs:
-    Pallet-- The pallet used for the fire, should be arranged from coldest to hottest colors
+    Palette-- The palette used for the fire, should be arranged from coldest to hottest colors
     BgColor -- The color used for the coldest parts of the fire ( usually blank (0) )
     Cooling -- Indicates how fast a flame cools down. More cooling means shorter flames,
               Recommended values are between 20 and 100. 50 seems the nicest.
@@ -66,7 +66,7 @@ Functions:
 */
 class Fire2012SegPS : public EffectBasePS {
     public:
-        Fire2012SegPS(SegmentSet &SegmentSet, palletPS *Pallet, CRGB BgColor, uint8_t Cooling, uint8_t Sparking, bool Blend, uint16_t Rate);  
+        Fire2012SegPS(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint8_t Cooling, uint8_t Sparking, bool Blend, uint16_t Rate);  
         
         ~Fire2012SegPS();
 
@@ -82,10 +82,10 @@ class Fire2012SegPS : public EffectBasePS {
         
         CRGB 
             bgColorOrig,
-           *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a pallet color)
+           *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
         
-        palletPS
-            *pallet;
+        palettePS
+            *palette;
 
         void 
             reset(),
@@ -103,9 +103,9 @@ class Fire2012SegPS : public EffectBasePS {
             *heat,
             //colorIndex,
             cooldown,
-            palletLength,
-            //palletLimit,
-            palletSecLen,
+            paletteLength,
+            //paletteLimit,
+            paletteSecLen,
             sparkPoint,
             //secHeatLimit,
             numSegs;

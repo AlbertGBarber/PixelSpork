@@ -17,9 +17,9 @@ Spawns multiple fireworks across the strip that explode into a series of sparks
 There are a lot of options for adjusting how the fireworks look
 I suggest you look at the inputs guide below, or try out one of the constructor examples
 
-Firework colors are picked randomly from a pallet. 
-You have the option of having the constructor make a random pallet for you
-By default all a firework's sparks are the same color, but you can set them all to be random (from the pallet)
+Firework colors are picked randomly from a palette. 
+You have the option of having the constructor make a random palette for you
+By default all a firework's sparks are the same color, but you can set them all to be random (from the palette)
 using randSparkColors
 
 By default, all fireworks "burst" as white initially before fading to their spark color
@@ -86,7 +86,7 @@ The settings for this spark all use the "center" in their name
 Example calls: 
 
     FireworksPS(mainSegments, 5, 3, 10, 10, 2000, 10, 40, 300);
-    Will do a set of fireworks using colors from a randomly generated pallet of 5 colors
+    Will do a set of fireworks using colors from a randomly generated palette of 5 colors
     There is a maximum of 3 fireworks active at one time.
     Each firework has 10 sparks
     There is a 10% chance a new firework spawns during an update
@@ -94,8 +94,8 @@ Example calls:
     The spark's speed decays at 10 percent per update
     The fastest particles will update at 40ms, while the slowest will be 40 + 300ms
 
-    FireworksPS(mainSegments, &pallet1, 3, 20, 10, 4000, 5, 40, 500);
-    Will do a set of fireworks using colors from a pallet1
+    FireworksPS(mainSegments, &palette1, 3, 20, 10, 4000, 5, 40, 500);
+    Will do a set of fireworks using colors from a palette1
     There is a maximum of 3 fireworks active at one time.
     Each firework has 20 sparks
     There is a 10% chance a new firework spawns during an update
@@ -117,7 +117,7 @@ Example calls:
     !!If using pre-build FastLED colors you need to pass them as CRGB( *color code* )
 
 Constructor Inputs:
-    Pallet(optional, see constructors) -- The set of colors that firework colors will be picked from
+    Palette(optional, see constructors) -- The set of colors that firework colors will be picked from
     NumColors (optional, see contructors) -- The number of randomly choosen colors for fireworks
     Color (optional, see contructors) -- A single color for all the fireworks
     MaxNumFireworks -- The maximum number of simultaneous fireworks that can be active at one time
@@ -149,17 +149,17 @@ Other Settings:
                              You should set this true if you are using an animated background mode
     blend (default false) -- Causes sparks to add their colors to the strip, rather than set them
                             See explanation of this in more detail above in effect intro
-    randSparkColors (default false) -- If true, each spark will have its own color picked from the pallet
+    randSparkColors (default false) -- If true, each spark will have its own color picked from the palette
     burstColor (default CRGB::White) -- The color of the inital firework burst
     spawnRangeDiv (default 5) -- Sets what range of the strip fireworks spawn in: from numLEDs / spawnRangeDiv to (numLEDs - numLEDs / spawnRangeDiv)
  */
 class FireworksPS : public EffectBasePS {
     public:
-        //Constructor for fireworks using a pallet
-        FireworksPS(SegmentSet &SegmentSet, palletPS *Pallet, uint8_t MaxNumFireworks, uint8_t MaxNumSparks, 
+        //Constructor for fireworks using a palette
+        FireworksPS(SegmentSet &SegmentSet, palettePS *Palette, uint8_t MaxNumFireworks, uint8_t MaxNumSparks, 
                     uint8_t SpawnChance, uint16_t LifeBase, uint8_t SpeedDecay, uint16_t Rate, uint16_t SpeedRange); 
 
-        //Constructor for fireworks using a pallet of random colors
+        //Constructor for fireworks using a palette of random colors
         FireworksPS(SegmentSet &SegmentSet, uint16_t numColors, uint8_t MaxNumFireworks, uint8_t MaxNumSparks, 
                     uint8_t SpawnChance, uint16_t LifeBase, uint8_t SpeedDecay, uint16_t Rate, uint16_t SpeedRange);
 
@@ -201,11 +201,11 @@ class FireworksPS : public EffectBasePS {
         CRGB 
             burstColor = CRGB::White,
             bgColorOrig,
-            *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a pallet color)
+            *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
 
-        palletPS
-            palletTemp,
-            *pallet;
+        palettePS
+            paletteTemp,
+            *palette;
 
         particleSetPS 
             *particleSet, //the particle set used in the effect
