@@ -14,9 +14,9 @@ void RateCtrlPS::reset(){
     outputRate = startRate;
     prevTime = 0;
     if(startRate < endRate){
-        setDirect(true);
+        direct = true;
     } else {
-        setDirect(false);
+        direct = false;
     }
 }
 
@@ -26,23 +26,6 @@ void RateCtrlPS::reset(uint16_t StartRate, uint16_t EndRate, uint16_t Rate ){
     endRate = EndRate;
     bindClassRatesPS();
     reset();
-}
-
-//returns the direction of the transition
-//this is for reference only,
-//you should not try to set the direction manually
-bool RateCtrlPS::direct(void){
-    return _direct;
-}
-
-//changes the step size based on the direction
-void RateCtrlPS::setDirect(bool newDirect){
-    _direct = newDirect;
-    if(_direct){
-        stepMulti = 1;
-    } else {
-        stepMulti = -1;
-    }
 }
 
 //Updates the output rate
@@ -63,8 +46,14 @@ void RateCtrlPS::update(){
     //once rateReached is set, we're done
     if( !rateReached && ( currentTime - prevTime ) >= rateTemp ) {
         prevTime = currentTime;
+
+        //get the step amount based on the direction
+        //will be -1 if direct is false, 1 if direct is true
+        //we do this live so you can change the direct directly
+        stepDirect = direct - !direct;
+
         //increment the outputRate one step
-        outputRate += stepMulti;
+        outputRate += stepDirect;
 
         //if we're easing, we check how close our end rate is to our current rate
         //ie outputRate/endRate
@@ -74,7 +63,7 @@ void RateCtrlPS::update(){
         //ie if the start rate is larger than the end rate
         //if we're not easing, then the ratio is always 1
         if(easing){
-            if(_direct){
+            if(direct){
                 ratio = (outputRate * 255)/endRate;
             } else {
                 ratio = (endRate * 255)/outputRate;
@@ -90,7 +79,7 @@ void RateCtrlPS::update(){
 
         //if we've reached the end rate based on the direction
         //we need end the transition, or reverse it if cycle is on
-        if( (_direct && outputRate >= endRate)  || (!_direct && outputRate <= endRate) ){
+        if( (direct && outputRate >= endRate)  || (!direct && outputRate <= endRate) ){
             rateReached = true;
             if(cycle == true){
                 uint16_t tempRate = startRate;

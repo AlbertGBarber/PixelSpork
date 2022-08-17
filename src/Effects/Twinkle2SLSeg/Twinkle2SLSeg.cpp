@@ -1,26 +1,29 @@
-#include "Twinkle2SLPS.h"
+#include "Twinkle2SLSeg.h"
 
 //palette based constructor
-Twinkle2SLPS::Twinkle2SLPS(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint16_t NumTwinkles, uint8_t SpawnChance,
-                       uint8_t FadeInSteps, uint8_t FadeInRange, uint8_t FadeOutSteps, uint8_t FadeOutRange, uint16_t Rate):
-    segmentSet(SegmentSet), palette(Palette), numTwinkles(NumTwinkles), spawnChance(SpawnChance), fadeInRange(FadeInRange), fadeOutRange(FadeOutRange)
+Twinkle2SLSeg::Twinkle2SLSeg(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint16_t NumTwinkles, uint8_t SpawnChance,
+                            uint8_t FadeInSteps, uint8_t FadeInRange, uint8_t FadeOutSteps, uint8_t FadeOutRange,
+                            bool SegMode, uint16_t Rate):
+    segmentSet(SegmentSet), palette(Palette), numTwinkles(NumTwinkles), spawnChance(SpawnChance), fadeInRange(FadeInRange), fadeOutRange(FadeOutRange), segMode(SegMode)
     {    
         init(FadeInSteps, FadeOutSteps, BgColor, Rate);
 	}
 
 //single color constructor
-Twinkle2SLPS::Twinkle2SLPS(SegmentSet &SegmentSet, CRGB Color, CRGB BgColor, uint16_t NumTwinkles, uint8_t SpawnChance,
-                       uint8_t FadeInSteps, uint8_t FadeInRange, uint8_t FadeOutSteps, uint8_t FadeOutRange, uint16_t Rate):
-    segmentSet(SegmentSet), numTwinkles(NumTwinkles), spawnChance(SpawnChance), fadeInRange(FadeInRange), fadeOutRange(FadeOutRange)
+Twinkle2SLSeg::Twinkle2SLSeg(SegmentSet &SegmentSet, CRGB Color, CRGB BgColor, uint16_t NumTwinkles, uint8_t SpawnChance,
+                            uint8_t FadeInSteps, uint8_t FadeInRange, uint8_t FadeOutSteps, uint8_t FadeOutRange,
+                            bool SegMode, uint16_t Rate):
+    segmentSet(SegmentSet), numTwinkles(NumTwinkles), spawnChance(SpawnChance), fadeInRange(FadeInRange), fadeOutRange(FadeOutRange), segMode(SegMode)
     {    
         setSingleColor(Color);
         init(FadeInSteps, FadeOutSteps, BgColor, Rate);
 	}
 
 //random colors constructor
-Twinkle2SLPS::Twinkle2SLPS(SegmentSet &SegmentSet, CRGB BgColor, uint16_t NumTwinkles, uint8_t SpawnChance,
-                       uint8_t FadeInSteps, uint8_t FadeInRange, uint8_t FadeOutSteps, uint8_t FadeOutRange, uint16_t Rate):
-    segmentSet(SegmentSet), numTwinkles(NumTwinkles), spawnChance(SpawnChance), fadeInRange(FadeInRange), fadeOutRange(FadeOutRange)
+Twinkle2SLSeg::Twinkle2SLSeg(SegmentSet &SegmentSet, CRGB BgColor, uint16_t NumTwinkles, uint8_t SpawnChance,
+                            uint8_t FadeInSteps, uint8_t FadeInRange, uint8_t FadeOutSteps, uint8_t FadeOutRange, 
+                            bool SegMode, uint16_t Rate):
+    segmentSet(SegmentSet), numTwinkles(NumTwinkles), spawnChance(SpawnChance), fadeInRange(FadeInRange), fadeOutRange(FadeOutRange), segMode(SegMode)
     {    
         //we make a random palette of one color so that 
         //if we switch to randMode 0 then we have a palette to use
@@ -30,13 +33,13 @@ Twinkle2SLPS::Twinkle2SLPS(SegmentSet &SegmentSet, CRGB BgColor, uint16_t NumTwi
         init(FadeInSteps, FadeOutSteps, BgColor, Rate);
 	}
 
-Twinkle2SLPS::~Twinkle2SLPS(){
+Twinkle2SLSeg::~Twinkle2SLSeg(){
     delete[] paletteTemp.paletteArr;
     deleteTwinkleSet();
 }
 
 //sets up all the core class vars, and initilizes the twinkle set struct
-void Twinkle2SLPS::init(uint8_t FadeInSteps, uint8_t FadeOutSteps, CRGB BgColor, uint16_t Rate){
+void Twinkle2SLSeg::init(uint8_t FadeInSteps, uint8_t FadeOutSteps, CRGB BgColor, uint16_t Rate){
     //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
     bindSegPtrPS();
     bindClassRatesPS();
@@ -47,14 +50,14 @@ void Twinkle2SLPS::init(uint8_t FadeInSteps, uint8_t FadeOutSteps, CRGB BgColor,
 }
 
 //creates an palette of length 1 containing the passed in color
-void Twinkle2SLPS::setSingleColor(CRGB Color){
+void Twinkle2SLSeg::setSingleColor(CRGB Color){
     delete[] paletteTemp.paletteArr;
     paletteTemp = paletteUtilsPS::makeSingleColorPalette(Color);
     palette = &paletteTemp;
 }
 
 //Creates the an array of twinkles and a twinkleSet struct for storing them
-void Twinkle2SLPS::initTwinkleArrays(){
+void Twinkle2SLSeg::initTwinkleArrays(){
 
     //delete the old arrays to prevent memory leak
     deleteTwinkleSet();
@@ -74,7 +77,7 @@ void Twinkle2SLPS::initTwinkleArrays(){
 //Deletes twinkleSetTemp and any twinkles in it
 //We need to do this because twinkleSetTemp is always created using new
 //So we need to free up the memory if we ever create a new twinkleSet
-void Twinkle2SLPS::deleteTwinkleSet(){
+void Twinkle2SLSeg::deleteTwinkleSet(){
     //we need to delete all the twinkles in the set before deleting the twinkle array
     for(uint8_t i = 0; i < twinkleSetTemp.length; i++ ){
         delete[] twinkleSetTemp.twinkleArr[i];
@@ -84,7 +87,7 @@ void Twinkle2SLPS::deleteTwinkleSet(){
 
 //resets all the twinkles to be inactive
 //and also fills the segment set with the background to clear any active twinkles
-void Twinkle2SLPS::reset(){
+void Twinkle2SLSeg::reset(){
     for(uint8_t i = 0; i < twinkleSet->length; i++ ){
         twinklePtr = twinkleSet->twinkleArr[i];
         twinklePtr->active = false;
@@ -95,7 +98,7 @@ void Twinkle2SLPS::reset(){
 
 //Sets the number of fade in and out steps (min value of 1)
 //You can also set the steps without using this function, but make sure they are greater than 0!
-void Twinkle2SLPS::setSteps(uint8_t newfadeInSteps, uint8_t newfadeOutSteps){
+void Twinkle2SLSeg::setSteps(uint8_t newfadeInSteps, uint8_t newfadeOutSteps){
     fadeInSteps = newfadeInSteps;
     if(fadeInSteps < 1){
        fadeOutSteps = 1; 
@@ -108,9 +111,19 @@ void Twinkle2SLPS::setSteps(uint8_t newfadeInSteps, uint8_t newfadeOutSteps){
 }
 
 //Sets the number of twinkles, and re-creates the twinkle array and twinkleSet
-void Twinkle2SLPS::setNumTwinkles(uint16_t newNumTwinkles){
+void Twinkle2SLSeg::setNumTwinkles(uint16_t newNumTwinkles){
     numTwinkles = newNumTwinkles;
     initTwinkleArrays();
+}
+
+//changes the segMode, will re-gen the twinkle arrays if the new segMode is different
+//this will also reset the effect
+//this prevents us from trying to write to a twinkle who is located off the segment set
+void Twinkle2SLSeg::setSegMode(bool newSegMode){
+    if(segMode != newSegMode){
+        segMode = newSegMode;
+        initTwinkleArrays();
+    }
 }
 
 //updates the effect
@@ -118,7 +131,7 @@ void Twinkle2SLPS::setNumTwinkles(uint16_t newNumTwinkles){
     //Each cycle, for any active twinkles we draw them and then advance the twinkle step they're on
     //For any inactive twinkles we try to spawn them
     //If we're limiting spawing we use the spawnOk flag to stop new twinkles from spawning if one has already spawned this cycle
-void Twinkle2SLPS::update(){
+void Twinkle2SLSeg::update(){
     currentTime = millis();
 
     if( ( currentTime - prevTime ) >= *rate ) {
@@ -169,27 +182,11 @@ void Twinkle2SLPS::update(){
                 }
                 //advance the twinkle's step
                 twinklePtr->stepNum++;
-
-                //draw twinkle along it's segment line
-                //ie fill in all the pixels on the twinkle's segment line
-                for(uint8_t j = 0; j < numSegs; j++){
-                    //get the physical pixel location based on the line and seg numbers
-                    pixelNum = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, j, twinkleLoc);
-                    //grab the background color, accounting for color modes
-                    colorTarget = segDrawUtils::getPixelColor(segmentSet, pixelNum, *bgColor, bgColorMode, j, twinkleLoc);
-                    //get the twinkle color, accounting for color modes
-                    twinkleColor = segDrawUtils::getPixelColor(segmentSet, pixelNum, twinkleColor, colorMode, j, twinkleLoc);
-
-                    //get the faded output color depending on if we're fading in or out
-                    if(fadeIn){
-                        //step is twinkleStep + 1, since we skip the first step (fully Bg)
-                        colorOut = colorUtilsPS::getCrossFadeColor(colorTarget, twinkleColor, twinkleStep + 1, twinkleFadeInSteps);
-                    } else {
-                        //fading out
-                        colorOut = colorUtilsPS::getCrossFadeColor(twinkleColor, colorTarget, twinkleStep, twinkleFadeOutSteps);
-                    }
-                    //set the pixel color
-                    segmentSet.leds[pixelNum] = colorOut;
+                //draw the twinkle either along a segment, or along a segment line
+                if(segMode){
+                    drawSegTwinkle();
+                } else {
+                    drawLineTwinkle();
                 }
             } else {  
                 //try to spawn any inactive twinkles
@@ -205,11 +202,71 @@ void Twinkle2SLPS::update(){
     }
 }
 
+//Draws a twinkle along a segment line
+//The tinkleLoc is the segment line number
+//To draw the twinkle we get the cross fade between the background and the twinkle color
+//for each pixel in the segment line
+//and then output the color
+void Twinkle2SLSeg::drawLineTwinkle(){
+    //draw twinkle along it's segment line
+    //ie fill in all the pixels on the twinkle's segment line
+    for(uint8_t j = 0; j < numSegs; j++){
+        //get the physical pixel location based on the line and seg numbers
+        pixelNum = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, j, twinkleLoc);
+        //grab the background color, accounting for color modes
+        colorTarget = segDrawUtils::getPixelColor(segmentSet, pixelNum, *bgColor, bgColorMode, j, twinkleLoc);
+        //get the twinkle color, accounting for color modes
+        twinkleColor = segDrawUtils::getPixelColor(segmentSet, pixelNum, twinkleColor, colorMode, j, twinkleLoc);
+
+        //get the faded output color depending on if we're fading in or out
+        if(fadeIn){
+            //step is twinkleStep + 1, since we skip the first step (fully Bg)
+            colorOut = colorUtilsPS::getCrossFadeColor(colorTarget, twinkleColor, twinkleStep + 1, twinkleFadeInSteps);
+        } else {
+            //fading out
+            colorOut = colorUtilsPS::getCrossFadeColor(twinkleColor, colorTarget, twinkleStep, twinkleFadeOutSteps);
+        }
+        //set the pixel color
+        segmentSet.leds[pixelNum] = colorOut;
+    }
+    
+}
+
+//Draws a twinkle along a segment
+//The tinkleLoc is the segment number
+//To draw the twinkle we get the cross fade between the background and the twinkle color
+//To do this we just check the first get the color for the first pixel in the segment
+//This does prevent a couple of color modes from working properly, but is much faster than fading all the pixels in the segment
+//Once we have the crossfade color, we output it to the whole segment
+void Twinkle2SLSeg::drawSegTwinkle(){
+    //Get the physical location of the first pixel in the segment
+    //We'll use this pixel to get the blended twinkle color
+    pixelNum = segDrawUtils::getSegmentPixel(segmentSet, twinkleLoc, 0);
+    //grab the background color, accounting for color modes
+    colorTarget = segDrawUtils::getPixelColor(segmentSet, pixelNum, *bgColor, bgColorMode, twinkleLoc, 0);
+    //get the twinkle color, accounting for color modes
+    twinkleColor = segDrawUtils::getPixelColor(segmentSet, pixelNum, twinkleColor, colorMode, twinkleLoc, 0);
+    //get the faded output color depending on if we're fading in or out
+    if(fadeIn){
+        //step is twinkleStep + 1, since we skip the first step (fully Bg)
+        colorOut = colorUtilsPS::getCrossFadeColor(colorTarget, twinkleColor, twinkleStep + 1, twinkleFadeInSteps);
+    } else {
+        //fading out
+        colorOut = colorUtilsPS::getCrossFadeColor(twinkleColor, colorTarget, twinkleStep, twinkleFadeOutSteps);
+    }
+    //fill the segment with color
+    segDrawUtils::fillSegColor(segmentSet, twinkleLoc, colorOut, 0);
+}
+
 //Set a twinkle to active and gives it a new location, fade in/out step values, and color
-void Twinkle2SLPS::spawnTwinkle(uint8_t twinkleNum){
+void Twinkle2SLSeg::spawnTwinkle(uint8_t twinkleNum){
     twinklePtr = twinkleSet->twinkleArr[twinkleNum];
-    //spawn a twinkle on a random segment line
-    twinklePtr->location = random16(numLines);
+    //spawn a twinkle on a random segment line or segment
+    if(segMode){
+        twinklePtr->location = random16(numSegs);
+    } else {
+        twinklePtr->location = random16(numLines);
+    }
     twinklePtr->active = true;
 
     twinklePtr->stepNum = 0;

@@ -1,7 +1,7 @@
-#include "StrobeSegPS.h"
+#include "StrobeSLSeg.h"
 
 //constructor for palette ver
-StrobeSegPS::StrobeSegPS(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, 
+StrobeSLSeg::StrobeSLSeg(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, 
                         bool SegEach, bool SegDual, bool SegLine, bool SegLineDual, bool SegAll, uint16_t Rate):
     segmentSet(SegmentSet), palette(Palette), numPulses(NumPulses), pauseTime(PauseTime), segEach(SegEach), segDual(SegDual), segLineDual(SegLineDual), segLine(SegLine), segAll(SegAll)
     {    
@@ -10,7 +10,7 @@ StrobeSegPS::StrobeSegPS(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColo
 
 //constructor for single color
 //!!If using pre-build FastLED colors you need to pass them as CRGB( *color code* )
-StrobeSegPS::StrobeSegPS(SegmentSet &SegmentSet, CRGB Color, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, 
+StrobeSLSeg::StrobeSLSeg(SegmentSet &SegmentSet, CRGB Color, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, 
                         bool SegEach, bool SegDual, bool SegLine, bool SegLineDual, bool SegAll, uint16_t Rate):
     segmentSet(SegmentSet), numPulses(NumPulses), pauseTime(PauseTime), segEach(SegEach), segDual(SegDual), segLineDual(SegLineDual), segLine(SegLine), segAll(SegAll)
     {    
@@ -20,7 +20,7 @@ StrobeSegPS::StrobeSegPS(SegmentSet &SegmentSet, CRGB Color, CRGB BgColor, uint8
 	}
 
 //constructor for randomly generated palette
-StrobeSegPS::StrobeSegPS(SegmentSet &SegmentSet, uint8_t numColors, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, 
+StrobeSLSeg::StrobeSLSeg(SegmentSet &SegmentSet, uint8_t numColors, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, 
                         bool SegEach, bool SegDual, bool SegLine, bool SegLineDual, bool SegAll, uint16_t Rate):
     segmentSet(SegmentSet), numPulses(NumPulses), pauseTime(PauseTime), segEach(SegEach), segDual(SegDual), segLineDual(SegLineDual), segLine(SegLine), segAll(SegAll)
     {    
@@ -29,7 +29,7 @@ StrobeSegPS::StrobeSegPS(SegmentSet &SegmentSet, uint8_t numColors, CRGB BgColor
         init(BgColor, Rate);
 	}
 
-void StrobeSegPS::init(CRGB BgColor, uint16_t Rate){
+void StrobeSLSeg::init(CRGB BgColor, uint16_t Rate){
     //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
     bindSegPtrPS();
     bindClassRatesPS();
@@ -38,25 +38,25 @@ void StrobeSegPS::init(CRGB BgColor, uint16_t Rate){
     reset();
 }
 
-StrobeSegPS::~StrobeSegPS(){
+StrobeSLSeg::~StrobeSLSeg(){
     delete[] paletteTemp.paletteArr;
 }
 
 //sets the newColor flag
 //we need to call setCycleCountMax() to setup the correct
 //number of cycles to run
-void StrobeSegPS::setNewColorBool(bool newColorBool){
+void StrobeSLSeg::setNewColorBool(bool newColorBool){
     newColor = newColorBool;
     setCycleCountMax();
 }
 
-void StrobeSegPS::setpalette(palettePS *newPalette){
+void StrobeSLSeg::setpalette(palettePS *newPalette){
     palette = newPalette;
     setCycleCountMax();
 }
 
 //resets the core cycle variables to restart the effect
-void StrobeSegPS::reset(){
+void StrobeSLSeg::reset(){
     pulseCount = 1;
     colorNum = 0;
     pulseMode = -1;
@@ -73,7 +73,7 @@ void StrobeSegPS::reset(){
     //0: Strobe each segment in the set one at a time, the direction can be set, and it can be set to reverse after each cycle
     //1: Strobe every other segment
     //2: Strobe each segment line one at a time, the direction can be set, and it can be set to reverse after each cycle
-    //3: Strobe every other segment line (radial)
+    //3: Strobe every other segment line
     //4: Strobe all segs at once 
     //What modes get used depends on the mode bool values (segEach, segDual, etc)
     //Each mode that is selected will be used after the previous mode has finished (with a pause in between)
@@ -116,7 +116,7 @@ void StrobeSegPS::reset(){
 //We flip the firstHalf flag (sets segments pulsed for modes 1 and 3)
 //and finally reset the pulse count to 1
 //After pausing we start pulsing again
-void StrobeSegPS::update(){
+void StrobeSLSeg::update(){
     currentTime = millis();
 
     if( ( currentTime - prevTime ) >= *rate ) {
@@ -256,7 +256,7 @@ void StrobeSegPS::update(){
 //we want to give the user the option of transitioning smoothly between pulse modes automatically
 //the pulse modes that will show up are set by the flags above
 //The pulse modes will occur in the order matching their mode numbers above (mode 0 happens before mode 2, etc)
-void StrobeSegPS::setPulseMode(){
+void StrobeSLSeg::setPulseMode(){
     if(segEach && pulseMode < 0){
         pulseMode = 0;
     } else if(segDual && pulseMode < 1){
@@ -278,7 +278,7 @@ void StrobeSegPS::setPulseMode(){
 //the reset point is cycleLoopLimit
 //while cycleCountMax is sets the total number of strobe cycles to do to show all the colors in the palette
 //This is rounded up to a whole number of strobe cycles
-void StrobeSegPS::setCycleCountMax(){
+void StrobeSLSeg::setCycleCountMax(){
     numSegs = segmentSet.numSegs;
     maxSegLength = segmentSet.maxSegLength;
     if(pulseMode == 0){
@@ -311,7 +311,7 @@ void StrobeSegPS::setCycleCountMax(){
 //trigger a pause to start by setting pause to true
 //and recording the start time
 //if pause time is 0, then we skip the pause
-void StrobeSegPS::startPause(){
+void StrobeSLSeg::startPause(){
     if(fillBGOnPause){
         segDrawUtils::fillSegSetColor(segmentSet, *bgColor, bgColorMode);
     }
@@ -322,7 +322,7 @@ void StrobeSegPS::startPause(){
 //Chooses a color based on the random mode and stores it in colorTemp
 //if we're choosing randomly (randMode > 0) then we only want to pick a new color
 //at the start of a set of pulses
-void StrobeSegPS::pickColor(){
+void StrobeSLSeg::pickColor(){
     if(randMode == 0){
         colorTemp = paletteUtilsPS::getPaletteColor( palette, colorNum );
     } else if(randMode == 1 && pulseCount <= 1) {

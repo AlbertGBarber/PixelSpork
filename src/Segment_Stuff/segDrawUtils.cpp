@@ -404,9 +404,9 @@ void segDrawUtils::setGradOffset(SegmentSet &segmentSet, uint16_t offsetMax){
     if(segmentSet.runOffset){
         currentTime = millis();
         if(currentTime - segmentSet.offsetUpdateTime > *segmentSet.offsetRate){
-            step = segmentSet.offsetDirect - !segmentSet.offsetDirect; //either 1 or -1
+            stepDir = segmentSet.offsetDirect - !(segmentSet.offsetDirect); //either 1 or -1
             segmentSet.offsetUpdateTime = currentTime;
-            segmentSet.gradOffset = addMod16PS(segmentSet.gradOffset, offsetMax + step, offsetMax);
+            segmentSet.gradOffset = addMod16PS(segmentSet.gradOffset, offsetMax - stepDir, offsetMax);
         }
     }
 }

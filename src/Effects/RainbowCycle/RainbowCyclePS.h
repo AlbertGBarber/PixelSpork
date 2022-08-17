@@ -12,7 +12,6 @@
 A classic effect
 Moves repeating rainbows of a set length along a segmentSet
 shifts the rainbows in along the segmentSet in the passed in direction at the passed in rate
-maximum length of the rainbow is 255 (b/c rgb are byte representations)
 suggested min length is 5 (ie red, yellow, green, blue, indigo/violet)
 
 This is the 1D version of the effect. See RainbowCycleSL.h for a segment line 2D version.
@@ -28,7 +27,6 @@ Constructor Inputs:
     Rate -- update rate (ms)
 
 Functions:
-    setDirect(newDirect) -- sets a new direction for the effect
     setLength(newLength) -- sets a new rainbow length
 
 Other Settings:
@@ -37,29 +35,28 @@ Other Settings:
 
 Reference Vars (do not set these directly):
     length -- The length of the rainbow. Set this using setLength();
-    direct --  The rainbow's direction. Set this using setDirect();
 
 Notes: 
 */
 class RainbowCyclePS : public EffectBasePS {
     public:
-        RainbowCyclePS(SegmentSet &SegmentSet, uint8_t Length, bool Direction, uint16_t Rate); 
-        //length fixed at 255 max, b/c that's the maximum length of a rainbow
+        RainbowCyclePS(SegmentSet &SegmentSet, uint16_t Length, bool Direction, uint16_t Rate); 
 
         SegmentSet 
             &segmentSet;
     
         uint8_t
             satur = 255,
-            value = 255,
-            length; //reference only, call setLength() to change the rainbow length
+            value = 255;
+        
+        uint16_t
+            length;
         
         bool 
             direct; //reference only, call setDirect() to change the rainbow direction
         
         void 
-            setDirect(bool newDirect),
-            setLength(uint8_t newLength),
+            setLength(uint16_t newLength),
             update(void);
 
     private:
@@ -77,9 +74,7 @@ class RainbowCyclePS : public EffectBasePS {
             numLeds,
             totSegLen,
             maxCycleLength,
-            pixelNum;
-        
-        uint32_t
+            pixelNum,
             stepVal;
         
         CRGB

@@ -1,6 +1,6 @@
 #include "RainbowCyclePS.h"
 
-RainbowCyclePS::RainbowCyclePS(SegmentSet &SegmentSet, uint8_t Length, bool Direction, uint16_t Rate):
+RainbowCyclePS::RainbowCyclePS(SegmentSet &SegmentSet, uint16_t Length, bool Direction, uint16_t Rate):
     length(Length), direct(Direction), segmentSet(SegmentSet)
     {    
         //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
@@ -13,11 +13,10 @@ RainbowCyclePS::RainbowCyclePS(SegmentSet &SegmentSet, uint8_t Length, bool Dire
 void RainbowCyclePS::init(){
     cycleCount = 0;
     setLength(length);
-    setDirect(direct);
 }
 
 //set the length of the rainbow, can be longer than the total length of the segmentSet
-void RainbowCyclePS::setLength(uint8_t newLength){
+void RainbowCyclePS::setLength(uint16_t newLength){
     numLeds = segmentSet.numLeds;
     numSegs = segmentSet.numSegs;
     //set the maximum cycle length 
@@ -29,16 +28,6 @@ void RainbowCyclePS::setLength(uint8_t newLength){
     }
 }
 
-//sets the step increment (1 or -1) and the start and end limits of the loop
-//when the direction is reversed we draw the rainbow from the end of the segmentSet
-void RainbowCyclePS::setDirect(bool newDirect){
-    direct = newDirect;
-    stepDirect = 1;
-    if (!direct) {
-        stepDirect = -1;
-    }
-}
-
 //core update cycle, draws the rainbows along the segmentSet every rate ms
 void RainbowCyclePS::update(){
     currentTime = millis();
@@ -47,6 +36,11 @@ void RainbowCyclePS::update(){
     if( ( currentTime - prevTime ) >= *rate ) {
         prevTime = currentTime;
         
+        //get the step amount based on the direction
+        //will be -1 if direct is false, 1 if direct is true
+        //we do this live so you can change the direct directly
+        stepDirect = direct - !direct;
+
         //we grab some segment info in case it's changed (It shouldn't have, but this is a safe guard)
         numLeds = segmentSet.numLeds;
         numSegs = segmentSet.numSegs;

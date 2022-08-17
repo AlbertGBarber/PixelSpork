@@ -55,14 +55,19 @@ class EffectBasePS {
         bool
             showOn = true;
 
-        //pointer to the segmentSet the effect is using
+        //pointer to the segmentSet the effect is using, used for fading
         //defaults to null, since a couple of other classes use the effectBase but don't use a segmentSet
         //this sounds bad, but it lets you use them in an an EffectGroup, which is very useful
         SegmentSet 
             *segmentSetPtr = nullptr;
 
+        //virtual update function to be implemented in each effect
+        //making it virtual so that the update functions of effects can be called from the EffectBase class
+        //This is used in the EffectGroup class to update multiple effects
         virtual void update() = 0;
 
+        //similar to the virtual update function, allows the deletion of any class instance derived from
+        //the EffectBase class
         virtual ~EffectBasePS() = 0;
 
 };

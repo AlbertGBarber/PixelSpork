@@ -1,5 +1,5 @@
-#ifndef StrobeSegPS_h
-#define StrobeSegPS_h
+#ifndef StrobeSLSeg_h
+#define StrobeSLSeg_h
 
 //TODO: make strobe colors based on pattern and palette?
 
@@ -69,14 +69,14 @@ to an external color variable
 There are quite a lot of extra configuration options, help make more dynamic strobes
 
 Example calls: 
-    StrobeSegPS(ringSegments, &palette1, 0, 4, 0, true, true, false, false, false, 50);
+    StrobeSLSeg(ringSegments, &palette1, 0, 4, 0, true, true, false, false, false, 50);
     setNewColorBool(true); (sets newColor flag)
     Will do a set of strobes using palette1 and strobe modes 0 and 1.
     The background is blank, there are 4 pulses per strobe with 50ms between each
     The pause time is 0
     The effect has been set to do a new color for each set of pulses
 
-    StrobeSegPS(ringSegments, &palette1, CRGB::Red, 2, 500, true, false, false, false, true, 100);
+    StrobeSLSeg(ringSegments, &palette1, CRGB::Red, 2, 500, true, false, false, false, true, 100);
     alternate = true;
     fillBG = false;
     fillBGOnPause = false;
@@ -87,13 +87,13 @@ Example calls:
     The total number of strobe cycles will be equal to the palette length (because newColor was not set)
     The background will not be filled after each pulse cycle
 
-    StrobeSegPS(ringSegments, CRGB(CRGB:Blue), CRGB(CRGB::Red), 5, 0, false, true, false, true, false, 40);
+    StrobeSLSeg(ringSegments, CRGB(CRGB:Blue), CRGB(CRGB::Red), 5, 0, false, true, false, true, false, 40);
     Will do a set of strobes in blue and strobe modes 1 and 3.
     The background is red, there are 5 pulses per strobe with 40ms between each
     The pause time is 0
     !!If using pre-build FastLED colors you need to pass them as CRGB( *color code* )
 
-    StrobeSegPS(ringSegments, 4, 0, 3, 0, false, true, false, false, false, 100);
+    StrobeSLSeg(ringSegments, 4, 0, 3, 0, false, true, false, false, false, 100);
     setNewColorBool(true); (sets newColor flag)
     randMode = 2; 
     Will do a set of strobes in using a palette of 4 random colors and strobe mode 1.
@@ -149,21 +149,22 @@ Reference Vars (read only, don't change these unless you know what you're doing)
     cycleCount -- The current cycle we're on out of cycleCountMax
     cycleCountMax -- The total number of cycles to pulse all segments with all colors shown somewhere at least once 
 */
-class StrobeSegPS : public EffectBasePS {
+class StrobeSLSeg : public EffectBasePS {
     public:
         //constructor for palette ver
-        StrobeSegPS(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, 
+        StrobeSLSeg(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, 
                     bool SegEach, bool SegDual, bool SegLine, bool SegLineDual, bool SegAll, uint16_t Rate);
 
         //constructor for single color ver
-        StrobeSegPS(SegmentSet &SegmentSet, CRGB Color, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, 
-                        bool SegEach, bool SegDual, bool SegLine, bool SegLineDual, bool SegAll, uint16_t Rate);
+        //!!If using pre-build FastLED colors you need to pass them as CRGB( *color code* )
+        StrobeSLSeg(SegmentSet &SegmentSet, CRGB Color, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, 
+                    bool SegEach, bool SegDual, bool SegLine, bool SegLineDual, bool SegAll, uint16_t Rate);
         
         //constructor for randomly generate palette ver
-        StrobeSegPS(SegmentSet &SegmentSet, uint8_t numColors, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, 
-                        bool SegEach, bool SegDual, bool SegLine, bool SegLineDual, bool SegAll, uint16_t Rate);
+        StrobeSLSeg(SegmentSet &SegmentSet, uint8_t numColors, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, 
+                    bool SegEach, bool SegDual, bool SegLine, bool SegLineDual, bool SegAll, uint16_t Rate);
 
-        ~StrobeSegPS();  
+        ~StrobeSLSeg();  
 
         SegmentSet 
             &segmentSet; 

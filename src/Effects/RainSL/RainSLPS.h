@@ -8,7 +8,8 @@
 #include "GeneralUtils/generalUtilsPS.h"
 #include "Effects/ParticlesSL/Particle_Stuff/particleUtilsPS.h"
 
-/* Like RainSeg, but the drops spawn and move along the segment set lines (perpendicular to the segments)
+/* 
+Like RainSeg, but the drops spawn and move along the segment set lines (perpendicular to the segments)
 An effect for prodcing a random set of falling particles, like rain, or the classic "Matrix" code animation
 You can set the drops to spawn at either the first or last segment
 They will then "fall" towards the last or first segment respecitvely

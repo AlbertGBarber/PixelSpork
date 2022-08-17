@@ -1,12 +1,12 @@
-#ifndef Twinkle2SLPS_h
-#define Twinkle2SLPS_h
+#ifndef Twinkle2SLSeg_h
+#define Twinkle2SLSeg_h
 
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
 #include "twinkleStarPS.h"
 
 /*
-Fades sets of randomly chosen segment lines in and out (like FastLED TwinkleFox)
+Fades sets of randomly chosen segment lines or segments in and out (like FastLED TwinkleFox)
 The effect gives you a lot of options to customize how the pixels fade in and out and how they group together
 The color of the pixels be set to a single color, chosen randomly, of picked from a palette 
 The amount of fade in and out steps are controlled by fadeInSteps, fadeOutSteps, fadeinRange, and fadeOutRange
@@ -18,14 +18,19 @@ This effect is very similar to TwinklePS, but aims to give you more options on h
 Likewise, it allows you to adjust all the variables (except possibly numTwinkles, see below) on the fly,
 so you can have the effect change over time.
 
-The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
-passing in a segmentSet with only one segment containing the whole strip.
+The effect is adapted to work on segment lines and whole segments for 2D use
+This is contolled by the segMode var:
+    true: The twinkles will be drawn on segments
+    false: They'll be drawn on segment lines
+You can keep it 1D by passing in a segmentSet with only one segment containing the whole strip,
+and setting segMode to false
 
 Note that the effect does require slightly more programing space and ram than TwinklePS
 The ram needed is in proportion to the number of twinkles.
 
-This effect is fully compatible with color modes, and the bgColor is a pointer, so you can bind it
-to an external color variable.
+This effect is almost fully compatible with color modes, and the bgColor is a pointer, so you can bind it
+to an external color variable. 
+When drawing along segments (segMode is true), the effect works with all color modes except 1, 2, 7, 8.
 
 Inputs Guide:
     This guide will focus on how you can adjust the twinkling rates and groupings using the following inputs:
@@ -71,45 +76,47 @@ Finally, remember that the effect works on segment lines, so all pixels in a lin
 their colors will match the twinkle color (or be set according to the colorMode)
 
 Example call: 
-    Twinkle2SLPS(mainSegments, CRGB::Red, CRGB::Blue, 12, 50, 3, 2, 4, 5, 70);
-    Will choose 10 pixels each cycle to fade to/from red each cycle, using a blue background, 
-    There is a 50% chance an inactive pixel will become active each cycle
+    Twinkle2SLSeg(mainSegments, CRGB::Red, CRGB::Blue, 12, 50, 3, 2, 4, 5, false, 70);
+    Will choose 10 segment lines each cycle to fade to/from red each cycle, using a blue background, 
+    There is a 50% chance an inactive line will become active each cycle
     There are 3 fade in and 4 fade out steps with ranges of 2 and 5 respectivly
     The effect upates at a rate of 70ms
 
-    Twinkle2SLPS(mainSegments, &palette1, 0, 8, 100, 2, 0, 6, 0, 60);
-    Will choose 8 pixels each cycle to fade to/from colors from palette1, using a blank background, 
-    There is a 100% chance an inactive pixel will become active each cycle
+    Twinkle2SLSeg(mainSegments, &palette1, 0, 8, 100, 2, 0, 6, 0, true, 60);
+    Will choose 8 segments each cycle to fade to/from colors from palette1, using a blank background, 
+    There is a 100% chance an inactive segment will become active each cycle
     There are 2 fade in and 6 fade out steps with ranges of 0 and 0 respectivly
     The effect upates at a rate of 60ms
 
-    Twinkle2SLPS(mainSegments, 0, 12, 20, 2, 0, 2, 0, 80);
-    Will choose 12 pixels each cycle to fade to/from random colors, using a blank backgound, 
+    Twinkle2SLSeg(mainSegments, 0, 12, 20, 2, 0, 2, 0, false, 80);
+    Will choose 12 segment lines each cycle to fade to/from random colors, using a blank backgound, 
     (note this sets randMode = 1)
-    There is a 20% chance an inactive pixel will become active each cycle
+    There is a 20% chance an inactive line will become active each cycle
     There are 2 fade in and 2 fade out steps with ranges of 0 and 0 respectivly
     The effect upates at a rate of 80ms
 
 Constructor Inputs:
-    palette(optional, see constructors) -- the palette from which colors will be choosen randomly
-    color(optional, see constructors) -- the color that the randomly choosen pixels will be set to
-    numTwinkles -- The amount of random pixels choosen each cycle 
-    bgColor -- The color of the background, this is what pixels will fade to and from
-    fadeInSteps and fadeOutSteps -- The number of steps taken to fade pixels in and out (min value of 1, max of 255)
+    palette(optional, see constructors) -- The palette from which colors will be choosen randomly
+    color(optional, see constructors) -- The color that the twinkles will be set to
+    numTwinkles -- The maxmimum amount of random twinkles that can be active at one time
+    bgColor -- The color of the background, this is what twinkles will fade to and from
+    fadeInSteps and fadeOutSteps -- The number of steps taken to fade twinkles in and out (min value of 1, max of 255)
     fadeInRange and fadeOutRange -- The amount of variation for the fade in and out steps (see Inputs Guide)
+    segMode -- If true, twinkles will be drawn along segments, otherwise they'll be drawn along segment lines
     Rate -- The update rate (ms)
 
 Functions:
     setSteps(newfadeInSteps, newfadeOutSteps) -- Sets the number of fade in and out steps, will restart the effect
                                                  You can also set the steps directly as long as you don't set them below 1
-    setSingleColor(Color) -- Sets the effect to use a single color for the pixels
+    setSingleColor(Color) -- Sets the effect to use a single color for the twinkles
     reset() -- Sets all twinkles to inactive and fills in the background
-    setNumTwinkles(newNumTwinkles) -- Sets an new number of pixels to be choosen each cycle, will restart the effect
+    setNumTwinkles(newNumTwinkles) -- Sets the maxmimum amount of random twinkles that can be active at one time, will restart the effect
                                       You can avoid calling this if you do the trick from my extra note in the inputs guide
+    setSegMode(newSegMode) -- Sets if the twinkles should be drawn along segments or segment lines (will reset the effect)
     update() -- updates the effect
 
 Other Settings:
-    colorMode (default 0) -- sets the color mode for the random pixels (see segDrawUtils::setPixelColor)
+    colorMode (default 0) -- sets the color mode for the random twinkles (see segDrawUtils::setPixelColor)
     bgColorMode (default 0) -- sets the color mode for the background (see segDrawUtils::setPixelColor)
     randMode (default 0) -- sets how colors will be picked
                             0: Picks colors from the palette
@@ -123,22 +130,25 @@ Notes:
     The more twinkles you have, the larger the twinkleSet is, so watch your memory usage.
     For more on twinkle sets see twinkleStart.h
 */
-class Twinkle2SLPS : public EffectBasePS {
+class Twinkle2SLSeg : public EffectBasePS {
     public:
         //Constructor for a full palette effect
-        Twinkle2SLPS(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint16_t NumTwinkles, uint8_t SpawnChance, 
-                   uint8_t FadeInSteps, uint8_t FadeInRange, uint8_t FadeOutSteps, uint8_t FadeOutRange, uint16_t Rate); 
+        Twinkle2SLSeg(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint16_t NumTwinkles, uint8_t SpawnChance, 
+                   uint8_t FadeInSteps, uint8_t FadeInRange, uint8_t FadeOutSteps, uint8_t FadeOutRange, 
+                   bool SegMode, uint16_t Rate); 
 
         //Constructor for a using a single color
-        Twinkle2SLPS(SegmentSet &SegmentSet, CRGB Color, CRGB BgColor, uint16_t NumTwinkles, uint8_t SpawnChance,
-                   uint8_t FadeInSteps, uint8_t FadeInRange, uint8_t FadeOutSteps, uint8_t FadeOutRange, uint16_t Rate);
+        Twinkle2SLSeg(SegmentSet &SegmentSet, CRGB Color, CRGB BgColor, uint16_t NumTwinkles, uint8_t SpawnChance,
+                   uint8_t FadeInSteps, uint8_t FadeInRange, uint8_t FadeOutSteps, uint8_t FadeOutRange,
+                   bool SegMode, uint16_t Rate);
         
         //Constructor for choosing all colors at random
-        Twinkle2SLPS(SegmentSet &SegmentSet, CRGB BgColor, uint16_t NumTwinkles, uint8_t SpawnChance, 
-                   uint8_t FadeInSteps, uint8_t FadeInRange, uint8_t FadeOutSteps, uint8_t FadeOutRange, uint16_t Rate);
+        Twinkle2SLSeg(SegmentSet &SegmentSet, CRGB BgColor, uint16_t NumTwinkles, uint8_t SpawnChance, 
+                   uint8_t FadeInSteps, uint8_t FadeInRange, uint8_t FadeOutSteps, uint8_t FadeOutRange, 
+                   bool SegMode, uint16_t Rate);
 
         //destructor
-        ~Twinkle2SLPS();
+        ~Twinkle2SLSeg();
 
         uint16_t
             numTwinkles;
@@ -149,6 +159,7 @@ class Twinkle2SLPS : public EffectBasePS {
 
         bool 
             limitSpawing = false,
+            segMode, //For reference only, use setSegMode()
             fillBG = false;
         
         uint8_t 
@@ -180,6 +191,7 @@ class Twinkle2SLPS : public EffectBasePS {
             reset(),
             setNumTwinkles(uint16_t newNumTwinkles),
             initTwinkleArrays(),
+            setSegMode(bool newSegMode),
             deleteTwinkleSet(),
             update(void);
     
@@ -214,6 +226,8 @@ class Twinkle2SLPS : public EffectBasePS {
         
         void
             spawnTwinkle(uint8_t twinkleNum),
+            drawLineTwinkle(),
+            drawSegTwinkle(),
             init(uint8_t FadeInSteps, uint8_t FadeOutSteps, CRGB BgColor, uint16_t Rate);
 };
 

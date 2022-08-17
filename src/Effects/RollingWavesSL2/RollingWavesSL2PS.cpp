@@ -1,14 +1,14 @@
-#include "RollingWavesFastSLPS.h"
+#include "RollingWavesSL2PS.h"
 
 //constructor with pattern
-RollingWavesFastSLPS::RollingWavesFastSLPS(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate):
+RollingWavesSL2PS::RollingWavesSL2PS(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate):
     segmentSet(SegmentSet), pattern(Pattern), palette(Palette), gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)
     {    
         init(BGColor,Rate);
 	}
 
 //constuctor with palette as pattern
-RollingWavesFastSLPS::RollingWavesFastSLPS(SegmentSet &SegmentSet, palettePS *Palette, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate):
+RollingWavesSL2PS::RollingWavesSL2PS(SegmentSet &SegmentSet, palettePS *Palette, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate):
     segmentSet(SegmentSet), palette(Palette), gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)
     {    
         setPaletteAsPattern();
@@ -16,7 +16,7 @@ RollingWavesFastSLPS::RollingWavesFastSLPS(SegmentSet &SegmentSet, palettePS *Pa
 	}
 
 //constructor with random colors
-RollingWavesFastSLPS::RollingWavesFastSLPS(SegmentSet &SegmentSet, uint8_t NumColors, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate):
+RollingWavesSL2PS::RollingWavesSL2PS(SegmentSet &SegmentSet, uint8_t NumColors, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate):
     segmentSet(SegmentSet), gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)
     {    
         paletteTemp = paletteUtilsPS::makeRandomPalette(NumColors);
@@ -25,13 +25,14 @@ RollingWavesFastSLPS::RollingWavesFastSLPS(SegmentSet &SegmentSet, uint8_t NumCo
         init(BGColor, Rate);
 	}
 
-RollingWavesFastSLPS::~RollingWavesFastSLPS(){
+RollingWavesSL2PS::~RollingWavesSL2PS(){
     delete[] paletteTemp.paletteArr;
     delete[] patternTemp.patternArr;
+    delete[] nextLine;
 }
 
 //inits core variables for the effect
-void RollingWavesFastSLPS::init(CRGB BgColor, uint16_t Rate){
+void RollingWavesSL2PS::init(CRGB BgColor, uint16_t Rate){
     //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
     bindSegPtrPS();
     bindClassRatesPS();
@@ -39,11 +40,12 @@ void RollingWavesFastSLPS::init(CRGB BgColor, uint16_t Rate){
     cycleNum = 0;
     setTrailMode(trailMode);
     setTotalEffectLength();
+    buildLineArr();
 }
 
 //sets the gradLength
 //we need to change the totalCycleLength to match
-void RollingWavesFastSLPS::setGradLength(uint8_t newGradLength){
+void RollingWavesSL2PS::setGradLength(uint8_t newGradLength){
     gradLength = newGradLength;
     setTrailMode(trailMode);
     setTotalEffectLength();
@@ -51,14 +53,14 @@ void RollingWavesFastSLPS::setGradLength(uint8_t newGradLength){
 
 //sets the spacing between the waves
 //and recalculates the totalCycleLength, since it includes the spacing
-void RollingWavesFastSLPS::setSpacing(uint8_t newSpacing){
+void RollingWavesSL2PS::setSpacing(uint8_t newSpacing){
     spacing = newSpacing;
     setTotalEffectLength();
 }
 
 //sets a new pattern for the effect
 //we need to change the totalCycleLength to match
-void RollingWavesFastSLPS::setPattern(patternPS *newPattern){
+void RollingWavesSL2PS::setPattern(patternPS *newPattern){
     pattern = newPattern;
     setTotalEffectLength();
 }
@@ -66,7 +68,7 @@ void RollingWavesFastSLPS::setPattern(patternPS *newPattern){
 //sets the pattern to match the current palette
 //ie for a palette length 5, the pattern would be 
 //{0, 1, 2, 3, 4}
-void RollingWavesFastSLPS::setPaletteAsPattern(){
+void RollingWavesSL2PS::setPaletteAsPattern(){
     patternTemp = generalUtilsPS::setPaletteAsPattern(palette);
     pattern = &patternTemp;
     setTotalEffectLength();
@@ -76,10 +78,23 @@ void RollingWavesFastSLPS::setPaletteAsPattern(){
 //ie the total length of all the waves (of each color in the pattern) combined
 //includes the spacing after each wave
 //The blend limit is the length of a wave plus its spacing
-void RollingWavesFastSLPS::setTotalEffectLength(){
+void RollingWavesSL2PS::setTotalEffectLength(){
     // the number of steps in a full cycle (fading through all the colors)
     blendLimit = gradLength + spacing;
     totalCycleLength = pattern->length * blendLimit;
+}
+
+//creates an array for storing the physical led locations of the 
+//next line to be drawn
+//!!! You should call this if you ever change the segment set
+void RollingWavesSL2PS::buildLineArr(){
+    numSegs = segmentSet.numSegs;
+    delete[] nextLine;
+    nextLine = new uint16_t[numSegs];
+
+    //fetch some core vars
+    numLines = segmentSet.maxSegLength;
+    numLinesLim = numLines - 1;
 }
 
 //sets various limits for drawing different types of trails
@@ -97,7 +112,7 @@ void RollingWavesFastSLPS::setTotalEffectLength(){
 //  0: Only ending trail will be drawn
 //  1: Both ending and leading trails will be drawn (at half gradLength)
 //  2: Only the leading trail will be drawn
-void RollingWavesFastSLPS::setTrailMode(uint8_t newTrailMode){
+void RollingWavesSL2PS::setTrailMode(uint8_t newTrailMode){
     trailMode = newTrailMode;
     switch (trailMode){
         case 0: //end trail only
@@ -134,7 +149,7 @@ void RollingWavesFastSLPS::setTrailMode(uint8_t newTrailMode){
 
 //We need to pre-fill the strip with the first set of waves
 //in order for the led colors to be copied properly in the main update cycle
-void RollingWavesFastSLPS::initalFill(){
+void RollingWavesSL2PS::initalFill(){
     cycleNum = 0;
 
     //we need to draw the initial waves on the strip
@@ -153,6 +168,7 @@ void RollingWavesFastSLPS::initalFill(){
             setNextColors(i);
         }
         colorOut = getWaveColor(cycleNum);
+
         //Draw the colored line
         segDrawUtils::drawSegLineSimple(segmentSet, i, colorOut, 0);
 
@@ -163,10 +179,12 @@ void RollingWavesFastSLPS::initalFill(){
 
 //Updates the effect
 //For all lines up to the final on we copy the color of the line behind it
-//To copy the color we always copy from the pixel on the longest segment,
-//Since all the pixels on the longest segment are on seperate lines
-//(unlike shorter segments, where a single pixel can be in multiple lines, so it's color may not be what we expect)
-//For the first line we caculate the next wave blendStep based on the cycleNum and the pattern
+//To save time, we store the current line pixels locations in the nextLine array, and then use them in the next loop step
+//This saves us from having to work out the pixels for both lines at each step
+//But also causes an "error" with segment sets with different length segments
+//Because one pixel can be in multiple lines, so the colors of those pixels can be coppied multiple times
+//This creates a neat effect, but is technically incorrect
+//For the final led we caculate the next wave blendStep based on the cycleNum and the pattern
 //The blendStep after cycle, which tracks what step of the wave we're on
 //The blendStep cycles between 0 and the blendLimit (gradLength + spacing)
 //If the blendStep is 0, then a wave and it's spacing have finished and we choose the next color for the next wave
@@ -176,23 +194,24 @@ void RollingWavesFastSLPS::initalFill(){
 //After the gradLength we draw any spacing pixels
 //At some point during the wave we will hit the midPoint, this is the "head" of the wave
 //and is drawn at full bightness (so that the wave dimming can be non-linear, but the "head" is always full color)
-//Once all the lines have been filled a cycle is complete and cycleNum is incremented
-void RollingWavesFastSLPS::update(){
+//Once all the leds have been filled a cycle is complete and cycleNum is incremented
+void RollingWavesSL2PS::update(){
     currentTime = millis();
 
     if( ( currentTime - prevTime ) >= *rate ) {
         prevTime = currentTime;
 
-        numSegs = segmentSet.numSegs;
-        //fetch some core vars
-        numLines = segmentSet.maxSegLength;
-        numLinesLim = numLines - 1;
-        longestSeg = segmentSet.segNumMaxSegLength;
-
         //We need to pre-fill the strip with a full cycle the first time the update is called
         //so that the colors are copied down the strip correctly on subsequent cycles
         if(!initFillDone){
             initalFill();
+        }
+
+        //prep for the loop below.
+        //We need to get the pixel locations of the final segment line
+        //(Which is the one the loop starts on)
+        for(uint8_t j = 0; j < numSegs; j++){
+            nextLine[j] = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, j, numLinesLim);
         }
 
         //Run backwards across all the segment lines and copy the color from the line before it
@@ -213,17 +232,26 @@ void RollingWavesFastSLPS::update(){
                 colorOut = getWaveColor(blendStep);
 
                 //Draw the line
-                segDrawUtils::drawSegLineSimple(segmentSet, i, colorOut, 0);
+                //Note that we only need to the pixels from the nextLine array
+                //because they were looked up in the previous loop step
+                for(uint8_t j = 0; j < numSegs; j++){
+                    //The nextPixelNumber from the previous loop iteration is now
+                    //the pixelNumber for this iteration
+                    pixelNum = nextLine[j];
+                    segDrawUtils::setPixelColor(segmentSet, pixelNum, colorOut, 0, j, i);
+                }
             } else {
-                //Copy the pixel color from the previous line
-                //To copy the color we always copy from the pixel on the longest segment,
-                //Since all the pixels on the longest segment are on seperate lines
-                //(unlike shorter segments, where a single pixel can be in multiple lines, so it's color may not be what we expect)
-                pixelNum = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, longestSeg, i - 1);
-                colorOut = segmentSet.leds[pixelNum];
-
-                //write out the copied color to the whole line
-                segDrawUtils::drawSegLineSimple(segmentSet, i, colorOut, 0);
+                //copy the pixel colors from the previous line to the current one
+                //Note that this is where the copping "error" occurs where colors mis-match 
+                //between multiple segment lines of different lengths
+                for(uint8_t j = 0; j < numSegs; j++){
+                    //The pixel locations from the previous loop are now the current ones
+                    //and we now need to fill in the next line locations
+                    pixelNum = nextLine[j];
+                    nextLine[j] = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, j, i - 1);
+                    //copy the color of the next pixel in line into the current pixel
+                    segmentSet.leds[pixelNum] = segmentSet.leds[nextLine[j]];
+                }
             }
         }
         cycleNum = addMod16PS( cycleNum, 1, totalCycleLength );
@@ -238,7 +266,7 @@ void RollingWavesFastSLPS::update(){
 //At some point during the wave we will hit the midPoint, this is the "head" of the wave
 //and is drawn at full bightness (so that the wave dimming can be non-linear, but the "head" is always full color)
 //Once all the leds have been filled a cycle is complete and cycleNum is incremented
-CRGB RollingWavesFastSLPS::getWaveColor(uint8_t step){
+CRGB RollingWavesSL2PS::getWaveColor(uint8_t step){
 
     //draw the various parts of the wave
     //the limit vars are set by setTrailMode
@@ -279,7 +307,7 @@ CRGB RollingWavesFastSLPS::getWaveColor(uint8_t step){
 //the maximum brightness is scaled by dimPow
 //dimPow 255 will produce a normal linear gradient, but for more shimmery waves we can dial the bightness down
 //The "head" wave pixel will still be drawn at full brightness since it's drawn seperatly 
-CRGB RollingWavesFastSLPS::desaturate(CRGB color, uint8_t step, uint8_t totalSteps) {
+CRGB RollingWavesSL2PS::desaturate(CRGB color, uint8_t step, uint8_t totalSteps) {
 
     dimRatio = (dimPow - (uint16_t)step * dimPow / (totalSteps + 1));
 
@@ -294,7 +322,7 @@ CRGB RollingWavesFastSLPS::desaturate(CRGB color, uint8_t step, uint8_t totalSte
 
 //For calling whenever a wave has finished
 //Chooses a new color for the next wave depending on the the options for random colors
-void RollingWavesFastSLPS::setNextColors(uint16_t segPixelNum){
+void RollingWavesSL2PS::setNextColors(uint16_t segPixelNum){
     if(randMode == 0){
         currentColorIndex = addMod16PS( segPixelNum, cycleNum, totalCycleLength ) / blendLimit; // what color we've started from (integers always round down)
         //the color we're at based on the current index

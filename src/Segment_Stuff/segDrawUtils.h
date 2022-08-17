@@ -94,6 +94,7 @@ namespace segDrawUtils{
     
     static int8_t
         step,
+        stepDir,
         secLengthSign;
 
     static int16_t

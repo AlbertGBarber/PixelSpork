@@ -1,5 +1,5 @@
-#ifndef GradientCycleFastPS_h
-#define GradientCycleFastPS_h
+#ifndef GradientCycleFastSLPS_h
+#define GradientCycleFastSLPS_h
 
 //TODO -- add constructor for random options?
 
@@ -13,6 +13,9 @@ The gradients have a set length, and smoothly transition from one color to the n
 If the total length of the gradients is longer than the segment set, they will still all transition on
 whatever fits onto the segement set will be drawn at one time
 
+The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
+passing in a segmentSet with only one segment containing the whole strip.
+
 Note that this effect should not be run alongside other effects on the same segmentSet
 since it needs to use the existing colors of the leds
 
@@ -23,12 +26,10 @@ however it does have a few extra restrictions
   This prevents this effect from playing well with paletteBlend functions
 2: The same restrictions as (1) apply to changing the pattern or the gradLength
 3: Changing the direction of the segments or segment set mid-effect may break it temporarily
-4: Depending on the length, you may have a temporary blend "jump" at the beginning of the strip
-  This will move along the strip before disappering
 
-Basically the effect works by setting the color of the first pixel, then for each subsequent pixel,
-it copies the color of the next pixel in line
-So any changes you make to colors will only show up at the first pixel, and will be shifted along the strip
+Basically the effect works by setting the color of the first line, then for each subsequent line,
+it copies the color of the next line.
+So any changes you make to colors will only show up at the first line, and will be shifted along the segment set
 
 However, as a bonus, this effect supports random colored gradients
 where the colors for the gradients are choosen at random as the enter the strip
@@ -37,14 +38,14 @@ This is controlled by the randMode setting
 Example calls: 
     uint8_t pattern_arr = {0, 1, 4};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-    GradientCycleFastPS(mainSegments, &pattern, &palette, 10, 100);
+    GradientCycleFastSLPS(mainSegments, &pattern, &palette, 10, 100);
     Will do a gradient cycle from color 0, to color 1, to color 4, of the palette
     with 10 steps to each gradient, and a 100ms update rate
 
-    GradientCycleFastPS(mainSegments, &palette, 10, 100);
+    GradientCycleFastSLPS(mainSegments, &palette, 10, 100);
     Will do a gradient cycle using the colors in the palette, with 10 steps to each gradient,and a 100ms update rate
 
-    GradientCycleFastPS(mainSegments, 3, 15, 80);
+    GradientCycleFastSLPS(mainSegments, 3, 15, 80);
     Will do a gradient cycle using 3 randomly choosen colors, with 15 steps to each gradient,and an 80ms update rate
     note this is not the same as setting randMode, it just makes a random palette
  
@@ -58,37 +59,38 @@ Constructor Inputs:
     Rate -- The update rate (ms)
 
 Functions:
-    setPalette(*newPalette) -- Sets the palette used for the gradient
-    setPattern(*newPattern) -- Sets the passed in pattern to be the effect patten
     setPaletteAsPattern() -- Sets the effect pattern to match the current palette
     reset() -- Restarts the effect
     update() -- updates the effect
 
 Other Settings:
     randMode (default 0) -- Sets the type of how colors are choosen:
-                        -- 0: Colors will be choosen in order from the pattern (not random)
-                        -- 1: Colors will be choosen completely at random
-                        -- 2: Colors will be choosen randomly from the pattern (will not repeat the same color in a row)
-                        --                                                     (unless your pattern has the same color in a row, like { 2, 2, 3})
+                         -- 0: Colors will be choosen in order from the pattern (not random)
+                         -- 1: Colors will be choosen completely at random
+                         -- 2: Colors will be choosen randomly from the pattern (will not repeat the same color in a row)
+                         --                                                     (unless your pattern has the same color in a row, like { 2, 2, 3})
 
 Flags:
     initFillDone -- Flag for doing the initial fill of the gradients on the strip
                    Set true once the fill is done
+                
+Reference Vars:
+    cycleNum -- Tracks how many cycles we've done, resets every gradLength cycles
 
 Notes: 
 */
-class GradientCycleFastPS : public EffectBasePS {
+class GradientCycleFastSLPS : public EffectBasePS {
     public:
         //Constructor for using pattern
-        GradientCycleFastPS(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, uint8_t GradLength, uint16_t Rate); 
+        GradientCycleFastSLPS(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, uint8_t GradLength, uint16_t Rate); 
 
         //Constructor for using the palette as the pattern
-        GradientCycleFastPS(SegmentSet &SegmentSet, palettePS *Palette, uint8_t GradLength, uint16_t Rate);
+        GradientCycleFastSLPS(SegmentSet &SegmentSet, palettePS *Palette, uint8_t GradLength, uint16_t Rate);
 
         //Constructor for using a random palette as the pattern
-        GradientCycleFastPS(SegmentSet &SegmentSet, uint8_t NumColors, uint8_t GradLength, uint16_t Rate);
+        GradientCycleFastSLPS(SegmentSet &SegmentSet, uint8_t NumColors, uint8_t GradLength, uint16_t Rate);
 
-        ~GradientCycleFastPS();
+        ~GradientCycleFastSLPS();
 
         uint8_t
             randMode = 0,
@@ -112,8 +114,6 @@ class GradientCycleFastPS : public EffectBasePS {
             &segmentSet; 
         
         void 
-            setPalette(palettePS* newPalette),
-            setPattern(patternPS *newPattern),
             setPaletteAsPattern(),
             reset(),
             update(void);
@@ -124,14 +124,15 @@ class GradientCycleFastPS : public EffectBasePS {
             prevTime = 0;
 
         uint8_t
+            longestSeg,
             currentPattern,
             nextPattern;
         
         uint16_t
-            pixelNumber,
-            nextPixelNumber,
-            patternCount = 0,
-            numPixels;
+            numLines,
+            numLinesLim,
+            pixelNum,
+            patternCount = 0;
 
         CRGB 
             currentColor,

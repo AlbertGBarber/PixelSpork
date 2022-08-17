@@ -33,8 +33,6 @@ Constructor Inputs:
     Rate -- The update rate of the utility (ms)
 
 Functions:
-    direct() --  returns the direction of the transition: true if the end rate > start rate, false otherwise
-                DO NOT try to set the direction manually
     reset(StartRate, EndRate, Rate) -- resets the utility with a new start rate, end rate, and update rate
                                       DO NOT change the start/end rates unless you know what you're doing
     reset() -- restarts the transition using the current start/end rates
@@ -48,6 +46,7 @@ Other Settings:
 
 Flags:
     rateReached -- Set when the ulility reaches the end rate 
+    direct -- Shows what direction the rate is moving (either decreasing or increasing)
 */
 class RateCtrlPS : public EffectBasePS{
     public:
@@ -63,11 +62,11 @@ class RateCtrlPS : public EffectBasePS{
         cycle,
         rateReached,
         easing,
-        direct(void);
+        direct; //for reference only, don't set this!!
     
     void 
         update(),
-        reset( uint16_t StartRate, uint16_t EndRate, uint16_t  Rate),
+        reset(uint16_t StartRate, uint16_t EndRate, uint16_t  Rate),
         reset();
 
     private:
@@ -76,19 +75,13 @@ class RateCtrlPS : public EffectBasePS{
             prevTime = 0;
 
         int8_t
-            stepMulti;
+            stepDirect;
         
         uint8_t
             ratio;
         
         uint16_t
             rateTemp;
-        
-        bool
-            _direct;
-
-        void
-            setDirect(bool newDirect);
 };  
 
 #endif

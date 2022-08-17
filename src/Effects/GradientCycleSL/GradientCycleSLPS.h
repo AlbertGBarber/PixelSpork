@@ -1,5 +1,5 @@
-#ifndef GradientCyclePS_h
-#define GradientCyclePS_h
+#ifndef GradientCycleSLPS_h
+#define GradientCycleSLPS_h
 
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
@@ -12,20 +12,23 @@ The gradients have a set length, and smoothly transition from one color to the n
 If the total length of the gradients is longer than the segment set, they will still all transition on
 whatever fits onto the segement set will be drawn at one time
 
-There is a version of this effect that takes less CPU power (GradientCycleLowPS)
+There is a version of this effect that takes less CPU power (GradientCycleSLFastPS)
 It has a few restrictions, but should run faster than this effect
+
+The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
+passing in a segmentSet with only one segment containing the whole strip.
 
 Example calls: 
     uint8_t pattern_arr = {0, 1, 4};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-    GradientCyclePS(mainSegments, &pattern, &palette, 10, 100);
+    GradientCycleSLPS(mainSegments, &pattern, &palette, 10, 100);
     Will do a gradient cycle from color 0, to color 1, to color 4, of the palette
     with 10 steps to each gradient, and a 100ms update rate
 
-    GradientCyclePS(mainSegments, &palette, 10, 100);
+    GradientCycleSLPS(mainSegments, &palette, 10, 100);
     Will do a gradient cycle using the colors in the palette, with 10 steps to each gradient,and a 100ms update rate
 
-    GradientCyclePS(mainSegments, 3, 15, 80);
+    GradientCycleSLPS(mainSegments, 3, 15, 80);
     Will do a gradient cycle using 3 randomly choosen colors, with 15 steps to each gradient,and an 80ms update rate
  
 Constructor Inputs:
@@ -38,7 +41,6 @@ Constructor Inputs:
     Rate -- The update rate (ms)
 
 Functions:
-    setPalette(*newPalette) -- Sets the palette used for the gradient
     setTotalEffectLength() -- Calculates the total length of all the gradients combined, you shouldn't need to call this
     setPattern(*newPattern) -- Sets the passed in pattern to be the effect pattern
                               Will force setTotalEffectLength() call, so may cause effect to jump
@@ -46,31 +48,35 @@ Functions:
     setGradLength(newGradLength) -- Changes the Gradlength to the specified value, adjusting the length of the gradients (calls setTotalEffectLength())
     update() -- updates the effect
 
+Reference Vars:
+    totalCycleLength -- Total length of all the gradients combined, set by setTotalEffectLength()
+    cycleNum -- Tracks what how many patterns we've gone through, resets every totalCycleLength cycles, set during update()
+
 Notes:
     For the randomly generated gradient constructor, the random palette can be accessed via paletteTemp
 
     If using the palette as the pattern, if you change the palette, you'll need to change the pattern as well
     (unless the palettes are the same length) 
 */
-class GradientCyclePS : public EffectBasePS {
+class GradientCycleSLPS : public EffectBasePS {
     public:
         //Constructor for using pattern
-        GradientCyclePS(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, uint8_t GradLength, uint16_t Rate); 
+        GradientCycleSLPS(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, uint8_t GradLength, uint16_t Rate); 
 
         //Constructor for using the palette as the pattern
-        GradientCyclePS(SegmentSet &SegmentSet, palettePS *Palette, uint8_t GradLength, uint16_t Rate);
+        GradientCycleSLPS(SegmentSet &SegmentSet, palettePS *Palette, uint8_t GradLength, uint16_t Rate);
 
         //Constructor for using a random palette as the pattern
-        GradientCyclePS(SegmentSet &SegmentSet, uint8_t NumColors, uint8_t GradLength, uint16_t Rate);
+        GradientCycleSLPS(SegmentSet &SegmentSet, uint8_t NumColors, uint8_t GradLength, uint16_t Rate);
 
-        ~GradientCyclePS();
+        ~GradientCycleSLPS();
 
         uint8_t
             gradLength;
         
         uint16_t 
             totalCycleLength, //total length of all the gradients combined, for reference
-            cycleNum = 0; // tracks what how many patterns we've gone through
+            cycleNum = 0; // tracks what how many patterns we've gone through, resets every totalCycleLength cycles
 
         patternPS
             patternTemp,
@@ -85,7 +91,6 @@ class GradientCyclePS : public EffectBasePS {
         
         void 
             setGradLength(uint8_t newGradLength),
-            setPalette(palettePS* newPalette),
             setPattern(patternPS *newPattern),
             setPaletteAsPattern(),
             setTotalEffectLength(),
@@ -104,7 +109,7 @@ class GradientCyclePS : public EffectBasePS {
         
         uint16_t
             step,
-            numPixels;
+            numLines;
 
         CRGB 
             currentColor,
