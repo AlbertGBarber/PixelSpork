@@ -7,7 +7,8 @@
 #include "Palette_Stuff/palettePS.h"
 //TODO:
 //-- Scrap turning off segments, full behavior too hard to implement, current behavior is confusing
-//-- Add function somewhere to automatically sync a rainbow or gradent across multiple segment sets
+//-- Add function somewhere to automatically sync a rainbow or gradent across multiple segment sets 
+//	(sets offsets and lengths to sync them up, more complicated to match lines)
 //-- Move direction settings to segDrawUtils?
 
 /*

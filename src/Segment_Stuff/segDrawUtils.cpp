@@ -2,37 +2,43 @@
 
 using namespace segDrawUtils;
 
-//!!!! Inputs distinguish between pixel num and seg pixel number (seg pixel number is local to the segment)
+//!!!!  Function inputs distinguish between pixel addresses local to the segment set
+//      and the pixel's physical address on the strip by using pixelNum and segPixelNum vars
+//          segPixelNum is the location local to the segment set, not the led's physical address. 
+//          ex: The 25th pixel in the segment set, it's segPixelNum is 25.
+//          pixelNum is the phyiscal address of the led
+//          ex: The 25th pixel in the segment set has a physical address of 10 so it's pixelNum is 10
+//      The input vars of functions tell you what type of pixel location it wants
 
 //returns the physical number of the nth pixel in the segment set
-//ie I want the 10th pixel as measured from the start of the segment, this is acutally the 25th pixel on the strip
+//ie I want the 10th pixel as measured from the start of the segment set, this is acutally the 25th pixel on the strip
 uint16_t segDrawUtils::getSegmentPixel(SegmentSet &segmentSet, uint16_t segPixelNum){
-    getSegLocationFromPixel(segmentSet, segPixelNum, locData);
-    return getSegmentPixel(segmentSet, locData[0], locData[1]);
+    getSegLocationFromPixel(segmentSet, segPixelNum, locData1);
+    return getSegmentPixel(segmentSet, locData1[0], locData1[1]);
 }
 
 //returns the segment number and the pixel number of that segment for the nth pixel
-//data is package is passed into the passed in locData[2] array
-//locData[0] is the segment number
-//locData[1] is the pixel number in the segment
+//data is package is passed into the passed in locData1[2] array
+//locData1[0] is the segment number
+//locData1[1] is the pixel number in the segment
 //ex we want the 12th pixel in the segment set. This is the 8th pixel of the second segment in the set 
-//so locData[0] = 2 and locData[1] = 8.
+//so locData1[0] = 2 and locData1[1] = 8.
 //If the passed in pixel number isn't on the segment (it's greater than the total segment set length)
-//Then the locData[1] pixel number will be passed back as segmentSet.numLeds + 1, which will prevent it being drawn
-void segDrawUtils::getSegLocationFromPixel(SegmentSet &segmentSet, uint16_t segPixelNum, uint16_t locData[2] ){
+//Then the locData1[1] pixel number will be passed back as segmentSet.numLeds + 1, which will prevent it being drawn
+void segDrawUtils::getSegLocationFromPixel(SegmentSet &segmentSet, uint16_t segPixelNum, uint16_t locData1[2] ){
    lengthSoFar = 0;
-   //Before we search for the segment pixel we set default values for locData array
+   //Before we search for the segment pixel we set default values for locData1 array
    //These act as a safeguard incase the segPixelNum is off the end of the segment set
    //In which case we want to avoid trying to draw to it
    //so we set the led location to dLed, which will be ignored when trying to write out any colors
-   locData[0] = 0;
-   locData[1] = dLed; 
+   locData1[0] = 0;
+   locData1[1] = dLed; 
     for (uint8_t i = 0; i < segmentSet.numSegs; i++) {
         //if(segmentSet.getSegActive(i)){ //only count active segments
             lengthSoFar += segmentSet.getTotalSegLength(i);
             if( (lengthSoFar - 1) >= segPixelNum){
-                locData[0] = i;
-                locData[1] = segPixelNum - ( lengthSoFar - segmentSet.getTotalSegLength(i) );
+                locData1[0] = i;
+                locData1[1] = segPixelNum - ( lengthSoFar - segmentSet.getTotalSegLength(i) );
                 break;
             }
        //}
@@ -54,8 +60,7 @@ uint16_t segDrawUtils::getSegmentPixel(SegmentSet &segmentSet, uint8_t segNum, u
         // segmentNum index of the segment in the segment array
         segDirection = segmentSet.getSegDirection(segNum);
         numSec = segmentSet.getTotalNumSec(segNum);
-        count = 0;
-        prevCount = 0; 
+        lengthSoFar = 0;
         // if the segment is decending, we want to count backwards, so we change the loop variables
         if (!segDirection) {
             step = -1;
@@ -74,10 +79,9 @@ uint16_t segDrawUtils::getSegmentPixel(SegmentSet &segmentSet, uint8_t segNum, u
         // use the section to get the physical pixel number
         for (int16_t i = startLimit; i != endLimit; i += step) {
             secLength = segmentSet.getSecLength(segNum, i); // sec length can be negative
-            secLengthSign = (secLength > 0) - (secLength < 0);
-            absSecLength = secLength * secLengthSign;
-            prevCount = count;
-            count += absSecLength; // always add a positive sec length, we want to know the physical length of each section
+            secLengthSign = (secLength > 0) - (secLength < 0); //either 1 or -1
+            secLength = secLength * secLengthSign; //get the positive version of secLength
+            lengthSoFar += secLength; // always add a positive sec length, we want to know the physical length of each section
 
             // if the count is greater than the number we want (num always starts at 0, so secLength will always be one longer than the max num in the section)
             // the num'th pixel is in the current segment.
@@ -87,14 +91,17 @@ uint16_t segDrawUtils::getSegmentPixel(SegmentSet &segmentSet, uint8_t segNum, u
             // for descending segments:
             // we add the section length and subtract the difference (num - prevCount) - 1
             // unless the secLength is 1, then it's just the start pixel
-            if (count > segPixelNum) {
+            if (lengthSoFar > segPixelNum) {
+                //We want to get the length up to the current section (so we find where the pixel is in this section)
+                //But we already added the current secLength to our length count, so we need to subtract it off again
+                lengthSoFar -= secLength;
                 secStartPixel = segmentSet.getSecStartPixel(segNum, i);
                 if (secLength == 1) {
                     return secStartPixel;
                 } else if (segDirection) {
-                    return (secStartPixel + secLengthSign * (segPixelNum - prevCount));
+                    return (secStartPixel + secLengthSign * (segPixelNum - lengthSoFar));
                 } else {
-                    return (secStartPixel + secLengthSign * (absSecLength - (segPixelNum - prevCount) - 1));
+                    return (secStartPixel + secLengthSign * (secLength - (segPixelNum - lengthSoFar) - 1));
                 }
             }
         }
@@ -206,16 +213,18 @@ void segDrawUtils::fillSegSetlengthColor(SegmentSet &segmentSet, CRGB color, uin
     if(segmentSet.numSegs == 1){ //only one segment
         fillSegLengthColor(segmentSet, color, colorMode, 0, startSegPixel, endPixel);
     } else {
-        getSegLocationFromPixel(segmentSet, startSegPixel, startData );
-        getSegLocationFromPixel(segmentSet, endPixel, endData );
-        if( startData[0] == endData[0] ){ //start and end pixel in same segment
-            fillSegLengthColor(segmentSet, color, colorMode, startData[0], startData[1], endData[1]);
+        //locData1 is the data for the starting pixel
+        //locData2 is the data for the ending pixel
+        getSegLocationFromPixel(segmentSet, startSegPixel, locData1 );
+        getSegLocationFromPixel(segmentSet, endPixel, locData2 );
+        if( locData1[0] == locData2[0] ){ //start and end pixel in same segment
+            fillSegLengthColor(segmentSet, color, colorMode, locData1[0], locData1[1], locData2[1]);
         } else { //general case
-            fillSegLengthColor(segmentSet, color, colorMode, startData[0], startData[1], segmentSet.getTotalSegLength(startData[0]) - 1 );
-            for(int i = startData[0] + 1 ; i < endData[0]; i++){
+            fillSegLengthColor(segmentSet, color, colorMode, locData1[0], locData1[1], segmentSet.getTotalSegLength(locData1[0]) - 1 );
+            for(int i = locData1[0] + 1 ; i < locData2[0]; i++){
                 fillSegColor(segmentSet, i, color, colorMode);
             }
-            fillSegLengthColor(segmentSet, color, colorMode, endData[0], 0, endData[1]);
+            fillSegLengthColor(segmentSet, color, colorMode, locData2[0], 0, locData2[1]);
         }
     }
 }
@@ -224,8 +233,7 @@ void segDrawUtils::fillSegSetlengthColor(SegmentSet &segmentSet, CRGB color, uin
 // the segment colors follow the provided pattern of palette indecies
 // the pattern length must match the number of segments
 void segDrawUtils::drawSegLine(SegmentSet &segmentSet, uint16_t lineNum, uint8_t Pattern[], CRGB palette[], uint8_t colorMode, uint8_t bgColorMode, bool brReplace) {
-    numSegs = segmentSet.numSegs;
-    drawSegLineSection(segmentSet, 0, numSegs - 1, lineNum, Pattern, palette, colorMode, bgColorMode, brReplace);
+    drawSegLineSection(segmentSet, 0, segmentSet.numSegs - 1, lineNum, Pattern, palette, colorMode, bgColorMode, brReplace);
 }
 
 // draws a line between segments, from startSeg to endSeg (including endSeg), does its best to make a straight line
@@ -235,13 +243,12 @@ void segDrawUtils::drawSegLine(SegmentSet &segmentSet, uint16_t lineNum, uint8_t
 // and will use bgColorMode for it's color mode (same modes as colorMode)
 // if you don't want this, set brReplace to false
 void segDrawUtils::drawSegLineSection(SegmentSet &segmentSet, uint8_t startSeg, uint8_t endseg, uint16_t lineNum, uint8_t Pattern[], CRGB palette[], uint8_t colorMode, uint8_t bgColorMode, bool brReplace) {
-    maxSegLength = segmentSet.maxSegLength;
     pixelNum = 0;
     colorFinal = 0;
     uint8_t colorModeTemp = colorMode;
     for (uint8_t i = startSeg; i <= endseg; i++) {
         colorModeTemp = colorMode;
-        pixelNum = getPixelNumFromLineNum(segmentSet, maxSegLength, i, lineNum);
+        pixelNum = getPixelNumFromLineNum(segmentSet, segmentSet.maxSegLength, i, lineNum);
         if (brReplace && Pattern[i] == 0) {
             colorModeTemp = bgColorMode;
         }
@@ -277,8 +284,8 @@ uint16_t segDrawUtils::getPixelNumFromLineNum(SegmentSet &segmentSet, uint16_t m
 //(pixel num is local to the segment set)
 uint8_t segDrawUtils::getLineNumFromPixelNum(SegmentSet &segmentSet, uint16_t segPixelNum){
     //get the segment number and led number of where the pixel is located in the strip
-    getSegLocationFromPixel(segmentSet, segPixelNum, locData );
-    return getLineNumFromPixelNum(segmentSet, locData[1], locData[0]);
+    getSegLocationFromPixel(segmentSet, segPixelNum, locData1 );
+    return getLineNumFromPixelNum(segmentSet, locData1[1], locData1[0]);
 }
 
 //returns the line number (based on the max segment length) of a pixel in a segment
@@ -293,8 +300,8 @@ uint8_t segDrawUtils::getLineNumFromPixelNum(SegmentSet &segmentSet, uint16_t se
 //doesn't need lineNum as argument. If lineNum is needed, it will be determined
 //note segPixelNum is local to the segement set (ie 5th pixel in the whole set)
 void segDrawUtils::setPixelColor(SegmentSet &segmentSet, uint16_t segPixelNum, CRGB color, uint8_t colorMode){
-    getSegLocationFromPixel(segmentSet, segPixelNum, locData);
-    setPixelColor(segmentSet, locData[1], locData[0], color, colorMode);
+    getSegLocationFromPixel(segmentSet, segPixelNum, locData1);
+    setPixelColor(segmentSet, locData1[1], locData1[0], color, colorMode);
 }
 
 //note segPixelNum is local to the segment (ie 5th pixel in the segment)
@@ -334,14 +341,14 @@ void segDrawUtils::setPixelColor(SegmentSet &segmentSet, uint16_t pixelNum, CRGB
 //the passed in color will be set to struct color if color mode is zero
 //segPixelNum is local to the segment set (ie 10th pixel in the whole set)
 void segDrawUtils::getPixelColor(SegmentSet &segmentSet, pixelInfoPS *pixelInfo, CRGB color, uint8_t colorMode, uint16_t segPixelNum){
-    getSegLocationFromPixel(segmentSet, segPixelNum, locData);
-    pixelInfo->segNum = locData[0];
-    pixelInfo->pixelLoc = getSegmentPixel(segmentSet, locData[0], locData[1]);
-    pixelInfo->lineNum = getLineNumFromPixelNum(segmentSet, locData[1], locData[0]);
+    getSegLocationFromPixel(segmentSet, segPixelNum, locData1);
+    pixelInfo->segNum = locData1[0];
+    pixelInfo->pixelLoc = getSegmentPixel(segmentSet, locData1[0], locData1[1]);
+    pixelInfo->lineNum = getLineNumFromPixelNum(segmentSet, locData1[1], locData1[0]);
     if(colorMode == 0){
         pixelInfo->color = color;
     } else {
-        pixelInfo->color = getPixelColor(segmentSet, pixelInfo->pixelLoc, color, colorMode, locData[0], pixelInfo->lineNum);
+        pixelInfo->color = getPixelColor(segmentSet, pixelInfo->pixelLoc, color, colorMode, locData1[0], pixelInfo->lineNum);
     }
 }
 

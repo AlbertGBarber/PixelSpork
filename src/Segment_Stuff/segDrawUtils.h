@@ -71,27 +71,21 @@ namespace segDrawUtils{
         currentTime;
 
     static uint8_t
-        ratio,
-        numSegs,
         numSec;
 
     static uint16_t
-        locData[2],
-        startData[2],
-        endData[2],
+        locData1[2],
+        locData2[2],
         lineNum,
-        count,
-        prevCount,
         lengthSoFar,
-        maxSegLength,
         pixelNum,
         secStartPixel,
         colorModeDom,
         colorModeNum,
         offsetMax,
-        absSecLength,
         startLimit;
     
+    //Don't change these! You need all three to prevent overwrites.
     static int8_t
         step,
         stepDir,

@@ -173,7 +173,7 @@ void SegmentSet::setsegDirectionEvery(uint8_t freq, bool direction, bool startAt
 //checks if a given segment number occurs in the segmentSet at the given freq, accouting for if the 
 //count is started at the first segment or not
 //ie checkDirectionFlip(2, 1, true) will return false, b/c we are checking for every other segment, and we started with the first
-//but, 	checkDirectionFlip(2, 1, false)	will return true, b/c the we are not starting on the first segment
+//but, checkDirectionFlip(2, 1, false)	will return true, b/c the we are not starting on the first segment
 bool SegmentSet::checkSegFreq(uint8_t freq, uint8_t num, bool startAtFirst){
 	uint8_t segNum;
 	uint8_t testNum;
