@@ -35,34 +35,34 @@ namespace segDrawUtils{
         turnSegSetOff(SegmentSet &segmentSet),
         getSegLocationFromPixel(SegmentSet &segmentSet, uint16_t segPixelNum, uint16_t locData[2] ),
         fillSegSetColor(SegmentSet &segmentSet, CRGB color, uint8_t colorMode),
-        fillSegColor(SegmentSet &segmentSet, uint8_t segNum, CRGB color, uint8_t colorMode),
-        fillSegSecColor(SegmentSet &segmentSet, uint8_t segNum, uint16_t secNum, CRGB color, uint8_t colorMode ),
+        fillSegColor(SegmentSet &segmentSet, uint16_t segNum, CRGB color, uint8_t colorMode),
+        fillSegSecColor(SegmentSet &segmentSet, uint16_t segNum, uint16_t secNum, CRGB color, uint8_t colorMode ),
         fillSegLengthColor(SegmentSet &segmentSet, CRGB color, uint8_t colorMode, uint16_t segNum, uint16_t startSegPixel, uint16_t endPixel),
         fillSegSetlengthColor(SegmentSet &segmentSet, CRGB color, uint8_t colorMode, uint16_t startSegPixel, uint16_t endPixel),
         drawSegLine(SegmentSet &segmentSet, uint16_t lineNum, uint8_t Pattern[], CRGB palette[], uint8_t colorMode, uint8_t bgColorMode, bool brReplace),
-        drawSegLineSection(SegmentSet &segmentSet, uint8_t startSeg, uint8_t endseg, uint16_t lineNum, uint8_t Pattern[], CRGB palette[], uint8_t colorMode, uint8_t bgColorMode, bool brReplace),
+        drawSegLineSection(SegmentSet &segmentSet, uint16_t startSeg, uint16_t endseg, uint16_t lineNum, uint8_t Pattern[], CRGB palette[], uint8_t colorMode, uint8_t bgColorMode, bool brReplace),
         drawSegLineSimple(SegmentSet &segmentSet, uint16_t lineNum, CRGB color, uint8_t colorMode),
-        drawSegLineSimpleSection(SegmentSet &segmentSet, uint8_t startSeg, uint8_t endSeg, uint16_t lineNum, CRGB color, uint8_t colorMode),
+        drawSegLineSimpleSection(SegmentSet &segmentSet, uint16_t startSeg, uint16_t endSeg, uint16_t lineNum, CRGB color, uint8_t colorMode),
         setPixelColor(SegmentSet &segmentSet, uint16_t segPixelNum, CRGB color, uint8_t colorMode),
-        setPixelColor(SegmentSet &segmentSet, uint16_t segPixelNum, uint8_t segNum, CRGB color, uint8_t colorMode),
-        setPixelColor(SegmentSet &segmentSet, uint16_t pixelNum, CRGB color, uint8_t colorMode, uint8_t segNum, uint16_t lineNum),
+        setPixelColor(SegmentSet &segmentSet, uint16_t segPixelNum, uint16_t segNum, CRGB color, uint8_t colorMode),
+        setPixelColor(SegmentSet &segmentSet, uint16_t pixelNum, CRGB color, uint8_t colorMode, uint16_t segNum, uint16_t lineNum),
         getPixelColor(SegmentSet &segmentSet, pixelInfoPS *pixelInfo, CRGB color, uint8_t colorMode, uint16_t segPixelNum),
         setGradOffset(SegmentSet &segmentSet, uint16_t offsetMax),
         fadeSegSetToBlackBy(SegmentSet &segmentSet, uint8_t val),
-        fadeSegToBlackBy(SegmentSet &segmentSet, uint8_t segNum, uint8_t val),
-        fadeSegSecToBlackBy(SegmentSet &segmentSet, uint8_t segNum, uint16_t secNum, uint8_t val);
+        fadeSegToBlackBy(SegmentSet &segmentSet, uint16_t segNum, uint8_t val),
+        fadeSegSecToBlackBy(SegmentSet &segmentSet, uint16_t segNum, uint16_t secNum, uint8_t val);
     
     uint8_t 
         getLineNumFromPixelNum(SegmentSet &segmentSet, uint16_t segPixelNum),
-        getLineNumFromPixelNum(SegmentSet &segmentSet, uint16_t segPixelNum, uint8_t segNum);
+        getLineNumFromPixelNum(SegmentSet &segmentSet, uint16_t segPixelNum, uint16_t segNum);
 
     uint16_t
         getSegmentPixel(SegmentSet &segmentSet, uint16_t segPixelNum),
-        getSegmentPixel(SegmentSet &segmentSet, uint8_t segNum, uint16_t num),
-        getPixelNumFromLineNum(SegmentSet &segmentSet, uint16_t maxSegLength, uint8_t segNum, uint16_t lineNum);
+        getSegmentPixel(SegmentSet &segmentSet, uint16_t segNum, uint16_t num),
+        getPixelNumFromLineNum(SegmentSet &segmentSet, uint16_t maxSegLength, uint16_t segNum, uint16_t lineNum);
         
     CRGB
-        getPixelColor(SegmentSet &segmentSet, uint16_t pixelNum, CRGB color, uint8_t colorMode, uint8_t segNum, uint16_t lineNum);
+        getPixelColor(SegmentSet &segmentSet, uint16_t pixelNum, CRGB color, uint8_t colorMode, uint16_t segNum, uint16_t lineNum);
     
     //pre-allocated space for function variables
     //Since these functions are all called a lot, it reduce call times

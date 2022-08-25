@@ -175,8 +175,6 @@ class RollingWavesFastSLPS : public EffectBasePS {
             prevTime = 0;
         
         uint8_t
-            numSegs,
-            longestSeg,
             dimRatio,
             stepTemp,
             currentPattern,
@@ -189,6 +187,7 @@ class RollingWavesFastSLPS : public EffectBasePS {
             
         uint16_t
             numLines,
+            longestSeg,
             numLinesLim,
             pixelNum;
         

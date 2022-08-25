@@ -58,7 +58,7 @@ void FairyLightsSLSeg::genPixelSet(){
     //If in seg mode, then each segment can be a twinkle
     //Otherwise each segment line can be a twinkle
     if(segMode){
-        twinkleRange = (uint16_t)segmentSet.numSegs;
+        twinkleRange = segmentSet.numSegs;
     } else {
         twinkleRange = segmentSet.maxSegLength;
     }

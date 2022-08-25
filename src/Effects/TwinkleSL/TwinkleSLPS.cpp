@@ -180,7 +180,7 @@ void TwinkleSLPS::update(){
                 lineNum = ledArray[i][j];
                 //for each pixel in the segment line we output the cross-fade color based on the 
                 //line color (colorIndexArr[i][j]) and the color mode
-                for(uint8_t k = 0; k < numSegs; k++){
+                for(uint16_t k = 0; k < numSegs; k++){
                     //get the physical pixel location based on the line and seg numbers
                     pixelNum = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, k, lineNum);
                     //grab the background color, accounting for color modes

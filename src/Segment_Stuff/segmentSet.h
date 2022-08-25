@@ -5,6 +5,8 @@
 #include "segmentSection.h"
 #include "segment.h"
 #include "Palette_Stuff/palettePS.h"
+#include "MathUtils/mathUtilsPS.h"
+
 //TODO:
 //-- Scrap turning off segments, full behavior too hard to implement, current behavior is confusing
 //-- Add function somewhere to automatically sync a rainbow or gradent across multiple segment sets 
@@ -151,17 +153,17 @@ An explaination of segment structure:
 						ie, if the segment array has one segment of length 8, and one of length 12, 12 will be the maxSegLength.
 						segArr; a double pointer of type Segment, used to access the segment array.
 					It also gives access to a number of functions:
-						getTotalSegLength(uint8_t segNum): returns the totalLength of the segment specified by the array index (segNum is the section's position in the segment array)
-						getTotalNumSec(uint8_t segNum): returns the total number of sections in the segment specified by the array index.
-						getSectionPtr(uint8_t segNum): returns the pointer to the segment's sections array specified by the array index.
-						getSecStartPixel(uint8_t segNum, uint8_t secNum): returns the start pixel of the specified section in the specified segment. (ie getSecStartPixel(0, 0) would return the start pixel of the first section in the first segment in the segments array)
-						getSecLength(uint8_t segNum, uint8_t secNum): returns the length of the specified section in the specified segment.
-						getSegDirection(uint8_t segNum): returns a bool direction of the specified segment
+						getTotalSegLength(uint16_t segNum): returns the totalLength of the segment specified by the array index (segNum is the section's position in the segment array)
+						getTotalNumSec(uint16_t segNum): returns the total number of sections in the segment specified by the array index.
+						getSectionPtr(uint16_t segNum): returns the pointer to the segment's sections array specified by the array index.
+						getSecStartPixel(uint16_t segNum, uint8_t secNum): returns the start pixel of the specified section in the specified segment. (ie getSecStartPixel(0, 0) would return the start pixel of the first section in the first segment in the segments array)
+						getSecLength(uint16_t segNum, uint8_t secNum): returns the length of the specified section in the specified segment.
+						getSegDirection(uint16_t segNum): returns a bool direction of the specified segment
 						setAllSegDirection(bool dirct): sets all the segments in the segmentSet to the specified direction
-						setSegDirection(uint8_t segNum, bool dirct): sets the direction of the specified segment to the specified direction 
+						setSegDirection(uint16_t segNum, bool dirct): sets the direction of the specified segment to the specified direction 
 						flipSegDirectionEvery(uint8_t freq, bool startAtFirst): flips the direction of every freq segment, starting with the first segment according to startAtFirst
 						setsegDirectionEvery(uint8_t freq, bool direction, bool startAtFirst): sets the direction of every freq segment, starting with the first segment according to startAtFirst
-						setSegActive(uint8_t segNum, bool state): turns a segment on or off, off segments are not drawn onto, and do not count towards the total segment length
+						setSegActive(uint16_t segNum, bool state): turns a segment on or off, off segments are not drawn onto, and do not count towards the total segment length
 					
 					Segment sets also have a number of variables for effecting color modes, and also a gradient palette
 					See Rainbows and Gradients section below for info.
@@ -284,7 +286,7 @@ do this, just use two segementSets.
 
 class SegmentSet {
 	public:
-		SegmentSet(struct CRGB *segLeds, uint16_t segAllLeds, Segment **segmentsArr, uint8_t numSegments);
+		SegmentSet(struct CRGB *segLeds, uint16_t segAllLeds, Segment **segmentsArr, uint16_t numSegments);
 		//Object.*pointerToMember
 		//ObjectPointer->*pointerToMember
 		
@@ -295,23 +297,23 @@ class SegmentSet {
 		  				  		//255 = same brightness as strip
 						  		//DO NOT use this in effects, it is meant as a set-up once type of control
 						  		//Note that effectFader will change this value during fades (but should reset to the original once done)
-	    	segNumMaxSegLength,
-			numSegs,
 			offsetStep = 1; //The number of gradient offset steps applied when the gradOffset is updated 
 
 		//segment set vars
 		uint16_t
+			numSegs, //Total number of segments in the segment set
 			maxSegLength, //the length of the longest segment in the set
+			segNumMaxSegLength, //The number of the seg with the maximum length
 			numLeds, //the total number of pixels in the set
 			numActiveSegLeds, //the number of pixels in all the active segments
-			getTotalSegLength(uint8_t segNum),
-			//getSectionPtr(uint8_t segNum),
-			getSecStartPixel(uint8_t segNum, uint8_t secNum), //only works with continuous sections!!
-			getSecMixPixel(uint8_t segNum, uint16_t pixelNum), //only works with mixed sections!!
-			getTotalNumSec(uint8_t segNum);
+			getTotalSegLength(uint16_t segNum),
+			//getSectionPtr(uint16_t segNum),
+			getSecStartPixel(uint16_t segNum, uint8_t secNum), //only works with continuous sections!!
+			getSecMixPixel(uint16_t segNum, uint16_t pixelNum), //only works with mixed sections!!
+			getTotalNumSec(uint16_t segNum);
 		
 	  	int16_t
-			getSecLength(uint8_t segNum, uint8_t secNum);
+			getSecLength(uint16_t segNum, uint8_t secNum);
 
 		//color mode vars
 		uint16_t
@@ -330,20 +332,20 @@ class SegmentSet {
 	  	bool
 		  	runOffset = false,
 			offsetDirect = true, 
-			getSegDirection(uint8_t segNum),
-			getSegActive(uint8_t segNum);
+			getSegDirection(uint16_t segNum),
+			getSegActive(uint16_t segNum);
 	
 	  	segmentSecCont* 
-			getSecArrPtr(uint8_t segNum);
+			getSecArrPtr(uint16_t segNum);
 		
 		segmentSecMix*  
-			getSecMixArrPtr(uint8_t segNum);
+			getSecMixArrPtr(uint16_t segNum);
 		
 	  	Segment
 			**segArr;
 
 	  	Segment*
-	  		getSegPtr(uint8_t segNum);
+	  		getSegPtr(uint16_t segNum);
 	  
 	    CRGB
 	  	 	*leds; //pointer to the FastLed leds array
@@ -355,11 +357,11 @@ class SegmentSet {
 	  	void
 		  	resetGradVals(),
 			setAllSegDirection(bool direction),
-			setSegDirection(uint8_t segNum, bool dirct),
+			setSegDirection(uint16_t segNum, bool dirct),
 			flipSegDirectionEvery(uint8_t freq, bool startAtFirst),
 			setsegDirectionEvery(uint8_t freq, bool direction, bool startAtFirst),
 			setBrightness(uint8_t newBrightness),
-			setSegActive(uint8_t segNum, bool state);
+			setSegActive(uint16_t segNum, bool state);
 	  
 	private:	
 	  	uint16_t 
@@ -368,7 +370,7 @@ class SegmentSet {
 			getNumActiveSegLeds(void);
 			
 		bool
-			checkSegFreq(uint8_t freq, uint8_t num, bool startAtFirst);
+			checkSegFreq(uint8_t freq, uint16_t segNum, bool startAtFirst);
 };
 
 #endif                

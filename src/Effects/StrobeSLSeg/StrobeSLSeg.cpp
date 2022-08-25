@@ -156,7 +156,7 @@ void StrobeSLSeg::update(){
                     //firstHalf is a bool, so it's either 0 or 1
                     //this will set the loop to either fill in the even or odd segments
                     //firstHalf flips every time we finish a set of pulses
-                    for(uint8_t i = firstHalf; i < numSegs; i += 2){
+                    for(uint16_t i = firstHalf; i < numSegs; i += 2){
                         segDrawUtils::fillSegColor(segmentSet, i, colorOut, modeOut);
                     }
                     break;

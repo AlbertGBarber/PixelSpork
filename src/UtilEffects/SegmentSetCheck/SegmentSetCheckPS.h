@@ -57,11 +57,11 @@ class SegmentSetCheckPS : public EffectBasePS {
             prevTime = 0;
         
         uint8_t
-            mode,
-            numSegs,
-            segNum = 0;
+            mode;
         
         uint16_t
+            numSegs,
+            segNum = 0,
             numLines,
             pixelCount = 1,
             totSegLen;

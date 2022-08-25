@@ -193,8 +193,7 @@ class PrideWPalSLPS : public EffectBasePS {
             hue8,
             brightdepth,
             index,
-            msmultiplier,
-            numSegs;
+            msmultiplier;
         
         uint16_t
             numSteps,
@@ -210,6 +209,7 @@ class PrideWPalSLPS : public EffectBasePS {
             h16_128,
             pixelNum,
             lineNum,
+            numSegs,
             numLines;
     
         CRGB

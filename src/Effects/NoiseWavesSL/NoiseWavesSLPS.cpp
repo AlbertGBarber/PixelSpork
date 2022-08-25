@@ -69,7 +69,7 @@ void NoiseWavesSLPS::update(){
         noisePhase = inoise8( currentTime/phaseScale ) + offset;
 
         //run over each segment line and set color and brighhtness values for the whole line
-        for (uint8_t i = 0; i < numLines; i++) {
+        for (uint16_t i = 0; i < numLines; i++) {
             //Get a changing frequency multplier, which helps produce the waves
             //We need this to change as we loop or all the pixels will have the same wave value
             //we cap this to keep the frequency from getting too high

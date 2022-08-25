@@ -181,7 +181,6 @@ class RollingWavesSL2PS : public EffectBasePS {
             prevTime = 0;
         
         uint8_t
-            numSegs,
             dimRatio,
             stepTemp,
             currentPattern,
@@ -193,6 +192,7 @@ class RollingWavesSL2PS : public EffectBasePS {
             blendLimit;
             
         uint16_t
+            numSegs,
             numLines,
             numLinesLim,
             pixelNum,

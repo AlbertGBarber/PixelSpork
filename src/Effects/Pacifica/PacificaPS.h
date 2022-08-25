@@ -69,7 +69,6 @@ class PacificaPS : public EffectBasePS {
             deltams21;
         
         uint8_t
-            numSegs,
             basethreshold,
             wave,
             threshold,
@@ -80,6 +79,7 @@ class PacificaPS : public EffectBasePS {
         uint16_t 
             totBlendLength,
             totSegLen,
+            numSegs,
             pixelNum,
             sCIStart1,
             sCIStart2,

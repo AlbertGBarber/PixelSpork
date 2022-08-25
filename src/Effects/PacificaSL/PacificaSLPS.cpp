@@ -104,7 +104,7 @@ void PacificaSLPS::doOneLayer(palettePS *palette, uint16_t cistart, uint16_t wav
         //output the color to all the line segment pixels
         //Since the colors are additive, pixels in multiple lines will be brighter than those in single lines
         //This is more or less eqivalent to doing addWhitecaps()
-        for(uint8_t j = 0; j < numSegs; j++){
+        for(uint16_t j = 0; j < numSegs; j++){
             pixelNum = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, j, i);
             segmentSet.leds[pixelNum] += colorOut;
         }
@@ -122,7 +122,7 @@ void PacificaSLPS::addWhitecaps(){
     for (uint16_t i = 0; i < numLines; i++) {
         threshold = scale8( sin8( wave ), 20) + basethreshold;
         wave += 7;
-        for(uint8_t j = 0; j < numSegs; j++){
+        for(uint16_t j = 0; j < numSegs; j++){
             pixelNum = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, j, i);
             lightLvl = segmentSet.leds[pixelNum].getAverageLight();
             if( lightLvl > threshold && lightLvl < thresholdMax) {

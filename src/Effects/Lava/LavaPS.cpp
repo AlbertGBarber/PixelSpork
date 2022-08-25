@@ -64,7 +64,7 @@ void LavaPS::update(){
         numSegs = segmentSet.numSegs;
         totBlendLength = blendSteps * palette->length;
         //run over each of the leds in the segment set and set a noise/color value
-        for (uint8_t i = 0; i < numSegs; i++) {
+        for (uint16_t i = 0; i < numSegs; i++) {
             totSegLen = segmentSet.getTotalSegLength(i);
             for(uint16_t j = 0; j < totSegLen; j++){
                 

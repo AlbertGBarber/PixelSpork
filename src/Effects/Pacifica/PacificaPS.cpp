@@ -61,7 +61,7 @@ void PacificaPS::doOneLayer(palettePS *palette, uint16_t cistart, uint16_t waves
     waveangle = ioff;
     wavescale_half = (wavescale / 2) + 20;
     //Run over each of the leds and set the color
-    for (uint8_t i = 0; i < numSegs; i++) {
+    for (uint16_t i = 0; i < numSegs; i++) {
         totSegLen = segmentSet.getTotalSegLength(i);
         for(uint16_t j = 0; j < totSegLen; j++){
             waveangle += 250;
@@ -86,7 +86,7 @@ void PacificaPS::addWhitecaps(){
     basethreshold = beatsin8( 9, 55, 65);
     wave = beat8( 7 );
         
-    for (uint8_t i = 0; i < numSegs; i++) {
+    for (uint16_t i = 0; i < numSegs; i++) {
         totSegLen = segmentSet.getTotalSegLength(i);
         for(uint16_t j = 0; j < totSegLen; j++){
             threshold = scale8( sin8( wave ), 20) + basethreshold;
@@ -104,7 +104,7 @@ void PacificaPS::addWhitecaps(){
 
  // Deepen the blues and greens
 void PacificaPS::deepenColors(){
-    for (uint8_t i = 0; i < numSegs; i++) {
+    for (uint16_t i = 0; i < numSegs; i++) {
         totSegLen = segmentSet.getTotalSegLength(i);
         for(uint16_t j = 0; j < totSegLen; j++){
             pixelNum = segDrawUtils::getSegmentPixel(segmentSet, i, j);

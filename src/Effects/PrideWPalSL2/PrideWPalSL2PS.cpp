@@ -124,7 +124,7 @@ void PrideWPalSL2PS::update(){
         //For each segment we first get a color for the whole segment
         //then for each segment line in the segment we modify the color by the brightness 
         //to create the brightness waves
-        for (uint8_t i = 0; i < numSegs; i++) {
+        for (uint16_t i = 0; i < numSegs; i++) {
             //get the next color hue
             hue16 += hueinc16;
             hue8 = hue16 / 256;

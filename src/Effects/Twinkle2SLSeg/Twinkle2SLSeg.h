@@ -201,13 +201,13 @@ class Twinkle2SLSeg : public EffectBasePS {
             prevTime = 0;
         
         uint8_t
-            numSegs,
             twinkleFadeInSteps,
             twinkleFadeOutSteps;
 
         uint16_t
             twinkleLoc,
             numLines,
+            numSegs,
             pixelNum,
             twinkleStep;
         

@@ -162,7 +162,6 @@ class NoiseGradSLPS : public EffectBasePS {
             index,
             noisePhase,
             phaseOffset = 0,
-            numSegs,
             bri;
 
         uint16_t
@@ -172,6 +171,7 @@ class NoiseGradSLPS : public EffectBasePS {
             colorOffset = 0,
             colorOffsetTot,
             pixelNum,
+            numSegs,
             totBlendLength;
         
         CRGB 

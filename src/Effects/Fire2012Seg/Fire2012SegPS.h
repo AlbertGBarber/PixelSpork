@@ -105,10 +105,9 @@ class Fire2012SegPS : public EffectBasePS {
             cooldown,
             paletteLength,
             //paletteLimit,
-            paletteSecLen,
-            sparkPoint,
             //secHeatLimit,
-            numSegs;
+            paletteSecLen,
+            sparkPoint;
         
         uint16_t
             *heatSegStarts,
@@ -116,7 +115,8 @@ class Fire2012SegPS : public EffectBasePS {
             heatIndex,
             segLength,
             ledLoc,
-            numLeds;
+            numLeds,
+            numSegs;
         
         CRGB 
             //startColor,

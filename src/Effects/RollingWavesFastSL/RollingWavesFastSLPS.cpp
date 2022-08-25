@@ -183,7 +183,6 @@ void RollingWavesFastSLPS::update(){
     if( ( currentTime - prevTime ) >= *rate ) {
         prevTime = currentTime;
 
-        numSegs = segmentSet.numSegs;
         //fetch some core vars
         numLines = segmentSet.maxSegLength;
         numLinesLim = numLines - 1;

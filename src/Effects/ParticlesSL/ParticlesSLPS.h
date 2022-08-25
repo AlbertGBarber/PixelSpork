@@ -203,7 +203,6 @@ class ParticlesSLPS : public EffectBasePS {
             directStep;
 
         uint8_t
-            numSegs,
             trailType,
             numParticles,
             trailSize,
@@ -220,6 +219,7 @@ class ParticlesSLPS : public EffectBasePS {
             trailLineNum,
             longestSeg,
             numLines,
+            numSegs,
             pixelNum,
             getTrailLedLoc(bool trailDirect, uint8_t trailPixelNum, uint16_t maxPosition);
 

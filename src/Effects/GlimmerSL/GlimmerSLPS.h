@@ -112,12 +112,10 @@ class GlimmerSLPS : public EffectBasePS {
             currentTime,
             prevTime = 0;
         
-        uint8_t
-            numSegs;
-        
         uint16_t
             arrayLength,
             numLines,
+            numSegs,
             pixelNum;
         
         CRGB 

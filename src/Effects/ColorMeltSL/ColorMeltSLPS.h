@@ -116,7 +116,6 @@ class ColorMeltSLPS : public EffectBasePS {
             prevTime = 0;
         
         uint8_t
-            numSegs,
             t1,
             t2,
             v,
@@ -128,6 +127,7 @@ class ColorMeltSLPS : public EffectBasePS {
             hl,
             pixelNum,
             numLines,
+            numSegs,
             blendLength;
     
         CRGB 

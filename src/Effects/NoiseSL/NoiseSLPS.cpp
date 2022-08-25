@@ -102,7 +102,7 @@ void NoiseSLPS::fillnoise8() {
     }
   
     //For each segment line do the following:
-    for (uint8_t i = 0; i < numLines; i++) {
+    for (uint16_t i = 0; i < numLines; i++) {
         ioffset = scale * i;
         //current segment line's start index in the noise array
         noiseStart = i * numSegs;
@@ -139,7 +139,7 @@ void NoiseSLPS::fillnoise8() {
 void NoiseSLPS::mapNoiseSegsWithPalette(){
   
     //For each segment line do the following:
-    for (uint8_t i = 0; i < numLines; i++) {
+    for (uint16_t i = 0; i < numLines; i++) {
         //current segment line's start index in the noise array
         noiseStart = i * numSegs; 
         for (uint16_t j = 0; j < numSegs; j++) {

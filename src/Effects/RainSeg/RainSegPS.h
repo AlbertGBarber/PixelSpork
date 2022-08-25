@@ -218,7 +218,6 @@ class RainSegPS : public EffectBasePS {
             trailDirectionAdj;
 
         uint8_t
-            numSegs = 0, //for first init function call
             partTrailType,
             partTrailSize,
             posOffset,
@@ -226,6 +225,7 @@ class RainSegPS : public EffectBasePS {
             dimRatio;
 
         uint16_t 
+            numSegs = 0, //for first init function call
             pixelPosTemp,
             particleIndex,
             totPartSize,

@@ -191,7 +191,7 @@ void RollingWavesSLPS::update(){
             //reverse the line number so that the effect moves positivly along the strip
             lineNum = numLines - i - 1;
 
-            for(uint8_t j = 0; j < numSegs; j++){
+            for(uint16_t j = 0; j < numSegs; j++){
                 //get the physical pixel location based on the line and seg numbers
                 pixelNum = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, j, lineNum);
                 //We get the pixel info for the current led, supplying the background or wave color info

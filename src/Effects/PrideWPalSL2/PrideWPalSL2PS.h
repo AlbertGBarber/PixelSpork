@@ -180,9 +180,7 @@ class PrideWPalSL2PS : public EffectBasePS {
             hue8,
             brightdepth,
             index,
-            msmultiplier,
-            numSegs,
-            segOut;
+            msmultiplier;
 
         uint16_t
             numSteps,
@@ -197,7 +195,9 @@ class PrideWPalSL2PS : public EffectBasePS {
             bri16,
             h16_128,
             pixelnumber,
-            numLines;
+            numLines,
+            numSegs,
+            segOut;
     
         CRGB
             newColor,

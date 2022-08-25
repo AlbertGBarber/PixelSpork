@@ -68,7 +68,6 @@ class RainbowFontsSLPS : public EffectBasePS {
         
         
         uint8_t
-            numSegs,
             t1,
             c;
         
@@ -76,6 +75,7 @@ class RainbowFontsSLPS : public EffectBasePS {
             hl,
             pixelNum,
             lineNum,
+            numSegs,
             numLines;
     
         CRGB 

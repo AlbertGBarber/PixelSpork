@@ -227,7 +227,6 @@ class RainSLPS : public EffectBasePS {
             trailDirectionAdj;
 
         uint8_t
-            numSegs,
             partTrailType,
             partTrailSize,
             posOffset,
@@ -236,6 +235,7 @@ class RainSLPS : public EffectBasePS {
 
         uint16_t 
             numLines = 0, //for first init function call
+            numSegs,
             pixelPosTemp,
             particleIndex,
             totPartSize,

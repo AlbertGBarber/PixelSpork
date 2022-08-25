@@ -125,13 +125,13 @@ class TwinkleSLPS : public EffectBasePS {
             prevTime = 0;
         
         uint8_t
-            numSegs,
             paletteLength,
             step,
             totalSteps = 0,
             totFadeSteps;
 
         uint16_t
+            numSegs,
             numLines,
             lineNum,
             pixelNum,

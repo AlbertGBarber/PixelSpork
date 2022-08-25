@@ -124,8 +124,7 @@ class Noise16PS : public EffectBasePS {
         
         uint8_t
             bri,
-            noise,
-            numSegs;
+            noise;
 
         uint16_t
             pixelCount = 0,
@@ -134,7 +133,8 @@ class Noise16PS : public EffectBasePS {
             shift_y,
             totBlendLength,
             totSegLen,
-            pixelNum;
+            pixelNum,
+            numSegs;
         
         uint32_t 
             real_x,

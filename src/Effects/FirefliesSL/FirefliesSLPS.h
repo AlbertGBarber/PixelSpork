@@ -188,14 +188,14 @@ class FirefliesSLPS : public EffectBasePS {
             flickerBri,
             fadeMax,
             fadeType,
-            dimRatio,
-            numSegs;
+            dimRatio;
 
         uint16_t 
             partLife,
             partPos,
             deltaTime,
             numLines,
+            numSegs,
             pixelNum,
             longestSeg,
             *particlePrevPos;

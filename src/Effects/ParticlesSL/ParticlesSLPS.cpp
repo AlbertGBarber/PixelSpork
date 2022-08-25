@@ -193,7 +193,7 @@ void ParticlesSLPS::update(){
             //draw the particle trails and body on each segment in the segment set at the particle's line position
             //Note that we basically re-caculate the particle colors for each segment, which isn't the best
             //but we more-or-less need to do it this way to deal with color modes
-            for(uint8_t j = 0; j < numSegs; j++){
+            for(uint16_t j = 0; j < numSegs; j++){
                 //if we have trails, draw them
                 //if it has two, we draw the trail in front of the particle first, followed by the one behind it
                 //this gets the correct look when bouncing with two trails

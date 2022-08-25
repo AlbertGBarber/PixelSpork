@@ -149,8 +149,7 @@ class PoliceStrobeSLPS : public EffectBasePS {
             pulseCount = 1,
             randGuess,
             prevGuess = 0, //the last color index guessed
-            modeOut,
-            numSegs;
+            modeOut;
 
         uint16_t
             lightStart,

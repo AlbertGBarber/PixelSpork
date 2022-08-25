@@ -125,11 +125,11 @@ class NoiseWavesSLPS : public EffectBasePS {
             noisePhase,
             offset = 0,
             index,
-            numSegs,
             bri;
 
         uint16_t
             numLines,
+            numSegs,
             colorIndex,
             pixelNum,
             totBlendLength;

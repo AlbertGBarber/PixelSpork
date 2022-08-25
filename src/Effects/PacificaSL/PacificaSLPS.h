@@ -95,7 +95,6 @@ class PacificaSLPS : public EffectBasePS {
             deltams21;
         
         uint8_t
-            numSegs,
             basethreshold,
             wave,
             threshold,
@@ -105,6 +104,7 @@ class PacificaSLPS : public EffectBasePS {
 
         uint16_t 
             numLines,
+            numSegs,
             totBlendLength,
             pixelNum,
             sCIStart1,

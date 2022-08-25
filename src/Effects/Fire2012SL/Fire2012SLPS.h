@@ -114,14 +114,14 @@ class Fire2012SLPS : public EffectBasePS {
             cooldown,
             paletteLength,
             //paletteLimit,
-            paletteSecLen,
-            sparkPoint,
             //secHeatLimit,
-            numSegs,
-            segNum;
+            paletteSecLen,
+            sparkPoint;
         
         uint16_t
             numLines,
+            numSegs,
+            segNum,
             heatSecStart,
             heatIndex,
             ledLoc;

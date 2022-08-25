@@ -97,14 +97,14 @@ class LavaPS : public EffectBasePS {
             prevTime = 0;
         
         uint8_t
-            brightness,
-            numSegs;
+            brightness;
 
         uint16_t
             pixelCount = 0,
             index,
             totBlendLength,
             totSegLen,
+            numSegs,
             pixelNum;
         
         bool

@@ -134,7 +134,6 @@ class EdgeBurstSLPS : public EffectBasePS {
             edge;
         
         uint8_t
-            numSegs,
             beatVal,
             t1,
             f,
@@ -145,7 +144,8 @@ class EdgeBurstSLPS : public EffectBasePS {
             offset = 0,
             blendLength,
             pixelNum,
-            numLines;
+            numLines,
+            numSegs;
         
         bool    
             offsetFlipFlop = true;

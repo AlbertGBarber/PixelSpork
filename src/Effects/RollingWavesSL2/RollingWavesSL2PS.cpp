@@ -210,7 +210,7 @@ void RollingWavesSL2PS::update(){
         //prep for the loop below.
         //We need to get the pixel locations of the final segment line
         //(Which is the one the loop starts on)
-        for(uint8_t j = 0; j < numSegs; j++){
+        for(uint16_t j = 0; j < numSegs; j++){
             nextLine[j] = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, j, numLinesLim);
         }
 
@@ -234,7 +234,7 @@ void RollingWavesSL2PS::update(){
                 //Draw the line
                 //Note that we only need to the pixels from the nextLine array
                 //because they were looked up in the previous loop step
-                for(uint8_t j = 0; j < numSegs; j++){
+                for(uint16_t j = 0; j < numSegs; j++){
                     //The nextPixelNumber from the previous loop iteration is now
                     //the pixelNumber for this iteration
                     pixelNum = nextLine[j];
@@ -244,7 +244,7 @@ void RollingWavesSL2PS::update(){
                 //copy the pixel colors from the previous line to the current one
                 //Note that this is where the copping "error" occurs where colors mis-match 
                 //between multiple segment lines of different lengths
-                for(uint8_t j = 0; j < numSegs; j++){
+                for(uint16_t j = 0; j < numSegs; j++){
                     //The pixel locations from the previous loop are now the current ones
                     //and we now need to fill in the next line locations
                     pixelNum = nextLine[j];

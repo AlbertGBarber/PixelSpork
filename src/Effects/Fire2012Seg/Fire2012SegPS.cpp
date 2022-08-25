@@ -39,7 +39,7 @@ void Fire2012SegPS::reset(){
     uint16_t segmentSetLength = 0;
     heatSegStarts = new uint16_t[numSegs];
     // get the total segmentSet length, and set the starting offsets
-    for (uint8_t i = 0; i < numSegs; i++) {
+    for (uint16_t i = 0; i < numSegs; i++) {
         heatSegStarts[i] = segmentSetLength; // the start offsets are just the lengths of each segment
         segmentSetLength += segmentSet.getTotalSegLength(i);
     }
@@ -72,7 +72,7 @@ void Fire2012SegPS::update(){
         prevTime = currentTime;
 
         //For each segment do the following:
-        for (uint8_t j = 0; j < numSegs; j++) {
+        for (uint16_t j = 0; j < numSegs; j++) {
             //get the length of the segment we're workging on
             segLength = segmentSet.getTotalSegLength(j);
 

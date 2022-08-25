@@ -135,18 +135,18 @@ class GradientCycleFastSegPS : public EffectBasePS {
         int8_t
             loopStep;
         
-        int16_t
+        int32_t
             endLimit,
             startLimit, 
             coloredSeg;
 
         uint8_t
-            numSegs,
-            numSegsLim,
             currentPattern,
             nextPattern;
         
         uint16_t
+            numSegs,
+            numSegsLim,
             pixelNum,
             patternCount = 0;
 

@@ -210,7 +210,7 @@ void Twinkle2SLSeg::update(){
 void Twinkle2SLSeg::drawLineTwinkle(){
     //draw twinkle along it's segment line
     //ie fill in all the pixels on the twinkle's segment line
-    for(uint8_t j = 0; j < numSegs; j++){
+    for(uint16_t j = 0; j < numSegs; j++){
         //get the physical pixel location based on the line and seg numbers
         pixelNum = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, j, twinkleLoc);
         //grab the background color, accounting for color modes

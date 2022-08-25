@@ -175,7 +175,7 @@ void GlimmerSLPS::update(){
 
             //We draw the glimmers along segment lines, so for each glimmer location
             //we need to fill in all the segment pixesl on the line
-            for(uint8_t j = 0; j < numSegs; j++){
+            for(uint16_t j = 0; j < numSegs; j++){
                 //get the physical pixel location
                 pixelNum = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, j, fadePixelLocs[i]);
 

@@ -151,7 +151,6 @@ class RollingWavesSLPS : public EffectBasePS {
             prevTime = 0;
         
         uint8_t
-            numSegs,
             dimRatio,
             stepTemp,
             currentPattern,
@@ -164,6 +163,7 @@ class RollingWavesSLPS : public EffectBasePS {
             blendStep;
         
         uint16_t
+            numSegs,
             pixelNum,
             lineNum,
             numLines;

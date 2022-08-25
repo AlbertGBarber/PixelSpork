@@ -128,7 +128,7 @@ void RainSegPS::setupDrops(uint8_t newMaxNumDrops){
 
     //set all the particles to inactive
     //and set their spawn postions
-    for (uint8_t i = 0; i < numSegs; i++) {
+    for (uint16_t i = 0; i < numSegs; i++) {
         for (uint8_t j = 0; j < maxNumDrops; j++) {
             particleIndex = i * maxNumDrops + j;
             partActive[particleIndex] = false;
@@ -233,7 +233,7 @@ void RainSegPS::update(){
             //If it's spawned, set it to active and its position to zero
             //and randomize it properties (speed, size, etc)
             //the draw the particle head in the 0th position
-        for (uint8_t i = 0; i < numSegs; i++) {
+        for (uint16_t i = 0; i < numSegs; i++) {
             sectionEnd = segmentSet.getTotalSegLength(i);
             //sectionStart = 0;
             //reset the spawnOkTest for each segment

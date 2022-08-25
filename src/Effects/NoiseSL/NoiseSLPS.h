@@ -160,7 +160,6 @@ class NoiseSLPS : public EffectBasePS {
         
         uint8_t
             *noise,
-            numSegs,
             noiseData,
             oldData,
             newData,
@@ -171,6 +170,7 @@ class NoiseSLPS : public EffectBasePS {
             totBlendLength,
             pixelNum,
             numLines,
+            numSegs,
             colorIndex,
             scale,
             scaleTarget,

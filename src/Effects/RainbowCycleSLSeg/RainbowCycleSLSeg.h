@@ -85,12 +85,10 @@ class RainbowCycleSLSeg : public EffectBasePS {
         int8_t
             stepDirect;
         
-        uint8_t
-            numSegs;
-        
         uint16_t
             cycleCount,
             numLines,
+            numSegs,
             maxCycleLength,
             stepVal;
         

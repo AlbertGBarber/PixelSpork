@@ -277,7 +277,7 @@ void FirefliesSLPS::drawParticlePixel(particlePS *particlePtr, uint16_t partNum)
     //draw the particle's line across the segments
     //note that, to account for color modes, we get the target particle and background colors for each 
     //pixel in the line
-    for(uint8_t i = 0; i < numSegs; i++){
+    for(uint16_t i = 0; i < numSegs; i++){
         //get the pixel's physical location and adjust for any color modes
         //also fetch the background and particle color at this point 
         pixelNum = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, i, partPos);

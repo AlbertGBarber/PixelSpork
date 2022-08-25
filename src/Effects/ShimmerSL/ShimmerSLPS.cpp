@@ -76,7 +76,7 @@ void ShimmerSLPS::update(){
             shimmerVal = 255 - random8(shimmerMin, shimmerMax);
             color = pickColor();
 
-            for(uint8_t j = 0; j < numSegs; j++){
+            for(uint16_t j = 0; j < numSegs; j++){
                 pixelNum = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, j, i);
 
                 colorOut = segDrawUtils::getPixelColor(segmentSet, pixelNum, color, colorMode, j, i);

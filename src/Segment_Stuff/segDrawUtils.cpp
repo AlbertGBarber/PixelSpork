@@ -33,7 +33,7 @@ void segDrawUtils::getSegLocationFromPixel(SegmentSet &segmentSet, uint16_t segP
    //so we set the led location to dLed, which will be ignored when trying to write out any colors
    locData1[0] = 0;
    locData1[1] = dLed; 
-    for (uint8_t i = 0; i < segmentSet.numSegs; i++) {
+    for (uint16_t i = 0; i < segmentSet.numSegs; i++) {
         //if(segmentSet.getSegActive(i)){ //only count active segments
             lengthSoFar += segmentSet.getTotalSegLength(i);
             if( (lengthSoFar - 1) >= segPixelNum){
@@ -48,7 +48,7 @@ void segDrawUtils::getSegLocationFromPixel(SegmentSet &segmentSet, uint16_t segP
 //finds the pixel number of the pixel at a given position in a segment
 //ie we want to find the pixel number of the 5th pixel in the second segment
 //if the segment is in the reverse direction we want the pixel for the end of the segment
-uint16_t segDrawUtils::getSegmentPixel(SegmentSet &segmentSet, uint8_t segNum, uint16_t segPixelNum) {
+uint16_t segDrawUtils::getSegmentPixel(SegmentSet &segmentSet, uint16_t segNum, uint16_t segPixelNum) {
     
     //Switch how we output to match the two possible segment section types
     //If the first if statment is true, then the segment has continuous sections, with starting pixels and lengths
@@ -130,16 +130,16 @@ void segDrawUtils::turnSegSetOff(SegmentSet &segmentSet){
 //fills and entire segment set with a color
 //ie all its segments and all their sections
 void segDrawUtils::fillSegSetColor(SegmentSet &segmentSet, CRGB color, uint8_t colorMode){
-    for(uint8_t i = 0; i < segmentSet.numSegs; i++){
+    for(uint16_t i = 0; i < segmentSet.numSegs; i++){
         fillSegColor(segmentSet, i, color, colorMode);
     }
 }
 
 // fills a segment with a specific color
-void segDrawUtils::fillSegColor(SegmentSet &segmentSet, uint8_t segNum, CRGB color, uint8_t colorMode) {
+void segDrawUtils::fillSegColor(SegmentSet &segmentSet, uint16_t segNum, CRGB color, uint8_t colorMode) {
     numSec = segmentSet.getTotalNumSec(segNum);
     // run through segment's sections, fetch the startPixel and length of each, then color each pixel
-    for (int i = 0; i < numSec; i++) {
+    for (uint8_t i = 0; i < numSec; i++) {
         fillSegSecColor(segmentSet, segNum, i, color, colorMode );
     }
 }
@@ -147,7 +147,7 @@ void segDrawUtils::fillSegColor(SegmentSet &segmentSet, uint8_t segNum, CRGB col
 //fills a segment section with a specific color 
 //(ex: a segment section has three sub sections: {1, 4} , {8, 3}, {14, 8}) (so 4 pixels starting at 1, 3 starting at 8, and 8 starting at 14)
 //this function fills all sections with a color
-void segDrawUtils::fillSegSecColor(SegmentSet &segmentSet, uint8_t segNum, uint16_t secNum, CRGB color, uint8_t colorMode ){
+void segDrawUtils::fillSegSecColor(SegmentSet &segmentSet, uint16_t segNum, uint16_t secNum, CRGB color, uint8_t colorMode ){
     secLength = segmentSet.getSecLength(segNum, secNum);
 
     //Switch how we output to match the two possible segment section types
@@ -190,7 +190,7 @@ void segDrawUtils::fillSegLengthColor(SegmentSet &segmentSet, CRGB color, uint8_
     //below is the fastest way to do this
     //there's no point in trying to split the length into partially and completely filled segement sections
     //because in the end you need to call getSegmentPixel() for each pixel anyway
-    for(int i = startSegPixel; i <= endPixel; i++){
+    for(uint16_t i = startSegPixel; i <= endPixel; i++){
         setPixelColor(segmentSet, i, segNum, color, colorMode);
     }
 }
@@ -221,7 +221,7 @@ void segDrawUtils::fillSegSetlengthColor(SegmentSet &segmentSet, CRGB color, uin
             fillSegLengthColor(segmentSet, color, colorMode, locData1[0], locData1[1], locData2[1]);
         } else { //general case
             fillSegLengthColor(segmentSet, color, colorMode, locData1[0], locData1[1], segmentSet.getTotalSegLength(locData1[0]) - 1 );
-            for(int i = locData1[0] + 1 ; i < locData2[0]; i++){
+            for(uint16_t i = locData1[0] + 1 ; i < locData2[0]; i++){
                 fillSegColor(segmentSet, i, color, colorMode);
             }
             fillSegLengthColor(segmentSet, color, colorMode, locData2[0], 0, locData2[1]);
@@ -242,11 +242,11 @@ void segDrawUtils::drawSegLine(SegmentSet &segmentSet, uint16_t lineNum, uint8_t
 // if brReplace is true, any part of the pattern with a value of zero (ie first element in the palette) will be treated as a background colored pixel
 // and will use bgColorMode for it's color mode (same modes as colorMode)
 // if you don't want this, set brReplace to false
-void segDrawUtils::drawSegLineSection(SegmentSet &segmentSet, uint8_t startSeg, uint8_t endseg, uint16_t lineNum, uint8_t Pattern[], CRGB palette[], uint8_t colorMode, uint8_t bgColorMode, bool brReplace) {
+void segDrawUtils::drawSegLineSection(SegmentSet &segmentSet, uint16_t startSeg, uint16_t endseg, uint16_t lineNum, uint8_t Pattern[], CRGB palette[], uint8_t colorMode, uint8_t bgColorMode, bool brReplace) {
     pixelNum = 0;
     colorFinal = 0;
     uint8_t colorModeTemp = colorMode;
-    for (uint8_t i = startSeg; i <= endseg; i++) {
+    for (uint16_t i = startSeg; i <= endseg; i++) {
         colorModeTemp = colorMode;
         pixelNum = getPixelNumFromLineNum(segmentSet, segmentSet.maxSegLength, i, lineNum);
         if (brReplace && Pattern[i] == 0) {
@@ -266,8 +266,8 @@ void segDrawUtils::drawSegLineSimple(SegmentSet &segmentSet, uint16_t lineNum, C
 
 // draws a segment line of one color between startSeg and endSeg (including endSeg)
 // does not need a palette or pattern,
-void segDrawUtils::drawSegLineSimpleSection(SegmentSet &segmentSet, uint8_t startSeg, uint8_t endSeg, uint16_t lineNum, CRGB color, uint8_t colorMode) {
-    for (uint8_t i = startSeg; i <= endSeg; i++) { // for each segment, set the color, if we're in rainbow mode, set the rainbow color
+void segDrawUtils::drawSegLineSimpleSection(SegmentSet &segmentSet, uint16_t startSeg, uint16_t endSeg, uint16_t lineNum, CRGB color, uint8_t colorMode) {
+    for (uint16_t i = startSeg; i <= endSeg; i++) { // for each segment, set the color, if we're in rainbow mode, set the rainbow color
         pixelNum = getPixelNumFromLineNum(segmentSet, segmentSet.maxSegLength, i, lineNum);
         setPixelColor(segmentSet, pixelNum, color, colorMode, i, lineNum);
     }
@@ -275,7 +275,7 @@ void segDrawUtils::drawSegLineSimpleSection(SegmentSet &segmentSet, uint8_t star
 
 // retuns the pixel number located on segment segNum located along line lineNum where the total number of lines matches the pixels in the longest segment
 // in other words, will return a pixel such that you can draw a straight line accross all segments, using the longest segment as the basis
-uint16_t segDrawUtils::getPixelNumFromLineNum(SegmentSet &segmentSet, uint16_t maxSegLength, uint8_t segNum, uint16_t lineNum) { 
+uint16_t segDrawUtils::getPixelNumFromLineNum(SegmentSet &segmentSet, uint16_t maxSegLength, uint16_t segNum, uint16_t lineNum) { 
     //This formula dedicated to my father, who saved me from many hours of head-scratching in an instant
     return getSegmentPixel(segmentSet, segNum, ( (lineNum * segmentSet.getTotalSegLength(segNum)) / maxSegLength) ); 
 }
@@ -290,7 +290,7 @@ uint8_t segDrawUtils::getLineNumFromPixelNum(SegmentSet &segmentSet, uint16_t se
 
 //returns the line number (based on the max segment length) of a pixel in a segment
 //(pixel num is local to the segment number)
-uint8_t segDrawUtils::getLineNumFromPixelNum(SegmentSet &segmentSet, uint16_t segPixelNum, uint8_t segNum){
+uint8_t segDrawUtils::getLineNumFromPixelNum(SegmentSet &segmentSet, uint16_t segPixelNum, uint16_t segNum){
     //the formula below is the same as the one in getPixelNumFromLineNum
     //but solving for lineNum instead of pixelNum
     return (uint16_t)(segPixelNum * segmentSet.maxSegLength) / segmentSet.getTotalSegLength(segNum);
@@ -305,7 +305,7 @@ void segDrawUtils::setPixelColor(SegmentSet &segmentSet, uint16_t segPixelNum, C
 }
 
 //note segPixelNum is local to the segment (ie 5th pixel in the segment)
-void segDrawUtils::setPixelColor(SegmentSet &segmentSet, uint16_t segPixelNum, uint8_t segNum, CRGB color, uint8_t colorMode){
+void segDrawUtils::setPixelColor(SegmentSet &segmentSet, uint16_t segPixelNum, uint16_t segNum, CRGB color, uint8_t colorMode){
     pixelNum = getSegmentPixel(segmentSet, segNum, segPixelNum);
     lineNum = 0;
     if(colorMode == 4 || colorMode == 10){
@@ -317,7 +317,7 @@ void segDrawUtils::setPixelColor(SegmentSet &segmentSet, uint16_t segPixelNum, u
 //Sets color of target pixel (actual address of the led, not local to segment)
 //also adjusts the output color to the brightness of the segmentSet
 //see getPixelColor() for explanation of colorMode and other inputs
-void segDrawUtils::setPixelColor(SegmentSet &segmentSet, uint16_t pixelNum, CRGB color, uint8_t colorMode, uint8_t segNum, uint16_t lineNum){
+void segDrawUtils::setPixelColor(SegmentSet &segmentSet, uint16_t pixelNum, CRGB color, uint8_t colorMode, uint16_t segNum, uint16_t lineNum){
     if( pixelNum == dLed || !segmentSet.getSegActive(segNum) ){
         return; //if we are given a dummy pixel, or the segment isn't active, don't try to color it
     }
@@ -377,7 +377,7 @@ void segDrawUtils::getPixelColor(SegmentSet &segmentSet, pixelInfoPS *pixelInfo,
 //By changing these values you can create shorter or longer rainbows/gradients
 //(note that rainbows will repeat every 255 steps, while gradients will be stretched over them)
 //You can the use segmentSet's gradOffset to shift the gradient across the pixels
-CRGB segDrawUtils::getPixelColor(SegmentSet &segmentSet, uint16_t pixelNum, CRGB color, uint8_t colorMode, uint8_t segNum, uint16_t lineNum){
+CRGB segDrawUtils::getPixelColor(SegmentSet &segmentSet, uint16_t pixelNum, CRGB color, uint8_t colorMode, uint16_t segNum, uint16_t lineNum){
     //if( pixelNum == dLed ){
         //return color; //if we're passed in a dummy led, just return the current color b/c it won't be output
     //}
@@ -467,14 +467,14 @@ void segDrawUtils::setGradOffset(SegmentSet &segmentSet, uint16_t offsetMax){
 //fades an entire segment set to black by a certain percentage (out of 255)
 //uses FastLED's fadeToBlackBy function
 void segDrawUtils::fadeSegSetToBlackBy(SegmentSet &segmentSet, uint8_t val){
-    for(uint8_t i = 0; i < segmentSet.numSegs; i++){
+    for(uint16_t i = 0; i < segmentSet.numSegs; i++){
         fadeSegToBlackBy(segmentSet, i, val);
     }
 }
 
 //fades an entire segment to black by a certain percentage (out of 255)
 //uses FastLED's fadeToBlackBy function
-void segDrawUtils::fadeSegToBlackBy(SegmentSet &segmentSet, uint8_t segNum, uint8_t val) {
+void segDrawUtils::fadeSegToBlackBy(SegmentSet &segmentSet, uint16_t segNum, uint8_t val) {
     numSec = segmentSet.getTotalNumSec(segNum);
     // run through segment's sections, fetch the startPixel and length of each, then color each pixel
     for (uint8_t i = 0; i < numSec; i++) {
@@ -486,7 +486,7 @@ void segDrawUtils::fadeSegToBlackBy(SegmentSet &segmentSet, uint8_t segNum, uint
 //(ex: a segment section has three sub sections: {1, 4} , {8, 3}, {14, 8}) (so 4 pixels starting at 1, 3 starting at 8, and 8 starting at 14)
 //this function fades one section to black
 //uses FastLED's fadeToBlackBy function
-void segDrawUtils::fadeSegSecToBlackBy(SegmentSet &segmentSet, uint8_t segNum, uint16_t secNum, uint8_t val){
+void segDrawUtils::fadeSegSecToBlackBy(SegmentSet &segmentSet, uint16_t segNum, uint16_t secNum, uint8_t val){
     secLength = segmentSet.getSecLength(segNum, secNum);
 
     //Switch how we output to match the two possible segment section types

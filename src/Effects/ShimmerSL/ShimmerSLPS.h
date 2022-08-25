@@ -89,11 +89,11 @@ class ShimmerSLPS : public EffectBasePS {
             prevTime = 0;
         
         uint8_t
-            numSegs,
             paletteLength,
             shimmerVal;
         
         uint16_t
+            numSegs,
             numLines,
             pixelNum;
         

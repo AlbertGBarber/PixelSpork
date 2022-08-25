@@ -116,7 +116,7 @@ void EdgeBurstSLPS::update(){
                 nscale8x3(colorOut.r, colorOut.g, colorOut.b, v);
             }
 
-            for (uint8_t j = 0; j < numSegs; j++) {
+            for (uint16_t j = 0; j < numSegs; j++) {
                 //get the physical pixel location based on the line and seg numbers
                 //and then write out the color
                 //Note that the actual line written to is offset and wraps

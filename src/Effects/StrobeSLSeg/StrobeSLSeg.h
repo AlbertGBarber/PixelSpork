@@ -222,14 +222,14 @@ class StrobeSLSeg : public EffectBasePS {
             prevTime = 0;
         
         uint8_t
-            numSegs,
             pulseCount = 1,
             randGuess,
             prevGuess = 0, //the last color index guessed
             modeOut;
         
         uint16_t
-            nextSeg,    
+            nextSeg,
+            numSegs,    
             cycleLoopLimit,
             maxSegLength;
         
