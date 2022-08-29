@@ -34,7 +34,7 @@
 #include "Effects/RainSeg/RainSegPS.h"
 #include "Effects/RainSL/RainSLPS.h"
 #include "Effects/Pacifica/PacificaPS.h"
-#include "Effects/PacificaSL/PacificaSLPS.h"
+#include "Effects/PacificaHueSL/PacificaHueSLPS.h"
 #include "Effects/Lava/LavaPS.h"
 #include "Effects/PlasmaSL/PlasmaSLPS.h"
 #include "Effects/Noise16/Noise16PS.h"
