@@ -81,7 +81,7 @@ void ShimmerSLPS::update(){
 
                 colorOut = segDrawUtils::getPixelColor(segmentSet, pixelNum, color, colorMode, j, i);
                 nscale8x3(colorOut.r, colorOut.g, colorOut.b, shimmerVal);
-                segmentSet.leds[pixelNum] = colorOut;
+                segDrawUtils::setPixelColor(segmentSet, pixelNum, colorOut, 0, 0, 0);
             }
         }
 

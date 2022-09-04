@@ -113,6 +113,11 @@ void PacificaPS::deepenColors(){
             //segmentSet.leds[pixelNum].red = scale8( segmentSet.leds[pixelNum].red, 200); //for lava colors
             segmentSet.leds[pixelNum] |= CRGB( 2, 5, 7);
             //segmentSet.leds[pixelNum] |= CRGB( 8, 0, 0); //for lava colors
+
+            //Need to check to dim the pixel color manually
+            //b/c we're not calling setPixelColor directly
+            //we do this here b/c deepenColors is the last function in setting the colors
+            segDrawUtils::handleBri(segmentSet, pixelNum);
         }
     }
 }

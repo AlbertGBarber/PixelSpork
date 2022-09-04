@@ -2,8 +2,10 @@
 #define segDrawUtils_h
 
 //TODO:
-//-- Consolidate vars
-//-- Add shortcuts for situations with one segment in a set
+//-- Consolidate vars (sorta done, unless you want to make things hard to read)
+//-- Add shortcuts for situations with one segment in a set?
+//-- Add an "add glitter" function to show(), would be based on setting in segment set
+//   Could add it as its own effect instead?
 
 #include "FastLED.h"
 #include "segmentSection.h"
@@ -36,7 +38,7 @@ namespace segDrawUtils{
         getSegLocationFromPixel(SegmentSet &segmentSet, uint16_t segPixelNum, uint16_t locData[2] ),
         fillSegSetColor(SegmentSet &segmentSet, CRGB color, uint8_t colorMode),
         fillSegColor(SegmentSet &segmentSet, uint16_t segNum, CRGB color, uint8_t colorMode),
-        fillSegSecColor(SegmentSet &segmentSet, uint16_t segNum, uint16_t secNum, CRGB color, uint8_t colorMode ),
+        fillSegSecColor(SegmentSet &segmentSet, uint16_t segNum, uint16_t secNum, uint16_t pixelCount, CRGB color, uint8_t colorMode ),
         fillSegLengthColor(SegmentSet &segmentSet, CRGB color, uint8_t colorMode, uint16_t segNum, uint16_t startSegPixel, uint16_t endPixel),
         fillSegSetlengthColor(SegmentSet &segmentSet, CRGB color, uint8_t colorMode, uint16_t startSegPixel, uint16_t endPixel),
         drawSegLine(SegmentSet &segmentSet, uint16_t lineNum, uint8_t Pattern[], CRGB palette[], uint8_t colorMode, uint8_t bgColorMode, bool brReplace),
@@ -46,6 +48,8 @@ namespace segDrawUtils{
         setPixelColor(SegmentSet &segmentSet, uint16_t segPixelNum, CRGB color, uint8_t colorMode),
         setPixelColor(SegmentSet &segmentSet, uint16_t segPixelNum, uint16_t segNum, CRGB color, uint8_t colorMode),
         setPixelColor(SegmentSet &segmentSet, uint16_t pixelNum, CRGB color, uint8_t colorMode, uint16_t segNum, uint16_t lineNum),
+        handleBri(SegmentSet &segmentSet, uint16_t pixelNum),
+        show(SegmentSet &segmentSet, bool showNow),
         getPixelColor(SegmentSet &segmentSet, pixelInfoPS *pixelInfo, CRGB color, uint8_t colorMode, uint16_t segPixelNum),
         setGradOffset(SegmentSet &segmentSet, uint16_t offsetMax),
         fadeSegSetToBlackBy(SegmentSet &segmentSet, uint8_t val),
@@ -96,7 +100,8 @@ namespace segDrawUtils{
         secLength;
     
     static bool
-        segDirection;
+        segDirection,
+        hasContSec;
     
     static CRGB
         colorFinal;

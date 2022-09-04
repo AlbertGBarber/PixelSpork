@@ -310,6 +310,9 @@ void FirefliesSLPS::drawParticlePixel(particlePS *particlePtr, uint16_t partNum)
         } else {
             segmentSet.leds[pixelNum] = colorFinal;
         }    
+        //Need to check to dim the pixel color manually
+        //b/c we're not calling setPixelColor directly
+        segDrawUtils::handleBri(segmentSet, pixelNum);
 
         //if we're writing out the pixel on the longest segment, we need to record the 
         //color, so we can use it for setting the background in update()

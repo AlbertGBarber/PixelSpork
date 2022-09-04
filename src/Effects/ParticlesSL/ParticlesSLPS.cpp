@@ -245,6 +245,9 @@ void ParticlesSLPS::update(){
                     } else {
                         segmentSet.leds[pixelNum] = colorFinal;
                     }
+                    //Need to check to dim the pixel color manually
+                    //b/c we're not calling setPixelColor directly
+                    segDrawUtils::handleBri(segmentSet, pixelNum);
 
                     //if we don't have a rear trail, then the next pixel that needs to be set to background
                     //is the last pixel in the particle body, so we record it's color
@@ -310,7 +313,10 @@ void ParticlesSLPS::setTrailColor(uint16_t trailLineNum, uint8_t segNum, uint8_t
         segmentSet.leds[pixelNum] += colorFinal;
     } else {
         segmentSet.leds[pixelNum] = colorFinal;
-    }                 
+    }    
+    //Need to check to dim the pixel color manually
+    //b/c we're not calling setPixelColor directly
+    segDrawUtils::handleBri(segmentSet, pixelNum);             
 }
 
 //returns the position of a trail pixel(local to the segment) based on the trail direction, and the mod ammount

@@ -158,6 +158,10 @@ void PrideWPalSLPS::update(){
                 //get the physical pixel location based on the line and seg numbers
                 pixelNum = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, j, lineNum);
                 nblend(segmentSet.leds[pixelNum], newColor, 128);
+                
+                //Need to check to dim the pixel color manually
+                //b/c we're not calling setPixelColor directly
+                segDrawUtils::handleBri(segmentSet, pixelNum);
             }
         }          
         showCheckPS();

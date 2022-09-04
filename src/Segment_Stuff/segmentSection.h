@@ -47,6 +47,8 @@ because mixed sections will run faster, but do require more memory.
 struct segmentSecCont {
     uint16_t startPixel;
     int16_t length;
+    //used to mark if the segment should be treated as a single pixel in effects
+    bool single; //Will be default initialized to 0 if omitted from the section definition in your code
     //support for direction of segment section, not implemented elsewhere
     //avoid using due to large increase in memory usage
     //instead, if you have a section facing the wrong way, define each pixel as a section, placing them in the order you want
@@ -63,6 +65,8 @@ struct segmentSecCont {
 struct segmentSecMix {
     uint16_t *pixArr;
     uint16_t length;
+    //used to mark if the segment should be treated as a single pixel in effects
+    bool single; //Will be default initialized to 0 if omitted from the section definition in your code
 } ;
 
 #endif

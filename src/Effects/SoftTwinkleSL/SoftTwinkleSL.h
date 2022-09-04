@@ -8,6 +8,10 @@
 #include "GeneralUtils/generalUtilsPS.h"
 
 /* 
+Note:
+The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
+passing in a segmentSet with only one segment containing the whole strip.
+
 For this animation to work, the Red component of lightColor
 MUST be nonzero, AND must be an EVEN number!!!!
 Note that it is not compatible with color modes, 
@@ -87,9 +91,9 @@ Notes:
     This is a pretty basic and pre-packaged effect, so there's not a lot of inputs or adjustments allowed
     but it looks nice, and doesn't take up much memory 
 */
-class SoftTwinklePS : public EffectBasePS {
+class SoftTwinkleSL : public EffectBasePS {
     public:
-        SoftTwinklePS(SegmentSet &SegmentSet, uint8_t Density, uint16_t Rate);  
+        SoftTwinkleSL(SegmentSet &SegmentSet, uint8_t Density, uint16_t Rate);  
 
         uint8_t
             density;
@@ -111,7 +115,9 @@ class SoftTwinklePS : public EffectBasePS {
         
         uint16_t 
             pixelNum,
-            numPixels;
+            numLines,
+            lineNum,
+            longestSeg;
         
         CRGB
             color;

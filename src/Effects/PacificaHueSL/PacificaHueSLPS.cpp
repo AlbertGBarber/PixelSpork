@@ -148,6 +148,13 @@ void PacificaHueSLPS::doOneLayer(palettePS *palette, uint16_t cistart, uint16_t 
         for(uint16_t j = 0; j < numSegs; j++){
             pixelNum = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, j, i);
             segmentSet.leds[pixelNum] += colorOut;
+
+            //Need to check to dim the pixel color manually
+            //b/c we're not calling setPixelColor directly
+            //We only want to do this once per pixel, so we only do it if we're not setting whitecaps
+            if(!addWhiteCaps){
+                segDrawUtils::handleBri(segmentSet, pixelNum);
+            }
         }
     }
 }
@@ -175,6 +182,10 @@ void PacificaHueSLPS::addWhitecaps(){
                 //CRGB( overage, overage2, qadd8( overage2, overage2) ); 
                 segmentSet.leds[pixelNum] += CHSV(PacificaPalette->pfHue, overage2, qadd8( overage2, overage2));
             }
+            //Need to check to dim the pixel color manually
+            //b/c we're not calling setPixelColor directly
+            //we do this here b/c addWhitecaps is the last function in setting the colors
+            segDrawUtils::handleBri(segmentSet, pixelNum);
         }
     }
 }

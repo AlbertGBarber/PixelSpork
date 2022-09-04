@@ -202,7 +202,7 @@ void TwinkleSLPS::update(){
                         twinkleColor = colorUtilsPS::getCrossFadeColor(twinkleColor, colorTarget, step, fadeOutSteps);
                     }
                     //set the pixel color
-                    segmentSet.leds[pixelNum] = twinkleColor;
+                    segDrawUtils::setPixelColor(segmentSet, pixelNum, twinkleColor, 0, 0, 0);
                 }
             }
         }

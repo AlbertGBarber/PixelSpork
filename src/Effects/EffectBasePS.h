@@ -35,11 +35,9 @@
 })                              \
 
 //checks the effect is set to show, if so, do so
-#define showCheckPS() ({    \
-    if(showOn){             \
-        (FastLED.show());   \
-    }                       \
-})                          \
+#define showCheckPS() ({                      \
+    (segDrawUtils::show(segmentSet, showNow));\
+})                                            \
 
 //This is the base effect class from which effects are derived (and some other helper functions)
 //contains:
@@ -53,7 +51,7 @@ class EffectBasePS {
             *rate;
         
         bool
-            showOn = true;
+            showNow = true;
 
         //pointer to the segmentSet the effect is using, used for fading
         //defaults to null, since a couple of other classes use the effectBase but don't use a segmentSet

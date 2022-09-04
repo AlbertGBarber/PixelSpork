@@ -11,7 +11,7 @@
 #include "Effects/ShiftingRainbowSeaSL/ShiftingRainbowSeaSLPS.h"
 #include "Effects/FairyLightsSLSeg/FairyLightsSLSeg.h"
 #include "Effects/DissolveSL/DissolveSLPS.h"
-#include "Effects/SoftTwinkle/SoftTwinklePS.h"
+#include "Effects/SoftTwinkleSL/SoftTwinkleSL.h"
 #include "Effects/GlimmerSL/GlimmerSLPS.h"
 #include "Effects/ShimmerSL/ShimmerSLPS.h"
 #include "Effects/TheaterChaseSL/TheaterChaseSLPS.h"

@@ -49,52 +49,54 @@ void segDrawUtils::getSegLocationFromPixel(SegmentSet &segmentSet, uint16_t segP
 //ie we want to find the pixel number of the 5th pixel in the second segment
 //if the segment is in the reverse direction we want the pixel for the end of the segment
 uint16_t segDrawUtils::getSegmentPixel(SegmentSet &segmentSet, uint16_t segNum, uint16_t segPixelNum) {
-    
-    //Switch how we output to match the two possible segment section types
-    //If the first if statment is true, then the segment has continuous sections, with starting pixels and lengths
-    //Otherwise the segment will have a single mixed section, with an array of physical pixel locations and a length
-    //( segmentSet.getSecArrPtr(segNum) returns false if the segment has a null section array pointer,
-    //it should have a real mixed section pointer instead )
-    if(segmentSet.getSecArrPtr(segNum)){
-        // num is the index of the pixel in the segment and is 0 based
-        // segmentNum index of the segment in the segment array
-        segDirection = segmentSet.getSegDirection(segNum);
-        numSec = segmentSet.getTotalNumSec(segNum);
-        lengthSoFar = 0;
-        // if the segment is decending, we want to count backwards, so we change the loop variables
-        if (!segDirection) {
-            step = -1;
-            endLimit = -1;
-            startLimit = numSec - 1;
-        } else {
-            // counting loop setup variables, the default is a ascending segment, so we count forward
-            step = 1; //int8_t
-            endLimit = numSec; //int16_t
-            startLimit = 0; //uint8_t
-        }
+    if(segPixelNum >= segmentSet.getTotalSegLength(segNum)){
+        return dLed;
+    }
+    numSec = segmentSet.getTotalNumSec(segNum);
+    lengthSoFar = 0;
+    // num is the index of the pixel in the segment and is 0 based
+    // segmentNum index of the segment in the segment array
+    segDirection = segmentSet.getSegDirection(segNum);
 
-        // run through each segment section, summing the lengths of the sections,
-        // starting at the end or beginning of the segment depending on direction
-        // if the sum is larger than the number we want, then the pixel is in the current section
-        // use the section to get the physical pixel number
-        for (int16_t i = startLimit; i != endLimit; i += step) {
-            secLength = segmentSet.getSecLength(segNum, i); // sec length can be negative
-            secLengthSign = (secLength > 0) - (secLength < 0); //either 1 or -1
-            secLength = secLength * secLengthSign; //get the positive version of secLength
-            lengthSoFar += secLength; // always add a positive sec length, we want to know the physical length of each section
-
-            // if the count is greater than the number we want (num always starts at 0, so secLength will always be one longer than the max num in the section)
-            // the num'th pixel is in the current segment.
-            // for ascending segments:
-            // we add the difference between how many pixel's we've counted
-            // and how many we want (ie num - prevCount) to the section's starting pixel
-            // for descending segments:
-            // we add the section length and subtract the difference (num - prevCount) - 1
-            // unless the secLength is 1, then it's just the start pixel
-            if (lengthSoFar > segPixelNum) {
-                //We want to get the length up to the current section (so we find where the pixel is in this section)
-                //But we already added the current secLength to our length count, so we need to subtract it off again
-                lengthSoFar -= secLength;
+    // if the segment is decending, we want to count backwards, so we change the loop variables
+    if (!segDirection) {
+        step = -1;
+        endLimit = -1;
+        startLimit = numSec - 1;
+    } else {
+        // counting loop setup variables, the default is a ascending segment, so we count forward
+        step = 1; //int8_t
+        endLimit = numSec; //int16_t
+        startLimit = 0; //uint8_t
+    }
+    // run through each segment section, summing the lengths of the sections,
+    // starting at the end or beginning of the segment depending on direction
+    // if the sum is larger than the number we want, then the pixel is in the current section
+    // use the section to get the physical pixel number
+    for (int16_t i = startLimit; i != endLimit; i += step) {
+        secLength = segmentSet.getSecLength(segNum, i); // sec length can be negative
+        secLengthSign = (secLength > 0) - (secLength < 0); //either 1 or -1
+        secLength = secLength * secLengthSign; //get the positive version of secLength
+        lengthSoFar += secLength; // always add a positive sec length, we want to know the physical length of each section
+        // if the count is greater than the number we want (num always starts at 0, so secLength will always be one longer than the max num in the section)
+        // the num'th pixel is in the current segment.
+        // for ascending segments:
+        // we add the difference between how many pixel's we've counted
+        // and how many we want (ie num - prevCount) to the section's starting pixel
+        // for descending segments:
+        // we add the section length and subtract the difference (num - prevCount) - 1
+        // unless the secLength is 1, then it's just the start pixel
+        if (lengthSoFar > segPixelNum) {
+            //We want to get the length up to the current section (so we find where the pixel is in this section)
+            //But we already added the current secLength to our length count, so we need to subtract it off again
+            lengthSoFar -= secLength;
+            //Switch how we output to match the two possible segment section types
+            //If the first if statment is true, then the segment has continuous sections, with starting pixels and lengths
+            //Otherwise the segment will have a single mixed section, with an array of physical pixel locations and a length
+            //( segmentSet.getSecArrPtr(segNum) returns false if the segment has a null section array pointer,
+            //it should have a real mixed section pointer instead )
+            if(segmentSet.getSecArrPtr(segNum)){
+                //for continuous sections we get the starting pixel, and then count from it
                 secStartPixel = segmentSet.getSecStartPixel(segNum, i);
                 if (secLength == 1) {
                     return secStartPixel;
@@ -103,21 +105,16 @@ uint16_t segDrawUtils::getSegmentPixel(SegmentSet &segmentSet, uint16_t segNum, 
                 } else {
                     return (secStartPixel + secLengthSign * (secLength - (segPixelNum - lengthSoFar) - 1));
                 }
+            } else {
+                //for mixed sections we grab the pixel value from the section array
+                if (segDirection){
+                    //if the segment has a mixed section, return the pixel value at the passed in pixel number
+                    return segmentSet.getSecMixPixel(segNum, i, segPixelNum - lengthSoFar);
+                } else {
+                    //if the segment is reversed, we grab the pixel counting from the end of the section
+                    return segmentSet.getSecMixPixel(segNum, i, secLength - (segPixelNum - lengthSoFar) - 1);
+                }
             }
-        }
-        //if we don't find the pixel across all the segments, we return the dLed value
-        //when passed into setPixelColor, this value will be safely ignored
-        return dLed;
-    } else {
-        //check that the passed in seg pixel number is in the segment
-        //if not, we return dLed to mark a dummy pixel
-        //(Note that since there's only one mixed section per segment, 
-        //the total length of the segment and the section are equal)
-        if(segPixelNum >= segmentSet.getTotalSegLength(segNum)){
-            return dLed;
-        } else {
-            //if the segment has a mixed section, return the pixel value at the passed in pixel number
-            return segmentSet.getSecMixPixel(segNum, segPixelNum);
         }
     }
 }
@@ -135,51 +132,57 @@ void segDrawUtils::fillSegSetColor(SegmentSet &segmentSet, CRGB color, uint8_t c
     }
 }
 
-// fills a segment with a specific color
+//Fills a segment with a specific color
 void segDrawUtils::fillSegColor(SegmentSet &segmentSet, uint16_t segNum, CRGB color, uint8_t colorMode) {
     numSec = segmentSet.getTotalNumSec(segNum);
-    // run through segment's sections, fetch the startPixel and length of each, then color each pixel
+    lengthSoFar = 0;
+    //Color each segment section. We keep track of how many pixels we've colored using lengthSoFar
+    //This is important for tracking the line number, see fillSegSecColor()
     for (uint8_t i = 0; i < numSec; i++) {
-        fillSegSecColor(segmentSet, segNum, i, color, colorMode );
+        fillSegSecColor(segmentSet, segNum, i, lengthSoFar, color, colorMode );
+        lengthSoFar += segmentSet.getSecLength(segNum, i);
     }
 }
 
-//fills a segment section with a specific color 
+//Fills a segment section with a specific color 
 //(ex: a segment section has three sub sections: {1, 4} , {8, 3}, {14, 8}) (so 4 pixels starting at 1, 3 starting at 8, and 8 starting at 14)
 //this function fills all sections with a color
-void segDrawUtils::fillSegSecColor(SegmentSet &segmentSet, uint16_t segNum, uint16_t secNum, CRGB color, uint8_t colorMode ){
+//To get the right line number, we need to know how far the sections pixels are in the overall segment
+//This is represented as the passed in pixelCount, which is the total length of all the sections up to the current section
+//Since you'll usually be using this function to color in all the sections of a segment, the pixelCount is easy to track
+//(see fillSegColor())
+//But if you need to track it for an arbitrary section you can use the code below:
+//Where secNum is the section you're coloring in
+        //numSec = segmentSet.getTotalNumSec(segNum);
+        //lengthSoFar = 0;
+        //for(uint8_t i = 0; i < secNum; i++){
+            //lengthSoFar += segmentSet.getSecLength(segNum, i);
+        //}
+void segDrawUtils::fillSegSecColor(SegmentSet &segmentSet, uint16_t segNum, uint16_t secNum, uint16_t pixelCount, CRGB color, uint8_t colorMode ){
     secLength = segmentSet.getSecLength(segNum, secNum);
 
     //Switch how we output to match the two possible segment section types
     //If the first if statment is true, then the segment has default sections, with starting pixels and lengths
     //Otherwise the segment will have a single mixed section, with an array of physical pixel locations and a length
-    //( segmentSet.getSecArrPtr(segNum) returns false if the segment has a null section array pointer,
+    //(segmentSet.getSecArrPtr(segNum) returns false if the segment has a null section array pointer,
     //it should have a real mixed section pointer instead )
     if(segmentSet.getSecArrPtr(segNum)){
-        //to get the right line number, we need to know how far the sections pixels are in the overall segment
-        //so we need to count the lengths of the sections before the passed in secNum
-        numSec = segmentSet.getTotalNumSec(segNum);
-        lengthSoFar = 0;
-        for(uint8_t i = 0; i < secNum; i++){
-            lengthSoFar += segmentSet.getSecLength(segNum, i);
-        }
-
         secStartPixel = segmentSet.getSecStartPixel(segNum, secNum);
         step = (secLength > 0) - (secLength < 0); // account for negative lengths
         for (uint16_t i = secStartPixel; i != (secStartPixel + secLength); i += step) {
-            //The line num uses lengthSoFar because we need the location of the pixel relative
-            //to the overall length of the segment. Ie pixel number 5 in the section could be the 20th pixel in the overall segment
-            //We increment lengthSoFar each loop, as we set each new pixel
-            setPixelColor(segmentSet, i, color, colorMode, segNum, getLineNumFromPixelNum(segmentSet, lengthSoFar, segNum));
-            lengthSoFar++;
+            //The line num uses pixelCount because we need the location of the pixel relative to the overall length of the segment. 
+            //Ie pixel number 5 in the section could be the 20th pixel in the overall segment
+            //We increment pixelCount each loop as we set each new pixel
+            setPixelColor(segmentSet, i, color, colorMode, segNum, getLineNumFromPixelNum(segmentSet, pixelCount, segNum));
+            pixelCount++;
         }
     } else {
-        //In this case the segment has a single section of mixed pixel values
-        //We just have to run across the section array and set every pixel in it
+        //For mixed sections we just have to run across the section array and set every pixel in it
         for(uint16_t i = 0; i < secLength; i++){
-            pixelNum = segmentSet.getSecMixPixel(segNum, i);
-            //for the line number, since we only have on section, the pixel number is just i
-            setPixelColor(segmentSet, pixelNum, color, colorMode, segNum, getLineNumFromPixelNum(segmentSet, i, segNum));
+            pixelNum = segmentSet.getSecMixPixel(segNum, secNum, i);
+            //for the line number, we do the same as above for continuous sections by counting the number of pixels
+            setPixelColor(segmentSet, pixelNum, color, colorMode, segNum, getLineNumFromPixelNum(segmentSet, pixelCount, segNum));
+            pixelCount++;
         }
     }
 }
@@ -321,8 +324,17 @@ void segDrawUtils::setPixelColor(SegmentSet &segmentSet, uint16_t pixelNum, CRGB
     if( pixelNum == dLed || !segmentSet.getSegActive(segNum) ){
         return; //if we are given a dummy pixel, or the segment isn't active, don't try to color it
     }
-    colorFinal = getPixelColor(segmentSet, pixelNum, color, colorMode, segNum, lineNum);
-    segmentSet.leds[pixelNum] = colorFinal;
+    segmentSet.leds[pixelNum] = getPixelColor(segmentSet, pixelNum, color, colorMode, segNum, lineNum);
+
+    handleBri(segmentSet, pixelNum);
+}
+
+//!!!You must call this whenever you set a pixel color!!!
+//Fades an individual pixel to match the brightness of the segment set
+//Note that FastLED doesn't track each pixel's brightness directly,
+//so calling this twice on the same pixel will fade it twice
+//Therefore make sure you only call this once after you set a pixel's color
+void segDrawUtils::handleBri(SegmentSet &segmentSet, uint16_t pixelNum){
     //if the segment set has a brightness different than overall strip
     //adjust the outgoing color to match the brightness
     //it's (255 - segmentSet.brightness) because 
@@ -330,6 +342,66 @@ void segDrawUtils::setPixelColor(SegmentSet &segmentSet, uint16_t pixelNum, CRGB
     //while for the segmentSet, 255 is acutally fully bright
     if(segmentSet.brightness != 255){
         segmentSet.leds[pixelNum].fadeToBlackBy(255 - segmentSet.brightness);
+    }
+}
+
+//Displays the current effect by calling FastLed.show()
+//The effect is only displayed if the effect's showNow var is true (it defaults to true)
+//This allow you to have multiple active effects, while only writing out to the leds once for all of them
+//ie if you have 3 effects, only one should have a true showNow var (usually the effect with shortest update rate)
+//Each effect is free to write to the FastLed Leds array (the color of each led), but they'll only be displayed
+//when the effect with the true showNow var is updated
+//This function also handles segments with single pixel sections by writing to all the leds in the single sections
+void segDrawUtils::show(SegmentSet &segmentSet, bool showNow){
+    //Before we try to write out the led colors we check if any segments have single pixel sections
+    for(uint16_t i = 0; i < segmentSet.numSegs; i++){
+
+        //If a segment has one or more single sections, we need to handle them
+        //by copying the color from the first led of each section
+        if(segmentSet.getSegHasSingle(i)){
+
+            //Check the type of sections the segment has (contiuous or mixed)
+            hasContSec = segmentSet.getSecArrPtr(i);
+
+            //For each segment section, if the seciton is single,
+            //copy the color from the first section pixel into all the other section pixels
+            for (uint8_t j = 0; j < numSec; j++) {
+                if(segmentSet.getSecIsSingle(i, j)){
+                    
+                    //get the actual length of the section
+                    secLength = segmentSet.getSecTrueLength(i, j);
+
+                    //Switch how we output to match the two possible segment section types
+                    //If the first if statment is true, then the segment has default sections, with starting pixels and lengths
+                    //Otherwise the segment will have a single mixed section, with an array of physical pixel locations and a length
+                    //( segmentSet.getSecArrPtr(segNum) returns false if the segment has a null section array pointer,
+                    //it should have a real mixed section pointer instead )
+                    if(hasContSec){
+                        secStartPixel = segmentSet.getSecStartPixel(i, j);
+                        colorFinal = segmentSet.leds[secStartPixel];
+
+                        step = (secLength > 0) - (secLength < 0); // account for negative lengths
+                        for (int16_t k = secStartPixel; k != (secStartPixel + secLength); k += step) {
+                            segmentSet.leds[k] = colorFinal;
+                        } 
+                    } else {
+                        colorFinal = segmentSet.leds[segmentSet.getSecMixPixel(i, j, 0)];
+                        //In this case the segment has a section of mixed pixel values
+                        //We just have to run across the section array and set every pixel in it
+                        for(uint16_t k = 0; k < secLength; k++){
+                            pixelNum = segmentSet.getSecMixPixel(i, j, k);
+                            //for the line number, since we only have on section, the pixel number is just i
+                            segmentSet.leds[pixelNum] = colorFinal;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    //if we're displaying the pixels for this effect, write them out
+    if(showNow){
+        FastLED.show();
     }
 }
 
@@ -505,8 +577,7 @@ void segDrawUtils::fadeSegSecToBlackBy(SegmentSet &segmentSet, uint16_t segNum, 
         //In this case the segment has a section of mixed pixel values
         //We just have to run across the section array and set every pixel in it
         for(uint16_t i = 0; i < secLength; i++){
-            pixelNum = segmentSet.getSecMixPixel(segNum, i);
-            //for the line number, since we only have on section, the pixel number is just i
+            pixelNum = segmentSet.getSecMixPixel(segNum, secNum, i);
             segmentSet.leds[i].fadeToBlackBy(val);
         }
     }
