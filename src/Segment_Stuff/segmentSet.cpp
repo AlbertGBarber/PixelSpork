@@ -27,7 +27,7 @@ void SegmentSet::resetGradVals(){
 	gradSegVal = numSegs;
 }
 
-//Gets and sets the maxium length across all active segments
+//Gets and sets the maxium length across all segments
 //Also records the segment with the maximum segment length as segNumMaxSegLength
 void SegmentSet::setMaxSegLength(void){
   	maxSegLength = 0;
@@ -35,30 +35,24 @@ void SegmentSet::setMaxSegLength(void){
   	//walk across all the segments
   	//if the segment length is greater than the current maxSegLength, store it as the maxSegLength
   	for(uint16_t i = 0; i < numSegs; i++ ){
-		if(getSegActive(i)){
-			totalLength = getTotalSegLength(i);
-			if( totalLength > maxSegLength ){
-				maxSegLength = totalLength;
-				//record the segment with the maximum segment length
-				segNumMaxSegLength = i;
-			}
+		totalLength = getTotalSegLength(i);
+		if( totalLength > maxSegLength ){
+			maxSegLength = totalLength;
+			//record the segment with the maximum segment length
+			segNumMaxSegLength = i;
 		}
   	}
 }
 
-//Gets and sets the total number of leds accounting for both inactive and active segments
-//(numLeds includes inactive segmets, numActiveSegLeds does not)
-//treats isSingle segments as one led (their segment length is 1)
+//Gets and sets the total number of leds in the segments
+//This is total length of all the segments, and so it can be different from the leds array length
+//treats "single" sections as 1 led 
 void SegmentSet::setNumLeds(void){
-  	uint16_t ledCount = 0, ledCountActive = 0;
+  	uint16_t ledCount = 0;
    	for(uint16_t i = 0; i < numSegs; i++ ){
 		ledCount += getTotalSegLength(i);
-	   	if(getSegActive(i)){
-	  		ledCountActive += getTotalSegLength(i);
- 		}
    	}
 	numLeds = ledCount;
- 	numActiveSegLeds = ledCountActive;
 }
 
 //returns a pointer to the specified segment instance
@@ -90,7 +84,7 @@ uint16_t SegmentSet::getSecStartPixel(uint16_t segNum, uint8_t secNum){
 
 //!!Only works for segments with mixed sections (not continuous sections!)
 //returns the physcial led location of the pixel in the passed in segment number and segment pixel number
-//ie the 5th pixel in the 0th segment
+//ie the 5th pixel in 0th section of the 0th segment
 uint16_t SegmentSet::getSecMixPixel(uint16_t segNum, uint8_t secNum, uint16_t pixelNum ){
 	return getSegPtr(segNum)->getSecMixPixel(secNum, pixelNum);
 }
@@ -109,11 +103,6 @@ int16_t SegmentSet::getSecTrueLength(uint16_t segNum, uint8_t secNum){
 //returns the direction of the specified segment
 bool SegmentSet::getSegDirection(uint16_t segNum){
 	return getSegPtr(segNum)->dirct;
-}
-
-//returns the active var for the specified segment
-bool SegmentSet::getSegActive(uint16_t segNum){
-	return getSegPtr(segNum)->active;
 }
 
 //returns the isSingle var for the specified segment
@@ -234,18 +223,4 @@ void SegmentSet::setBrightness(uint8_t newBrightness){
 		fadeLightBy(leds, ledArrSize, percentDiff);
 	}
 	brightness = newBrightness;
-}
-
-//Sets the specified segment as active or inactive
-//Also modifies the numActiveSegLeds var to reflect the new number of active leds
-void SegmentSet::setSegActive(uint16_t segNum, bool state){
-	bool isActive = getSegActive(segNum);
-	if(isActive != state){
-		getSegPtr(segNum)->active = state;
-		if(state){
-			numActiveSegLeds += getTotalSegLength(segNum);
-		} else {
-			numActiveSegLeds -= getTotalSegLength(segNum);
-		}
-	}
 }

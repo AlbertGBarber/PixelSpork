@@ -94,16 +94,13 @@ void SegOffsetCyclerPS::update(){
 
         for(uint8_t i = 0; i < numSegSets; i++){
             switch(*colorMode) { 
-                case 7: // colors each line according to a rainbow or gradient spread across whole strip
+                case 6: // colors each line according to a rainbow or gradient spread across whole strip
                     offsetMax = segGroup[i]->gradLenVal;
                     break;
-                case 8:  //colors each line according to a rainbow or gradient spread across the active segments
-                    offsetMax = segGroup[i]->numActiveSegLeds;
-                    break;
-                case 9: // colors each line according to a rainbow or gradient spread across all segments
+                case 7: // colors each line according to a rainbow or gradient spread across all segments
                     offsetMax = segGroup[i]->gradSegVal;
                     break;
-                case 10: // colors each line according to a rainbow or gradient mapped to the longest segment
+                case 8: // colors each line according to a rainbow or gradient mapped to the longest segment
                     offsetMax = segGroup[i]->gradLineVal;
                     break;
                 default:

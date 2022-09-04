@@ -140,7 +140,7 @@ CRGB StreamerFastPS::pickStreamerColor(uint8_t patternIndex){
 //To do this we basically do one full update cycle, drawing the streamer pattern onto the whole strip
 //note that a spacing pixel is indicated by a pattern value of 255, these pixels will be filled in with the bgColor
 void StreamerFastPS::preFill(){
-    numPixels = segmentSet.numActiveSegLeds;
+    numPixels = segmentSet.numLeds;
     uint16_t patternLength = pattern->length;
     prevPattern = 255; //base value for previous pattern value, it's set to the spacing value b.c we don't expect a pattern to start with spacing
 
@@ -178,7 +178,7 @@ void StreamerFastPS::update(){
         }
 
         //numPixels is the loop limit below, so we subtract 1
-        numPixels = segmentSet.numActiveSegLeds - 1;
+        numPixels = segmentSet.numLeds - 1;
 
         //prep for the loop below.
         //We need a initial value for the nextPixelNumber

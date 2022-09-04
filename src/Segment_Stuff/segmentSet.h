@@ -8,7 +8,6 @@
 #include "MathUtils/mathUtilsPS.h"
 
 //TODO:
-//-- Scrap turning off segments, full behavior too hard to implement, current behavior is confusing
 //-- Add function somewhere to automatically sync a rainbow or gradent across multiple segment sets 
 //	(sets offsets and lengths to sync them up, more complicated to match lines)
 
@@ -142,7 +141,6 @@ An explaination of segment structure:
 						secPtr; Which is a pointer to the array of segmentSecCont's.
 						secMixPtr; Which is a pointer to the segmentSecMix struct.
 						dirct; A bool indicating the segment direction
-						isActive: A bool indicating if the segment is active or not
 						hasSingle: A bool indicating if the segment has any sections that are treated as single pixels
 					Note that a segment can only have one section type, so one of the section pointers will be Null
 					It also gives access to functions:
@@ -194,7 +192,6 @@ An explaination of segment structure:
 						setSegDirection(uint16_t segNum, bool dirct): sets the direction of the specified segment to the specified direction 
 						flipSegDirectionEvery(uint8_t freq, bool startAtFirst): flips the direction of every freq segment, starting with the first segment according to startAtFirst
 						setsegDirectionEvery(uint8_t freq, bool direction, bool startAtFirst): sets the direction of every freq segment, starting with the first segment according to startAtFirst
-						setSegActive(uint16_t segNum, bool state): turns a segment on or off, off segments are not drawn onto, and do not count towards the total segment length
 						getSegHasSingle(uint16_t segNum): Returns true if the segment has any "single" sections
 						getSecIsSingle(uint16_t segNum, uint8_t secNum); Returns true if the passed in section is "single"
 					
@@ -353,7 +350,6 @@ class SegmentSet {
 			segNumMaxSegLength, //The number of the seg with the maximum length
 			ledArrSize, 		//The size of the FastLED array (total number of pixels, including any extras for dummy or duplicate pixels)
 			numLeds, 			//the total number of pixels in the segment set (treating isSingle segments as one pixel)
-			numActiveSegLeds, 	//the number of pixels in all the active segments
 			getTotalSegLength(uint16_t segNum),
 			//getSectionPtr(uint16_t segNum),
 			getSecStartPixel(uint16_t segNum, uint8_t secNum), 					//only works with continuous sections!!
@@ -382,7 +378,6 @@ class SegmentSet {
 		  	runOffset = false,
 			offsetDirect = true, 
 			getSegDirection(uint16_t segNum),
-			getSegActive(uint16_t segNum),
 			getSegHasSingle(uint16_t segNum),
 			getSecIsSingle(uint16_t segNum, uint8_t secNum);
 	
@@ -420,8 +415,7 @@ class SegmentSet {
 			setSegDirection(uint16_t segNum, bool dirct),
 			flipSegDirectionEvery(uint8_t freq, bool startAtFirst),
 			setsegDirectionEvery(uint8_t freq, bool direction, bool startAtFirst),
-			setBrightness(uint8_t newBrightness),
-			setSegActive(uint16_t segNum, bool state);
+			setBrightness(uint8_t newBrightness);
 	  
 	private:		
 		bool

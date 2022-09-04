@@ -151,7 +151,7 @@ void FireworksPS::update(){
     if( deltaTime >= *rate ) {
         prevTime = currentTime;
         
-        numLEDs = segmentSet.numActiveSegLeds;
+        numLEDs = segmentSet.numLeds;
         //if the bg is to be filled before the particles start, fill it in
         //(such as if you have a background that's changing with time (alla bgColorMode 6))
         if( fillBG || blend ){

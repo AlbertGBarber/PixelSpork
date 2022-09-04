@@ -137,7 +137,7 @@ void StreamerPS::update(){
 
         //both updateFade() and updateNoFade() need the current segment and pattern lengths,
         //so we'll do them here to reduce repetition
-        numPixels = segmentSet.numActiveSegLeds;
+        numPixels = segmentSet.numLeds;
         patternLength = pattern->length;
 
         if(fadeOn){

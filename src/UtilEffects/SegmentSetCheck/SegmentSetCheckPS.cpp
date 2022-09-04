@@ -51,9 +51,9 @@ void SegmentSetCheckPS::update(){
                 segNum++;
                 //if the next segment is inactive, we set the pixelCount to its length,
                 //so that we'll switch to the next segment on the next cycle
-                if(segNum != numSegs && !segmentSet.getSegActive(segNum)){
-                    pixelCount = segmentSet.getTotalSegLength(segNum);
-                }
+                //if(segNum != numSegs && !segmentSet.getSegActive(segNum)){
+                    //pixelCount = segmentSet.getTotalSegLength(segNum);
+                //}
                 //clear the segment set
                 segDrawUtils::fillSegSetColor(segmentSet, 0, 0);
             }

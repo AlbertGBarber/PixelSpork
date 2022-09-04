@@ -8,17 +8,16 @@ class Segment {
 	
 	public:
 		//Constructor for creating a segment with a continuous section
-		Segment(uint8_t numSections, segmentSecCont *segSectionsArr, bool direction = true, bool segActive = true);
+		Segment(uint8_t numSections, segmentSecCont *segSectionsArr, bool direction = true);
 
 		//Constructor for creating a segment with a mixed section
-		Segment(uint8_t numSections, segmentSecMix *segSecMix, bool direction = true, bool segActive = true);
+		Segment(uint8_t numSections, segmentSecMix *segSecMix, bool direction = true);
 		
 	  	uint8_t
 			numSec;
 	 
 	  	bool
 		  	hasSingle = false,
-	  		active = true,
 			dirct,
 			getSecIsSingle(uint8_t secNum); //Returns the sections "single" bool var
 		

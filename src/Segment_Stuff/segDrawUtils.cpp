@@ -34,14 +34,12 @@ void segDrawUtils::getSegLocationFromPixel(SegmentSet &segmentSet, uint16_t segP
    locData1[0] = 0;
    locData1[1] = dLed; 
     for (uint16_t i = 0; i < segmentSet.numSegs; i++) {
-        //if(segmentSet.getSegActive(i)){ //only count active segments
-            lengthSoFar += segmentSet.getTotalSegLength(i);
-            if( (lengthSoFar - 1) >= segPixelNum){
-                locData1[0] = i;
-                locData1[1] = segPixelNum - ( lengthSoFar - segmentSet.getTotalSegLength(i) );
-                break;
-            }
-       //}
+        lengthSoFar += segmentSet.getTotalSegLength(i);
+        if( (lengthSoFar - 1) >= segPixelNum){
+            locData1[0] = i;
+            locData1[1] = segPixelNum - ( lengthSoFar - segmentSet.getTotalSegLength(i) );
+            break;
+        }
     }
 }
 
@@ -321,8 +319,8 @@ void segDrawUtils::setPixelColor(SegmentSet &segmentSet, uint16_t segPixelNum, u
 //also adjusts the output color to the brightness of the segmentSet
 //see getPixelColor() for explanation of colorMode and other inputs
 void segDrawUtils::setPixelColor(SegmentSet &segmentSet, uint16_t pixelNum, CRGB color, uint8_t colorMode, uint16_t segNum, uint16_t lineNum){
-    if( pixelNum == dLed || !segmentSet.getSegActive(segNum) ){
-        return; //if we are given a dummy pixel, or the segment isn't active, don't try to color it
+    if( pixelNum == dLed ){
+        return; //if we are given a dummy pixel don't try to color it
     }
     segmentSet.leds[pixelNum] = getPixelColor(segmentSet, pixelNum, color, colorMode, segNum, lineNum);
 
@@ -428,27 +426,26 @@ void segDrawUtils::getPixelColor(SegmentSet &segmentSet, pixelInfoPS *pixelInfo,
 //For color mode 0, the input color will be returned as is
 //For other modes, the color will either be set to part of a rainbow, 
 //or as part of the gradient based on the segmentSet's gradPalette (see segmentSet.h for info)
-//Also updates the segmentSet's gradOffset value, if active (see setGradOffset() and segmentSet.h )
 //Color modes are as follows (higher vals => using the gradient palette):
 //      mode 0: use passed in color
-//      mode 1 & 7: colors each pixel according to a rainbow or gradient spread across the total number of leds in the segmentSet
-//      mode 2 & 8: same as case 1 & 7, but only counts the leds in active segments
-//      mode 3 & 9: colors each segment according to a rainbow or gradient spread across all segments
-//      mode 4 & 10: colors each segment line according to a rainbow or gradient mapped to the longest segment
-//      mode 5 & 11: Produces a single color that cycles through the rainbow or gradient at the segmentSet's offsetRate
+//      mode 1 & 5: colors each pixel according to a rainbow or gradient spread across the total number of leds in the segmentSet
+//      mode 2 & 6: colors each segment according to a rainbow or gradient spread across all segments
+//      mode 3 & 7: colors each segment line according to a rainbow or gradient mapped to the longest segment
+//      mode 4 & 8: Produces a single color that cycles through the rainbow or gradient at the segmentSet's offsetRate
 //               Used to color a whole effect as a single color that cycles through the rainbow or gradient
 //               Note that 256 steps are used for the gradient/rainbow
-//      mode 6 & 12:  Same as mode 7, but the direction of the cycle is reversed
+//      mode 5 & 10:  Same as mode 8, but the direction of the cycle is reversed
 //The total number of gradient steps are based on the segmentSet values:
 //Each mode uses a different value so you can switch between modes more easily  
-//      mode 1 & 7: segmentSet.gradLenVal (defaulted to the number of leds in the segment set)
-//      mode 2 & 8: segmentSet.numActiveSegLeds ( total number of active leds in the segment set (don't change this manually) )
+//      mode 1 & 5: segmentSet.gradLenVal (defaulted to the number of leds in the segment set)
+//      mode 2 & 6: segmentSet.numActiveSegLeds ( total number of active leds in the segment set (don't change this manually) )
 //      mode 3 & 9: segmentSet.gradSegVal (defaulted to the number of segments in the segmentSet)
-//      mode 4 & 10: segmentSet.gradLineVal (defaulted to the length of the longest segment (maxSeglength) )
-//      mode 5 & 11: 256 (not user changable)
+//      mode 3 & 7: segmentSet.gradLineVal (defaulted to the length of the longest segment (maxSeglength) )
+//      mode 4 & 8 and 5 & 10: 256 (not user changable)
 //By changing these values you can create shorter or longer rainbows/gradients
 //(note that rainbows will repeat every 255 steps, while gradients will be stretched over them)
 //You can the use segmentSet's gradOffset to shift the gradient across the pixels
+//IF YOU CHANGE THE COLOR MODE ORDER BE SURE TO CHANGE IT IN THE OffsetCycler Util!!
 CRGB segDrawUtils::getPixelColor(SegmentSet &segmentSet, uint16_t pixelNum, CRGB color, uint8_t colorMode, uint16_t segNum, uint16_t lineNum){
     //if( pixelNum == dLed ){
         //return color; //if we're passed in a dummy led, just return the current color b/c it won't be output
@@ -461,33 +458,28 @@ CRGB segDrawUtils::getPixelColor(SegmentSet &segmentSet, uint16_t pixelNum, CRGB
             return colorFinal;
             break;
         case 1: // colors each pixel according to a rainbow or gradient spread across the total number of leds in the segmentSet
-        case 7:
+        case 6:
             colorModeDom = segmentSet.gradLenVal; //the total number of gradient steps
             colorModeNum = pixelNum; //the current step
             break;  
-        case 2: // same as case 1 & 7, but only counts the leds in active segments
-        case 8:
-            colorModeDom = segmentSet.numActiveSegLeds; //the total number of gradient steps
-            colorModeNum = pixelNum; //the current step
-            break;
-        case 3: // colors each segment according to a rainbow or gradient spread across all segments
-        case 9:
+        case 2: // colors each segment according to a rainbow or gradient spread across all segments
+        case 7:
             colorModeDom = segmentSet.gradSegVal; //the total number of gradient steps
             colorModeNum = segNum; //the current step
             break;
-        case 4: // colors each segment line according to a rainbow or gradient mapped to the longest segment
-        case 10:
+        case 3: // colors each segment line according to a rainbow or gradient mapped to the longest segment
+        case 8:
             colorModeDom = segmentSet.gradLineVal; //the total number of gradient steps
             colorModeNum = lineNum; //the current step
             break;
-        case 5:  //produces a single color that cycles through the rainbow or gradient at the segmentSet's offsetRate
-        case 11: //used to color a whole effect as a single color that cycles through the rainbow or gradient
+        case 4:  //produces a single color that cycles through the rainbow or gradient at the segmentSet's offsetRate
+        case 9: //used to color a whole effect as a single color that cycles through the rainbow or gradient
             colorModeDom = 255; //The number of gradient steps are capped at 256
             colorModeNum = mod16PS( millis() / (*segmentSet.offsetRate), 255 ); //gets the step we're on
             //colorFinal = colorUtilsPS::wheel( colorModeNum & 255, 0 );
             break;
-        case 6:  //Same as case 5 & 11, but the cycle direction is reversed
-        case 12: //(useful for effects where the main pixels are case 5 or 11, while the background is case 6 or 12)
+        case 5:  //Same as case 5 & 11, but the cycle direction is reversed
+        case 10: //(useful for effects where the main pixels are case 5 or 11, while the background is case 6 or 12)
             colorModeDom = 255;
             colorModeNum = 255 - mod16PS( millis() / (*segmentSet.offsetRate), 255 );
             //colorFinal = colorUtilsPS::wheel( 255 - (colorModeNum & 255), 0 );
@@ -502,7 +494,7 @@ CRGB segDrawUtils::getPixelColor(SegmentSet &segmentSet, uint16_t pixelNum, CRGB
     //we also set offsetMax for the offset cycle here
     //because for all rainbow gradients it needs to be 255, 
     //while for all palette gradients it's whatever colorModeDom is
-    if(colorMode < 7){
+    if(colorMode < 6){
         offsetMax = 255;
         colorFinal = colorUtilsPS::wheel( (colorModeNum * 255) / colorModeDom, segmentSet.gradOffset, segmentSet.rainbowSatur, segmentSet.rainbowVal );
     } else{

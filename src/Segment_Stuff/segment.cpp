@@ -1,8 +1,8 @@
 #include "segment.h"
 
 //Constructor for creating a segment with a normal section
-Segment::Segment( uint8_t numSections, segmentSecCont *segSectionArr, bool direction, bool segActive) :
-    numSec(numSections), secPtr(segSectionArr), dirct(direction), active(segActive)
+Segment::Segment( uint8_t numSections, segmentSecCont *segSectionArr, bool direction) :
+    numSec(numSections), secPtr(segSectionArr), dirct(direction)
 	{
 		init(numSections);
 	}
@@ -11,8 +11,8 @@ Segment::Segment( uint8_t numSections, segmentSecCont *segSectionArr, bool direc
 //note that the you are limited to one mixed section
 //This is because a mixed section can contain any number of pixels in any order,
 //so you don't need more than one section
-Segment::Segment(uint8_t numSections, segmentSecMix *segSecMix, bool direction, bool segActive) :
-    numSec(numSections), secMixPtr(segSecMix), dirct(direction), active(segActive)
+Segment::Segment(uint8_t numSections, segmentSecMix *segSecMix, bool direction) :
+    numSec(numSections), secMixPtr(segSecMix), dirct(direction)
 	{
         init(numSections);
 	}
