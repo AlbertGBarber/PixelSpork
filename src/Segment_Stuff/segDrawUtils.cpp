@@ -428,20 +428,19 @@ void segDrawUtils::getPixelColor(SegmentSet &segmentSet, pixelInfoPS *pixelInfo,
 //or as part of the gradient based on the segmentSet's gradPalette (see segmentSet.h for info)
 //Color modes are as follows (higher vals => using the gradient palette):
 //      mode 0: use passed in color
-//      mode 1 & 5: colors each pixel according to a rainbow or gradient spread across the total number of leds in the segmentSet
-//      mode 2 & 6: colors each segment according to a rainbow or gradient spread across all segments
-//      mode 3 & 7: colors each segment line according to a rainbow or gradient mapped to the longest segment
-//      mode 4 & 8: Produces a single color that cycles through the rainbow or gradient at the segmentSet's offsetRate
+//      mode 1 & 6: colors each pixel according to a rainbow or gradient spread across the total number of leds in the segmentSet
+//      mode 2 & 7: colors each segment according to a rainbow or gradient spread across all segments
+//      mode 3 & 8: colors each segment line according to a rainbow or gradient mapped to the longest segment
+//      mode 4 & 9: Produces a single color that cycles through the rainbow or gradient at the segmentSet's offsetRate
 //               Used to color a whole effect as a single color that cycles through the rainbow or gradient
 //               Note that 256 steps are used for the gradient/rainbow
 //      mode 5 & 10:  Same as mode 8, but the direction of the cycle is reversed
 //The total number of gradient steps are based on the segmentSet values:
 //Each mode uses a different value so you can switch between modes more easily  
-//      mode 1 & 5: segmentSet.gradLenVal (defaulted to the number of leds in the segment set)
-//      mode 2 & 6: segmentSet.numActiveSegLeds ( total number of active leds in the segment set (don't change this manually) )
-//      mode 3 & 9: segmentSet.gradSegVal (defaulted to the number of segments in the segmentSet)
-//      mode 3 & 7: segmentSet.gradLineVal (defaulted to the length of the longest segment (maxSeglength) )
-//      mode 4 & 8 and 5 & 10: 256 (not user changable)
+//      mode 1 & 6: segmentSet.gradLenVal (defaulted to the number of leds in the segment set)
+//      mode 2 & 7: segmentSet.gradSegVal (defaulted to the number of segments in the segmentSet)
+//      mode 3 & 9: segmentSet.gradLineVal (defaulted to the length of the longest segment (maxSeglength) )
+//      mode 4 & 9 and 5 & 10: 256 (not user changable)
 //By changing these values you can create shorter or longer rainbows/gradients
 //(note that rainbows will repeat every 255 steps, while gradients will be stretched over them)
 //You can the use segmentSet's gradOffset to shift the gradient across the pixels
