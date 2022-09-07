@@ -3,6 +3,7 @@
 
 //#define FASTLED_INTERNAL
 #include "FastLED.h"
+#pragma once
 
 #if ARDUINO >= 100
 #include "Arduino.h"

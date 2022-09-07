@@ -12,3 +12,4 @@
 #include "UtilEffects/PaletteCycle/PaletteCyclePS.h"
 #include "UtilEffects/SinglePaletteCycle/SinglePaletteCyclePS.h"
 #include "UtilEffects/SegmentSetCheck/SegmentSetCheckPS.h"
+#include "UtilEffects/AddGlitter/addGlitterPS.h"
