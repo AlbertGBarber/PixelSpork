@@ -283,7 +283,7 @@ uint16_t segDrawUtils::getPixelNumFromLineNum(SegmentSet &segmentSet, uint16_t m
 
 //returns the line number (based on the max segment length) of a pixel in a segment set
 //(pixel num is local to the segment set)
-uint8_t segDrawUtils::getLineNumFromPixelNum(SegmentSet &segmentSet, uint16_t segPixelNum){
+uint16_t segDrawUtils::getLineNumFromPixelNum(SegmentSet &segmentSet, uint16_t segPixelNum){
     //get the segment number and led number of where the pixel is located in the strip
     getSegLocationFromPixel(segmentSet, segPixelNum, locData1 );
     return getLineNumFromPixelNum(segmentSet, locData1[1], locData1[0]);
@@ -291,7 +291,7 @@ uint8_t segDrawUtils::getLineNumFromPixelNum(SegmentSet &segmentSet, uint16_t se
 
 //returns the line number (based on the max segment length) of a pixel in a segment
 //(pixel num is local to the segment number)
-uint8_t segDrawUtils::getLineNumFromPixelNum(SegmentSet &segmentSet, uint16_t segPixelNum, uint16_t segNum){
+uint16_t segDrawUtils::getLineNumFromPixelNum(SegmentSet &segmentSet, uint16_t segPixelNum, uint16_t segNum){
     //the formula below is the same as the one in getPixelNumFromLineNum
     //but solving for lineNum instead of pixelNum
     return (uint16_t)(segPixelNum * segmentSet.maxSegLength) / segmentSet.getTotalSegLength(segNum);

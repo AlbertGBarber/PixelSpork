@@ -3,14 +3,22 @@
 RainbowCyclePS::RainbowCyclePS(SegmentSet &SegmentSet, uint16_t Length, bool Direction, uint16_t Rate):
     length(Length), direct(Direction), segmentSet(SegmentSet)
     {    
-        //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
-        bindSegPtrPS();
-        bindClassRatesPS();
-        init();
+        init(Rate);
+	}
+
+//Does a rainbow cycle of length 255
+RainbowCyclePS::RainbowCyclePS(SegmentSet &SegmentSet, bool Direction, uint16_t Rate):
+    direct(Direction), segmentSet(SegmentSet)
+    {    
+        length = 255;
+        init(Rate);
 	}
 
 //initializes/resets the core counting and direction vars for the effect
-void RainbowCyclePS::init(){
+void RainbowCyclePS::init(uint16_t Rate){
+    //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
+    bindSegPtrPS();
+    bindClassRatesPS();
     cycleCount = 0;
     setLength(length);
 }

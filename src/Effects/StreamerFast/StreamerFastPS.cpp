@@ -94,7 +94,7 @@ void StreamerFastPS::setPaletteAsPattern(uint8_t colorLength, uint8_t spacing){
 //resets the streamer to it's original starting point
 void StreamerFastPS::reset(){
     cycleCount = 0;
-    preFillDone = false;
+    initFillDone = false;
 }
 
 //intilization of core variables and pointers
@@ -126,9 +126,12 @@ CRGB StreamerFastPS::pickStreamerColor(uint8_t patternIndex){
         if(randMode == 1){
             //choose a completely random color
             nextColor = colorUtilsPS::randColor();
-        } else {
-            //choose a color randomly from the palette
+        }  else if(randMode == 2) {
+            //choose a color randomly from the palette (can repeat)
             nextColor = paletteUtilsPS::getPaletteColor( palette, random8(palette->length) );
+        } else {
+            //choose a color randomly from the palette (making sure it's not the same as the current color)
+            nextColor = paletteUtilsPS::getShuffleIndex(palette, prevColor);
         }
     }
     prevPattern = patternIndex; //save the current pattern value (only needed for the random color case)
@@ -139,7 +142,7 @@ CRGB StreamerFastPS::pickStreamerColor(uint8_t patternIndex){
 //On the first cycle we need to fill in the strip with the streamers
 //To do this we basically do one full update cycle, drawing the streamer pattern onto the whole strip
 //note that a spacing pixel is indicated by a pattern value of 255, these pixels will be filled in with the bgColor
-void StreamerFastPS::preFill(){
+void StreamerFastPS::initalFill(){
     numPixels = segmentSet.numLeds;
     uint16_t patternLength = pattern->length;
     prevPattern = 255; //base value for previous pattern value, it's set to the spacing value b.c we don't expect a pattern to start with spacing
@@ -157,7 +160,7 @@ void StreamerFastPS::preFill(){
         //next update() call will sync properly
         cycleCount = addMod16PS( cycleCount, 1, patternLength );// (cycleCount + 1) % patternLength;
     }
-    preFillDone = true;
+    initFillDone = true;
 }
     
 //Each update cycle, we run along the strip, coping the color of the next pixel into the current pixel
@@ -173,8 +176,8 @@ void StreamerFastPS::update(){
 
         //We need to pre-fill the strip with a full cycle the first time the update is called
         //so that the colors are copied down the strip correctly on subsequent cycles
-        if(!preFillDone){
-            preFill();
+        if(!initFillDone){
+            initalFill();
         }
 
         //numPixels is the loop limit below, so we subtract 1
@@ -197,6 +200,12 @@ void StreamerFastPS::update(){
                 nextPattern = patternUtilsPS::getPatternVal(pattern, cycleCount);
                 nextColor = pickStreamerColor(nextPattern);
                 segDrawUtils::setPixelColor(segmentSet, pixelNumber, nextColor, 0, 0, 0);
+                //records the color of the streamer (if it's not spacing)
+                //This is only used for picking new colors at random (mode 3) from the palette
+                //so that we don't choose the same color repeatedly
+                if(nextPattern != 255){
+                    prevColor = nextColor;
+                }
             } else {
                 //copy the color of the next pixel in line into the current pixel
                 segmentSet.leds[pixelNumber] = segmentSet.leds[nextPixelNumber];

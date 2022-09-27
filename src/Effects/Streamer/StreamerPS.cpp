@@ -176,7 +176,8 @@ CRGB StreamerPS::getNextColor(uint16_t pixelNum){
 //The colors are re-fetched each cycle to account for color modes and palette blending
 void StreamerPS::updateFade(){
 
-    nextPattern = patternUtilsPS::getPatternVal(pattern, cycleCount);
+    //nextPattern = patternUtilsPS::getPatternVal(pattern, cycleCount);
+    nextPatternIndex = cycleCount;
     //we need the target color for the first pixel.
     //before be beginning of the loop since currentColor is only set at the end of each loop step
     currentColor = getNextColor(0);

@@ -3,6 +3,7 @@
 
 //TODO:
 //  -- Add option to use a pattern based on a palette?
+//  --Add option to insert a blank color into the sea
 
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"

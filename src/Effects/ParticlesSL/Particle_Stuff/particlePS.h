@@ -1,6 +1,8 @@
 #ifndef particlePS_h
 #define particlePS_h
 
+#include "FastLED.h"
+
 #if ARDUINO >= 100
 #include "Arduino.h"
 #else
@@ -60,12 +62,12 @@ struct particleSetPS {
 
     //returns the pointer to a particle at the specified index
     particlePS *getParticle(uint8_t index){
-        return particleArr[index % length];
+        return particleArr[mod8(index, length)];
     };
 
     //sets particle in the array to the passed in particle at the specified index
     void setParticle(particlePS *particle, uint8_t index){
-        particleArr[index % length] = particle;
+        particleArr[mod8(index, length)] = particle;
     };
 
 };

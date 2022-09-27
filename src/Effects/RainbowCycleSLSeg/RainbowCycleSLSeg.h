@@ -36,8 +36,13 @@ Example call:
     Will draw rainbows of length 50, moving from the last to first segment, at 80ms
     The rainbow colors will be drawn on each segment
 
+    RainbowCycleSLSeg(mainSegments, false, true, 80); 
+    Will draw rainbows of length 255 (the length is set to 255 by default b/c it is omitted from the constructor), 
+    moving from the last to first segment, at 80ms
+    The rainbow colors will be drawn on each segment
+
 Constructor Inputs:
-    length -- The length of each rainbow
+    length (optional) -- The length of each rainbow, if omitted, 255 will be used
     direction -- The direction the rainbows will move in (true is forward)
     segMode -- Sets if the rainbows will be drawn along segment lines or whole segments
                (true will do whole segents)
@@ -58,6 +63,9 @@ Notes:
 class RainbowCycleSLSeg : public EffectBasePS {
     public:
         RainbowCycleSLSeg(SegmentSet &SegmentSet, uint16_t Length, bool Direction, bool SegMode, uint16_t Rate); 
+
+        //Does a rainbow cycle of length 255
+        RainbowCycleSLSeg(SegmentSet &SegmentSet, bool Direction, bool SegMode, uint16_t Rate); 
 
         SegmentSet 
             &segmentSet;
@@ -97,7 +105,7 @@ class RainbowCycleSLSeg : public EffectBasePS {
             color;
 
         void 
-            init();
+            init(uint16_t Rate);
 
 };
 

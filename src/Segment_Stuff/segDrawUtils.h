@@ -56,7 +56,7 @@ namespace segDrawUtils{
         fadeSegToBlackBy(SegmentSet &segmentSet, uint16_t segNum, uint8_t val),
         fadeSegSecToBlackBy(SegmentSet &segmentSet, uint16_t segNum, uint16_t secNum, uint8_t val);
     
-    uint8_t 
+    uint16_t 
         getLineNumFromPixelNum(SegmentSet &segmentSet, uint16_t segPixelNum),
         getLineNumFromPixelNum(SegmentSet &segmentSet, uint16_t segPixelNum, uint16_t segNum);
 

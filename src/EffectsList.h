@@ -45,3 +45,5 @@
 #include "Effects/EdgeBurstSL/EdgeBurstSL.h"
 #include "Effects/ColorMeltSL/ColorMeltSL.h"
 #include "Effects/RainbowFontsSL/RainbowFontsSL.h"
+#include "Effects/SegWaves/SegWaves.h"
+#include "Effects/SegWavesFast/SegWavesFast.h"

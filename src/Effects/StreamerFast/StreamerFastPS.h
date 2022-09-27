@@ -22,8 +22,8 @@ The restrictions when compared to StreamerPS are listed below:
 4: Changing the direction of the segments or segment set mid-effect may break it temporarily
 5: This effect is not compatible with colorModes for either the streamers or the background
 
-Basically the effect works by setting the color of the first pixel, then for each subsequent pixel,
-it copies the color of the next pixel in line
+Basically the effect works by setting the color of the first pixel, 
+then for each subsequent pixel, it copies the color of the next pixel in line
 So any changes you make to colors will only show up at the first pixel, and will be shifted along the strip
 
 However, as a bonus, this effect supports random colored streamer
@@ -86,7 +86,7 @@ Constructor Inputs:
 Functions:
     reset() -- Restarts the streamer pattern
     setPatternAsPattern(*inputPattern, colorLength, spacing) -- Takes an input pattern and creates a streamer pattern from it using the current palette
-                                                               Ex: uint8_t pattern_arr = {1, 2, 3};
+                                                                Ex: uint8_t pattern_arr = {1, 2, 3};
                                                                    patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
                                                                    setPatternAsPattern(&pattern, 3, 4) 
                                                                    Will do a streamer using the first three colors of the palette (taken from the pattern)
@@ -95,19 +95,18 @@ Functions:
     update() -- updates the effect
 
 Other Settings:
-    fadeOn (default true) -- If false, the streamer will jump directly to the next color instead of fading
-                            Note that if 1 or 0 are passed in as the FadeSteps in the constructor, 
-                            fadeOn will be set to false automatically
     randMode (default 0) -- Sets the type of how colors are choosen:
-                        -- 0: Colors will be choosen in order from the pattern (not random)
-                        -- 1: Colors will be choosen completely at random
-                        -- 2: Colors will be choosen randomly from the palette
+                         -- 0: Colors will be choosen in order from the pattern (not random)
+                         -- 1: Colors will be choosen completely at random
+                         -- 2: Colors will be choosen randomly from the palette
+                         -- 3: Colors will be choosen at random from the palette,
+                               but the same color won't be repeated in a row
 
 Flags:
-    preFillDone -- Indicates if the strip has been pre-filled with the effect's color outputs 
-                  This needs to happen before running the first update cycle
-                  If false, preFill() will be called when first updating
-                  Set true once the first update cycle has been finished
+    initFillDone -- Indicates if the strip has been pre-filled with the effect's color outputs 
+                    This needs to happen before running the first update cycle
+                    If false, preFill() will be called when first updating
+                    Set true once the first update cycle has been finished
 
 Notes:
     If the constructor made your pattern, it will be stored in patternTemp
@@ -136,10 +135,10 @@ class StreamerFastPS : public EffectBasePS {
             cycleCount = 0;
             
         bool
-            preFillDone = false;
+            initFillDone = false;
 
         CRGB 
-            nextColor,
+            prevColor, //The color of the newest wave (excluding the background color)
             bgColorOrig,
            *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
 
@@ -155,11 +154,9 @@ class StreamerFastPS : public EffectBasePS {
             *palette;
         
         void 
-            init(CRGB BgColor, uint16_t Rate),
             setPatternAsPattern(patternPS *inputPattern, uint8_t colorLength, uint8_t spacing),
             setPaletteAsPattern(uint8_t colorLength, uint8_t spacing),
             reset(),
-            preFill(),
             update(void);
     
     private:
@@ -173,7 +170,12 @@ class StreamerFastPS : public EffectBasePS {
             pixelNumber;
 
         CRGB 
+            nextColor,
             pickStreamerColor(uint8_t patternIndex);
+        
+        void
+            initalFill(),
+            init(CRGB BgColor, uint16_t Rate);
 };  
 
 #endif
