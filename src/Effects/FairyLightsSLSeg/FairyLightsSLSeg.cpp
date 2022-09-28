@@ -4,14 +4,14 @@
 
 //palette based constructor
 FairyLightsSLSeg::FairyLightsSLSeg(SegmentSet &SegmentSet, palettePS *Palette, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode, bool SegMode, uint16_t Rate):
-    segmentSet(SegmentSet), palette(Palette), numTwinkles(NumTwinkles), tmode(Tmode), segMode(SegMode)
+    segmentSet(SegmentSet), palette(Palette), numTwinkles(NumTwinkles), tMode(Tmode), segMode(SegMode)
     {    
         init(BGColor, Rate);
 	}
 
 //single color constructor
 FairyLightsSLSeg::FairyLightsSLSeg(SegmentSet &SegmentSet, CRGB Color, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode, bool SegMode, uint16_t Rate):
-    segmentSet(SegmentSet), numTwinkles(NumTwinkles), tmode(Tmode), segMode(SegMode)
+    segmentSet(SegmentSet), numTwinkles(NumTwinkles), tMode(Tmode), segMode(SegMode)
     {    
         init(BGColor, Rate);
         setSingleColor(Color);
@@ -19,7 +19,7 @@ FairyLightsSLSeg::FairyLightsSLSeg(SegmentSet &SegmentSet, CRGB Color, uint8_t N
 
 //random colors constructor
 FairyLightsSLSeg::FairyLightsSLSeg(SegmentSet &SegmentSet, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode, bool SegMode, uint16_t Rate):
-    segmentSet(SegmentSet), numTwinkles(NumTwinkles), tmode(Tmode), segMode(SegMode)
+    segmentSet(SegmentSet), numTwinkles(NumTwinkles), tMode(Tmode), segMode(SegMode)
     {    
         init(BGColor, Rate);
         //we make a random palette of one color so that 
@@ -115,7 +115,7 @@ void FairyLightsSLSeg::update(){
             reDrawAll = true;
             segDrawUtils::fillSegSetColor(segmentSet, *bgColor, bgColorMode);
         }
-        switch (tmode) {
+        switch (tMode) {
             case 0: 
             default:
                 modeZeroSet();

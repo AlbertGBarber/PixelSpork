@@ -21,20 +21,23 @@ Example calls:
     uint8_t pattern_arr = {0, 1, 4};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
     CrossFadeCyclePS(mainSegments, &pattern, palette, 0, 40, 30);
-    Will fade from color 0, to color 1, to color 4 of the palette, infinitly, taking 40 steps for each fade, with 30ms between steps
+    Will fade from color 0, to color 1, to color 4 of the palette, infinitly, 
+    taking 40 steps for each fade, with 30ms between steps
 
     CrossFadeCyclePS(mainSegments, palette, 5, 40, 30);
-    Will fade through the colors of the palette in order until 5 fades have been completed, taking 40 steps for each fade, with 30ms between steps
+    Will fade through the colors of the palette in order until 5 fades have been completed, 
+    taking 40 steps for each fade, with 30ms between steps
 
     CrossFadeCyclePS(mainSegments, 0, 40, 30);
-    Will fade from one random color to the next infinitly, taking 40 steps for each fade, with 30ms between steps
+    Will fade from one random color to the next infinitly, 
+    taking 40 steps for each fade, with 30ms between steps
 
-Modes ( not set in constructor, set using mode variable ):
-    Mode 0: (default), cycles through the pattern in order
-    Mode 1: Chooses the next color randomly from the current pattern (it shuffles)
-    Mode 2: Chooses colors completely randomly (is set by the corrosponding constuctor)
+Modes ( not set in constructor, set using randMode variable ):
+    0: (default), cycles through the pattern in order (not random)
+    1: Chooses the next color randomly from the current pattern (it shuffles)
+    2: Chooses colors completely randomly (is set by the corrosponding constuctor)
 
-Doe not accept color modes from segDrawUtils::setPixelColor();
+Does not work with color modes from segDrawUtils::setPixelColor()
 
 Constructor Inputs
     Pattern(optional, see constructors) -- A pattern is struct made from a 1-d array of palette indexes ie {0, 1, 3, 6, 7} 
@@ -57,7 +60,7 @@ Flags:
     done (starts false) -- set to true flag for if we've done the total number of fades
 
 Other Settings:
-    Mode -- see mode note above
+    randMode -- see mode note above
 */
 class CrossFadeCyclePS : public EffectBasePS {
     public:
@@ -74,10 +77,7 @@ class CrossFadeCyclePS : public EffectBasePS {
 
         uint8_t
             steps, //total steps per fade
-            fMode = 0; //see description above
-
-        patternPS
-            *pattern;
+            randMode = 0; //see description above
         
         uint16_t 
             numFades; //total number of fades to do
@@ -90,11 +90,14 @@ class CrossFadeCyclePS : public EffectBasePS {
             &segmentSet; 
 
         palettePS
-            *palette;
+            *palette,
+            paletteTemp;
+        
+        patternPS
+            *pattern,
+            patternTemp;
         
         void 
-            setPattern(patternPS *newPattern),
-            setPalette(palettePS *newPalette),
             setPaletteAsPattern(),
             reset(void),
             update(void);
@@ -103,12 +106,6 @@ class CrossFadeCyclePS : public EffectBasePS {
         unsigned long
             currentTime,
             prevTime = 0;
-        
-        palettePS
-            paletteTemp;
-        
-        patternPS
-            patternTemp;
         
         CRGB 
             startColor, //the color we are fading from

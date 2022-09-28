@@ -32,26 +32,26 @@ Example calls:
     uint8_t pattern_arr = {0, 1, 4};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
     DissolveSL(mainSegments, &pattern, palette, 0, 150, 70);
-    Will dissolve from color 0 in the palette to color 1, to color 4, etc using dMode 0 (see below) 
+    Will dissolve from color 0 in the palette to color 1, to color 4, etc using randMode 0 (see below) 
     with the number of leds set on one cycle increasing every 150ms with the effect updating every 70ms
 
     DissolveSL(mainSegments, palette, 4, 100, 100);
-    Will dissolve from one palette color to the next using dMode 4 (see below) 
+    Will dissolve from one palette color to the next using randMode 4 (see below) 
     with the number of leds set on one cycle increasing every 100ms with the effect updating every 100ms
 
     DissolveSL(mainSegments, 3, 150, 70);
-    Will dissolve using random colors set according to dMode 3
-    (use dMode 2 or 3 with this constructor)
+    Will dissolve using random colors set according to randMode 3
+    (use randMode 2 or 3 with this constructor)
     with the number of leds set on one cycle increasing every 150ms with the effect updating every 70ms
 
-dModes:
+randModes:
     0: Each dissolve is a solid color following the pattern
     1: Each dissolve is a set of random colors choosen from the pattern
     2: Each dissolve is a set of randomly choosen colors
     3: Each dissolve is a solid color choosen at random
     4: Each dissolve is a solid color choosen randomly from the pattern
 
-You should be able switch freely between dModes on the fly (the random modes will set up a random palette/pattern as a fallback)
+You should be able switch freely between randModes on the fly (the random modes will set up a random palette/pattern as a fallback)
 
 You can freely use colorModes from segDrawUtils::setPixelColor(), but they don't make much sense
 unless you are running an offset in the segmentSet or using colorModes 5 or 6.
@@ -61,7 +61,7 @@ Constructor Inputs
                                           and the length of the array 
                                           (see patternPS.h)   
     palette(optional, see constructors) -- The repository of colors used in the pattern, or can be used as the pattern itself
-    dMode -- The dMode that will be used for the dissolves (see above)
+    randMode -- The randMode that will be used for the dissolves (see above)
     spawnRateInc -- The rate increase at which the total number of leds that are set each cycle (ms)
                    Setting this closeish (up to double?) to the update rate looks the best
     Rate -- update rate (ms)
@@ -89,13 +89,13 @@ Notes:
 class DissolveSL : public EffectBasePS {
     public:
         //constructor for pattern
-        DissolveSL(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, uint8_t DMode, uint16_t SpawnRateInc, uint16_t Rate); 
+        DissolveSL(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, uint8_t RandMode, uint16_t SpawnRateInc, uint16_t Rate); 
 
         //constructor for palette as pattern
-        DissolveSL(SegmentSet &SegmentSet, palettePS *Palette, uint8_t DMode, uint16_t SpawnRateInc, uint16_t Rate); 
+        DissolveSL(SegmentSet &SegmentSet, palettePS *Palette, uint8_t RandMode, uint16_t SpawnRateInc, uint16_t Rate); 
         
-        //constructor for randomly choosen colors (should only use dMode 2 or 3 with this constructor)
-        DissolveSL(SegmentSet &SegmentSet, uint8_t DMode, uint16_t SpawnRateInc, uint16_t Rate);
+        //constructor for randomly choosen colors (should only use randMode 2 or 3 with this constructor)
+        DissolveSL(SegmentSet &SegmentSet, uint8_t RandMode, uint16_t SpawnRateInc, uint16_t Rate);
     
         ~DissolveSL();
 
@@ -105,7 +105,7 @@ class DissolveSL : public EffectBasePS {
             spawnRateInc;
         
         uint8_t
-            dMode,
+            randMode,
             colorMode = 0,
             numCycles = 0, //how many update cycles we've been through, for reference
             numMaxSpawn,

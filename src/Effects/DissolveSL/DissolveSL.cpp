@@ -1,26 +1,26 @@
 #include "DissolveSL.h"
 
 //constructor for pattern
-DissolveSL::DissolveSL(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, uint8_t DMode, uint16_t SpawnRateInc, uint16_t Rate):
-    segmentSet(SegmentSet), pattern(Pattern), palette(Palette), dMode(DMode), spawnRateInc(SpawnRateInc)
+DissolveSL::DissolveSL(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, uint8_t RandMode, uint16_t SpawnRateInc, uint16_t Rate):
+    segmentSet(SegmentSet), pattern(Pattern), palette(Palette), randMode(RandMode), spawnRateInc(SpawnRateInc)
     {    
         init(Rate);
 	}
 
 //constructor for palette as pattern
-DissolveSL::DissolveSL(SegmentSet &SegmentSet, palettePS *Palette, uint8_t DMode, uint16_t SpawnRateInc, uint16_t Rate):
-    segmentSet(SegmentSet), palette(Palette), dMode(DMode), spawnRateInc(SpawnRateInc)
+DissolveSL::DissolveSL(SegmentSet &SegmentSet, palettePS *Palette, uint8_t RandMode, uint16_t SpawnRateInc, uint16_t Rate):
+    segmentSet(SegmentSet), palette(Palette), randMode(RandMode), spawnRateInc(SpawnRateInc)
     {
         setPaletteAsPattern();
         init(Rate);
     }
 
-//constructor for randomly choosen colors (should only use dMode 2 or 3 with this constructor)
-DissolveSL::DissolveSL(SegmentSet &SegmentSet, uint8_t DMode, uint16_t SpawnRateInc, uint16_t Rate):
-    segmentSet(SegmentSet), dMode(DMode), spawnRateInc(SpawnRateInc)
+//constructor for randomly choosen colors (should only use randMode 2 or 3 with this constructor)
+DissolveSL::DissolveSL(SegmentSet &SegmentSet, uint8_t RandMode, uint16_t SpawnRateInc, uint16_t Rate):
+    segmentSet(SegmentSet), randMode(RandMode), spawnRateInc(SpawnRateInc)
     {
         //although we're randomly choosing colors, we still make a palette and pattern 
-        //so that if the dMode is changed later, there's still a palette/pattern to use
+        //so that if the randMode is changed later, there's still a palette/pattern to use
         paletteTemp = paletteUtilsPS::makeRandomPalette(3);
         palette = &paletteTemp;
         setPaletteAsPattern();
@@ -70,23 +70,23 @@ void DissolveSL::setPaletteAsPattern(){
     pattern = &patternTemp;
 }
 
-//set a color based on the pattern and dMode
+//set a color based on the pattern and randMode
 //see effect description for pattern info
-//dModes:
+//randModes:
     //0: Each dissolve is a solid color following the pattern
     //1: Each dissolve is a set of random colors choosen from the pattern
     //2: Each dissolve is a set of randomly choosen colors
     //3: Each dissolve is a solid color choosen at random
     //4: Each dissolve is a solid color choosen randomly from the pattern
 CRGB DissolveSL::pickColor(){
-    if(dMode == 0){
+    if(randMode == 0){
         //cycle through the pattern
         currentIndex = patternUtilsPS::getPatternVal(pattern, numCycles);
         color = paletteUtilsPS::getPaletteColor(palette, currentIndex );
-    } else if(dMode == 1){
+    } else if(randMode == 1){
         //choose colors randomly from the pattern
         color = paletteUtilsPS::getPaletteColor(palette, patternUtilsPS::getRandVal(pattern) );
-    } else if(dMode == 2){
+    } else if(randMode == 2){
         //choose colors randomly
         color = colorUtilsPS::randColor();
     } else {
@@ -94,9 +94,9 @@ CRGB DissolveSL::pickColor(){
         //hence the ranColorPicked flag
         //(This could also apply to mode 0, but we want to check the color each time for paletteBlending)
         if( !randColorPicked ){
-            if(dMode == 3){
+            if(randMode == 3){
                 color = colorUtilsPS::randColor();
-            } else if(dMode == 4) {
+            } else if(randMode == 4) {
                 currentIndex = patternUtilsPS::getShuffleIndex(pattern, currentIndex);
                 color = paletteUtilsPS::getPaletteColor( palette, currentIndex );
             }

@@ -18,7 +18,7 @@ You can keep it 1D by passing in a segmentSet with only one segment containing t
 and setting segMode to false
 
 For segment sets with different segment lengths you may need to set fillBG to true
-otherwise you might end up with artifacts where multiple lines cross depending on the tmode
+otherwise you might end up with artifacts where multiple lines cross depending on the tMode
 
 This effect is fully compatible with color modes, and the bgColor is a pointer, so you can bind it
 to an external color variable
@@ -97,7 +97,7 @@ class FairyLightsSLSeg : public EffectBasePS {
             randMode = 0,
             cycleNum = 0,
             numTwinkles, //for reference only, set using setNumTwinkles()
-            tmode,
+            tMode,
             colorMode = 0,
             bgColorMode = 0;
         

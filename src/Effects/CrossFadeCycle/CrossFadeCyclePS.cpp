@@ -4,7 +4,7 @@
 CrossFadeCyclePS::CrossFadeCyclePS(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, uint16_t NumFades, uint8_t Steps, uint16_t Rate):
     segmentSet(SegmentSet), pattern(Pattern), palette(Palette), numFades(NumFades), steps(Steps)
     {    
-        fMode = 0;
+        randMode = 0;
         init(Rate);
 	}
 
@@ -12,7 +12,7 @@ CrossFadeCyclePS::CrossFadeCyclePS(SegmentSet &SegmentSet, patternPS *Pattern, p
 CrossFadeCyclePS::CrossFadeCyclePS(SegmentSet &SegmentSet, palettePS *Palette, uint16_t NumFades, uint8_t Steps, uint16_t Rate):
     segmentSet(SegmentSet), palette(Palette), numFades(NumFades), steps(Steps)
     {    
-        fMode = 0;
+        randMode = 0;
         setPaletteAsPattern();
         init(Rate);
 	}
@@ -21,7 +21,7 @@ CrossFadeCyclePS::CrossFadeCyclePS(SegmentSet &SegmentSet, palettePS *Palette, u
 CrossFadeCyclePS::CrossFadeCyclePS(SegmentSet &SegmentSet, uint16_t NumFades, uint8_t Steps, uint16_t Rate):
     segmentSet(SegmentSet), numFades(NumFades), steps(Steps)
     {    
-        fMode = 2; //set mode to 2 since we are doing a full random set of colors
+        randMode= 2; //set mode to 2 since we are doing a full random set of colors
         //setup a minimal backup palette of random colors of length 2
         //this won't be used in the effect, but if you switched modes without 
         //setting up a palette, you will crash
@@ -65,8 +65,9 @@ void CrossFadeCyclePS::reset(){
     currentIndex = patternUtilsPS::getPatternVal( pattern, 0 );
     //set the starting colors depending on the mode
     //for shuffle, we always start with the first color for simplicity
-    switch (fMode) {
+    switch (randMode) {
         case 0: 
+        default:
             startColor = paletteUtilsPS::getPaletteColor( palette, currentIndex );
             nextColor = paletteUtilsPS::getPaletteColor( palette, patternUtilsPS::getPatternVal( pattern, 1 ) );
             break;
@@ -74,21 +75,11 @@ void CrossFadeCyclePS::reset(){
             startColor = paletteUtilsPS::getPaletteColor( palette, currentIndex );
             nextColor = paletteUtilsPS::getPaletteColor( palette, patternUtilsPS::getShuffleIndex(pattern, currentIndex) );
             break;
-        default: //anything mode 2 or above
+        case 2:
             startColor = colorUtilsPS::randColor();
             nextColor = colorUtilsPS::randColor();
             break;
     }
-}
-
-//binds the palette to a new one
-void CrossFadeCyclePS::setPalette(palettePS *newPalette){
-    palette = newPalette;
-}
-
-//sets a new pattern
-void CrossFadeCyclePS::setPattern(patternPS *newPattern){
-    pattern = newPattern;
 }
 
 //sets the pattern to match the current palette
@@ -105,9 +96,9 @@ void CrossFadeCyclePS::update(){
     //if we've reached the fadeCount number of cycle
     //the effect is finished
     //other wise update the effect
-    if(!infinite && (fadeCount == numFades ) ){
+    if( !infinite && (fadeCount == numFades) ){
         done = true;
-    } else if( ( currentTime - prevTime ) >= *rate ) {
+    } else if( (currentTime - prevTime) >= *rate ) {
         prevTime = currentTime;
         
         //caculate the next step of the current fade and display it
@@ -124,8 +115,9 @@ void CrossFadeCyclePS::update(){
             //since the fade is done, the new starting color is the previous next color
             startColor = nextColor;
             //set the next color depending on the mode
-            switch (fMode) {
+            switch (randMode) {
                 case 0: 
+                default:
                     //normal mode
                     //(fadeCount + 2) is used as the next index, because we start with the first pair of colors
                     //techincally, this means that cycle count starts at 1, but because fadeCount is also a measure of 
@@ -138,8 +130,8 @@ void CrossFadeCyclePS::update(){
                     currentIndex = patternUtilsPS::getShuffleIndex(pattern, currentIndex);
                     nextColor = paletteUtilsPS::getPaletteColor( palette, currentIndex);
                     break;
-                default:
-                    //random mode (for all cases above 1)
+                case 2:
+                    //random mode
                     nextColor = colorUtilsPS::randColor();
                     break;
             }
