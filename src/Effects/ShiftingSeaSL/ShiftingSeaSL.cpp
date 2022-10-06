@@ -58,15 +58,25 @@ void ShiftingSeaSL::resetOffsets() {
     numLines = segmentSet.maxSegLength;
     delete[] offsets;
     offsets = new uint16_t[numLines];
-    totalCycleLength = palette->length * gradLength;
+    setTotalCycleLen();
     ShiftingSeaUtilsPS::genOffsetArray(offsets, numLines, gradLength, grouping, totalCycleLength, sMode);
 }
 
-// updates the effect
-// Runs through each pixel, calculates it's color based on the cycle number and the offset
-// and determines which colors from the palette it's inbetween
-// incrments the offset based on the randomShift values
-// then writes it out
+//caculates the totalCycleLength, which represents the total number of possible offsets a pixel can hav
+void ShiftingSeaSL::setTotalCycleLen(){
+    paletteLen = palette->length;
+    totalCycleLength = gradLength * (paletteLen + (uint8_t)addBlank); //addBlank is a bool, so will be either 0 or 1
+}
+
+//Updates the effect
+//Runs through each pixel, calculates it's color based on the cycle number and the offset
+//and determines which colors from the palette it's inbetween
+//incrments the offset based on the randomShift values
+//then writes it out
+//Note that if addBlank is true, then we want to add an extra blank color to the end of the cycle,
+//but we don't want to modify the existing palette (since it may be used in other effects)
+//So we have to artificially add the extra blank color by manipluating the total number of cycle steps
+//and then setting the colors manually at the end of the cycle (rather than just getting them from the palette)
 void ShiftingSeaSL::update() {
     currentTime = millis();
 
@@ -75,28 +85,47 @@ void ShiftingSeaSL::update() {
         
         //caculates the totalCycleLength, which represents the total number of possible offsets a pixel can have
         //we do this on the fly so you can change gradLength and the palette freely
-        totalCycleLength = palette->length * gradLength;
+        //If we're adding a blank color to the cycle, we add an extra gradLength to the totalCycleLength
+        //to account for the extra blank color cycle steps
+        setTotalCycleLen();
 
         for (uint16_t i = 0; i < numLines; i++) {
             step = addMod16PS( cycleNum, offsets[i], totalCycleLength); // where we are in the cycle of all the colors
             gradStep = addMod16PS( cycleNum, offsets[i], gradLength); // what step we're on between the current and next color
-            currentColorIndex = step / gradLength; // what color we've started from (integers always round down)
+            currentColorIndex = step / gradLength; // what color (palette index) we've started from (integers always round down)
             currentColor = paletteUtilsPS::getPaletteColor(palette, currentColorIndex);
             nextColor = paletteUtilsPS::getPaletteColor(palette, currentColorIndex + 1); // the next color, wrapping to the start of the palette as needed
+
+            //if we're adding a blank color at the end of the cycle, we need to to catch the end
+            //since the palette doesn't include the blank color
+            //so we have the case where we're transitioning from the last palette color to the blank color
+            //and the case after where we're transitioning from the blank color back to the start of the palette
+            if(addBlank){
+                if(currentColorIndex + 1 == paletteLen){
+                    //going from the end of the palette to the blank color
+                    nextColor = *blankColor;
+                } else if(currentColorIndex == paletteLen){
+                    //going from the blankColor to the start of the palette
+                    currentColor = *blankColor;
+                    nextColor = paletteUtilsPS::getPaletteColor(palette, 0);
+                }
+            }
+            
+            //get the cross faded color and write it out
             color = colorUtilsPS::getCrossFadeColor(currentColor, nextColor, gradStep, gradLength);
-
             segDrawUtils::drawSegLineSimple(segmentSet, i, color, 0);
-            //segDrawUtils::setPixelColor(segmentSet, i, color, 0);
 
-            // randomly increment the offset
+            // randomly increment the offset (keeps the effect varied)
             if (randomShift) {
                 if (random8(100) <= shiftThreshold) {
-                    offsets[i] = addMod16PS( offsets[i], random8(1, shiftStep), totalCycleLength ); //(offsets[i] + random8(1, shiftStep)) % totalCycleLength;
+                    offsets[i] = addMod16PS( offsets[i], random8(1, shiftStep), totalCycleLength );
                 }
             }
         }
-        // incrment the cycle, clamping it's max value to prevent any overflow
+
+        //increment the cycle, clamping it's max value to prevent any overflow
         cycleNum = addMod16PS(cycleNum, 1, totalCycleLength);
+        
         showCheckPS();
     }
 }

@@ -3,7 +3,7 @@
 
 //TODO:
 //  -- Add option to use a pattern based on a palette?
-//  --Add option to insert a blank color into the sea
+//  -- Add a constructor with random shift and blank options?
 
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
@@ -13,16 +13,31 @@
 /*
 Cycles each line of a segment set through a palette of colors. Each segment line is given an random 
 offset to place it somewhere mid-fade between the palette colors, so the result is a shifting sea of palette colors. 
-There are two modes: 0, where the offsets are choosen randomly from any point of fading between any 
-two consecutive colors of the palette (so the overall output is a mix of the palette colors)
-or mode 1, where the offsets are choosen randomly from the fade between the first and second colors
-in mode 1, the lines will all generally shift from color to color, but some will be ahead of others, creating a varied look.
+
+There are two modes: 
+    0: Where the offsets are choosen randomly from any point of fading between any 
+       two consecutive colors of the palette (so the overall output is a mix of the palette colors)
+    1: Where the offsets are choosen randomly from the fade between the first and second colors
+       in mode 1, the lines will all generally shift from color to color, 
+       but some will be ahead of others, creating a varied look.
+
 You can specify a grouping for the lines, this will set the offsets of consecutive pixels to be the same
-the number of lines grouped together is choosen randomly (up to the grouping amount)
+the number of lines grouped together is choosen randomly (up to the grouping amount).
 This makes the effect more uniform, and may look better with larger palettes or segments sets
+
 By default, once the offsets are set, they do not change. This can make the effect look a bit repetitive
 to counter this, you can turn on random shifting, which will increment the offset of a line
-by up to shiftStep (default 1) if a random threshold is met
+by up to shiftStep (default 1) if a random threshold is met.
+
+You can change how many gradient steps between colors there are on the fly.
+
+In some cases the effect looks better if there is a "blank" inserted into the cycle
+so that pixels will cycle to off every so often.
+However most palettes don't include off as a color, so I've build an off state into the effect directly.
+This will not modify any palettes, the blank state is tacked on to the end of the palette color cycle.
+You can include the off state by setting addBlank to true.
+You can also set the blank color (default is 0) using the *blankColor var.
+Note that turning this on or off while the effect is running will cause colors to jump.
 
 Please note that this effect will not work with the colorModes of segDrawUtils::setPixelColor();
 But you can find a rainbow version of the effect in ShiftingRainbowSeaPS.h
@@ -49,7 +64,7 @@ Inputs:
     numColors (optional, see constructors) -- The length of the randonly created palette used for the effect
     gradLength -- (max 255) the number of steps to fade from one color to the next
     sMode -- The mode of the effect, either 0, or 1: 0 for the offsets to be picked between any two colors
-                                                   1 for the offsets to be picked from between the first two colors
+                                                     1 for the offsets to be picked from between the first two colors
     grouping -- Min value of 1. The maximum number of consecutive pixels that can share the same offset
                (the offsets are grouped in randomly lengths up to the Grouping value)
     Rate -- The update rate (ms)
@@ -61,8 +76,10 @@ Functions:
     update() -- updates the effect
 
 Other Settings:
+    addBlank (default false) -- Adds a blank color to the cycle. The blank color is stored as blankColor.
+    *blankColor and blankColorOrig (default 0) -- The color used by addBlank. By default the blankColor is pointed to blankColorOrig.
     randomShift (default false) -- Turns on/off the random shift for the pixel offsets (see effect description above)
-    shiftThreshold ( default 15) -- Sets the threshold for if a pixel offset will increment, out of 100, with higher values being more likly
+    shiftThreshold (default 15) -- Sets the threshold for if a pixel offset will increment, out of 100, with higher values being more likly
                                    15 seemed to look good in my tests
     shiftStep (default 1, min 1) -- The maximum value (is choosen randomly) of the offset increment if the shiftThreshold is met
 
@@ -94,7 +111,12 @@ class ShiftingSeaSL : public EffectBasePS {
             cycleNum = 0; //tracks how many update's we've done, max value of totalCycleLength, for reference
         
         bool
-            randomShift = false;
+            randomShift = false,
+            addBlank = false;
+        
+        CRGB 
+            blankColorOrig = 0,
+            *blankColor = &blankColorOrig;
         
         palettePS
             paletteTemp,
@@ -117,6 +139,7 @@ class ShiftingSeaSL : public EffectBasePS {
             nextColor;
 
         uint8_t 
+            paletteLen,
             currentColorIndex, 
             gradStep;
 
@@ -126,7 +149,8 @@ class ShiftingSeaSL : public EffectBasePS {
             step = 0;
         
         void
-            init(uint16_t Rate);
+            init(uint16_t Rate),
+            setTotalCycleLen();
 };
 
 #endif

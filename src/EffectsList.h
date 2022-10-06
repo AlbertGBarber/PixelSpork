@@ -3,7 +3,6 @@
 #include "Effects/RainbowCycle/RainbowCyclePS.h"
 #include "Effects/RainbowCycleSLSeg/RainbowCycleSLSeg.h"
 #include "Effects/CrossFadeCycle/CrossFadeCyclePS.h"
-#include "Effects/CrossFadeCycleRand/CrossFadeCycleRandPS.h"
 #include "Effects/TwinkleSL/TwinkleSL.h"
 #include "Effects/Twinkle2SLSeg/Twinkle2SLSeg.h"
 #include "Effects/TwinkleFastSL/TwinkleFastSL.h"

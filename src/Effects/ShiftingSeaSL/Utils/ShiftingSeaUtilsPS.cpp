@@ -8,7 +8,7 @@ using namespace ShiftingSeaUtilsPS;
 //Min value fro grouping is 1
 void ShiftingSeaUtilsPS::genOffsetArray(uint16_t *offsets, uint16_t numPixels, uint8_t gradLength, uint16_t grouping, uint16_t totalCycleLength, uint8_t mode ){
 
-    uint8_t groupSize;
+    uint16_t groupSize;
 
     // grouping must be at least 1 (otherwise no pixels would be choosen)
     if (grouping <= 0) {
@@ -31,7 +31,7 @@ void ShiftingSeaUtilsPS::genOffsetArray(uint16_t *offsets, uint16_t numPixels, u
             offsets[i] = random8(gradLength);
         }
         //copy the offset to the grouped pixels
-        for (int j = 0; j < groupSize; j++) {
+        for (uint16_t j = 0; j < groupSize; j++) {
             // if we try to write to an led off the end of the strip, skip the rest
             //(happens because the group size can be bigger than the remaining leds in the strip)
             if ((i + j) > (numPixels - 1)) {
