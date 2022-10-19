@@ -1,8 +1,6 @@
 #ifndef LarsonScannerSL_h
 #define LarsonScannerSL_h
 
-//TODO -- combine this is the scanner function in my orginal library (give ability to change colors, w/ more scan particle positions?)
-
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
 #include "Effects/ParticlesSL/ParticlesSL.h"

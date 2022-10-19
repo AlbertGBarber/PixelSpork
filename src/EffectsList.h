@@ -46,3 +46,4 @@
 #include "Effects/RainbowFontsSL/RainbowFontsSL.h"
 #include "Effects/SegWaves/SegWaves.h"
 #include "Effects/SegWavesFast/SegWavesFast.h"
+#include "Effects/ScannerSL/ScannerSL.h"

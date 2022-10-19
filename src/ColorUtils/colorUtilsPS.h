@@ -1,6 +1,8 @@
 #ifndef colorUtilsPS_h
 #define colorUtilsPS_h
 
+//TODO: add color dim function (use crossfadeColor with 0 as target)
+
 #include "FastLED.h"
 #include "MathUtils/mathUtilsPS.h"
 

@@ -1,47 +1,61 @@
-#include "ParticlesSL.h"
+#include "ScannerSL.h"
 
-//constructor for automatically making a particle set according to the passed in options
-ParticlesSL::ParticlesSL(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint8_t numParticles, uint8_t direction, uint16_t baseSpeed, 
-                        uint16_t speedRange, uint16_t size, uint16_t sizeRange, uint8_t trailType, uint8_t trailSize, 
-                        uint8_t trailRange, uint8_t bounce, uint8_t colorIndex, bool randColor):
-    segmentSet(SegmentSet), palette(Palette)
+//Constructor for using a pattern with one of the default scan types
+ScannerSL::ScannerSL(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, CRGB BGColor, uint8_t ScanType,
+                     uint16_t TrailSize, uint16_t Size, bool Bounce, bool BounceChange, uint16_t Rate):
+    segmentSet(SegmentSet), pattern(Pattern), palette(Palette), trailSize(TrailSize), size(Size), bounce(Bounce), bounceChange(BounceChange)
     {    
-        init(BgColor);
-        numLines = segmentSet.maxSegLength;
-        particleSetTemp = particleUtilsPS::buildParticleSet(numParticles, numLines, direction, baseSpeed, 
-                                                            speedRange, size, sizeRange, trailType, trailSize, 
-                                                            trailRange, bounce, colorIndex, randColor);
-        particleSet = &particleSetTemp;
-        trailEndColors = new CRGB[numParticles];
-    }
+        init(BGColor, Rate);
+        setScanType(ScanType);
+	}
 
-//constructor for using a particle set you've already made
-ParticlesSL::ParticlesSL(SegmentSet &SegmentSet, particleSetPS *ParticleSet, palettePS *Palette, CRGB BgColor):
-    segmentSet(SegmentSet), particleSet(ParticleSet), palette(Palette)
+//Constructor for using the palette as the pattern with one of the default scan types
+ScannerSL::ScannerSL(SegmentSet &SegmentSet, palettePS *Palette, CRGB BGColor, uint8_t ScanType, uint16_t TrailSize, 
+                     uint16_t Size, bool Bounce, bool BounceChange, uint16_t Rate):
+    segmentSet(SegmentSet), palette(Palette), trailSize(TrailSize), size(Size), bounce(Bounce), bounceChange(BounceChange)
     {    
-        init(BgColor);
-        trailEndColors = new CRGB[particleSet->length];
-    }
+        init(BGColor, Rate);
+        setPaletteAsPattern();
+        setScanType(ScanType);
+	}
+
+//Constructor for using a pattern with a custom set of repeating waves
+ScannerSL::ScannerSL(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, CRGB BGColor, uint16_t numWaves,
+                     uint8_t TrailType, uint16_t TrailSize, uint16_t Size, bool direction, bool alternate, bool Bounce, 
+                     bool BounceChange, bool Blend, uint16_t Rate):
+    segmentSet(SegmentSet), pattern(Pattern), palette(Palette), trailSize(TrailSize), trailType(TrailType), size(Size), bounce(Bounce), bounceChange(BounceChange), blend(Blend)
+    {    
+        init(BGColor, Rate);
+        makeWaveSet(numWaves, direction, alternate);
+	}
+
+//Constructor for using the palette as the pattern with a custom set of repeating waves
+ScannerSL::ScannerSL(SegmentSet &SegmentSet, palettePS *Palette, CRGB BGColor, uint16_t numWaves, uint8_t TrailType,   
+                     uint16_t TrailSize, uint16_t Size,  bool direction, bool alternate, bool Bounce, bool BounceChange, 
+                     bool Blend, uint16_t Rate):
+    segmentSet(SegmentSet), palette(Palette), trailSize(TrailSize), trailType(TrailType), size(Size), bounce(Bounce), bounceChange(BounceChange), blend(Blend)
+    {    
+        init(BGColor, Rate);
+        setPaletteAsPattern();
+        makeWaveSet(numWaves, direction, alternate);
+	}
 
 //destructor
 //since particleSetTemp is only ever set using particleUtilsPS::buildParticleSet() (which makes everything using new)
 //we need to clean up it's memory. This includes the particles themselves.
 //However if particleSetTemp has not been set, then trying to clean it up will probably cause an error
 //by default, the particleArr pointer is NULL, so we can check for that to confirm if particleSetTemp has been used or not
-ParticlesSL::~ParticlesSL(){
-    if(particleSetTemp.particleArr){
-        particleUtilsPS::deleteAllParticles(&particleSetTemp);
-        delete[] particleSetTemp.particleArr;
-    }
+ScannerSL::~ScannerSL(){
     delete[] trailEndColors;
+    delete[] paletteTemp.paletteArr;
+    delete[] patternTemp.patternArr;
 }
 
 //initilizes the core variables of the effect
-void ParticlesSL::init(CRGB BgColor){
+void ScannerSL::init(CRGB BgColor, uint16_t Rate){
     //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
     bindSegPtrPS();
     //The effect uses the rates of the particles, but all effects must have a Rate var, so we make one up
-    uint16_t Rate = 80; 
     bindClassRatesPS();
     //bind background color pointer
     bindBGColorPS();
@@ -49,25 +63,127 @@ void ParticlesSL::init(CRGB BgColor){
     segDrawUtils::fillSegSetColor(segmentSet, *bgColor, bgColorMode);
 }
 
-//sets the effect to use a new particle set
-//we need to remake the trail end color array for the new particles
-//to avoid having left over trails, we'll redraw the background
-void ParticlesSL::setParticleSet(particleSetPS *newParticleSet){
-    particleSet = newParticleSet;
+void ScannerSL::setPaletteAsPattern(){
+    patternTemp = generalUtilsPS::setPaletteAsPattern(palette);
+    pattern = &patternTemp;
+}
+
+//builds the particle set for the type of common scan effect
+//(see makeWaveSet() for making a set of repeating waves)
+//Scan types:
+//  0: Like the classic cylon scanner, one particle with two trails moving back and forth
+//  1: Like the cylon scanner, but only using one trail
+//  2: Like one of the Kit Knight Rider scanners: two particles with single trails
+//     That move back and forth, intersecting in the center of the strip
+//     (note that this mode uses blend, see ParticlesPS.h for details)
+//NOTE that we use each particle's "bounce" var to store its initial direction
+//(all particles use the same bounce value, so we don't need to store it)
+void ScannerSL::setScanType(uint8_t newScanType){
+    numLines = segmentSet.maxSegLength;
+    uint8_t scanType = newScanType;
+  
+    blend = false;
+    if(scanType == 0){ //Like the classic cylon scanner, one particle with two trails moving back and forth
+        trailType = 2;
+        particleSet = particleUtilsPS::buildParticleSet(1, numLines, true, *rate, 0, size, 0, trailType, trailSize, 0, bounce, 0, false);
+        particleSet.particleArr[0]->bounce = 1;
+    } else if(scanType == 1){ //Like the cylon scanner, but only using one trail
+        trailType = 1;
+        particleSet = particleUtilsPS::buildParticleSet(1, numLines, true, *rate, 0, size, 0, trailType, trailSize, 0, bounce, 0, false);
+        particleSet.particleArr[0]->bounce = 1;
+    } else if(scanType == 2){ //Like one of the Kit Knight Rider scanners: two particles with single trails intersecting in the center of the strip
+        trailType = 1;
+        particleSet = particleUtilsPS::buildParticleSet(2, numLines, true, *rate, 0, size, 0, trailType, trailSize, 0, bounce, 0, false);
+        particleUtilsPS::setParticleSetPosition(&particleSet, 0, 0, false);
+        particleUtilsPS::setParticleSetDirection(&particleSet, 0, false);
+        particleSet.particleArr[0]->bounce = 0;
+        particleUtilsPS::setParticleSetPosition(&particleSet, 1, numLines - 1, false);
+        particleSet.particleArr[1]->bounce = 1;
+        blend = true; //need to turn on blend so that the two particles don't overwrite each other when they meet
+    }
+
+    reset();
+}
+
+//creates a set of particles of numWaves, with the particles evenly spaced across the segment set
+//also sets their initial directions, and will alternate the directions of each particle if alternate is true
+//NOTE that we use each particle's "bounce" var to store its initial direction
+//(all particles use the same bounce value, so we don't need to store it)
+void ScannerSL::makeWaveSet(uint16_t numWaves, bool direction, bool alternate){
+    numLines = segmentSet.maxSegLength;
+    particleSet = particleUtilsPS::buildParticleSet(numWaves, numLines, direction, *rate, 0, size, 0, trailType, trailSize, 0, bounce, 0, false);
+
+    uint16_t spacing;
+    spacing = numLines / numWaves;
+
+    //set each particle's starting location and direction according to the spacing
+    for(uint16_t i = 0; i < numWaves; i++){
+        //we add 1 to the spacing multiplier, so the wave trails start on the segments
+        particleUtilsPS::setParticleSetPosition(&particleSet, i, (i + 1) * spacing, false);
+        particleSet.particleArr[i]->bounce = 1;
+
+        if(alternate && mod16PS(i, 2) != 0){
+            particleUtilsPS::setParticleSetDirection(&particleSet, i, !direction);
+            particleSet.particleArr[i]->bounce = 0;
+        }
+    }
+
+    reset();
+}
+
+//resets all the particles to their start locations and sets their starting colors
+void ScannerSL::reset(){
+    particleUtilsPS::resetParticleset(&particleSet);
     delete[] trailEndColors;
-    trailEndColors = new CRGB[particleSet->length];
+    trailEndColors = new CRGB[particleSet.length];
+
+    //set the particle's starting colors
+    //we need to run over them twice to set their initial and next colors
+    patternIndexCount = 0;
+    numParticles = particleSet.length;
+    for(uint8_t i = 0; i < numParticles * 2; i++){
+        setPartColor(particleSet.particleArr[ mod16PS(i, numParticles) ]);
+    }
+
+    //can't have 0 length trails, so we need to change the trail type
+    if(trailSize == 0){
+        particleUtilsPS::setParticleSetProp(&particleSet, 4, 0, 0, 0);
+    }
+
     segDrawUtils::fillSegSetColor(segmentSet, *bgColor, bgColorMode);
 }
 
-//resets all the particles to their start locations
-void ParticlesSL::reset(){
-    particleUtilsPS::resetParticleset(particleSet);
-}
+///--------------------------------------------------------------------------------------
+/*
+This effect is basically a copy of ParticlesSL, but it includes code for switching the particle colors as they move.
+So if you want to know how the particles move it would be better to look at ParticlesSL.
+For the color switching, the goal of the effect is to produce "sonar-like" waves, ie a particls with fading trails
+with the added option of using multiple colors for the waves (with the colors changing as the waves cycle)
+The colors cycle according to a color pattern and are take from a palette. This can produce some neat effects.
+It should be noted that all the waves have the same speed, size, trails, etc
+Waves can be set to either bounce back or wrap when reaching the start/end of the segment lines
+They can be set to have their colors change every time they bounce, or only when the reach their starting point
+We need to keep the trail colors consistent as they bounce or wrap:
+For example if a wave moving forward, not bouncing, moves off the end of the strip and wraps to the start again
+it will change color, but we want to keep the part of the trail that has not wrapped yet the previous color
+so that it looks like the wave is moving off the segment set.
+To do this we keep track of the next wave color, its current color and its previous color
+(Note, since particles only have one native color index value, we use the life and maxLife values to store the previous and next wave colors)
+Then whenever we draw part of a wave we check where the part is and set its color appropriatly
+When a wave either wraps or bounces, we change its colors.
+
+The color changing happens in moveParticle() using setPartColor();
+while getPartPixelColor() is used to get the correct color for each particle piece
+(for trails there's a small extra bit to cover the trails of bouncing waves)
+*/
+//---------------------------------------------------------------------------------------------------------
 
 //Updates all the particles
 //Note that this effect is set up to draw particles along segment lines
 //So each particle is draw along all segment lines, with the longest segment setting the maximum particle position
 //Outline:
+//(Note the unlike ParticlesSL, all the scanner particles have the same properties, ie bounce, speed, etc
+//so we don't actually get them from the particles, rather we use the variables from the effect)
 //On each update cycle we check each particle to see if it should move, if so, we move it (dealing with bouncing and wrapping)
 //Then, if the particle moved, we set the background color on the segment line that the particle has moved off of (the last pixel in the trail)
 //Next, even if the particle has not moved, we re-draw the trails and the particle body
@@ -83,13 +199,12 @@ void ParticlesSL::reset(){
 //This means that the trail naturally fades as like it would for a physical streamer/flame/etc
 //For particles where the body size is larger than one, when bounce happens, the entire body reverses direction at once
 //This is not visually noticable, and makes coding easier. But it does mean there's no "center" of a particle
-void ParticlesSL::update(){
+void ScannerSL::update(){
     currentTime = millis();
 
-    if( ( currentTime - prevTime ) >= updateRate ) {
+    if( ( currentTime - prevTime ) >= *rate ) {
         prevTime = currentTime;
         //need to reset the update rate each cycle, to make sure we always set it to the fastest particle
-        updateRate = 65535; //max value of a uint16_t. This is an update rate of 65.5 sec.
 
         //refill the background if directed (if we're using a dynamic rainbow or something)
         if(fillBG || blend){
@@ -97,13 +212,13 @@ void ParticlesSL::update(){
         }
 
         //re-fetch the segment vars in-case they've been modified
-        numParticles = particleSet->length;
+        numParticles = particleSet.length;
         numLines = segmentSet.maxSegLength;
         numSegs = segmentSet.numSegs;
         longestSeg = segmentSet.segNumMaxSegLength;
 
         //for each particle, in order:
-        //move it to it's next position (ie line number) (if needed)
+        //move it to it's next position (ie line number)
         //then set the line at the previous location to the BgColor (including trail ends)
         //(Setting the background has some tricks, see the code comments below)
         //then draws new trails if needed
@@ -123,21 +238,10 @@ void ParticlesSL::update(){
         //In any case, this makes the programming much simpler, saves storage, and seems to work well in practice from what I can tell
         for (uint8_t i = 0; i < numParticles; i++) {
             //get the particle from the set, and record some vars locally for ease of access
-            particlePtr = particleSet->particleArr[i];
+            particlePtr = particleSet.particleArr[i];
             position = particlePtr->position; //the current position of the particle
-            speed = particlePtr->speed; //the speed of the patrticle 
             direction = particlePtr->direction; //the direction of motion (true moves towards the last pixel in the segementSet)
-            size = particlePtr->size; //the length of the main body of the particle
-            trailType = particlePtr->trailType; //the type of trail for the particle (see above for types)
-            trailSize = particlePtr->trailSize; //the length of the trail(s) of the particle (only applies if the pixel has a trail)
-            bounce = particlePtr->bounce; //sets if the particle wraps to the beginning of the segmentSet once it reaches the end, or if it reverses direction (it bounces)
-            
-            //record the fastest particle for accurate effect updating
-            if( speed < updateRate ){
-                updateRate = speed;
-            }
-            
-            partColor = paletteUtilsPS::getPaletteColor(palette, particlePtr->colorIndex);
+            startDirect = particlePtr->bounce; //We store the initial direction of the particle in its bounce var
 
             //partciles run from 0 to the maximum segment line number (numLines), either bouncing or wrapping depending on mode
             //if we're bouncing, we don't want anything to wrap past the end/start of the segment lines
@@ -151,13 +255,14 @@ void ParticlesSL::update(){
                 maxPosition = numLines;
             }
 
-            //if enough time has passed, we need to move the particle
-            movePart = ( ( currentTime - particlePtr->lastUpdateTime ) >= speed );
-            //if the particle needs to move, move it and record the time
-            if(movePart) {
-                particlePtr->lastUpdateTime = currentTime;
-                moveParticle(particlePtr);
-            }
+            //all scanner particle are the same speed, so they all update at once
+            //particlePtr->lastUpdateTime = currentTime;
+            moveParticle(particlePtr);
+
+            //get the current, previous and next particle colors
+            partColor = paletteUtilsPS::getPaletteColor(palette, particlePtr->colorIndex);
+            nextColor = paletteUtilsPS::getPaletteColor(palette, particlePtr->maxLife);
+            prevColor = paletteUtilsPS::getPaletteColor(palette, particlePtr->life);
 
             //get the multiplier for the particle direction (1 or -1)
             //we need this for drawing the trails and the particle body in the correct direction
@@ -177,7 +282,6 @@ void ParticlesSL::update(){
                 }
 
                 //get the physical pixel location and the color it's meant to be
-                //segDrawUtils::getPixelColor(segmentSet, &pixelInfo, *bgColor, bgColorMode, trailLineNum);
                 pixelNum = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, longestSeg, trailLineNum);
                 //only turn off the pixel if it hasn't been touched by another particle's trail (or something else)
                 //this prevents background holes from being placed in other particles
@@ -201,17 +305,19 @@ void ParticlesSL::update(){
                     //draw a trail, extending positively or negatively, dimming with each step, wrapping according to the maxPosition
                     //we draw the trail rear first, so that on bounces the brighter part of the trail over-writes the dimmer part
                     for (uint8_t k = trailSize; k > 0; k--) {
+                        
+                        //Note that getTrailLedLoc() also stores the color of the trail piece in targetColor
 
                         //if we have two trails, we need to draw the negative trail
                         if (trailType == 2 || trailType == 3) {
                             trailLineNum = getTrailLedLoc(false, k, maxPosition);
-                            setTrailColor(trailLineNum, j, k);
+                            setTrailColor(colorTarget, trailLineNum, j, k);
                         }
                         
                         //draw the positive trail
                         if (trailType == 1 || trailType == 2) {
                             trailLineNum = getTrailLedLoc(true, k, maxPosition);
-                            setTrailColor(trailLineNum, j, k);
+                            setTrailColor(colorTarget, trailLineNum, j, k);
                             //If we have trails, we need to record the trail end color at the end of the trail
                             //but only if we're writing to the longest seg (see notes in the background setting code above, and the intro)
                             if(k == trailSize && j == longestSeg){
@@ -235,10 +341,13 @@ void ParticlesSL::update(){
                         trailLineNum = addMod16PS( position, numLines - k * directStep, numLines); //( (position - k * directStep) + numLEDs) % numLEDs;
                     }
 
+                    //get the color of the body part based on its position relative to the head
+                    colorTarget = getPartPixelColor(trailLineNum, true);
+
                     //get the pixel location and color and set it
                     //segDrawUtils::getPixelColor(segmentSet, &pixelInfo, partColor, colorMode, trailLineNum);
                     pixelNum = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, j, trailLineNum);
-                    colorFinal = segDrawUtils::getPixelColor(segmentSet, pixelNum, partColor, colorMode, j, trailLineNum);
+                    colorFinal = segDrawUtils::getPixelColor(segmentSet, pixelNum, colorTarget, colorMode, j, trailLineNum);
                     
                     if(blend){
                         segmentSet.leds[pixelNum] += colorFinal;
@@ -266,7 +375,8 @@ void ParticlesSL::update(){
 //also handles bounce behavior
 //when bouncing, the whole particle body is reversed, so it's head position is 
 //shifted back/forward equal to it's size
-void ParticlesSL::moveParticle(particlePS *particlePtr) {
+//It also handles changing the particle's color 
+void ScannerSL::moveParticle(particlePS *particlePtr) {
     position = particlePtr->position;
 
     //get the multiplier for the direction (1 or -1)
@@ -285,26 +395,73 @@ void ParticlesSL::moveParticle(particlePS *particlePtr) {
         if(direction){
             position = numLines - size;
             direction = false;
+            //If we're changing colors every bounce, or we're back at the starting direction
+            //we need to set a new particle color
+            if(bounceChange || !startDirect){
+                setPartColor(particlePtr);
+            }
         } else{
             position = size - 1;
             direction = true;
+            //If we're changing colors every bounce, or we're back at the starting direction
+            //we need to set a new particle color
+            if(bounceChange || startDirect){
+                setPartColor(particlePtr);
+            }
         }
         particlePtr->direction = direction;
+    } else if( (direction && position == 0) || (!direction && position == numLines - 1) ){
+        //If we're not bouncing, we need to change the particle's color when it either passes 0 or the last line
+        //(depending on its direction)
+        setPartColor(particlePtr);
     }
 
     //update the particle's position
     particlePtr->position = position;
 }
 
+//Gives the particle a new color while also setting the next and previous color indexs (for the palette)
+//The Previous color is stored in the particle's life property
+//The current color is stored in the particle's colorIndex property
+//The next color is stored in the particle's maxLife property
+//randModes:
+//  0: Colors will be choosen in order from the pattern (not random)
+//  1: Colors will be choosen randomly from the pattern
+//  2: Colors will be choosen at random from the pattern,
+//     but the same color won't be repeated in a row
+//  3: new colors will not be choosen, the particle colors will be locked to whatever they currently are
+void ScannerSL::setPartColor(particlePS *particlePtr){
+    particlePtr->life = particlePtr->colorIndex;
+
+    if(randMode != 3){
+        particlePtr->colorIndex = particlePtr->maxLife;
+    }
+    
+    //Get the next particle color based on the random mode
+    if(randMode == 0){
+        //Get the next particle color, taking into account the number of active particles
+        //(don't want to have every particle repeat the pattern individually, rather all the particles do the pattern together)
+        particlePtr->maxLife = patternUtilsPS::getPatternVal(pattern, patternIndexCount + numParticles);
+        //Once we've set a color, we need to advance the pattern index for the next particle
+        patternIndexCount = addmod8(patternIndexCount, 1, pattern->length);
+    } else if(randMode == 1){
+        //get a color at random from the pattern
+        particlePtr->maxLife = patternUtilsPS::getRandVal(pattern);
+    } else if(randMode == 2){
+        //get a color at random from the pattern (but it won't be the same as the current color)
+        particlePtr->maxLife = patternUtilsPS::getShuffleIndex(pattern, particlePtr->colorIndex);
+    }
+    
+}
+
 //writes out the trail color according to the pixel number in the trail (ie 0 - trailSize)
 //the trail is blended towards background color according to the trailSize
-void ParticlesSL::setTrailColor(uint16_t trailLineNum, uint8_t segNum, uint8_t trailPixelNum){
+void ScannerSL::setTrailColor(CRGB trailColor, uint16_t trailLineNum, uint8_t segNum, uint8_t trailPixelNum){
     //get the physical pixel location, it's color, and the target background color
-    //segDrawUtils::getPixelColor(segmentSet, &pixelInfo, partColor, colorMode, trailLineNum);
     pixelNum = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, segNum, trailLineNum);
     
     colorTarget = segDrawUtils::getPixelColor(segmentSet, pixelNum, *bgColor, bgColorMode, segNum, trailLineNum);
-    colorFinal = segDrawUtils::getPixelColor(segmentSet, pixelNum, partColor, colorMode, segNum, trailLineNum);
+    colorFinal = segDrawUtils::getPixelColor(segmentSet, pixelNum, trailColor, colorMode, segNum, trailLineNum);
 
     //blend the color into the background according to where we are in the trail
     colorFinal = particleUtilsPS::getTrailColor(colorFinal, colorTarget, trailPixelNum, trailSize, dimPow);
@@ -322,7 +479,8 @@ void ParticlesSL::setTrailColor(uint16_t trailLineNum, uint8_t segNum, uint8_t t
 //returns the position of a trail pixel(local to the segment) based on the trail direction, and the mod ammount
 //trailDirect = true => a rear trail
 //trailDirect = false => a front trail
-uint16_t ParticlesSL::getTrailLedLoc(bool trailDirect, uint8_t trailPixelNum, uint16_t maxPosition) { 
+//Note that it also stores the trail pixel color in colorTarget.
+uint16_t ScannerSL::getTrailLedLoc(bool trailDirect, uint8_t trailPixelNum, uint16_t maxPosition) { 
     //get the multiplier for the direction (1 or -1)
     //sets if the trail will be drawn forwards or backwards
     trailDirectionAdj = particleUtilsPS::getDirectStep(trailDirect);
@@ -353,7 +511,44 @@ uint16_t ParticlesSL::getTrailLedLoc(bool trailDirect, uint8_t trailPixelNum, ui
         }
         //displace the trail by the size of the particle
         trailLocOutput = trailLocOutput - sizeAdj;
-    } 
+
+        //For this bounce-return case, we still need to keep the trail the previous color
+        //This is most easily caught here rather than in getPartPixelColor()
+        //We also only need to keep the previous color if the particle is changing color for this bounce
+        if( bounceChange || (startDirect == direction) ){
+            colorTarget = prevColor;
+        } else {
+            colorTarget = partColor;
+        }
+    } else {
+        //if we aren't handling the bounce-return case, we just get the color as normal
+        colorTarget = getPartPixelColor(trailLocOutput, trailDirect);
+    }
 
     return trailLocOutput;
+}
+
+//Returns the color of a particle's pixel so that the wave colors change correctly as they bounce or wrap
+CRGB ScannerSL::getPartPixelColor(uint16_t partPixelLoc, bool trailDirect){
+    if(bounce){ //For bouncing particles, it turns out that the correct color is always the trail color (except the for the case in getTrailLedLoc())
+        return partColor;
+    } else {
+        //If we're not bouncing, then any particle pieces that have not yet wrapped must be kept the previous particle color
+        //while any that have wrapped must be set to the next color
+        if(trailDirect){ //trail behind particle
+            //if we're moving forward, the particle wraps to 0, so any trail parts that have position greater
+            //then the particle head's need to be the previous color
+            //(This is reversed for a particle going backwards)
+            if( (direction && partPixelLoc > position) || (!direction && partPixelLoc < position)){
+                return prevColor;
+            }
+        } else { //trail ahead of particle
+            //If the trail is wrapping ahead of the particle, then it needs to be the next particle color
+            if( (direction && partPixelLoc < position) || (!direction && partPixelLoc > position)){
+                return nextColor;
+            }
+        }
+        //if the particle part is not wrapped, then it just needs to be the particle color
+        return partColor;
+    }
 }
