@@ -25,6 +25,12 @@ CRGB colorUtilsPS::wheel( uint16_t wheelPos, uint16_t rainbowOffset) {
     return wheel( wheelPos, rainbowOffset, 255, 255);
 }
 
+//returns a color that is dimmed by the ratio
+//the ratio is between 0 and 255, 255 being the total black
+CRGB colorUtilsPS::dimColor(CRGB startColor, uint8_t ratio){
+    return getCrossFadeColor(startColor, 0, ratio);
+}
+
 //returns a color that is blended/cross-faded between a start and end color according to the ratio of step/totalSteps
 //maximum value of totalSteps is 255 (since the color components are 0-255 uint8_t's)
 CRGB colorUtilsPS::getCrossFadeColor(CRGB startColor, CRGB endColor, uint8_t blendStep, uint8_t totalSteps){
