@@ -49,8 +49,6 @@ Constructor Inputs
     Rate -- update rate (ms)
 
 Functions:
-    setPattern(*newPattern) -- Sets the passed in pattern to be the effect pattern
-    setPalette(*newPalette) -- Sets the palette to the passed in palette
     setPaletteAsPattern() -- Sets the effect pattern to match the current palette
     reset() -- restarts the effect
     update() -- updates the effect

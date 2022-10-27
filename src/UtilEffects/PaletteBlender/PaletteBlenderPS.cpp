@@ -69,6 +69,9 @@ void PaletteBlenderPS::update(){
     if( ( currentTime - prevTime ) >= *rate ){
         if(!holdActive && !blendEnd){
             prevTime = currentTime;
+
+            step++;
+
             //for each color in the blend palette, blend it towards a color in the end palette
             //using the getCrossFadeColor function (see colorUtilsPS.h)
             //it doesn't matter if one palette is shorter than the other, b/c palettes wrap automatically
@@ -77,8 +80,8 @@ void PaletteBlenderPS::update(){
                 endColor = paletteUtilsPS::getPaletteColor(endPalette, i);
                 newColor = colorUtilsPS::getCrossFadeColor(startColor, endColor, step, totalSteps);
                 paletteUtilsPS::setColor(&blendPalette, newColor, i);
-                step++;
             }
+            
             //if we have reached the totalSteps,
             //the blend palette has reached the end palette
             //set flags, and loop if needed
