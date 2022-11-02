@@ -17,6 +17,13 @@ fades continue until the speficied number of fades is reached, or indefinitly if
 once the fade number is reached, the done flag will be set
 see constructors below for inputs
 
+Does not work with color modes from segDrawUtils::setPixelColor()
+
+randModes are: (default 0)
+    0: Colors will be choosen in order from the pattern (not random)
+    1: Colors will be choosen completely at random
+    2: Colors will be choosen randomly from the palette (not allowing repeats)
+
 Example calls: 
     uint8_t pattern_arr = {0, 1, 4};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
@@ -32,20 +39,13 @@ Example calls:
     Will fade from one random color to the next infinitly, 
     taking 40 steps for each fade, with 30ms between steps
 
-Modes ( not set in constructor, set using randMode variable ):
-    0: (default), cycles through the pattern in order (not random)
-    1: Chooses the next color randomly from the current pattern (it shuffles)
-    2: Chooses colors completely randomly (is set by the corrosponding constuctor)
-
-Does not work with color modes from segDrawUtils::setPixelColor()
-
 Constructor Inputs
-    Pattern(optional, see constructors) -- A pattern is struct made from a 1-d array of palette indexes ie {0, 1, 3, 6, 7} 
+    pattern(optional, see constructors) -- A pattern is struct made from a 1-d array of palette indexes ie {0, 1, 3, 6, 7} 
                                           and the length of the array 
                                           (see patternPS.h)                                     
-    Palette(optional, see constructors) -- The repository of colors used in the pattern, or can be used as the pattern itself
-    NumFades -- The total number of crossfades(colors) the effect will go through, setting this to 0 will flag for infinite fades
-    Steps -- How many steps for each fade
+    palette(optional, see constructors) -- The repository of colors used in the pattern, or can be used as the pattern itself
+    numFades -- The total number of crossfades(colors) the effect will go through, setting this to 0 will flag for infinite fades
+    steps -- How many steps for each fade
     Rate -- update rate (ms)
 
 Functions:
@@ -58,7 +58,7 @@ Flags:
     done (starts false) -- set to true flag for if we've done the total number of fades
 
 Other Settings:
-    randMode -- see mode note above
+    randMode (defualt 0) -- see mode note above
 */
 class CrossFadeCyclePS : public EffectBasePS {
     public:
@@ -107,17 +107,19 @@ class CrossFadeCyclePS : public EffectBasePS {
         
         CRGB 
             startColor, //the color we are fading from
-            newColor,
+            colorOut,
             nextColor; //the color we are fading to
         
         uint8_t
-            currentIndex = 0, //the index of the pattern that we are currently fading away from, mainly used for shuffle()
+            patternIndex = 0, //What index we're fading to in the pattern
+            palIndex = 0, //the index of the pattern that we are currently fading away from, mainly used for shuffle()
             currentStep = 0; //current step of the current fade
         
         uint16_t 
             fadeCount = 0; //how many total fades we've done
         
         void
+            getNextColor(),
             init(uint16_t Rate);
 };
 

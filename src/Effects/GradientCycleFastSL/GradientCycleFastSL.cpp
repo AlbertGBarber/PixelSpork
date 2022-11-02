@@ -159,7 +159,7 @@ void GradientCycleFastSL::pickNextColor(){
     //advance the pattern count,
     //even with random colors, I think you still need to do this for the initalFill?
     //idk, I'm tired today and it seemed to fix a bug where a gradient would start half-filled
-    patternCount = (patternCount + 1) % pattern->length;
+    patternCount = addMod16PS(patternCount, 1, pattern->length);  
     if(randMode == 0){
         //if we're not choosing a random color, we need to pick the next color in the pattern
         nextPattern = patternUtilsPS::getPatternVal(pattern, patternCount);

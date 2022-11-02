@@ -4,7 +4,6 @@
 CrossFadeCyclePS::CrossFadeCyclePS(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, uint16_t NumFades, uint8_t Steps, uint16_t Rate):
     segmentSet(SegmentSet), pattern(Pattern), palette(Palette), numFades(NumFades), steps(Steps)
     {    
-        randMode = 0;
         init(Rate);
 	}
 
@@ -12,16 +11,15 @@ CrossFadeCyclePS::CrossFadeCyclePS(SegmentSet &SegmentSet, patternPS *Pattern, p
 CrossFadeCyclePS::CrossFadeCyclePS(SegmentSet &SegmentSet, palettePS *Palette, uint16_t NumFades, uint8_t Steps, uint16_t Rate):
     segmentSet(SegmentSet), palette(Palette), numFades(NumFades), steps(Steps)
     {    
-        randMode = 0;
         setPaletteAsPattern();
         init(Rate);
 	}
 
-//constructor for fully random colors (mode 2)
+//constructor for fully random colors (mode 1)
 CrossFadeCyclePS::CrossFadeCyclePS(SegmentSet &SegmentSet, uint16_t NumFades, uint8_t Steps, uint16_t Rate):
     segmentSet(SegmentSet), numFades(NumFades), steps(Steps)
     {    
-        randMode= 2; //set mode to 2 since we are doing a full random set of colors
+        randMode = 1; //set mode to 1 since we are doing a full random set of colors
         //setup a minimal backup palette of random colors of length 2
         //this won't be used in the effect, but if you switched modes without 
         //setting up a palette, you will crash
@@ -49,7 +47,9 @@ void CrossFadeCyclePS::init(uint16_t Rate){
 void CrossFadeCyclePS::reset(){
     done = false;
     fadeCount = 0;
+    patternIndex = 0;
     currentStep = 0;
+    palIndex = 0;
     //a pattern of length 1 is nonsensical
     //the only result is a single solid color
     //once that is drawn set done to true, as there is nothing else to draw
@@ -57,29 +57,16 @@ void CrossFadeCyclePS::reset(){
         segDrawUtils::fillSegSetColor(segmentSet, paletteUtilsPS::getPaletteColor( palette, pattern->patternArr[0]), 0);
         done = true;
     }
+
     //passing 0 for numFades is a shorthand for turning infinite on
     if(numFades == 0){
         infinite = true;
     }
     
-    currentIndex = patternUtilsPS::getPatternVal( pattern, 0 );
-    //set the starting colors depending on the mode
-    //for shuffle, we always start with the first color for simplicity
-    switch (randMode) {
-        case 0: 
-        default:
-            startColor = paletteUtilsPS::getPaletteColor( palette, currentIndex );
-            nextColor = paletteUtilsPS::getPaletteColor( palette, patternUtilsPS::getPatternVal( pattern, 1 ) );
-            break;
-        case 1:
-            startColor = paletteUtilsPS::getPaletteColor( palette, currentIndex );
-            nextColor = paletteUtilsPS::getPaletteColor( palette, patternUtilsPS::getShuffleIndex(pattern, currentIndex) );
-            break;
-        case 2:
-            startColor = colorUtilsPS::randColor();
-            nextColor = colorUtilsPS::randColor();
-            break;
-    }
+    //Get the inital color and the first end color
+    getNextColor();
+    startColor = nextColor;
+    getNextColor();
 }
 
 //sets the pattern to match the current palette
@@ -88,6 +75,32 @@ void CrossFadeCyclePS::reset(){
 void CrossFadeCyclePS::setPaletteAsPattern(){
     patternTemp = generalUtilsPS::setPaletteAsPattern(palette);
     pattern = &patternTemp;
+}
+
+//Gets the next fade color based on the pattern, palette, and randMode
+//Also advances the patternIndex to track where we are in the pattern
+//randModes are:
+//  0: Colors will be choosen in order from the pattern (not random)
+//  1: Colors will be choosen completely at random
+//  2: Colors will be choosen randomly from the palette (not allowing repeats)
+void CrossFadeCyclePS::getNextColor(){
+    switch (randMode) {
+        case 0: //Colors will be choosen in order from the pattern (not random)
+        default:
+            palIndex = patternUtilsPS::getPatternVal( pattern, patternIndex );
+            nextColor = paletteUtilsPS::getPaletteColor( palette, palIndex );
+            break;
+        case 1: //Colors will be choosen completely at random
+            nextColor = colorUtilsPS::randColor();
+            break;
+        case 2: //Colors will be choosen randomly from the palette (not allowing repeats)
+            palIndex = patternUtilsPS::getShuffleIndex( pattern, palIndex );
+            nextColor = paletteUtilsPS::getPaletteColor( palette, palIndex );
+            break;
+    }
+
+    //Advance the patternIndex for when we pick the next color
+    patternIndex = addMod16PS(patternIndex, 1, pattern->length);  
 }
 
 //updates the effect until we reach the fadeCount number of cycles
@@ -102,10 +115,9 @@ void CrossFadeCyclePS::update(){
         prevTime = currentTime;
         
         //caculate the next step of the current fade and display it
-        newColor = colorUtilsPS::getCrossFadeColor(startColor, nextColor, currentStep, steps);
-        segDrawUtils::fillSegSetColor(segmentSet, newColor, 0);
+        colorOut = colorUtilsPS::getCrossFadeColor(startColor, nextColor, currentStep, steps);
+        segDrawUtils::fillSegSetColor(segmentSet, colorOut, 0);
         currentStep++;
-        showCheckPS();
 
         //if we've reached the end of the current fade
         //we need to choose the next color to fade to
@@ -115,27 +127,10 @@ void CrossFadeCyclePS::update(){
             //since the fade is done, the new starting color is the previous next color
             startColor = nextColor;
             //set the next color depending on the mode
-            switch (randMode) {
-                case 0: 
-                default:
-                    //normal mode
-                    //(fadeCount + 2) is used as the next index, because we start with the first pair of colors
-                    //techincally, this means that cycle count starts at 1, but because fadeCount is also a measure of 
-                    //how many actual cycles we've completed, it should start at zero, hence we add 2
-                    currentIndex = patternUtilsPS::getPatternVal( pattern, (fadeCount + 2) );
-                    nextColor = paletteUtilsPS::getPaletteColor( palette, currentIndex);
-                    break;
-                case 1:
-                    //shuffle mode
-                    currentIndex = patternUtilsPS::getShuffleIndex(pattern, currentIndex);
-                    nextColor = paletteUtilsPS::getPaletteColor( palette, currentIndex);
-                    break;
-                case 2:
-                    //random mode
-                    nextColor = colorUtilsPS::randColor();
-                    break;
-            }
+            getNextColor();
             fadeCount++;
         }
+
+        showCheckPS();
     }
 }

@@ -47,3 +47,4 @@
 #include "Effects/SegWaves/SegWaves.h"
 #include "Effects/SegWavesFast/SegWavesFast.h"
 #include "Effects/ScannerSL/ScannerSL.h"
+#include "Effects/Breath/BreathPS.h"
