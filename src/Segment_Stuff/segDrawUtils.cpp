@@ -432,8 +432,8 @@ void segDrawUtils::getPixelColor(SegmentSet &segmentSet, pixelInfoPS *pixelInfo,
 //      mode 2 & 7: colors each segment according to a rainbow or gradient spread across all segments
 //      mode 3 & 8: colors each segment line according to a rainbow or gradient mapped to the longest segment
 //      mode 4 & 9: Produces a single color that cycles through the rainbow or gradient at the segmentSet's offsetRate
-//               Used to color a whole effect as a single color that cycles through the rainbow or gradient
-//               Note that 256 steps are used for the gradient/rainbow
+//                  Used to color a whole effect as a single color that cycles through the rainbow or gradient
+//                  Note that 256 steps are used for the gradient/rainbow
 //      mode 5 & 10:  Same as mode 8, but the direction of the cycle is reversed
 //The total number of gradient steps are based on the segmentSet values:
 //Each mode uses a different value so you can switch between modes more easily  

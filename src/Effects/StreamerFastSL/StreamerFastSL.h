@@ -1,9 +1,6 @@
 #ifndef StreamerFastPS_h
 #define StreamerFastPS_h
 
-//TODO -- add constructor for random options?
-//     -- When picking random colors, use getShuffleIndex instead of just randoming
-
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
 #include "MathUtils/mathUtilsPS.h"
@@ -11,7 +8,9 @@
 /* 
 Similar to StreamerPS, but runs faster with some restrictions
 Repeats a set of lines down the strip according to the passed in palette, shifting them forward over time
-Like a theater chase, but a pattern is used instead of just dots
+Like a theater chase, but a pattern is used instead of just dots.
+
+This effect has been adapted to use segment lines to allow 2D effects. 
 
 The restrictions when compared to StreamerPS are listed below:
 1: There is no fading to shift the streamers along the strip
@@ -98,9 +97,12 @@ Other Settings:
     randMode (default 0) -- Sets the type of how colors are choosen:
                          -- 0: Colors will be choosen in order from the pattern (not random)
                          -- 1: Colors will be choosen completely at random
-                         -- 2: Colors will be choosen randomly from the palette
-                         -- 3: Colors will be choosen at random from the palette,
+                         -- 2: Colors will be choosen at random from the !!palette!!, 
                                but the same color won't be repeated in a row
+                         -- 3: Colors will be choosen randomly from the pattern
+                         -- 4: Colors will be choosen randomly from the !!palette!!
+                               (option included b/c the pattern may have a lot of spaces, 
+                                so choosing from it may be very biased)
 
 Flags:
     initFillDone -- Indicates if the strip has been pre-filled with the effect's color outputs 
@@ -112,25 +114,23 @@ Notes:
     If the constructor made your pattern, it will be stored in patternTemp
     same goes for the palette 
 */
-class StreamerFastPS : public EffectBasePS {
+class StreamerFastSL : public EffectBasePS {
     public:
         //constructor for using the passed in pattern and palette for the streamer
-        StreamerFastPS(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, CRGB BgColor, uint16_t Rate);
+        StreamerFastSL(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, CRGB BgColor, uint16_t Rate);
 
         //constructor for building the streamer pattern from the passed in pattern and the palette, using the passed in colorLength and spacing
-        StreamerFastPS(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint16_t Rate);
+        StreamerFastSL(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint16_t Rate);
         
         //constructor for building a streamer using all the colors in the passed in palette, using the colorLength and spacing for each color
-        StreamerFastPS(SegmentSet &SegmentSet, palettePS *Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint16_t Rate);
+        StreamerFastSL(SegmentSet &SegmentSet, palettePS *Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint16_t Rate);
 
         //constructor for doing a single colored streamer, using colorLength and spacing
-        StreamerFastPS(SegmentSet &SegmentSet, CRGB Color, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint16_t Rate);  
+        StreamerFastSL(SegmentSet &SegmentSet, CRGB Color, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint16_t Rate);  
     
-        ~StreamerFastPS();
+        ~StreamerFastSL();
 
         uint8_t
-            nextPattern,
-            prevPattern,
             randMode = 0,
             cycleCount = 0;
             
@@ -164,14 +164,21 @@ class StreamerFastPS : public EffectBasePS {
             currentTime,
             prevTime = 0;
         
+        uint8_t
+            nextPattern,
+            nextPatternRand,
+            prevPattern;
+        
         uint16_t
-            numPixels,
-            nextPixelNumber,
-            pixelNumber;
+            numLines,
+            numLinesLim,
+            longestSeg,
+            pixelNum;
 
         CRGB 
             nextColor,
-            pickStreamerColor(uint8_t patternIndex);
+            randColor = 0,
+            pickStreamerColor(uint8_t nextPatternTemp);
         
         void
             initalFill(),

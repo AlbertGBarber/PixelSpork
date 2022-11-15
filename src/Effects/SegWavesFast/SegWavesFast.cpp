@@ -161,6 +161,7 @@ void SegWavesFast::getDirection(){
 //To do this we basically do one full update cycle, drawing the wave pattern onto the whole strip
 //note that a spacing pixel is indicated by a pattern value of 255, these pixels will be filled in with the bgColor
 void SegWavesFast::initalFill(){
+    cycleCount = 0;
     uint16_t patternLength = pattern->length;
     prevPattern = 255; //base value for previous pattern value, it's set to the spacing value b.c we don't expect a pattern to start with spacing
     
@@ -172,16 +173,14 @@ void SegWavesFast::initalFill(){
     //So that the loop either runs from the first to last segment, or visa versa
     for (int32_t i = startLimit; i != endLimit; i += loopStep) {
 
-        nextPattern = patternUtilsPS::getPatternVal(pattern, i - loopStep);
-
+        nextPattern = patternUtilsPS::getPatternVal(pattern, cycleCount);
         nextColor = pickStreamerColor(nextPattern);
-        prevColor = nextColor;
 
         segDrawUtils::fillSegColor(segmentSet, i, nextColor, 0);
         //every time we fill a segment, we're basically doing one whole update()
         //so we need to increment the cycleCount, so that once the preFill is done, the 
         //next update() call will sync properly
-        cycleCount = addMod16PS( cycleCount, 1, patternLength );// (cycleCount + 1) % patternLength;
+        cycleCount = addMod16PS( cycleCount, 1, patternLength );
     }
     initFillDone = true;
 }
@@ -217,17 +216,11 @@ void SegWavesFast::update(){
             if (i == coloredSeg) {
                 nextPattern = patternUtilsPS::getPatternVal(pattern, cycleCount);
                 nextColor = pickStreamerColor(nextPattern);
-                //records the color of the wave (if it's not spacing)
-                //This is only used for picking new colors at random (mode 3) from the palette
-                //so that we don't choose the same color repeatedly
-                if(nextPattern != 255){
-                    prevColor = nextColor;
-                }
             } else {
                 //Copy the pixel color from the previous segment, based on the direction (loopStep)
                 //To copy the color we always copy from the first pixel in the previous segment
-                pixelNumber = segDrawUtils::getSegmentPixel(segmentSet, i + loopStep, 0);
-                nextColor = segmentSet.leds[pixelNumber];
+                pixelNum = segDrawUtils::getSegmentPixel(segmentSet, i + loopStep, 0);
+                nextColor = segmentSet.leds[pixelNum];
             }
             //Color the segment
             segDrawUtils::fillSegColor(segmentSet, i, nextColor, 0);
@@ -241,7 +234,13 @@ void SegWavesFast::update(){
 //returns the color of the next wave based on the passed in pattern index
 //if the index is 255, this notes a spacing pixel, so the bgColor is returned
 //otherwise the color is choosen either from the palette, or randomly
-//according to the randMode
+//according to the randMode:
+//  0: Colors will be choosen in order from the pattern (not random)
+//  1: Colors will be choosen completely at random
+//  2: Colors will be choosen at random from the !!palette!!, but the same color won't be repeated in a row
+//  3: Colors will be choosen randomly from the pattern
+//  4: Colors will be choosen randomly from the !!palette!! 
+//     (option included b/c the pattern may have a lot of spaces, so choosing from it may be very biased)
 CRGB SegWavesFast::pickStreamerColor(uint8_t patternIndex){
     if(patternIndex == 255){
         nextColor = *bgColor;
@@ -249,7 +248,7 @@ CRGB SegWavesFast::pickStreamerColor(uint8_t patternIndex){
         //the color we're at based on the current index
         nextColor = paletteUtilsPS::getPaletteColor(palette, patternIndex);
     } else if(patternIndex != prevPattern){
-        //if we're doing random colors, we still want to stick to the wave lengths in the pattern
+        //if we're doing random colors, we still want to stick to the streamer lengths in the pattern
         //but replace the color with a random one 
         //So we only pick a new random color each time the nextPattern is different from the previous one
         //since that indicates a new wave length
@@ -258,11 +257,19 @@ CRGB SegWavesFast::pickStreamerColor(uint8_t patternIndex){
             //choose a completely random color
             nextColor = colorUtilsPS::randColor();
         } else if(randMode == 2) {
+            //choose a color randomly from the palette (making sure it's not the same as the current color)
+            //(Can't shuffle the pattern directly, because it contains repeats of the same index)
+            nextColor = paletteUtilsPS::getShuffleIndex(palette, randColor);
+            randColor = nextColor; //record the random color so we don't pick it again
+        } else if(randMode == 3) {
+            //choose a color randomly from the pattern (can repeat)
+            //we use nextPatternRand because we don't want to interfere with nextPattern
+            //since it keeps track of the spaces
+            nextPatternRand = patternUtilsPS::getPatternVal( pattern, random16(pattern->length) );
+            nextColor = paletteUtilsPS::getPaletteColor(palette, nextPatternRand);
+        } else {
             //choose a color randomly from the palette (can repeat)
             nextColor = paletteUtilsPS::getPaletteColor( palette, random8(palette->length) );
-        } else {
-            //choose a color randomly from the palette (making sure it's not the same as the current color)
-            nextColor = paletteUtilsPS::getShuffleIndex(palette, prevColor);
         }
     }
     prevPattern = patternIndex; //save the current pattern value (only needed for the random color case)

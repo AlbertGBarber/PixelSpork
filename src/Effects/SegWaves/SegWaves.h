@@ -54,7 +54,7 @@ Likewise, the effect needs to store a CRGB array of size numSegs + 1 for random 
 
 This effect is fully compatible with color modes, but to help make the effect faster it's only
 compatible with modes 2, 4, 5, 7, 9, and 10. In random modes, the colors do not change once the enter the segments
-but the color modes will work as need colors are added.
+but the color modes will work as new colors are added.
 
 The bgColor is a pointer, so you can bind it to an external color variable.
 
@@ -134,9 +134,9 @@ Other Settings:
     randMode (default 0) -- Sets the type of how colors are choosen:
                          -- 0: Colors will be choosen in order from the pattern (not random)
                          -- 1: Colors will be choosen completely at random
-                         -- 2: Colors will be choosen randomly from the palette (allowing repeats)
-                         -- 3: Colors will be choosen at random from the palette,
+                         -- 2: Colors will be choosen at random from the palette,
                                but the same color won't be repeated in a row
+                         -- 3: Colors will be choosen randomly from the palette (allowing repeats)
 
 Notes:
     You can change the palette, and patterns on the fly, but there's no way to smoothly transition
@@ -221,7 +221,9 @@ class SegWaves : public EffectBasePS {
             nextPatternIndex,
             pixelNum,
             segNum,
-            numSegs;
+            numSegs,
+            numSegsLim,
+            handleDirect(uint16_t segNum);
         
         bool
             initFillDone = false; //For filling in the segColors array in random modes
@@ -232,7 +234,7 @@ class SegWaves : public EffectBasePS {
             colorOut,
             randColor,
             *segColors,
-            getNextColor(uint16_t pixelNum);
+            getNextColor(uint16_t segNum, uint16_t segNumRaw);
         
         void
             updateFade(),

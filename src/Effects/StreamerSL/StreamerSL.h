@@ -1,5 +1,5 @@
-#ifndef StreamerPS_h
-#define StreamerPS_h
+#ifndef StreamerSL_h
+#define StreamerSL_h
 
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
@@ -26,15 +26,31 @@ that automate the pattern creation, so you don't have to do it yourself (see con
 
 Note that while each entry in the pattern is a uint8_t,
 if you have a lot of colors, with long streamers, your patterns may be quite large
-so watch your memory usage
+so watch your memory usage.
+
+This effect has been adapted to use segment lines to allow 2D effects. 
+Note that this requires an array for storing some colors, so if you change the number of segments
+in your segment set make sure to call reset or the effect will crash!!!!
+The array's length is the number of segment in the segment set.
 
 This effect is fully compatible with color modes, and the bgColor is a pointer, so you can bind it
-to an external color variable
+to an external color variable.
+
+Notes:
+    You can change the palette, and patterns on the fly, but there's no way to smoothly transition
+    between patterns, so there will possibly be a jump.
+
+    If the constructor made your pattern, it will be stored in patternTemp
+    same goes for the palette.
+
+    Turning off fading using fadeOn should improve performance. The effect will not be as smooth, but should still look
+    pretty good. Note that you'll need to set your new update rate to (fadeSteps * your current rate) to keep the same
+    overall update rate.
 
 Example calls: 
     uint8_t pattern_arr = {0, 255, 255, 255, 1, 1, 255, 255};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-    StreamerPS(mainSegments, &pattern, &palette3, 0, 30, 20);
+    StreamerSL(mainSegments, &pattern, &palette3, 0, 30, 20);
     Will do a set of streamers using the first two colors in the palette
     The streamer will begin with 1 pixel of color 0, with three spaces after, followed by 2 pixels of color 1, followed by 2 spaces
     The bgColor is zero (off)
@@ -42,41 +58,41 @@ Example calls:
 
     uint8_t pattern_arr = {1, 2, 3};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-    StreamerPS(mainSegments, &pattern, &palette3, 3, 4, 0, 0, 120);
+    StreamerSL(mainSegments, &pattern, &palette3, 3, 4, 0, 0, 120);
     Will do a streamer using the first three colors of the palette (taken from the pattern)
     Each streamer will be length 3, followed by 4 spaces, bgColor is 0 (off)
     The fade steps are set to zero, so there is no blending, 
     The effect updates at a rate of 120ms
 
-    StreamerPS(mainSegments, &palette3, 3, 4, CRGB::Red, 10, 40);
+    StreamerSL(mainSegments, &palette3, 3, 4, CRGB::Red, 10, 40);
     Will do a streamer using all the colors in palette3, each streamer will be length 3, with 4 spaces inbetween
     The bgColor is red
     The streamer will blend forward, taking 10 steps, with 40ms between each step
 
-    StreamerPS(mainSegments, CRGB::Blue, 2, 2, CRGB::Red, 0, 140);
+    StreamerSL(mainSegments, CRGB::Blue, 2, 2, CRGB::Red, 0, 140);
     Will do a blue streamers with length 2 and 2 spaces inbetween
     The bgColor is red
     The fade steps are set to zero, so there is no blending
     The effect updates at a rate of 140ms
  
 Constructor Inputs:
-    Pattern(optional, see constructors) -- The pattern used for the streamers, made up of palette indexes 
-    Palette(optional, see constructors) -- The repository of colors used in the pattern
+    pattern(optional, see constructors) -- The pattern used for the streamers, made up of palette indexes 
+    palette(optional, see constructors) -- The repository of colors used in the pattern
     Color(optional, see constructors) -- Used for making a single color streamer
     ColorLength (optional, see constructors, max 255) -- The number pixels a streamer color is. Used for automated pattern creation.
     Spacing (optional, see constructors, max 255) -- The number of pixels between each streamer color (will be set to bgColor).  Used for automated pattern creation.
-    BgColor -- The color of the spacing pixels. It is a pointer, so it can be tied to an external variable
-    FadeSteps -- The number of steps to transition from one color to the next as the streamers move down the strip
+    bgColor -- The color of the spacing pixels. It is a pointer, so it can be tied to an external variable
+    fadeSteps -- The number of steps to transition from one color to the next as the streamers move down the strip
     Rate -- The update rate (ms)
 
 Functions:
-    reset() -- Restarts the streamer pattern
+    reset() -- Restarts the streamer pattern, you should call this if you change segment sets as well.
     setPatternAsPattern(*inputPattern, colorLength, spacing) -- Takes an input pattern and creates a streamer pattern from it using the current palette
-                                                               Ex: uint8_t pattern_arr = {1, 2, 3};
-                                                                   patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-                                                                   setPatternAsPattern(&pattern, 3, 4) 
-                                                                   Will do a streamer using the first three colors of the palette (taken from the pattern)
-                                                                   Each streamer will be length 3, followed by 4 spaces
+                                                                Ex: uint8_t pattern_arr = {1, 2, 3};
+                                                                    patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
+                                                                    setPatternAsPattern(&pattern, 3, 4) 
+                                                                    Will do a streamer using the first three colors of the palette (taken from the pattern)
+                                                                    Each streamer will be length 3, followed by 4 spaces
     setPaletteAsPattern(uint8_t colorLength, uint8_t spacing) -- Like the previous function, but all of the current palette will be used for the pattern                                                       
     update() -- updates the effect
 
@@ -84,35 +100,24 @@ Other Settings:
     colorMode (default 0) -- sets the color mode for the streamer pixels (see segDrawUtils::setPixelColor)
     bgColorMode (default 0) -- sets the color mode for the spacing pixels (see segDrawUtils::setPixelColor)
     fadeOn (default true) -- If false, the streamer will jump directly to the next color instead of fading
-                            Note that if 1 or 0 are passed in as the FadeSteps in the constructor, 
-                            fadeOn will be set to false automatically
-
-Notes:
-    You can change the palette, and patterns on the fly, but there's no way to smoothly transition
-    between patterns, so there will possibly be a jump
-
-    If the constructor made your pattern, it will be stored in patternTemp
-    same goes for the palette
-
-    Turning off fading using fadeOn should improve performance. The effect will not be as smooth, but should still look
-    pretty good. Note that you'll need to set your new update rate to (fadeSteps * your current rate) to keep the same
-    overall update rate
+                             Note that if 1 or 0 are passed in as the FadeSteps in the constructor, 
+                             fadeOn will be set to false automatically
 */
-class StreamerPS : public EffectBasePS {
+class StreamerSL : public EffectBasePS {
     public:
-        //constructor for using the passed in pattern and palette for the streamer
-        StreamerPS(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate);  
+        //Constructor for using the passed in pattern and palette for the streamer
+        StreamerSL(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate);  
 
-        //constructor for building the streamer pattern from the passed in pattern and the palette, using the passed in colorLength and spacing
-        StreamerPS(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate);
+        //Constructor for building the streamer pattern from the passed in pattern and the palette, using the passed in colorLength and spacing
+        StreamerSL(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate);
         
-        //constructor for building a streamer using all the colors in the passed in palette, using the colorLength and spacing for each color
-        StreamerPS(SegmentSet &SegmentSet, palettePS *Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate);
+        //Constructor for building a streamer using all the colors in the passed in palette, using the colorLength and spacing for each color
+        StreamerSL(SegmentSet &SegmentSet, palettePS *Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate);
 
-        //constructor for doing a single colored streamer, using colorLength and spacing
-        StreamerPS(SegmentSet &SegmentSet, CRGB Color, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate);
+        //Constructor for doing a single colored streamer, using colorLength and spacing
+        StreamerSL(SegmentSet &SegmentSet, CRGB Color, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate);
 
-        ~StreamerPS();
+        ~StreamerSL();
 
         uint8_t
             colorMode = 0,
@@ -157,16 +162,18 @@ class StreamerPS : public EffectBasePS {
         uint16_t
             patternLength,
             nextPatternIndex,
-            numPixels;
-        
-        pixelInfoPS
-            pixelInfo{0, 0, 0, 0};
+            numSegs,
+            numLines,
+            numLinesLim,
+            longestSeg,
+            pixelNum;
         
         CRGB 
+            *prevLineColors,
             nextColor,
-            currentColor,
             colorOut,
-            getNextColor(uint16_t pixelNum);
+            getNextColor(uint16_t lineNum, uint16_t segNum),
+            getBlendedColor(CRGB nextColor, uint16_t segNum);
         
         void
             updateFade(),

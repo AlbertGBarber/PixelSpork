@@ -108,9 +108,12 @@ Other Settings:
     randMode (default 0) -- Sets the type of how colors are choosen:
                          -- 0: Colors will be choosen in order from the pattern (not random)
                          -- 1: Colors will be choosen completely at random
-                         -- 2: Colors will be choosen randomly from the palette (allowing repeats)
-                         -- 3: Colors will be choosen at random from the palette,
+                         -- 2: Colors will be choosen at random from the !!palette!!, 
                                but the same color won't be repeated in a row
+                         -- 3: Colors will be choosen randomly from the pattern
+                         -- 4: Colors will be choosen randomly from the !!palette!!
+                               (option included b/c the pattern may have a lot of spaces, 
+                                so choosing from it may be very biased)
 
 Flags:
     initFillDone -- Indicates if the strip has been pre-filled with the effect's color outputs 
@@ -139,8 +142,6 @@ class SegWavesFast : public EffectBasePS {
         ~SegWavesFast();
 
         uint8_t
-            nextPattern,
-            prevPattern,
             randMode = 0,
             cycleCount = 0;
             
@@ -149,7 +150,6 @@ class SegWavesFast : public EffectBasePS {
             direct;
 
         CRGB 
-            prevColor, //The color of the neweststreamer (excluding the background color)
             bgColorOrig,
            *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
 
@@ -177,19 +177,23 @@ class SegWavesFast : public EffectBasePS {
             prevTime = 0;
         
         int8_t
+            nextPattern,
+            prevPattern,
+            nextPatternRand,
             loopStep;
         
         uint16_t
             numSegs,
             startLimit,
             coloredSeg,
-            pixelNumber;
+            pixelNum;
         
         int32_t
             endLimit;
 
         CRGB 
             nextColor,
+            randColor,
             pickStreamerColor(uint8_t patternIndex);
         
         void
