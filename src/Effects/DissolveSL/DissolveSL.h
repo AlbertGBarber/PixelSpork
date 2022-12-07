@@ -20,7 +20,7 @@ Once a certain threshold has been met (default of 1/10 of the number of lines in
 All the remaining lines are set. This prevents us from getting stuck looking for the last line.
 Once a morph is finished, the effect can be set to pause for a period using the hangTime variable.
 
-You can increase the starting number of lines set at once (numMaxSpawnBase), which will
+You can increase the starting number of lines set at once (maxNumSpawnBase), which will
 acclerate the morphing, and may be good on longer segment sets.
 
 The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
@@ -46,8 +46,8 @@ Example calls:
 
 randModes:
     0: Each dissolve is a solid color following the pattern
-    1: Each dissolve is a set of random colors choosen from the pattern
-    2: Each dissolve is a set of randomly choosen colors
+    1: Each dissolve is a set of randomly choosen colors
+    2: Each dissolve is a set of random colors choosen from the pattern
     3: Each dissolve is a solid color choosen at random
     4: Each dissolve is a solid color choosen randomly from the pattern
 
@@ -62,13 +62,15 @@ Constructor Inputs
                                           (see patternPS.h)   
     palette(optional, see constructors) -- The repository of colors used in the pattern, or can be used as the pattern itself
     randMode -- The randMode that will be used for the dissolves (see above)
-    spawnRateInc -- The rate increase at which the total number of leds that are set each cycle (ms)
-                   Setting this closeish (up to double?) to the update rate looks the best
+    spawnRateInc -- The rate increase at which the total number of lines that are set each cycle (ms)
+                    Setting this closeish (up to double?) to the update rate looks the best
     Rate -- update rate (ms)
 
 Functions:
     setPaletteAsPattern() -- Sets the effect pattern to match the current palette
-    resetPixelArray() -- effectivly restarts the current dissolve
+    resetPixelArray() -- effectively restarts the current dissolve
+    setLineMode(bool newLineMode) -- Sets the line mode (see Other Settings below), 
+                                     also restarts the dissolve, and sets the setAllTheshold to 1/10 the numLines
     update() -- updates the effect
 
 Other Settings:
@@ -79,8 +81,14 @@ Other Settings:
     hangTime (default 0ms) -- The length of time that the effect will wait between dissolves, useful for adjusting the next dissolve color/settings
                              If the hang time is active, it is indicated with the hangTimeOn flag
     colorMode (default 0) -- sets the color mode for the random pixels (see segDrawUtils::setPixelColor)
-    numMaxSpawnBase (default 1) -- The starting value of the number of pixels set in one cycle
-                                  Higher numbers may work better for longer pixel lengths
+    maxNumSpawnBase (default 1) -- The starting value of the number of pixels set in one cycle
+                                   Higher numbers may work better for longer pixel lengths
+    lineMode (default true) -- If false, pixels will be dissolved individualy (rather than in segment lines)
+                               Only really useful if you want multi-segment color modes, but want individual dissolves
+                               !!FOR reference only, set using setLineMode();
+
+Reference vars:
+    hangTimeOn - If true, then the effect is paused. Note that the effect is not re-draw while hanging.
 
 Notes:
     Requires an array of bools of equal size to the number of pixels in the segment set
@@ -99,22 +107,20 @@ class DissolveSL : public EffectBasePS {
     
         ~DissolveSL();
 
-        uint16_t
-            setAllThreshold,
-            hangTime = 0,
-            spawnRateInc;
-        
         uint8_t
             randMode,
             colorMode = 0,
             numCycles = 0, //how many update cycles we've been through, for reference
-            numMaxSpawn,
-            numMaxSpawnBase = 1;
+            maxNumSpawnBase = 1;
+
+        uint16_t
+            setAllThreshold,
+            hangTime = 0,
+            spawnRateInc;
 
         bool
-            randColorPicked = false,
-            hangTimeOn = false,
-            *pixelArray;
+            lineMode = true, //for reference, set using setLineMode()
+            hangTimeOn = false; //for reference
 
         SegmentSet 
             &segmentSet; 
@@ -130,6 +136,7 @@ class DissolveSL : public EffectBasePS {
         void
             setPaletteAsPattern(),
             resetPixelArray(),
+            setLineMode(bool newLineMode),
             update(void);
     
     private:
@@ -139,14 +146,20 @@ class DissolveSL : public EffectBasePS {
             prevTime = 0;
 
         uint8_t
+            maxNumSpawn, //How many lines we'll try to spawn each cycle (starts as maxNumSpawnBase and increases with time)    
             currentIndex = 0;
         
         uint16_t
             thresStartPoint = 0,
             numLines,
+            prevNumLines = 0,
             lineNum,
             numSpawned = 0,
             pixelNum;
+        
+        bool
+            randColorPicked = false,
+            *pixelArray;
         
         CRGB 
             pickColor(),

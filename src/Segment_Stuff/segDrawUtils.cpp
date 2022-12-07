@@ -309,7 +309,7 @@ void segDrawUtils::setPixelColor(SegmentSet &segmentSet, uint16_t segPixelNum, C
 void segDrawUtils::setPixelColor(SegmentSet &segmentSet, uint16_t segPixelNum, uint16_t segNum, CRGB color, uint8_t colorMode){
     pixelNum = getSegmentPixel(segmentSet, segNum, segPixelNum);
     lineNum = 0;
-    if(colorMode == 4 || colorMode == 10){
+    if(colorMode == 3 || colorMode == 8){
         lineNum = getLineNumFromPixelNum(segmentSet, segPixelNum, segNum);
     }
     setPixelColor(segmentSet, pixelNum, color, colorMode, segNum, lineNum);
@@ -422,6 +422,7 @@ void segDrawUtils::getPixelColor(SegmentSet &segmentSet, pixelInfoPS *pixelInfo,
     }
 }
 
+//IF YOU CHANGE THE COLOR MODE ORDER BE SURE TO CHANGE IT IN THE SegOffsetCycler Util and setPixelColor() above!!
 //Returns the color of a pixel based on the color mode and other variables
 //For color mode 0, the input color will be returned as is
 //For other modes, the color will either be set to part of a rainbow, 
@@ -444,7 +445,6 @@ void segDrawUtils::getPixelColor(SegmentSet &segmentSet, pixelInfoPS *pixelInfo,
 //By changing these values you can create shorter or longer rainbows/gradients
 //(note that rainbows will repeat every 255 steps, while gradients will be stretched over them)
 //You can the use segmentSet's gradOffset to shift the gradient across the pixels
-//IF YOU CHANGE THE COLOR MODE ORDER BE SURE TO CHANGE IT IN THE OffsetCycler Util!!
 CRGB segDrawUtils::getPixelColor(SegmentSet &segmentSet, uint16_t pixelNum, CRGB color, uint8_t colorMode, uint16_t segNum, uint16_t lineNum){
     //if( pixelNum == dLed ){
         //return color; //if we're passed in a dummy led, just return the current color b/c it won't be output

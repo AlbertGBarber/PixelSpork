@@ -60,8 +60,7 @@ CRGB ShimmerSL::pickColor(){
 
 //updates the effect
 //effect is quite simple. 
-//Each cycle we go through all the leds, pick a color for the leds, fade that color by a random amount
-//and output it
+//Each cycle we go through all the leds, pick a color for the leds, fade that color by a random amount and output it
 void ShimmerSL::update(){
     currentTime = millis();
 
@@ -78,6 +77,11 @@ void ShimmerSL::update(){
 
             for(uint16_t j = 0; j < numSegs; j++){
                 pixelNum = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, j, i);
+
+                //If we're not in line mode, then each individual pixel is to have it's own shimmer brightness
+                if(!lineMode){
+                    shimmerVal = 255 - random8(shimmerMin, shimmerMax);
+                }
 
                 colorOut = segDrawUtils::getPixelColor(segmentSet, pixelNum, color, colorMode, j, i);
                 nscale8x3(colorOut.r, colorOut.g, colorOut.b, shimmerVal);

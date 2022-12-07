@@ -19,6 +19,8 @@ Both glimmerColor and bgColor are pointers, so you can bind them to external col
 
 The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
 passing in a segmentSet with only one segment containing the whole strip.
+Or you can set lineMode to false, which makes each glimmer an individual pixel 
+(useful for using multi-segment color modes, while still only glimmering individual pixels)
 
 TwoPixelSets setting:
     True: Two sets of leds with be driven at once, with one set fading in while the other is fading out
@@ -53,8 +55,10 @@ Functions:
 Other Settings:
     colorMode (default 0) -- sets the color mode for the random pixels (see segDrawUtils::setPixelColor)
     bgColorMode (default 0) -- sets the color mode for the background (see segDrawUtils::setPixelColor)
+    lineMode (default true) -- If false, sets each glimmer to use a individual pixel, rather than a whole line
+                               Only really useful if you want multi-segment color modes with point glimmers
     fillBG (default false) -- sets the background to be redrawn every cycle, useful for bgColorModes that are dynamic
-    fadeMin  and fadeMax -- (see Costructor inputs)
+    fadeMin  and fadeMax -- (see Constructor inputs)
 
 Flags / Counters (for reference): 
     fadeIn -- Tracks is the set of leds is fading in or not, for two sets, this varaible will be toggled mid-set
@@ -67,8 +71,10 @@ Notes:
 */
 class GlimmerSL : public EffectBasePS {
     public:
+        //Constructor using default fade in and out values
         GlimmerSL(SegmentSet &SegmentSet, uint16_t NumGlims, CRGB GlimmerColor, CRGB BgColor, bool TwoPixelSets, uint8_t FadeSteSLPS, uint16_t Rate);  
-
+        
+        //Constuctor for setting maximum fade in and out values
         GlimmerSL(SegmentSet &SegmentSet, uint16_t NumGlims, CRGB GlimmerColor, CRGB BgColor, bool TwoPixelSets, uint8_t FadeSteSLPS, uint8_t FadeMin, uint8_t FadeMax, uint16_t Rate);
 
         ~GlimmerSL();
@@ -91,6 +97,7 @@ class GlimmerSL : public EffectBasePS {
         
         bool 
             fadeIn,
+            lineMode = true,
             fillBG = false,
             twoPixelSets;
         
@@ -113,15 +120,19 @@ class GlimmerSL : public EffectBasePS {
             prevTime = 0;
         
         uint16_t
-            arrayLength,
+            glimArrLen,
             numLines,
             numSegs,
             pixelNum;
+
+        pixelInfoPS
+            pixelInfo{0, 0, 0, 0};
         
         CRGB 
             startColor,
-            colorTemp,
-            targetColor;
+            targetColor,
+            fadeColor,
+            getFadeColor(uint8_t glimNum);
         
         bool
             firstFade = false;

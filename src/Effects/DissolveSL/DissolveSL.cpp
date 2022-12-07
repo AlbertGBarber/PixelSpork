@@ -15,7 +15,7 @@ DissolveSL::DissolveSL(SegmentSet &SegmentSet, palettePS *Palette, uint8_t RandM
         init(Rate);
     }
 
-//constructor for randomly choosen colors (should only use randMode 2 or 3 with this constructor)
+//constructor for randomly choosen colors (should only use randMode 1 or 3 with this constructor)
 DissolveSL::DissolveSL(SegmentSet &SegmentSet, uint8_t RandMode, uint16_t SpawnRateInc, uint16_t Rate):
     segmentSet(SegmentSet), randMode(RandMode), spawnRateInc(SpawnRateInc)
     {
@@ -35,31 +35,11 @@ DissolveSL::~DissolveSL(){
 }
 
 //inits core variables for the effect
-//caculates the setAllThreshold to be 1/10th of the number of leds (rounded up)
 void DissolveSL::init(uint16_t Rate){
     //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
     bindSegPtrPS();
     bindClassRatesPS();
-    resetPixelArray();
-    //note that numLines is set in resetPixelArray();
-    setAllThreshold = numLines - ceil( (float) (numLines) / 10);
-}
-
-//resets the pixel array to false
-//also resets the core effect variables as needed
-void DissolveSL::resetPixelArray(){
-    //create an array of bools, one bool for each line in the segment set.
-    //These record if the line has switched colors or not.
-    numLines = segmentSet.maxSegLength;
-    delete[] pixelArray;
-    pixelArray = new bool[numLines];
-    for(int i = 0; i < numLines; i++){
-        pixelArray[i] = false;
-    }
-    numMaxSpawn = numMaxSpawnBase;
-    numSpawned = 0;
-    thresStartPoint = 0;
-    randColorPicked = false;
+    setLineMode(lineMode);
 }
 
 //sets the pattern to match the current palette
@@ -70,12 +50,52 @@ void DissolveSL::setPaletteAsPattern(){
     pattern = &patternTemp;
 }
 
+//Sets the line mode var, also restarts the dissolve, 
+//and sets the setAllTheshold to 1/10 the numLines
+void DissolveSL::setLineMode(bool newLineMode){
+    lineMode = newLineMode;
+    resetPixelArray();
+    setAllThreshold = numLines - ceil( (float) (numLines) / 10);
+}
+
+//resets the pixel array to false, restarting the dissolve
+//also resets the core effect variables as needed
+void DissolveSL::resetPixelArray(){
+    //if we're in line mode, then we'll be setting whole lines at once
+    //otherwise we'll be setting each pixel individually, so we need to set the numLines to match
+    //(we use numLines, even though it's more like numPixels for the individual case to keep the code clean)
+    if(lineMode){
+        numLines = segmentSet.maxSegLength;
+    } else {
+        numLines = segmentSet.numLeds;
+    }
+
+    //To record if a line has been switched or not, we need to create an array of bools
+    //(but only if we don't already have an array of the right size)
+    if(prevNumLines != numLines){
+        delete[] pixelArray;
+        pixelArray = new bool[numLines];
+        prevNumLines = numLines;
+    }
+
+    //reset the bool array, indicating that all the lines need to be spawned
+    for(uint16_t i = 0; i < numLines; i++){
+        pixelArray[i] = false;
+    }
+
+    maxNumSpawn = maxNumSpawnBase;
+    numSpawned = 0;
+    thresStartPoint = 0;
+    randColorPicked = false;
+    hangTimeOn = false;
+}
+
 //set a color based on the pattern and randMode
 //see effect description for pattern info
 //randModes:
     //0: Each dissolve is a solid color following the pattern
-    //1: Each dissolve is a set of random colors choosen from the pattern
-    //2: Each dissolve is a set of randomly choosen colors
+    //1: Each dissolve is a set of randomly choosen colors
+    //2: Each dissolve is a set of random colors choosen from the pattern
     //3: Each dissolve is a solid color choosen at random
     //4: Each dissolve is a solid color choosen randomly from the pattern
 CRGB DissolveSL::pickColor(){
@@ -84,11 +104,13 @@ CRGB DissolveSL::pickColor(){
         currentIndex = patternUtilsPS::getPatternVal(pattern, numCycles);
         color = paletteUtilsPS::getPaletteColor(palette, currentIndex );
     } else if(randMode == 1){
+        //choose colors randomly
+        color = colorUtilsPS::randColor();
         //choose colors randomly from the pattern
         color = paletteUtilsPS::getPaletteColor(palette, patternUtilsPS::getRandVal(pattern) );
     } else if(randMode == 2){
-        //choose colors randomly
-        color = colorUtilsPS::randColor();
+        //choose colors randomly from the pattern
+        color = paletteUtilsPS::getPaletteColor(palette, patternUtilsPS::getRandVal(pattern) );
     } else {
         //for modes 3 and 4, the colors must only be picked once, since they are choosen randomly
         //hence the ranColorPicked flag
@@ -109,17 +131,18 @@ CRGB DissolveSL::pickColor(){
 //Updates the effect
 //How it works:
     //Our goal is to switch all of the lines from one color to the next at random
-    //To record if any line has been switched we use an array of bools, one for each line
+    //To record if any line has been switched we use an array of bools, one for each line (pixelArray)
     //When an line is switched, it's corrosponding index in the array is switched to true
-        //Each cycle we try to switch up to numMaxSpawn line, picking them at random
+        //Each cycle we try to switch up to maxNumSpawn lines, picking them at random
         //If we pick an line that has not been switched, we switch it
         //We also increment numSpawned, which tracks how many lines have been switched so far
+        //maxNumSpawn increases every spawnRateInc ms, to help speed up the spawing over time
     //To avoid getting stuck with just a few lines not switched (and missing them every time due to the randomness)
     //We use setAllThreshold, which is the maximum number of lines we'll try to set randomly
     //(setAllThreshold is set by init() based on the length of the segmentSet)
-    //If numSpawned passes setAllThreshold, we'll set any remaining lines in order (up to numMaxSpawn lines per cycle)
+    //If numSpawned passes setAllThreshold, we'll set any remaining lines in order (up to maxNumSpawn lines per cycle)
     //Once all the lines have been set (numSpawned >= numLines)
-    //We reset the pixel array, numMaxSpawn, thresStartPoint (used when setting the lines once the threshold is met)
+    //We reset the pixel array, maxNumSpawn, thresStartPoint (used when setting the lines once the threshold is met)
     //We also set hangTimeOn, and increment the numCycles (which tracks how many dissolves we've done, used for setting colors)
     //Hang Time:
         //Hang time holds the current dissolve for a certain period before starting a new one
@@ -142,10 +165,10 @@ void DissolveSL::update(){
 
         prevTime = currentTime;
         
-        //try to spawn up to numMaxSpawn lines
+        //try to spawn up to maxNumSpawn lines
         //the lines will either be spawned randomly, or in order along the strip
         //depending on if the theshold for setting all has been reached
-        for(uint8_t i = 0; i < numMaxSpawn; i++){
+        for(uint8_t i = 0; i < maxNumSpawn; i++){
             //if we're not passed the threshold for setting all the lines,
             //choose one randomly and try to set it
             if(numSpawned < setAllThreshold){
@@ -185,7 +208,7 @@ void DissolveSL::update(){
     //to decouple the spawn increase time from the effect rate
     if( ( currentTime - prevSpawnTime ) >= spawnRateInc ){
         prevSpawnTime = currentTime;
-        numMaxSpawn++;
+        maxNumSpawn++;
     }
 }
 
@@ -194,8 +217,12 @@ void DissolveSL::update(){
 void DissolveSL::spawnLed(uint16_t lineNum){
     pixelArray[lineNum] = true;
     color = pickColor();
-    //write the color out to all the leds in the segment line
-    segDrawUtils::drawSegLineSimple(segmentSet, lineNum, color, colorMode);
-    //segDrawUtils::setPixelColor(segmentSet, lineNum, color, colorMode);
+
+    if(lineMode){
+        //write the color out to all the leds in the segment line
+        segDrawUtils::drawSegLineSimple(segmentSet, lineNum, color, colorMode);
+    } else {
+        segDrawUtils::setPixelColor(segmentSet, lineNum, color, colorMode);
+    }
     numSpawned++;
 }

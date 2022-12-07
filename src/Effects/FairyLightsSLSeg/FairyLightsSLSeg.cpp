@@ -3,14 +3,14 @@
 //see update() for how the effect works
 
 //palette based constructor
-FairyLightsSLSeg::FairyLightsSLSeg(SegmentSet &SegmentSet, palettePS *Palette, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode, bool SegMode, uint16_t Rate):
+FairyLightsSLSeg::FairyLightsSLSeg(SegmentSet &SegmentSet, palettePS *Palette, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode, uint8_t SegMode, uint16_t Rate):
     segmentSet(SegmentSet), palette(Palette), numTwinkles(NumTwinkles), tMode(Tmode), segMode(SegMode)
     {    
         init(BGColor, Rate);
 	}
 
 //single color constructor
-FairyLightsSLSeg::FairyLightsSLSeg(SegmentSet &SegmentSet, CRGB Color, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode, bool SegMode, uint16_t Rate):
+FairyLightsSLSeg::FairyLightsSLSeg(SegmentSet &SegmentSet, CRGB Color, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode, uint8_t SegMode, uint16_t Rate):
     segmentSet(SegmentSet), numTwinkles(NumTwinkles), tMode(Tmode), segMode(SegMode)
     {    
         init(BGColor, Rate);
@@ -18,7 +18,7 @@ FairyLightsSLSeg::FairyLightsSLSeg(SegmentSet &SegmentSet, CRGB Color, uint8_t N
 	}
 
 //random colors constructor
-FairyLightsSLSeg::FairyLightsSLSeg(SegmentSet &SegmentSet, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode, bool SegMode, uint16_t Rate):
+FairyLightsSLSeg::FairyLightsSLSeg(SegmentSet &SegmentSet, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode, uint8_t SegMode, uint16_t Rate):
     segmentSet(SegmentSet), numTwinkles(NumTwinkles), tMode(Tmode), segMode(SegMode)
     {    
         init(BGColor, Rate);
@@ -54,13 +54,19 @@ void FairyLightsSLSeg::genPixelSet(){
     twinkleSet = new uint16_t[numTwinkles];
     cycleLimit = numTwinkles - 1; //the number of cycles to go through the whole array
 
-    //set the how many twinkle locations there are
-    //If in seg mode, then each segment can be a twinkle
-    //Otherwise each segment line can be a twinkle
-    if(segMode){
-        twinkleRange = segmentSet.numSegs;
-    } else {
-        twinkleRange = segmentSet.maxSegLength;
+    //set the how many twinkle locations there are depending on the segMode
+    //(segmentLines, whole segments, or individual pixels)
+    switch(segMode){
+        case 0:
+        default:
+            twinkleRange = segmentSet.maxSegLength;
+            break;
+        case 1:
+            twinkleRange = segmentSet.numSegs;
+            break;
+        case 2:
+            twinkleRange = segmentSet.numLeds;
+            break;
     }
 
     //pick locations for the twinkles (local to the segment set)
@@ -87,7 +93,7 @@ void FairyLightsSLSeg::setSingleColor(CRGB Color){
 }
 
 //changes the segMode, will re-gen the pixel set if the new segMode is different
-void FairyLightsSLSeg::setSegMode(bool newSegMode){
+void FairyLightsSLSeg::setSegMode(uint8_t newSegMode){
     if(segMode != newSegMode){
         segMode = newSegMode;
         genPixelSet();
@@ -146,16 +152,24 @@ CRGB FairyLightsSLSeg::pickColor(){
     return color;
 }
 
-//Draws the twinkle, either along the whole segment, or segment line depending on segMode
+//Draws the twinkle, either along the whole segment, segment line, or an individual pixel depending on segMode
 //Inputs are the index of the twinkle array of the twinkle, the twinkle color, and the color mode
 void FairyLightsSLSeg::drawTwinkle(uint8_t twinkleNum, CRGB tColor, uint8_t cMode){
     //if in segMode we draw the twinkles along segments, otherwise we draw the along segment lines
-    if(segMode){
-        //fill twinkleSet[i]'th segment with color
-        segDrawUtils::fillSegColor(segmentSet, twinkleSet[twinkleNum], tColor, cMode);
-    } else { 
-        //fill the segment line at the twinkle location with color
-        segDrawUtils::drawSegLineSimple(segmentSet, twinkleSet[twinkleNum], tColor, cMode);
+    switch(segMode){
+        case 0:
+        default:
+            //fill the segment line at the twinkle location with color
+            segDrawUtils::drawSegLineSimple(segmentSet, twinkleSet[twinkleNum], tColor, cMode);
+            break;
+        case 1:
+            //fill twinkleSet[i]'th segment with color
+            segDrawUtils::fillSegColor(segmentSet, twinkleSet[twinkleNum], tColor, cMode);
+            break;
+        case 2:
+            //set the single pixel at twinkleSet[twinkleNum] to the tColor
+            segDrawUtils::setPixelColor(segmentSet, twinkleSet[twinkleNum], tColor, cMode);
+            break;
     }
 }
 

@@ -1,12 +1,12 @@
 #include "GlimmerSL.h"
-
+//Constructor using default fade in and out values
 GlimmerSL::GlimmerSL(SegmentSet &SegmentSet, uint16_t NumGlims, CRGB GlimmerColor, CRGB BgColor, bool TwoPixelSets, uint8_t FadeSteps, uint16_t Rate):
     segmentSet(SegmentSet), numGlims(NumGlims), fadeSteps(FadeSteps), twoPixelSets(TwoPixelSets)
     {    
         init(GlimmerColor, BgColor, Rate);
 	}
 
-
+//Constuctor for setting maximum fade in and out values
 GlimmerSL::GlimmerSL(SegmentSet &SegmentSet, uint16_t NumGlims, CRGB GlimmerColor, CRGB BgColor, bool TwoPixelSets, uint8_t FadeSteps, uint8_t FadeMin, uint8_t FadeMax, uint16_t Rate):
     segmentSet(SegmentSet), numGlims(NumGlims), fadeSteps(FadeSteps), twoPixelSets(TwoPixelSets), fadeMin(FadeMin), fadeMax(FadeMax)
     {    
@@ -45,14 +45,14 @@ void GlimmerSL::init(CRGB GlimmerColor, CRGB BgColor, uint16_t Rate){
 //pixels up to numGlims in the array are fading in,
 //while pixels from numGlims to the end are fading out
 void GlimmerSL::setupPixelArray(){
-    arrayLength = numGlims;
+    glimArrLen = numGlims;
     if(twoPixelSets){
-        arrayLength = numGlims * 2;
+        glimArrLen = numGlims * 2;
     }
     delete[] fadePixelLocs;
     delete[] totFadeSteps;
-    fadePixelLocs = new uint16_t[ arrayLength ];
-    totFadeSteps = new uint8_t[ arrayLength ];
+    fadePixelLocs = new uint16_t[ glimArrLen ];
+    totFadeSteps = new uint8_t[ glimArrLen ];
     //we need to set firstFade to since the arrays
     //are only filled up to numGlims because we don't 
     //want to start with set that is already faded when the effect begins
@@ -63,15 +63,21 @@ void GlimmerSL::setupPixelArray(){
 }
 
 //fills in the pixel arrays with random locations and fade values
-//Note that the locations are choosen from the numLines in the segment set
-//only fills the arrays up to numGlims
-//since if we're working with two pixel sets, the second numGlims length of the array
-//is used for the fading out set, which should already be set, and we don't want to overwrite it
+//Note that the locations are choosen from the line or pixel numbers in the segment set, depending on lineMode
+//Only fills the arrays up to numGlims since if we're working with two pixel sets, 
+//the second numGlims length of the array is used for the fading out set, 
+//which should already be set, and we don't want to overwrite it
 //We also set the step to zero, since we're starting a new set of pixels
 void GlimmerSL::fillPixelArray(){
     step = 0;
     //we set the segment vars here since the pixel locations depend on them
-    numLines = segmentSet.maxSegLength;
+    //if we're in line mode, then we're drawing full lines,
+    //otherwise we're drawing individual pixels
+    if(lineMode){
+        numLines = segmentSet.maxSegLength;
+    } else {
+        numLines = segmentSet.numLeds;
+    }
     numSegs = segmentSet.numSegs;
     for(uint16_t i = 0; i < numGlims; i++){
         totFadeSteps[i] = random8(fadeMin, fadeMax); //target fade amount between the bgColor and the glimmer color
@@ -157,8 +163,8 @@ void GlimmerSL::update(){
            fadeIn = true; 
         }
 
-        //run over all the pixels in the arrays and output them
-        for(uint16_t i = 0; i < arrayLength; i++){
+        //run over all the pixels in the glimmer array and output them
+        for(uint16_t i = 0; i < glimArrLen; i++){
             
             //only relevant for when we have two pixel sets
             //when we have two pixel sets, the pixels in the array 
@@ -173,34 +179,40 @@ void GlimmerSL::update(){
                 fadeIn = false;
             }
 
-            //We draw the glimmers along segment lines, so for each glimmer location
-            //we need to fill in all the segment pixesl on the line
-            for(uint16_t j = 0; j < numSegs; j++){
-                //get the physical pixel location
-                pixelNum = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, j, fadePixelLocs[i]);
+            //if we're in line mode, then we draw the glimmers along the segment lines, 
+            //otherwise, each glimmer is a single pixel
+            if(lineMode){
+                //We draw the glimmers along segment lines, so for each glimmer location
+                //we need to fill in all the segment pixesl on the line
+                for(uint16_t j = 0; j < numSegs; j++){
+                    //get the physical pixel location
+                    pixelNum = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, j, fadePixelLocs[i]);
 
-                //get the background color for the pixel, we check this every cycle to account for color modes
-                startColor = segDrawUtils::getPixelColor(segmentSet, pixelNum, *bgColor, bgColorMode, j, fadePixelLocs[i]);
-                
+                    //get the background color for the pixel, we check this every cycle to account for color modes
+                    startColor = segDrawUtils::getPixelColor(segmentSet, pixelNum, *bgColor, bgColorMode, j, fadePixelLocs[i]);
+                    
+                    //get the final target glimmer color, accounting for color modes
+                    targetColor = segDrawUtils::getPixelColor(segmentSet, pixelNum, *glimmerColor, colorMode, j, fadePixelLocs[i]);
+
+                    //get the final faded color
+                    fadeColor = getFadeColor(i);
+
+                    segDrawUtils::setPixelColor(segmentSet, pixelNum, targetColor, 0, j, fadePixelLocs[i]);
+                }
+            } else {
+                //For single pixel's we need to get the info of where the pixel is in the segment set, then set its color
+                //grab the background color, accounting for color modes
+                //this also fills in the pixelInfo struct, telling us the pixel's segment number, line number, and physical address
+                segDrawUtils::getPixelColor(segmentSet, &pixelInfo, *bgColor, bgColorMode, fadePixelLocs[i]);
+                startColor = pixelInfo.color;
+
                 //get the glimmer color, accounting for color modes
-                colorTemp = segDrawUtils::getPixelColor(segmentSet, pixelNum, *glimmerColor, colorMode, j, fadePixelLocs[i]);
-            
-                //determine final transition color for the fade
-                //ie how far towards the glimmer color we're going
-                targetColor = colorUtilsPS::getCrossFadeColor(startColor, colorTemp, totFadeSteps[i], fadeMax);
-
-                //if we're not fading in, then we're starting from the targetColor
-                //so we need to switch it with the startColor
-                if(!fadeIn){
-                    colorTemp = targetColor;
-                    targetColor = startColor;
-                    startColor = colorTemp;
-                } 
+                targetColor = segDrawUtils::getPixelColor(segmentSet, pixelInfo.pixelLoc, *glimmerColor, colorMode, pixelInfo.segNum, pixelInfo.lineNum);
                 
-                //the final output color, blended towards the target color by the number of steps
-                colorTemp = colorUtilsPS::getCrossFadeColor(startColor, targetColor, step, fadeSteps);
+                //get the final faded color
+                fadeColor = getFadeColor(i);
 
-                segDrawUtils::setPixelColor(segmentSet, pixelNum, colorTemp, 0, j, fadePixelLocs[i]);
+                segDrawUtils::setPixelColor(segmentSet, pixelInfo.pixelLoc, fadeColor, 0, 0, 0);
             }
         }
         
@@ -226,4 +238,23 @@ void GlimmerSL::update(){
         }
         showCheckPS();
     }
+}
+
+//Returns the cross faded output color depending on if we're fading in or out
+//NOTE that the color fading vars are set in the draw functions
+CRGB GlimmerSL::getFadeColor(uint8_t glimNum){
+    //determine final transition color for the fade
+    //ie how far towards the glimmer color we're going
+    fadeColor = colorUtilsPS::getCrossFadeColor(startColor, targetColor, totFadeSteps[glimNum], fadeMax);
+
+    //if we're not fading in, then we're starting from the fadeColor
+    //so we need to switch it with the startColor
+    if(!fadeIn){
+        targetColor = fadeColor;
+        fadeColor = startColor;
+        startColor = targetColor;
+    } 
+
+    //the final output color, blended towards the fade color by the number of steps
+    return colorUtilsPS::getCrossFadeColor(startColor, fadeColor, step, fadeSteps);
 }
