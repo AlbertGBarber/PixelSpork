@@ -12,13 +12,13 @@ Fire2012SL::Fire2012SL(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor,
 	}
 
 Fire2012SL::~Fire2012SL(){
-    delete[] heat;
+    free(heat);
 }
 
 //resets the effect and creates new heat arrays
 //call this if you change segment sets or sections
 void Fire2012SL::reset(){
-    delete[] heat;
+    free(heat);
 
     //fetch some core vars
     numSegs = segmentSet.numSegs;
@@ -26,7 +26,7 @@ void Fire2012SL::reset(){
     uint16_t numPoints = numLines * numSegs;
     
     //create the heat array to store temperatures of each line point
-    heat = new uint8_t[numPoints];
+    heat = (uint8_t*) malloc(numPoints * sizeof(uint8_t));
     for(uint16_t i = 0; i < numPoints; i++){
         heat[i] = 0;
     }

@@ -31,9 +31,9 @@ FairyLightsSLSeg::FairyLightsSLSeg(SegmentSet &SegmentSet, uint8_t NumTwinkles, 
 
 //destructor
 FairyLightsSLSeg::~FairyLightsSLSeg(){
-    delete[] paletteTemp.paletteArr;
-    delete[] twinkleSet;
-    delete[] colorSet;
+    free(paletteTemp.paletteArr);
+    free(colorSet);
+    free(twinkleSet);
 }
 
 void FairyLightsSLSeg::init(CRGB BgColor, uint16_t Rate){
@@ -41,18 +41,30 @@ void FairyLightsSLSeg::init(CRGB BgColor, uint16_t Rate){
     bindSegPtrPS();
     bindClassRatesPS();
     bindBGColorPS();
+    paletteTemp.paletteArr = nullptr;
     genPixelSet();
 }
 
 //makes new twinkleSet and colorSet arrays to store the twinkle locations and colors
 void FairyLightsSLSeg::genPixelSet(){
+
+    //must have at least one twinkle
     if(numTwinkles < 1){
         numTwinkles = 1;
     }
 
-    delete[] twinkleSet;
-    twinkleSet = new uint16_t[numTwinkles];
-    cycleLimit = numTwinkles - 1; //the number of cycles to go through the whole array
+    //we only need to re-create new twinkle arrays, and set twinkle vars if the number of twinkles has changed
+    if(prevNumTwinkles != numTwinkles){
+        prevNumTwinkles = numTwinkles;    
+   
+        cycleLimit = numTwinkles - 1; //the number of cycles to go through the whole array
+
+        free(twinkleSet);
+        twinkleSet = (uint16_t*) malloc(numTwinkles * sizeof(uint16_t));
+
+        free(colorSet);
+        colorSet = (CRGB*) malloc(numTwinkles * sizeof(CRGB));
+    }
 
     //set the how many twinkle locations there are depending on the segMode
     //(segmentLines, whole segments, or individual pixels)
@@ -73,9 +85,6 @@ void FairyLightsSLSeg::genPixelSet(){
     for (uint8_t i = 0; i < numTwinkles; i++) {
         twinkleSet[i] = random16(twinkleRange);
     }
-
-    delete[] colorSet;
-    colorSet = new CRGB[numTwinkles];
 }
 
 //changes the number of twinkles, also resets the twinkleSet
@@ -87,7 +96,7 @@ void FairyLightsSLSeg::setNumTwinkles(uint8_t newNumTwinkles){
 //creates an palette of length 1 containing the passed in color
 //binds it to the temp palette to keep it in scope
 void FairyLightsSLSeg::setSingleColor(CRGB Color){
-    delete[] paletteTemp.paletteArr;
+    free(paletteTemp.paletteArr);
     paletteTemp = paletteUtilsPS::makeSingleColorPalette(Color);
     palette = &paletteTemp;
 }
@@ -109,6 +118,7 @@ void FairyLightsSLSeg::setSegMode(uint8_t newSegMode){
 //see the individual functions for how they work
 //Note that twinkles are drawn along segment lines, so each twinkle will light up a whole segment line
 void FairyLightsSLSeg::update(){
+    
     currentTime = millis();
 
     if( ( currentTime - prevTime ) >= *rate ) {

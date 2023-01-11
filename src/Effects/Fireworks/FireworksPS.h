@@ -196,19 +196,19 @@ class FireworksPS : public EffectBasePS {
             fillBG = false,
             blend = false,
             randSparkColors = false,
-            *fireWorkActive;
+            *fireWorkActive = nullptr;
         
         CRGB 
             burstColor = CRGB::White,
-            bgColorOrig,
-            *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+            bgColorOrig = 0,
+            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
 
         palettePS
             paletteTemp,
-            *palette;
+            *palette = nullptr;
 
         particleSetPS 
-            *particleSet, //the particle set used in the effect
+            *particleSet = nullptr, //the particle set used in the effect
             particleSetTemp; //storage for self created particle sets
 
         void 
@@ -249,13 +249,13 @@ class FireworksPS : public EffectBasePS {
             movePart; //flag for if a particle should move thise cycle
         
         particlePS
-            *particlePtr;
+            *particlePtr = nullptr;
 
         pixelInfoPS
             pixelInfo{0, 0, 0, 0};
 
         CRGB 
-            *trailEndColors, //used to store the last colors of each trail, so the background color can be set
+            *trailEndColors = nullptr, //used to store the last colors of each trail, so the background color can be set
             colorFinal,
             colorOut,
             colorTemp;

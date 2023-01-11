@@ -12,21 +12,21 @@ Fire2012Seg::Fire2012Seg(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColo
 	}
 
 Fire2012Seg::~Fire2012Seg(){
-    delete[] heat;
-    delete[] heatSegStarts;
+    free(heat);
+    free(heatSegStarts);
 }
 
 //resets the effect and creates new heat arrays
 //call this if you change segment sets or sections
 void Fire2012Seg::reset(){
-    delete[] heat;
-    delete[] heatSegStarts;
+    free(heat);
+    free(heatSegStarts);
 
     numSegs = segmentSet.numSegs;
     numLeds = segmentSet.numLeds;
     
     //create the heat array to store temperatures
-    heat = new uint8_t[numLeds];
+    heat = (uint8_t*) malloc(numLeds * sizeof(uint8_t));
     for(uint16_t i = 0; i < numLeds; i++){
         heat[i] = 0;
     }
@@ -37,7 +37,7 @@ void Fire2012Seg::reset(){
     //corrosponds to the current segment
     //the offsets are stored in the heatSegStarts in order of the segments
     uint16_t segmentSetLength = 0;
-    heatSegStarts = new uint16_t[numSegs];
+    heatSegStarts = (uint16_t*) malloc(numSegs * sizeof(uint16_t));
     // get the total segmentSet length, and set the starting offsets
     for (uint16_t i = 0; i < numSegs; i++) {
         heatSegStarts[i] = segmentSetLength; // the start offsets are just the lengths of each segment

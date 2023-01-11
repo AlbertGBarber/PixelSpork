@@ -48,8 +48,9 @@ namespace particleUtilsPS{
         resetParticle(particlePS *particle),
         resetParticleset(particleSetPS *particleSet),
         resetParticle(particleSetPS *particleSet, uint8_t partNum),
-        deleteParticle(particleSetPS *particleSet, uint8_t partNum),
-        deleteAllParticles(particleSetPS *particleSet);
+        freeParticleSet(particleSetPS *particleSet),
+        freeParticle(particleSetPS *particleSet, uint8_t partNum),
+        freeAllParticles(particleSetPS *particleSet);
 
     //functions for changing particle properties
     void

@@ -17,8 +17,8 @@ NoiseSL::NoiseSL(SegmentSet &SegmentSet, palettePS *Palette, uint16_t BlendSteps
     }
 
 NoiseSL::~NoiseSL(){
-    delete[] noise;
-    delete[] paletteTemp.paletteArr;
+    free(noise);
+    free(paletteTemp.paletteArr);
 }
 
 //Sets up the initial effect values and other key variables
@@ -52,15 +52,14 @@ void NoiseSL::init(uint16_t Rate){
 //then array index's 0, 1, 2, 3 would be for line 0
 //4, 5, 6, 7 for line 1, etc
 void NoiseSL::setupNoiseArray(){
-
-    delete[] noise;
     //fetch some core vars
     numSegs = segmentSet.numSegs;
     numLines = segmentSet.maxSegLength;
     uint16_t numPoints = numLines * numSegs;
     
+    free(noise);
     //create the noise array to store noise value of each line point
-    noise = new uint8_t[numPoints];
+    noise = (uint8_t*) malloc(numPoints * sizeof(uint8_t));
 }
 
 //updates the effect

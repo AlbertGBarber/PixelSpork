@@ -45,7 +45,7 @@ class RateRandomizerPS : public EffectBasePS {
 
         uint16_t
             baseRateOrig,
-            *baseRate,
+            *baseRate = nullptr,
             outputRate;
         
         bool

@@ -106,14 +106,14 @@ class FairyLightsSLSeg : public EffectBasePS {
             bgColorMode = 0;
         
         uint16_t
-            *twinkleSet;
+            *twinkleSet = nullptr;
         
         CRGB
             bgColorOrig,
-            *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
         
         palettePS
-            *palette;
+            *palette = nullptr;
 
         bool
             reDrawAll = false,
@@ -133,6 +133,7 @@ class FairyLightsSLSeg : public EffectBasePS {
             prevTime = 0;
         
         uint8_t
+            prevNumTwinkles = 0,
             paletteLength,
             cycleLimit,
             loopStart,
@@ -146,7 +147,7 @@ class FairyLightsSLSeg : public EffectBasePS {
         
         CRGB 
             color,
-            *colorSet,
+            *colorSet = nullptr,
             pickColor();
         
         void

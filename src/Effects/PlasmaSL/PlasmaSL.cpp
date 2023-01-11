@@ -17,7 +17,7 @@ PlasmaSL::PlasmaSL(SegmentSet &SegmentSet, uint8_t numColors, uint16_t BlendStep
 	}
 
 PlasmaSL::~PlasmaSL(){
-    delete[] paletteTemp.paletteArr;
+    free(paletteTemp.paletteArr);
 }
 
 //sets up variables for the effect

@@ -9,7 +9,7 @@ PaletteBlenderPS::PaletteBlenderPS(palettePS *StartPalette, palettePS *EndPalett
     }
 
 PaletteBlenderPS::~PaletteBlenderPS(){
-    delete[] blendPalette_arr;
+    free(blendPalette_arr);
 }
 
 //resets the core class variables, allowing you to reuse class instances
@@ -34,11 +34,9 @@ void PaletteBlenderPS::reset(palettePS *StartPalette, palettePS *EndPalette){
     endPalette = EndPalette;
     startPalette = StartPalette;
     uint8_t blendPaletteLengthTemp = max(startPalette->length, endPalette->length);
-    //if the new blend palette will be the same length as the current blend palette
-    //we don't need to make a new one
-    if(blendPaletteLengthTemp != blendPaletteLength){
-        setupBlendPalette(blendPaletteLength);
-    }
+    
+    //create the blend palette
+    setupBlendPalette(blendPaletteLengthTemp);
 }
 
 //reset the loop variables, basically starting the loop from scratch
@@ -51,13 +49,16 @@ void PaletteBlenderPS::reset(){
 
 //creates the blend palette and the color storage arrays
 void PaletteBlenderPS::setupBlendPalette( uint8_t newBlendPaletteLength){
-    //delete the current (if there is one) blendPalette array of colors to free up memory
-    //then create a new one, and pass that to a palette
-    //this has to be done this way so that the blendPalette array doesn't vanish after this function is finished
-    blendPaletteLength = newBlendPaletteLength;
-    delete[] blendPalette_arr;
-    blendPalette_arr = new CRGB[blendPaletteLength];
-    blendPalette = {blendPalette_arr, blendPaletteLength};
+    //if the new blend palette will be the same length as the current blend palette we don't need to make a new one
+    if(newBlendPaletteLength != blendPaletteLength){
+        //delete the current blendPalette array of colors to free up memory
+        //then create a new one, and pass that to a palette
+        //this has to be done this way so that the blendPalette array doesn't vanish after this function is finished
+        blendPaletteLength = newBlendPaletteLength;
+        free(blendPalette_arr);
+        blendPalette_arr = (CRGB*) malloc(blendPaletteLength * sizeof(CRGB));
+        blendPalette = {blendPalette_arr, blendPaletteLength};
+    }
     update(); //update once to fill in the blendPalette
 }
 
@@ -82,7 +83,7 @@ void PaletteBlenderPS::update(){
                 paletteUtilsPS::setColor(&blendPalette, newColor, i);
             }
             
-            //if we have reached the totalSteps,
+            //if we have reached the totalSteps,'
             //the blend palette has reached the end palette
             //set flags, and loop if needed
             if(step >= totalSteps){

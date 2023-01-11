@@ -29,9 +29,9 @@ DissolveSL::DissolveSL(SegmentSet &SegmentSet, uint8_t RandMode, uint16_t SpawnR
 
 //destructor
 DissolveSL::~DissolveSL(){
-    delete[] paletteTemp.paletteArr;
-    delete[] pixelArray;
-    delete[] patternTemp.patternArr;
+    free(paletteTemp.paletteArr);
+    free(patternTemp.patternArr);
+    free(pixelArray);
 }
 
 //inits core variables for the effect
@@ -73,8 +73,8 @@ void DissolveSL::resetPixelArray(){
     //To record if a line has been switched or not, we need to create an array of bools
     //(but only if we don't already have an array of the right size)
     if(prevNumLines != numLines){
-        delete[] pixelArray;
-        pixelArray = new bool[numLines];
+        free(pixelArray);
+        pixelArray = (bool*) malloc(numLines * sizeof(bool));
         prevNumLines = numLines;
     }
 

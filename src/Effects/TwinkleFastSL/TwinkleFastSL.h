@@ -72,14 +72,14 @@ class TwinkleFastSL : public EffectBasePS {
 
         CRGB 
             bgColorOrig,
-            *bgColor;
+            *bgColor = nullptr;
 
         SegmentSet 
             &segmentSet; 
         
         palettePS
             paletteTemp,
-            *palette;
+            *palette = nullptr;
         
         void 
             setSingleColor(CRGB Color),

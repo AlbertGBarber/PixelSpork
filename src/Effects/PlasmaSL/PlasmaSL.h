@@ -141,7 +141,7 @@ class PlasmaSL : public EffectBasePS {
         
         palettePS
             paletteTemp,
-            *palette;
+            *palette = nullptr;
 
         void 
             randomizeFreq(uint8_t freqMin, uint8_t freqMax),

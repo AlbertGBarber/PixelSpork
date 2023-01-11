@@ -42,11 +42,13 @@ Constructor Inputs:
     Rate -- The update rate (ms)
 
 Functions:
-    setSteps(newfadeInSteps, newfadeOutSteps) -- Sets the number of fade in and out steps, will restart the effect
-                                                 !!DO NOT set the number of steps directly
+    setSteps(newfadeInSteps, newfadeOutSteps) -- Sets the number of fade in and out steps
+                                                (Will reset the effect if the either of the number of steps 
+                                                 is different than the current number)
     setSingleColor(Color) -- Sets the effect to use a single color for the pixels, will restart the effect
     reset() -- Resets the startup variables, you probably don't need to ever call this
-    setNumTwinkles(newNumTwinkles) -- sets an new number of pixels to be choosen each cycle, will restart the effect
+    setNumTwinkles(newNumTwinkles) -- sets an new number of pixels to be choosen each cycle, 
+                                      (Will reset the effect if the new number of pixels is different than the current number)
     update() -- updates the effect
 
 Other Settings:
@@ -56,6 +58,11 @@ Other Settings:
                             0: Picks colors from the palette
                             1: Picks colors at random
     fillBG (default false) -- sets the background to be redrawn every cycle, useful for bgColorModes that are dynamic
+
+reference Vars:
+    numTwinkles -- How many random pixels are choosen each cycle, set with setNumTwinkles()
+    fadeInSteps and fadeOutSteps -- The number of steps taken to fade pixels in and out (min value of 1, max of 255)
+                                    Both are set at the same time using setSteps();
 
 Notes:
     In order for the effect to work, it needs to keep track of all the active random pixels until they fade out
@@ -89,7 +96,7 @@ class TwinkleSL : public EffectBasePS {
 
         CRGB 
             bgColorOrig,
-            *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
 
         bool 
             fillBG = false;
@@ -100,15 +107,15 @@ class TwinkleSL : public EffectBasePS {
             bgColorMode = 0;
 
         uint8_t 
-            fadeInSteps,
-            fadeOutSteps;
+            fadeInSteps = 0, //Set using setSteps(), for reference only!!
+            fadeOutSteps =0; //Set using setSteps(), for reference only!!
 
         SegmentSet 
             &segmentSet; 
         
         palettePS
             paletteTemp,
-            *palette;
+            *palette = nullptr;
         
         void 
             setSteps(uint8_t newfadeInSteps, uint8_t newfadeOutSteps),

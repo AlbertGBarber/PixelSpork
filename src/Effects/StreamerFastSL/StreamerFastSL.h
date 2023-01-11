@@ -140,18 +140,18 @@ class StreamerFastSL : public EffectBasePS {
         CRGB 
             prevColor, //The color of the newest wave (excluding the background color)
             bgColorOrig,
-           *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
 
         SegmentSet 
             &segmentSet; 
         
         patternPS
             patternTemp,
-            *pattern;
+            *pattern = nullptr;
         
         palettePS
             paletteTemp,
-            *palette;
+            *palette = nullptr;
         
         void 
             setPatternAsPattern(patternPS *inputPattern, uint8_t colorLength, uint8_t spacing),
@@ -165,6 +165,7 @@ class StreamerFastSL : public EffectBasePS {
             prevTime = 0;
         
         uint8_t
+            *pattern_arr = nullptr,
             nextPattern,
             nextPatternRand,
             prevPattern;

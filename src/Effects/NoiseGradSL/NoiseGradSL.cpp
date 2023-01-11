@@ -21,7 +21,7 @@ NoiseGradSL::NoiseGradSL(SegmentSet &SegmentSet, uint8_t numColors, CRGB BgColor
 	}
 
 NoiseGradSL::~NoiseGradSL(){
-    delete[] paletteTemp.paletteArr;
+    free(paletteTemp.paletteArr);
 }
 
 //Initializes core common varaibles

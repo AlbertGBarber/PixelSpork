@@ -65,13 +65,6 @@ class PaletteBlenderPS : public EffectBasePS {
         PaletteBlenderPS(palettePS *StartPalette, palettePS *EndPalette, bool looped, uint8_t TotalSteps, uint16_t Rate);
         
         ~PaletteBlenderPS();
-        
-        void
-            reset(palettePS *StartPalette, palettePS *EndPalette), //resets just the colors (also starts the blend again)
-            reset(palettePS *StartPalette, palettePS *EndPalette, uint8_t TotalSteps, uint16_t Rate), //resets all vars
-            reset(), //resets the loop vars, restarting the blend from the beginning
-            setupBlendPalette(uint8_t blendPaletteLength), //used only by PaletteCycle, not for general use!
-            update();
 
         uint8_t
             step, //the current step, mainly for refrence, not intended to be manually set
@@ -90,8 +83,15 @@ class PaletteBlenderPS : public EffectBasePS {
             blendPalette; //the output palette from the blend
         
         palettePS
-            *startPalette,
-            *endPalette;
+            *startPalette = nullptr,
+            *endPalette = nullptr;
+        
+        void
+            reset(palettePS *StartPalette, palettePS *EndPalette), //resets just the colors (also starts the blend again)
+            reset(palettePS *StartPalette, palettePS *EndPalette, uint8_t TotalSteps, uint16_t Rate), //resets all vars
+            reset(), //resets the loop vars, restarting the blend from the beginning
+            setupBlendPalette(uint8_t blendPaletteLength), //used only by PaletteCycle, not for general use!
+            update();
     
     private:
         unsigned long
@@ -100,7 +100,7 @@ class PaletteBlenderPS : public EffectBasePS {
             prevTime = 0;
 
         CRGB
-           *blendPalette_arr,
+           *blendPalette_arr = nullptr,
            startColor,
            endColor,
            newColor;

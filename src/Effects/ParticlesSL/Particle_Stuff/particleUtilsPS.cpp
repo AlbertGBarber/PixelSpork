@@ -28,17 +28,21 @@ void particleUtilsPS::resetParticleset(particleSetPS *particleSet){
 //The option names are the same as used in the individual setParticle functions and do the same things
 //ie maxPosition will be passed to setParticleSetPositions() as the maxPosition input
 //See each of the individual functions for what the options do
-//NOTE: the particles are created using new, so don't forget to call deleteParticle() or deleteAllParticles()
-//if you are finished with a particle or particleSet
+//NOTE: the particles are created using new, so don't forget to call freeParticleSet() or freeParticle() once you are 
+//finished with a particleSet
 particleSetPS particleUtilsPS::buildParticleSet(uint8_t numParticles, uint16_t maxPosition, uint8_t direction, uint16_t baseSpeed, 
                                                 uint16_t speedRange, uint16_t size, uint16_t sizeRange, uint8_t trailType, 
                                                 uint8_t trailSize, uint8_t trailRange, uint8_t bounce, uint8_t colorIndex, 
                                                 bool randColor){
-    particlePS **particleArr = new particlePS*[numParticles];
+
+    //particlePS **particleArr = new particlePS*[numParticles];
+    particlePS **particleArr = (particlePS**) malloc(numParticles * sizeof(particlePS*));
     particleSetPS newParticleSet = { particleArr, numParticles };
+
     //create a new set of particles
     for(uint8_t i = 0; i < numParticles; i++ ){
-        particlePS* p = new particlePS();
+        //particlePS *p = new particlePS();
+        particlePS *p = (particlePS*) malloc(sizeof(particlePS));
         newParticleSet.setParticle(p, i);
     }
 
@@ -267,19 +271,31 @@ void particleUtilsPS::setParticleSetColor(particleSetPS *particleSet, uint8_t pa
     particleSet->particleArr[partNum]->colorIndex = colorIndex;
 }
 
-//deletes a particle in a particleSet, should only be used if the particle was generated using new
-//ie using the buildParticleSet() function
-void particleUtilsPS::deleteParticle(particleSetPS *particleSet, uint8_t partNum){
-    delete[] particleSet->particleArr[partNum];
+//Frees the pointers in a particle set (the pointer to the particle array and all thr pointers in the array)
+//Call when you're finished with a particle set that was created using buildParticleSet()
+//!!!DO NOT call this if the particle set was not created using malloc() or buildParticleSet()
+void particleUtilsPS::freeParticleSet(particleSetPS *particleSet){
+    //Free all the pointers to particles in the particle array (if it exists)
+    if(particleSet->particleArr){
+        freeAllParticles(particleSet);
+    }
+    //Now free the pointer to the particle array itself
+    free(particleSet->particleArr);
 }
 
-//deletes all the particles in a particleSet, should only be used if the particles were generated using new
-//ie using the buildParticleSet() function
-void particleUtilsPS::deleteAllParticles(particleSetPS *particleSet){
+//Frees all the particles pointers in a particleSet, should only be used if the particles were generated using malloc()
+//!!!DO NOT call this if the particle set was not created using malloc() or buildParticleSet()
+void particleUtilsPS::freeAllParticles(particleSetPS *particleSet){
     particleSetLength = particleSet->length;
     for(uint8_t i = 0; i < particleSetLength; i++ ){
-        deleteParticle(particleSet, i);
+        freeParticle(particleSet, i);
     }
+}
+
+//Frees the pointer to a particle in a particleSet, should only be used if the particles was generated using malloc()
+//!!!DO NOT call this if the particle set was not created using malloc() or buildParticleSet()
+void particleUtilsPS::freeParticle(particleSetPS *particleSet, uint8_t partNum){
+    free(particleSet->particleArr[partNum]);
 }
 
 //for gettint particle trail colors

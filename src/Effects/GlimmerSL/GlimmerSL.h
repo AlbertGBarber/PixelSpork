@@ -47,7 +47,10 @@ Constructor Inputs:
     Rate -- The update rate (ms)
 
 Functions:
-    setnumGlims(newnumGlims) -- Changes the number of pixels fading, resets the current fade cycle
+    setNumGlims(newnumGlims) -- Changes the number of pixels fading,
+                                If the new number of pixels is different than the current numGlims,
+                                the glimmer arrays will be re-created, and the effect will be reset
+                                (otherwise, nothing will happen)
     setTwoSets(newSetting) -- Changes the TwoPixelSets variable, if different, it will reset the current fade cycle
     setupPixelArray() and fillPixelArray() -- Both generate a new set of pixels for fading, you should not need to call these
     update() -- updates the effect
@@ -63,6 +66,9 @@ Other Settings:
 Flags / Counters (for reference): 
     fadeIn -- Tracks is the set of leds is fading in or not, for two sets, this varaible will be toggled mid-set
     step -- Tracks the fade step we're on, max value is fadeSteSLPS, is reset to 0 once a fade is finished
+
+Reference Vars:
+    numGlims -- The number of glimmering particles, set using setNumGlims()
 
 Notes:
     Requires uint16_t array and uint8_t arrays of length up to 2*numGlims to work, make sure you have the memory for them!
@@ -85,15 +91,13 @@ class GlimmerSL : public EffectBasePS {
         uint8_t 
             colorMode = 0,
             bgColorMode = 0,
-            *totFadeSteps,
             fadeSteps,
             step = 0,
             fadeMin = 50,
             fadeMax = 255;
 
         uint16_t
-            *fadePixelLocs,
-            numGlims;
+            numGlims; //For reference only!, Set using setNumGlims()
         
         bool 
             fadeIn,
@@ -103,9 +107,9 @@ class GlimmerSL : public EffectBasePS {
         
         CRGB 
             colorOrig,
-            *glimmerColor, //glimmerColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+            *glimmerColor = nullptr, //glimmerColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
             bgColorOrig,
-            *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
         
         void 
             setupPixelArray(),
@@ -119,7 +123,11 @@ class GlimmerSL : public EffectBasePS {
             currentTime,
             prevTime = 0;
         
+        uint8_t
+            *totFadeSteps = nullptr;
+        
         uint16_t
+            *fadePixelLocs = nullptr,
             glimArrLen,
             numLines,
             numSegs,

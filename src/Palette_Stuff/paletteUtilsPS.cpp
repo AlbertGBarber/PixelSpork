@@ -118,7 +118,8 @@ CRGB paletteUtilsPS::getPaletteGradColor(palettePS *palette, uint16_t num, uint1
 //since it is created with new
 palettePS paletteUtilsPS::makeSingleColorPalette(CRGB Color){
     palettePS newPalette;
-    CRGB *newPalette_arr = new CRGB[1];
+    CRGB *newPalette_arr = (CRGB*) malloc(1*sizeof(CRGB));
+    //CRGB *newPalette_arr = new CRGB[1];
     newPalette_arr[0] = Color;
     newPalette = {newPalette_arr, 1};
     return newPalette;
@@ -129,7 +130,8 @@ palettePS paletteUtilsPS::makeSingleColorPalette(CRGB Color){
 //since it is created with new
 palettePS paletteUtilsPS::makeRandomPalette(uint8_t length){
     palettePS newPalette;
-    CRGB *newPalette_arr = new CRGB[length];
+    CRGB *newPalette_arr = (CRGB*) malloc(length*sizeof(CRGB));
+    //CRGB *newPalette_arr = new CRGB[length];
     for(uint8_t i = 0; i < length; i++){
         newPalette_arr[i] = colorUtilsPS::randColor();
     }                                 

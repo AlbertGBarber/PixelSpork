@@ -27,8 +27,8 @@ ShiftingSeaSL::ShiftingSeaSL(SegmentSet& SegmentSet, uint8_t NumColors, uint8_t 
 }
 
 ShiftingSeaSL::~ShiftingSeaSL(){
-    delete[] offsets;
-    delete[] paletteTemp.paletteArr;
+    free(offsets);
+    free(paletteTemp.paletteArr);
 }
 
 //initializes core variables
@@ -56,8 +56,8 @@ void ShiftingSeaSL::setGrouping(uint16_t newGrouping) {
 // re-builds the offset array with new values
 void ShiftingSeaSL::resetOffsets() {
     numLines = segmentSet.maxSegLength;
-    delete[] offsets;
-    offsets = new uint16_t[numLines];
+    free(offsets);
+    offsets = (uint16_t*) malloc(numLines * sizeof(uint16_t));
     setTotalCycleLen();
     ShiftingSeaUtilsPS::genOffsetArray(offsets, numLines, gradLength, grouping, totalCycleLength, sMode);
 }

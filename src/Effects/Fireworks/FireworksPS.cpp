@@ -30,11 +30,10 @@ FireworksPS::FireworksPS(SegmentSet &SegmentSet, CRGB Color, uint8_t MaxNumFirew
 	}
 
 FireworksPS::~FireworksPS(){
-    particleUtilsPS::deleteAllParticles(&particleSetTemp);
-    delete[] particleSetTemp.particleArr;
-    delete[] fireWorkActive;
-    delete[] trailEndColors;
-    delete[] paletteTemp.paletteArr;
+    particleUtilsPS::freeParticleSet(&particleSetTemp);
+    free(fireWorkActive);
+    free(trailEndColors);
+    free(paletteTemp.paletteArr);
 }
 
 //common initilzation function for core vars
@@ -43,6 +42,7 @@ void FireworksPS::init(uint8_t maxNumFireworks, uint8_t maxNumSparks, uint16_t R
     bindSegPtrPS();
     bindClassRatesPS();
     //bind background color pointer (if needed)
+    //By default the background color is 0
     CRGB BgColor = 0;
     bindBGColorPS();
     //set how long the center "bomb" pixel is alive for in ms.
@@ -66,14 +66,16 @@ void FireworksPS::init(uint8_t maxNumFireworks, uint8_t maxNumSparks, uint16_t R
 //To get the particles in a specific firework, we use fireworkNum * maxNumSparks + i where 0 -> i -> maxNumSparks
 //The minimium number of fireworks and sparks is 1
 void FireworksPS::setupFireworks(uint8_t newMaxNumFireworks, uint8_t newMaxNumSparks){
-
+    
     //check for any active particles on the segment set
     //we need to clear them before we make a new set of particles
     bool clearStrip = false;
-    for (uint8_t i = 0; i < maxNumFireworks; i++) {
-        if( fireWorkActive[i] ){
-            clearStrip = true;
-            break;
+    if(fireWorkActive){ //if we actually have a set of fireworks (the array is not a nullptr)
+        for (uint8_t i = 0; i < maxNumFireworks; i++) {
+            if( fireWorkActive && fireWorkActive[i] ){
+                clearStrip = true;
+                break;
+            }
         }
     }
 
@@ -97,15 +99,16 @@ void FireworksPS::setupFireworks(uint8_t newMaxNumFireworks, uint8_t newMaxNumSp
     maxNumSparks = newMaxNumSparks + 1;
     uint16_t numParticles = maxNumFireworks * maxNumSparks;
 
-    delete[] trailEndColors;
-    trailEndColors = new CRGB[numParticles];
+    free(trailEndColors);
+    trailEndColors = (CRGB*) malloc(numParticles * sizeof(CRGB));
 
-    delete[] fireWorkActive;
-    fireWorkActive = new bool[maxNumFireworks];
+    free(fireWorkActive);
+    fireWorkActive = (bool*) malloc(maxNumFireworks * sizeof(bool));
 
-    particleUtilsPS::deleteAllParticles(&particleSetTemp);
-    delete[] particleSetTemp.particleArr;
+    //Free all particles and the particle array pointer
+    particleUtilsPS::freeParticleSet(&particleSetTemp);
 
+    //create a new particle set
     particleSetTemp = particleUtilsPS::buildParticleSet(numParticles, 0, true, *rate, speedRange, size, sizeRange, 
                                                         0, 0, 0, false, palette->length, true);
     particleSet = &particleSetTemp;
@@ -150,7 +153,7 @@ void FireworksPS::update(){
     deltaTime = currentTime - prevTime;
     if( deltaTime >= *rate ) {
         prevTime = currentTime;
-        
+
         numLEDs = segmentSet.numLeds;
         //if the bg is to be filled before the particles start, fill it in
         //(such as if you have a background that's changing with time (alla bgColorMode 6))
@@ -196,8 +199,9 @@ void FireworksPS::update(){
                         //This includes a "phantom zone" off the strip of size partSize
                         //Where the particle exists, but isn't drawn. This is to accomodate 
                         //particles of size > 1, so that they fully move off the strip
-                        maxPosition = numLEDs + partSize;
-
+                        //IGNORE ABOVE, KEPT FOR CONTEXT, particle isn't allowed to run off strip 
+                        maxPosition = numLEDs; // + partSize;
+                        
                         //if enough time has passed, we need to move the particle
                         movePart = ( ( currentTime - particlePtr->lastUpdateTime ) >= partSpeed );
                         //if the particle needs to move, move it and record the time
@@ -216,11 +220,14 @@ void FireworksPS::update(){
                             trailLedLocation = getTrailLedLoc(1);
                             //get the physical pixel location and the color it's meant to be
                             segDrawUtils::getPixelColor(segmentSet, &pixelInfo, *bgColor, bgColorMode, trailLedLocation);
-
+                            
                             //only turn off the pixel if it hasn't been touched by another particle (or something else)
                             //this prevents background holes from being placed in other particles
                             if(segmentSet.leds[pixelInfo.pixelLoc] == trailEndColors[particleIndex]){
                                 segmentSet.leds[pixelInfo.pixelLoc] = pixelInfo.color;
+                                //Need to check to dim the pixel color manually
+                                //b/c we're not calling setPixelColor directly
+                                segDrawUtils::handleBri(segmentSet, pixelInfo.pixelLoc); 
                             }
                         }
 
@@ -228,7 +235,7 @@ void FireworksPS::update(){
                         //once the particle's life hits 0 it is deactivated
                         //(We re-fetch partLife incase it's been set to zero because the particle has moved off the strip)
                         partLife = particlePtr->life;
-                        if( int32_t(partLife - deltaTime) <= 0){
+                        if( ( (int32_t(partLife) - deltaTime) <= 0) || partLife == 0 ){
                             partLife = 0;
                         } else {
                             partLife -= deltaTime;
@@ -241,9 +248,10 @@ void FireworksPS::update(){
                             
                             //the body postion, for size 1 particles, this is just it position
                             trailLedLocation = addMod16PS( partPos, maxPosition - (k * directStep), maxPosition ); //( (position - k * directStep) + numLEDs) % numLEDs;
-
+                            
                             //Draw the body pixel
                             drawParticlePixel(particlePtr, trailLedLocation);
+                            //segDrawUtils::setPixelColor(segmentSet, 0, 0, bgColorMode); 
                             //The pixel that needs to be set to background
                             //is the last pixel in the particle body, so we record it's color
                             if( k == (partSize - 1) ){
@@ -306,6 +314,7 @@ void FireworksPS::drawParticlePixel(particlePS *particlePtr, uint16_t trailLedLo
     //get the pixel's physical location and adjust for any color modes
     //also fetch the background color at this point (colorFinal)
     segDrawUtils::getPixelColor(segmentSet, &pixelInfo, colorOut, colorMode, trailLedLocation);
+    
     colorFinal = segDrawUtils::getPixelColor(segmentSet, pixelInfo.pixelLoc, *bgColor, bgColorMode, pixelInfo.segNum, pixelInfo.lineNum);
     
     //if the pixel is the first particle in the firework, then it is the center particle
@@ -336,7 +345,11 @@ void FireworksPS::drawParticlePixel(particlePS *particlePtr, uint16_t trailLedLo
         segmentSet.leds[pixelInfo.pixelLoc] += colorFinal;
     } else {
         segmentSet.leds[pixelInfo.pixelLoc] = colorFinal;
-    }                 
+    }       
+
+    //Need to check to dim the pixel color manually
+    //b/c we're not calling setPixelColor directly
+    segDrawUtils::handleBri(segmentSet, pixelInfo.pixelLoc);         
 }
 
 //returns the previous position end of the particle
@@ -434,5 +447,5 @@ void FireworksPS::spawnFirework(uint8_t fireworkNum){
     //We want this particle to be the center of the explosion, but for larger particles
     //they are always draw with the head at the particle position, and the rest of the body after
     //so we need to offset the particle position to keep it centered
-    particlePtr->position = min( spawnPos + particlePtr->size/2, numLEDs );
+    particlePtr->position = min( spawnPos + particlePtr->size/2, numLEDs - 1 );
 }

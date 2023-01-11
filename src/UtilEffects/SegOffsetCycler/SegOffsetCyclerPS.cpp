@@ -15,7 +15,7 @@ SegOffsetCyclerPS::SegOffsetCyclerPS(SegmentSet &segmentSet, uint8_t ColorMode, 
     }
 
 SegOffsetCyclerPS::~SegOffsetCyclerPS(){
-    delete[] segGroupTemp;
+    free(segGroupTemp);
 }
 
 //initilization
@@ -39,8 +39,8 @@ void SegOffsetCyclerPS::setGroup(SegmentSet** SegmentSetArr, uint8_t NumSegsSets
 //lets you delete the groupTemp when a new segmentSet is assigned
 //without worring about deleting parts of any external arrays that may have been assigned to the group before
 void SegOffsetCyclerPS::setGroup(SegmentSet &segmentSet){
-    delete[] segGroupTemp;
-    segGroupTemp = new SegmentSet*[1];
+    free(segGroupTemp);
+    segGroupTemp = (SegmentSet**) malloc(1 * sizeof(SegmentSet*));
     segGroupTemp[0] = &segmentSet;
     segGroup = segGroupTemp;
     numSegSets = 1;

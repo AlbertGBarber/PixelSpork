@@ -84,8 +84,8 @@ The Modes:
 For example, with a trail length of 7, the modes will produce:
 (The trail head is *, - are the trail)
   0: ------* 
-  2: ---*---
-  3: *------
+  1: ---*---
+  2: *------
 
 Functions:
     setPalette(*newPalette) -- Sets the palette used for the waves
@@ -96,8 +96,6 @@ Functions:
     setGradLength(newGradLength) -- Changes the gradlength to the specified value, adjusting the length of the waves (calls setTotalEffectLength())
     setSpacing(newSpacing) -- Changes the spacing to the specified value, (calls setTotalEffectLength())
     setTrailMode(newTrailMode) -- Changes the trail mode used for the waves
-    buildLineArr() -- Creates the array for storing the line pixel locations
-                      !! Only call this if you change your segment set
     update() -- updates the effect
 
 Other Settings:
@@ -147,15 +145,15 @@ class RollingWavesFastSL : public EffectBasePS {
         
         CRGB 
             bgColorOrig,
-           *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
 
         patternPS
             patternTemp,
-            *pattern;
+            *pattern = nullptr;
 
         palettePS
             paletteTemp,
-            *palette;
+            *palette = nullptr;
 
         SegmentSet 
             &segmentSet; 

@@ -44,7 +44,7 @@ PrideWPalSL::PrideWPalSL(SegmentSet &SegmentSet, palettePS *Palette, bool BriDir
     }
 
 PrideWPalSL::~PrideWPalSL(){
-    delete[] paletteTemp.paletteArr;
+    free(paletteTemp.paletteArr);
 }
 
 //Initializes core variables and also picks random values for briThetaInc16 and briThetaFreq if randomBriInc is true

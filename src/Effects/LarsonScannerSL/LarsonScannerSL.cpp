@@ -17,10 +17,10 @@ LarsonScannerSL::LarsonScannerSL(SegmentSet &SegmentSet, uint8_t ScanType, CRGB 
 	}
 
 LarsonScannerSL::~LarsonScannerSL(){
-    delete[] scannerInst;
-    delete[] palette.paletteArr;
-    particleUtilsPS::deleteAllParticles(&particleSet);
-    delete[] particleSet.particleArr;
+    scannerInst->~ParticlesSL();
+    //Free all particles and the particle array pointer
+    particleUtilsPS::freeParticleSet(&particleSet);
+    free(particleSet.particleArr);
 }
 
 //changes the color mode of the scanner
@@ -35,7 +35,7 @@ void LarsonScannerSL::setColorMode(uint8_t colorMode, bool bgColorMode){
 
 //changes the color of the particles
 void LarsonScannerSL::setColor(CRGB color){
-    delete[] palette.paletteArr;
+    free(palette.paletteArr);
     palette = paletteUtilsPS::makeSingleColorPalette(color);
 }
 
@@ -55,8 +55,10 @@ void LarsonScannerSL::setBounce(bool newBounce){
 void LarsonScannerSL::setScanType(uint8_t newScanType){
     numLines = segmentSet.maxSegLength;
     scanType = newScanType;
-    //delete and re-create a particle set for the particles
-    delete[] particleSet.particleArr;
+
+    //Free all particles and the particle array pointer
+    particleUtilsPS::freeParticleSet(&particleSet);
+
     scannerInst->blend = false;
     if(scanType == 0){
         particleSet = particleUtilsPS::buildParticleSet(1, numLines, true, *rate, 0, eyeSize, 0, 2, trailLength, 0, bounce, 0, false);

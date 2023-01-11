@@ -10,7 +10,7 @@ using namespace generalUtilsPS;
 patternPS generalUtilsPS::setPaletteAsPattern(palettePS *palette){
     patternPS newPattern;
     uint8_t patternLength = palette->length;
-    uint8_t *pattern_arr = new uint8_t[patternLength];
+    uint8_t *pattern_arr = (uint8_t*) malloc( patternLength * sizeof(uint8_t) );
     for(int i = 0; i < patternLength; i++){
         pattern_arr[i] = i;
     }

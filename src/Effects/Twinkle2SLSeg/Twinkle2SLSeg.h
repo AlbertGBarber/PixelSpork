@@ -104,15 +104,20 @@ Constructor Inputs:
     Rate -- The update rate (ms)
 
 Functions:
-    setSteps(newfadeInSteps, newfadeOutSteps) -- Sets the number of fade in and out steps, will restart the effect
+    setSteps(newfadeInSteps, newfadeOutSteps) -- Sets the number of fade in and out steps
                                                  You can also set the steps directly as long as you don't set them below 1
     setSingleColor(Color) -- Sets the effect to use a single color for the twinkles
     reset() -- Sets all twinkles to inactive and fills in the background
-    setNumTwinkles(newNumTwinkles) -- Sets the maxmimum amount of random twinkles that can be active at one time, will restart the effect
+    setNumTwinkles(newNumTwinkles) -- Sets the maxmimum amount of random twinkles that can be active at one time,
+                                      will restart the effect if the new number is different from the current number
                                       You can avoid calling this if you do the trick from my extra note in the inputs guide
     setSegMode(newSegMode) -- Sets if twinkles will be drawn on segment lines, whole segments or individual pixels
-                              (See segMode notes above) (will reset the effect)
+                              (See segMode notes above) (will reset the effect if value is different from current value)
     update() -- updates the effect
+
+Reference Vars:
+    numTwinkles -- (see notes above) set using setNumTwinkles()
+    segMode -- (see notes above) set using setSegMode()
 
 Other Settings:
     colorMode (default 0) -- sets the color mode for the random twinkles (see segDrawUtils::setPixelColor)
@@ -150,11 +155,11 @@ class Twinkle2SLSeg : public EffectBasePS {
         ~Twinkle2SLSeg();
 
         uint16_t
-            numTwinkles;
+            numTwinkles; //for refrence, set with setNumTwinkles()
 
         CRGB 
             bgColorOrig,
-            *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
 
         bool 
             limitSpawing = false,
@@ -178,10 +183,10 @@ class Twinkle2SLSeg : public EffectBasePS {
         
         palettePS
             paletteTemp,
-            *palette;
+            *palette = nullptr;
         
         twinkleSetPS 
-            *twinkleSet,
+            *twinkleSet = nullptr,
             twinkleSetTemp;
         
         void 
@@ -221,8 +226,8 @@ class Twinkle2SLSeg : public EffectBasePS {
             colorOut;
         
         twinkleStarPS 
-            *twinklePtr,
-            **twinkleArr;
+            *twinklePtr = nullptr,
+            **twinkleArr = nullptr;
 
         pixelInfoPS
             pixelInfo{0, 0, 0, 0};

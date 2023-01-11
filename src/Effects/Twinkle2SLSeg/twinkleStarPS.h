@@ -29,7 +29,7 @@ struct twinkleStarPS {
     //access a twinkle's property via: twinkleSet.twinkeArr[x]->property.
     //See code in Twinkle2PS for more snippets.
 struct twinkleSetPS {
-    twinkleStarPS **twinkleArr; //pointer to an array of twinkles pointers
+    twinkleStarPS **twinkleArr = nullptr; //pointer to an array of twinkles pointers
     uint8_t length; //the size of the twinkle array (num of twinkles)
 
     //sets twinkle in the array to the passed in twinkle at the specified index

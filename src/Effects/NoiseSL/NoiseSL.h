@@ -144,7 +144,7 @@ class NoiseSL : public EffectBasePS {
         
         palettePS 
             paletteTemp,
-            *palette;
+            *palette = nullptr;
 
         void 
             setupNoiseArray(),
@@ -159,7 +159,7 @@ class NoiseSL : public EffectBasePS {
             scaleStep = 0;
         
         uint8_t
-            *noise,
+            *noise = nullptr,
             noiseData,
             oldData,
             newData,

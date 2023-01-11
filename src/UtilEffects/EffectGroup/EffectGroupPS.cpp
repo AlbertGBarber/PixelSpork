@@ -27,7 +27,7 @@
 //         fadeInStarted = false;
 //         fadeOutStarted = false;
 //         if(!effectFader){
-//             delete effectFader;
+//             effectFader->~EffectFaderPS();
 //             effectFader = new EffectFaderPS(group, numEffects, false, fadeRunTime);
 //         } else {
 //             effectFader->reset(group, numEffects, false);

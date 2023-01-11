@@ -122,6 +122,10 @@ Other Settings:
                               The value of fadeThresh reduces how long the they will stay at peak color
                               Note that setting it to 255 will only doa fade in, and then the fireflys will disappear instantly
                               128 will cause them to fade in then out with no pause at the peak 
+
+Reference Vars
+    maxNumFireflies -- The maximum number of fireflies that can be active at any one time
+                       call setupFireflies() to change
 */
 class FirefliesSL : public EffectBasePS {
     public:
@@ -148,7 +152,7 @@ class FirefliesSL : public EffectBasePS {
             colorMode = 0,
             bgColorMode = 0,
             fadeThresh = 50,
-            maxNumFireflies;
+            maxNumFireflies = 0; //For reference only!, call setupFireflies() to change
         
         uint16_t
             lifeBase, 
@@ -163,14 +167,14 @@ class FirefliesSL : public EffectBasePS {
 
         CRGB 
             bgColorOrig,
-            *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
 
         palettePS
             paletteTemp,
-            *palette;
+            *palette = nullptr;
 
         particleSetPS 
-            *particleSet, //the particle set used in the effect
+            *particleSet = nullptr, //the particle set used in the effect
             particleSetTemp; //storage for self created particle sets
 
         void 
@@ -198,13 +202,13 @@ class FirefliesSL : public EffectBasePS {
             numSegs,
             pixelNum,
             longestSeg,
-            *particlePrevPos;
+            *particlePrevPos = nullptr;
         
         particlePS
-            *particlePtr;
+            *particlePtr = nullptr;
             
         CRGB 
-            *trailEndColors, //used to store the last colors of each trail, so the background color can be set
+            *trailEndColors = nullptr, //used to store the last colors of each trail, so the background color can be set
             colorFinal,
             colorOut,
             bgCol;

@@ -56,7 +56,7 @@ class EffectFaderPS {
 
         uint8_t
             minBrightness = 10,
-            *origBrightness_arr,
+            *origBrightness_arr = nullptr,
             maxBrightness;
         
         uint16_t
@@ -86,11 +86,11 @@ class EffectFaderPS {
             stepRate;
         
         EffectBasePS
-            **group;
+            **group = nullptr;
         
         SegmentSet
             *getSegPtr(uint8_t effectNum),
-            *segmentSet;
+            *segmentSet = nullptr;
 
         void
             resetSegVars();

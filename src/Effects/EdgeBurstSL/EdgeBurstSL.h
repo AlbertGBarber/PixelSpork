@@ -59,7 +59,7 @@ Randomize Notes:
 Example calls: 
 
     EdgeBurstSL(ringSegments, 15, 80);
-    Will do a a ranibow edge burst with a burst freq of 15
+    Will do a a rainbow edge burst with a burst freq of 15
     The effect updates at 80ms
 
     EdgeBurstSL(ringSegments, &palette1, 10, 80);
@@ -120,7 +120,7 @@ class EdgeBurstSL : public EffectBasePS {
         
         palettePS
             paletteTemp,
-            *palette;
+            *palette = nullptr;
 
         void 
             update(void);

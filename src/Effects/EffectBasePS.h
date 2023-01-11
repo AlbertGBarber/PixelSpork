@@ -48,7 +48,7 @@ class EffectBasePS {
     public:
         uint16_t 
             rateOrig,
-            *rate;
+            *rate = nullptr;
         
         bool
             showNow = true;

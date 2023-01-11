@@ -17,7 +17,7 @@ NoiseWavesSL::NoiseWavesSL(SegmentSet &SegmentSet, uint8_t numColors, CRGB BgCol
 	}
 
 NoiseWavesSL::~NoiseWavesSL(){
-    delete[] paletteTemp.paletteArr;
+    free(paletteTemp.paletteArr);
 }
 
 //Initializes core common varaibles

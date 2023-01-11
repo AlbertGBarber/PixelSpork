@@ -27,8 +27,8 @@ GradientCycleFastSL::GradientCycleFastSL(SegmentSet &SegmentSet, uint8_t NumColo
 	}
 
 GradientCycleFastSL::~GradientCycleFastSL(){
-    delete[] paletteTemp.paletteArr;
-    delete[] patternTemp.patternArr;
+    free(paletteTemp.paletteArr);
+    free(patternTemp.patternArr);
 }
 
 //inits core variables for the effect

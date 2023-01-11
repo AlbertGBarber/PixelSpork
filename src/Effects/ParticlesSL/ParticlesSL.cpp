@@ -12,7 +12,7 @@ ParticlesSL::ParticlesSL(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColo
                                                             speedRange, size, sizeRange, trailType, trailSize, 
                                                             trailRange, bounce, colorIndex, randColor);
         particleSet = &particleSetTemp;
-        trailEndColors = new CRGB[numParticles];
+        trailEndColors = (CRGB*) malloc( numParticles * sizeof(CRGB) );
     }
 
 //constructor for using a particle set you've already made
@@ -20,7 +20,7 @@ ParticlesSL::ParticlesSL(SegmentSet &SegmentSet, particleSetPS *ParticleSet, pal
     segmentSet(SegmentSet), particleSet(ParticleSet), palette(Palette)
     {    
         init(BgColor);
-        trailEndColors = new CRGB[particleSet->length];
+        trailEndColors = (CRGB*) malloc( (particleSet->length) * sizeof(CRGB) );
     }
 
 //destructor
@@ -29,11 +29,9 @@ ParticlesSL::ParticlesSL(SegmentSet &SegmentSet, particleSetPS *ParticleSet, pal
 //However if particleSetTemp has not been set, then trying to clean it up will probably cause an error
 //by default, the particleArr pointer is NULL, so we can check for that to confirm if particleSetTemp has been used or not
 ParticlesSL::~ParticlesSL(){
-    if(particleSetTemp.particleArr){
-        particleUtilsPS::deleteAllParticles(&particleSetTemp);
-        delete[] particleSetTemp.particleArr;
-    }
-    delete[] trailEndColors;
+    //clear the memory of the existing particles (to prevent a memory leak)
+    particleUtilsPS::freeParticleSet(&particleSetTemp);
+    free(trailEndColors);
 }
 
 //initilizes the core variables of the effect
@@ -54,8 +52,8 @@ void ParticlesSL::init(CRGB BgColor){
 //to avoid having left over trails, we'll redraw the background
 void ParticlesSL::setParticleSet(particleSetPS *newParticleSet){
     particleSet = newParticleSet;
-    delete[] trailEndColors;
-    trailEndColors = new CRGB[particleSet->length];
+    free(trailEndColors);
+    trailEndColors = (CRGB*) malloc( (particleSet->length) * sizeof(CRGB) );
     segDrawUtils::fillSegSetColor(segmentSet, *bgColor, bgColorMode);
 }
 
@@ -78,9 +76,14 @@ void ParticlesSL::reset(){
 //For a particle to bounce, it must reverse it's direction once it hits either end of the segmentSet's lines
 //However, how/when it bounces is a matter of opinion. I have opted for the following:
 //The particle only bounces when it's main body (not trail) reaches an end point.
-//This means that a trail in front of the particle disappears off the strip before the bounce. This was done to mimic the classic cylon eye look.
-//However, trails behind the particle wrap back on themselves as the particle bounces. 
-//This means that the trail naturally fades as like it would for a physical streamer/flame/etc
+//Both the front and rear trails wrap back on themselves as the particle bounces
+//Ie the head of the trail moves back down the strip, opposite the direction of the particle
+//The rear trail is always drawn last.
+//In paractice this means that particles with two trails mimics the classic "cyclon" scanner look, where the front of the 
+//trail moves disappears off the strip (it is actually wrapping back, but is over written by the rear trail, which is drawn after)
+//While for particles with only a rear trail, it naturally fades as like it would for a physical streamer/flame/etc
+//Finally, for particles with only a front trail the trail also wraps back, this does look a little weird, but 
+//there's not a good real world approximation to this kind of particle, so w/e.
 //For particles where the body size is larger than one, when bounce happens, the entire body reverses direction at once
 //This is not visually noticable, and makes coding easier. But it does mean there's no "center" of a particle
 void ParticlesSL::update(){
@@ -198,21 +201,21 @@ void ParticlesSL::update(){
                 //if it has two, we draw the trail in front of the particle first, followed by the one behind it
                 //this gets the correct look when bouncing with two trails
                 if (trailType != 0 && trailType < 4) {
-                    //draw a trail, extending positively or negatively, dimming with each step, wrapping according to the maxPosition
-                    //we draw the trail rear first, so that on bounces the brighter part of the trail over-writes the dimmer part
+                    //draw a trail, extending to the front or rear, dimming with each step, wrapping according to the maxPosition
+                    //we draw the end of the trail first, so that on bounces the brighter part of the trail over-writes the dimmer part
                     for (uint8_t k = trailSize; k > 0; k--) {
 
-                        //if we have two trails, we need to draw the negative trail
+                        //if we have two trails, we need to draw the front trail
                         if (trailType == 2 || trailType == 3) {
                             trailLineNum = getTrailLedLoc(false, k, maxPosition);
                             setTrailColor(trailLineNum, j, k);
                         }
                         
-                        //draw the positive trail
+                        //draw the rear trail
                         if (trailType == 1 || trailType == 2) {
                             trailLineNum = getTrailLedLoc(true, k, maxPosition);
                             setTrailColor(trailLineNum, j, k);
-                            //If we have trails, we need to record the trail end color at the end of the trail
+                            //If we have rear trails, we need to record the trail end color at the end of the trail
                             //but only if we're writing to the longest seg (see notes in the background setting code above, and the intro)
                             if(k == trailSize && j == longestSeg){
                                 trailEndColors[i] = segmentSet.leds[pixelNum];
@@ -332,27 +335,35 @@ uint16_t ParticlesSL::getTrailLedLoc(bool trailDirect, uint8_t trailPixelNum, ui
     sizeAdj = size - 1;
 
     if(!trailDirect){
-        sizeAdj = 0;
+        sizeAdj = 0;     
     }
 
     //worked this formula out by hand, basically just adds/subtracts the trail location from the particle location
-    //wrapping according to the mod ammount (note that we add the mod ammount to prevent this from being negative,
-    //arduino handles mods of negative numbers weirdly)
+    //wrapping according to the maxPosition (note that we add the maxPosition to prevent this from being negative, arduino handles mods of negative numbers weirdly)
+    //Because we mod by the maxPosition, bouncing trails can extend off the end of the strip in either direcition
+    //(due to the way mod works, anything outside of the segment set always ends up with a position of > numLine,
+    //no matter the particle direction)
+    //This behavior is intended so we can handle re-direct any trails off the end of the strip, to wrap back on themselves
     //( position + maxPosition - trailDirectionAdj * ( directStep * ( trailPixelNum + sizeAdj ) ) ) % maxPosition;
     trailLocOutput = addMod16PS(position, maxPosition - trailDirectionAdj * ( directStep * ( trailPixelNum + sizeAdj ) ), maxPosition);
 
-    //if we've bounced and have a trail coming from the rear of the particle
-    //we produce a fading trail as it bounces (like you'd see on a flame or stream irl)
+    //If we're bouncing and the trail part would go off the end of the segment set
+    //we need to re-direct the trail part back along the strip, in the opposite direction of the particle
+    //like you'd see on a flame or stream irl, which traces the particle's previous motion (or next for front trails))
     //to do this we take the portion of the trail that is currently off the strip 
-    //and redirect it back along the strip according to the direction
-    if(trailType == 1 && trailDirect && bounce && trailLocOutput >= numLines){
-        if(direction){
+    //and redirect it back along the strip according to the direction and trail direction
+    if(bounce && trailLocOutput >= numLines){
+        //The re-directed trail position depends on the direction of the particle and trail direction
+        //For rear trails the particle direction changes before ahead of the trail
+        //So the trail needs to be directed in the opposite direction to the particle's motion
+        //For front trails, the opposite is true, because the trail needs to change direction ahead of the particle
+        if((trailDirect && direction) || (!trailDirect && !direction) ){  
             trailLocOutput = maxPosition - trailLocOutput;
         } else {
             trailLocOutput = (numLines - 1) - mod16PS( trailLocOutput, (numLines - 1) );
-        }
-        //displace the trail by the size of the particle
-        trailLocOutput = trailLocOutput - sizeAdj;
+        }   
+        //displace the trail by the size of the particle opposite to the direction of the particle
+        trailLocOutput = trailLocOutput + directStep * sizeAdj;
     } 
 
     return trailLocOutput;

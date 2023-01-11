@@ -63,7 +63,7 @@ struct segmentSecCont {
 //segmentSecMix segmentSec = { pixel_arr, SIZE(pixel_arr) };
 //Segment segment0 = { segmentSec, true };
 struct segmentSecMix {
-    uint16_t *pixArr;
+    uint16_t *pixArr = nullptr;
     uint16_t length;
     //used to mark if the segment should be treated as a single pixel in effects
     bool single; //Will be default initialized to 0 if omitted from the section definition in your code

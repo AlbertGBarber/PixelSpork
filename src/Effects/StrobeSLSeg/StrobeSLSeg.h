@@ -201,11 +201,11 @@ class StrobeSLSeg : public EffectBasePS {
             cycleCountMax;
         
         palettePS
-            *palette; //the palette used for the strobe colors
+            *palette = nullptr; //the palette used for the strobe colors
 
         CRGB 
             bgColorOrig,
-           *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
         
         void 
             reset(),

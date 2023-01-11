@@ -106,11 +106,11 @@ class NoiseWavesSL : public EffectBasePS {
 
         CRGB 
             bgColorOrig,
-           *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
         
         palettePS 
             paletteTemp,
-            *palette;
+            *palette = nullptr;
 
         void 
             update(void);

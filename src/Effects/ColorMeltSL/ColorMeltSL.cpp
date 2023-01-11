@@ -30,7 +30,7 @@ ColorMeltSL::ColorMeltSL(SegmentSet &SegmentSet, uint8_t numColors, uint8_t Melt
 	}
 
 ColorMeltSL::~ColorMeltSL(){
-    delete[] paletteTemp.paletteArr;
+    free(paletteTemp.paletteArr);
 }
 
 void ColorMeltSL::init(uint16_t Rate){

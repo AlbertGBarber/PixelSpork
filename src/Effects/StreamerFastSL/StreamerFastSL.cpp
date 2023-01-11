@@ -34,8 +34,8 @@ StreamerFastSL::StreamerFastSL(SegmentSet &SegmentSet, CRGB Color, uint8_t Color
 	}
 
 StreamerFastSL::~StreamerFastSL(){
-    delete[] paletteTemp.paletteArr;
-    delete[] patternTemp.patternArr;
+    free(paletteTemp.paletteArr);
+    free(patternTemp.patternArr);
 }
 
 //takes the passed in pattern and creates a pattern for the streamer
@@ -48,8 +48,9 @@ void StreamerFastSL::setPatternAsPattern(patternPS *inputPattern, uint8_t colorL
     uint8_t repeatLength = (colorLength + spacing);
     uint16_t patternLength = inputPattern->length;
     uint16_t totalPatternLength = patternLength * repeatLength;
-    delete[] patternTemp.patternArr;
-    uint8_t *pattern_arr = new uint8_t[totalPatternLength];
+    //create new storage for the pattern array
+    free(pattern_arr);
+    pattern_arr = (uint8_t*) malloc(totalPatternLength*sizeof(uint8_t));
 
     for(uint16_t i = 0; i < patternLength; i++){
         nextPattern = patternUtilsPS::getPatternVal(inputPattern, i);
@@ -74,8 +75,9 @@ void StreamerFastSL::setPaletteAsPattern(uint8_t colorLength, uint8_t spacing){
     uint8_t repeatLength = (colorLength + spacing);
     uint8_t palettelength = palette->length;
     uint16_t totalPatternLength = palettelength * repeatLength;
-    delete[] patternTemp.patternArr;
-    uint8_t *pattern_arr = new uint8_t[totalPatternLength];
+    //create new storage for the pattern array
+    free(patternTemp.patternArr);
+    pattern_arr = (uint8_t*) malloc(totalPatternLength * sizeof(uint8_t));
 
     for(uint16_t i = 0; i < palettelength; i++){
         for(uint8_t j = 0; j < repeatLength; j++){

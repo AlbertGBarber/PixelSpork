@@ -95,14 +95,14 @@ class SinglePaletteCyclePS : public EffectBasePS {
             getTotalSteps();
 
         CRGB 
-            *paletteColorArr1, //storage for the start/end palette colors, for reference
-            *paletteColorArr2;
+            *paletteColorArr1 = nullptr, //storage for the start/end palette colors, for reference
+            *paletteColorArr2 = nullptr;
         
         bool 
             direct = true;
                                  
         palettePS
-            *paletteOrig,
+            *paletteOrig = nullptr,
             cyclePalette; //ouput palette
         
         palettePS
@@ -110,7 +110,7 @@ class SinglePaletteCyclePS : public EffectBasePS {
             nextPalette; //ending palette for the current blend
         
         PaletteBlenderPS
-            *PB; //PaletteBlenderPS instance
+            *PB = nullptr; //PaletteBlenderPS instance
 
         void 
             switchPalette(),

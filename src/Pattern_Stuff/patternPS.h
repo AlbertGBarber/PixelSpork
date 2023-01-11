@@ -25,7 +25,7 @@
 //uint8_t pattern_arr[] = {0, 2, 1};
 //patternPS pattern = { pattern_arr, SIZE(pattern_arr) };
 struct patternPS {
-  uint8_t *patternArr;
+  uint8_t *patternArr = nullptr;
   uint16_t length;
 } ;
 

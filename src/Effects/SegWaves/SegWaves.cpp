@@ -77,9 +77,9 @@ SegWaves::SegWaves(SegmentSet &SegmentSet,uint8_t FadeSteps, bool Direct, uint16
 
 //destructor
 SegWaves::~SegWaves(){
-    delete[] paletteTemp.paletteArr;
-    delete[] patternTemp.patternArr;
-    delete[] segColors; 
+    free(paletteTemp.paletteArr);
+    free(patternTemp.patternArr);
+    free(segColors); 
 }
 
 //intilization of core variables and pointers
@@ -111,8 +111,8 @@ void SegWaves::reset(){
 //Only needs to be used if you change the number of segments in your segment set
 void SegWaves::resetSegColors(){
     numSegs = segmentSet.numSegs;
-    delete[] segColors; 
-    segColors = new CRGB[numSegs + 1];
+    free(segColors); 
+    segColors = (CRGB*) malloc( (numSegs + 1) * sizeof(CRGB) );
 }
 
 //creates a pattern so that there's only a single segment wave on the segment set at one time
@@ -133,8 +133,8 @@ void SegWaves::setPatternAsPattern(patternPS *inputPattern, uint8_t waveThicknes
     uint16_t patternLength = inputPattern->length;
     uint16_t totalPatternLength = patternLength * repeatLength; 
     //create new storage for the pattern array
-    delete[] patternTemp.patternArr;
-    uint8_t *pattern_arr = new uint8_t[totalPatternLength];
+    free(patternTemp.patternArr);
+    uint8_t *pattern_arr = (uint8_t*) malloc(totalPatternLength * sizeof(uint8_t));
 
     //for each color in the inputPattern, we fill in the color and spacing for the output pattern
     for(uint16_t i = 0; i < patternLength; i++){
@@ -166,8 +166,8 @@ void SegWaves::setPaletteAsPattern(uint8_t waveThickness, uint8_t spacing){
     uint8_t palettelength = palette->length;
     uint16_t totalPatternLength = palettelength * repeatLength; //the total length taken up by a single color and spacing
     //create new storage for the pattern array
-    delete[] patternTemp.patternArr;
-    uint8_t *pattern_arr = new uint8_t[totalPatternLength];
+    free(patternTemp.patternArr);
+    uint8_t *pattern_arr = (uint8_t*) malloc(totalPatternLength * sizeof(uint8_t));
 
     //for each color in the palette, we fill in the color and spacing for the output pattern
     for(uint16_t i = 0; i < palettelength; i++){

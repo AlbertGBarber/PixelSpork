@@ -48,8 +48,8 @@ BreathPS::BreathPS(SegmentSet &SegmentSet, CRGB BgColor, uint8_t RainbowRate, ui
 	}
 
 BreathPS::~BreathPS(){
-    delete[] paletteTemp.paletteArr;
-    delete[] patternTemp.patternArr;
+    free(paletteTemp.paletteArr);
+    free(patternTemp.patternArr);
 }
 
 //bind core class vars

@@ -83,6 +83,10 @@ Other Settings:
                                    15 seemed to look good in my tests
     shiftStep (default 1, min 1) -- The maximum value (is choosen randomly) of the offset increment if the shiftThreshold is met
 
+Reference Vars:
+    grouping -- (see notes above) set this using setGrouping()
+    sMode -- (see notes above) set this using setMode()
+
 Notes:
 */
 class ShiftingSeaSL : public EffectBasePS {
@@ -120,7 +124,7 @@ class ShiftingSeaSL : public EffectBasePS {
         
         palettePS
             paletteTemp,
-            *palette;
+            *palette = nullptr;
         
         void
             setMode(uint8_t newMode),
@@ -145,7 +149,7 @@ class ShiftingSeaSL : public EffectBasePS {
 
         uint16_t
             numLines,
-            *offsets,
+            *offsets = nullptr,
             step = 0;
         
         void

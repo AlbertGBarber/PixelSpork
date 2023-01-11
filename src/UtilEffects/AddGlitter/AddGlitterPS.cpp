@@ -19,14 +19,14 @@ AddGlitterPS::AddGlitterPS(SegmentSet &SegmentSet, CRGB GlitterColor, uint16_t G
 	}
 
 AddGlitterPS::~AddGlitterPS(){
-    delete[] glitterLocs;
+    free(glitterLocs);
 }
 
 //creates an array of glitter locations of length newNum
 void AddGlitterPS::setGlitterNum(uint16_t newNum){
     glitterNum = newNum;
-    delete[] glitterLocs;
-    glitterLocs = new uint16_t[glitterNum];
+    free(glitterLocs);
+    glitterLocs = (uint16_t*) malloc(glitterNum * sizeof(uint16_t));
     fillGlitterArr();
 }
 

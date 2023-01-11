@@ -32,7 +32,7 @@ EdgeBurstSL::EdgeBurstSL(SegmentSet &SegmentSet, uint8_t numColors, bool Randomi
 	}
 
 EdgeBurstSL::~EdgeBurstSL(){
-    delete[] paletteTemp.paletteArr;
+    free(paletteTemp.paletteArr);
 }
 
 //initialize core vars

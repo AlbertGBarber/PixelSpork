@@ -48,8 +48,8 @@ BreathEyeSL::BreathEyeSL(SegmentSet &SegmentSet, CRGB BgColor, uint8_t RainbowRa
 	}
 
 BreathEyeSL::~BreathEyeSL(){
-    delete[] paletteTemp.paletteArr;
-    delete[] patternTemp.patternArr;
+    free(paletteTemp.paletteArr);
+    free(patternTemp.patternArr);
 }
 
 //bind core class vars

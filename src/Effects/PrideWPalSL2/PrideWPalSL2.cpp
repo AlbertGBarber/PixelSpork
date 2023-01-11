@@ -44,7 +44,7 @@ PrideWPalSL2::PrideWPalSL2(SegmentSet &SegmentSet, palettePS *Palette, bool Dire
     }
 
 PrideWPalSL2::~PrideWPalSL2(){
-    delete[] paletteTemp.paletteArr;
+    free(paletteTemp.paletteArr);
 }
 
 //Initializes core variables and also picks random values for briThetaInc16 and briThetaFreq if randomBriInc is true
@@ -179,6 +179,10 @@ void PrideWPalSL2::update(){
                 
                 //output a the color 
                 nblend(segmentSet.leds[pixelnumber], colorOut, 128);
+
+                //Need to check to dim the pixel color manually
+                //b/c we're not calling setPixelColor directly
+                segDrawUtils::handleBri(segmentSet, pixelNum);
             }
         }          
         showCheckPS();

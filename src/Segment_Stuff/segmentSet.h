@@ -363,7 +363,7 @@ class SegmentSet {
 		//color mode vars
 		uint16_t
 			offsetRateOrig = 30,//default setting for color mode 5 and 6 of segDrawUtils::setPixelColor in ms
-			*offsetRate,
+			*offsetRate = nullptr,
 			gradOffset = 0, 	//sets the offset used when calling the wheel function in segDrawUtils.h
 		  				   		//this adjusts the start point of any rainbow drawn on the segmentSet
 						   		//can also be controlled externally using RainbowOffsetCycle.h
@@ -388,17 +388,17 @@ class SegmentSet {
 			getSecMixArrPtr(uint16_t segNum);
 		
 	  	Segment
-			**segArr;
+			**segArr = nullptr;
 
 	  	Segment*
 	  		getSegPtr(uint16_t segNum);
 	  
 	    CRGB
-	  	 	*leds; //pointer to the FastLed leds array
+	  	 	*leds = nullptr; //pointer to the FastLed leds array
 		
 		palettePS //palettes for gradients
 			paletteTemp,
-			*gradPalette;
+			*gradPalette = nullptr;
 		
 		//Functions for setting core segment set properties based on the segments
 		//These are called when the segment set is created, but if you change and of the segments

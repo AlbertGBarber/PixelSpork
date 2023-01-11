@@ -28,7 +28,7 @@ TwinkleFastSL::TwinkleFastSL(SegmentSet &SegmentSet, uint16_t NumTwinkles, CRGB 
 	}
 
 TwinkleFastSL::~TwinkleFastSL(){
-    delete[] paletteTemp.paletteArr;
+    free(paletteTemp.paletteArr);
 }
 
 //sets up all the core class vars, and initilizes the pixel and color arrays
@@ -42,7 +42,7 @@ void TwinkleFastSL::init(CRGB BgColor, uint16_t Rate){
 
 //creates an palette of length 1 containing the passed in color
 void TwinkleFastSL::setSingleColor(CRGB Color){
-    delete[] paletteTemp.paletteArr;
+    free(paletteTemp.paletteArr);
     paletteTemp = paletteUtilsPS::makeSingleColorPalette(Color);
     palette = &paletteTemp;
 }

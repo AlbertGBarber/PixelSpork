@@ -168,7 +168,7 @@ class PrideWPalSL : public EffectBasePS {
         
         palettePS
             paletteTemp,
-            *palette;
+            *palette = nullptr;
         
         bool
             briDirect,

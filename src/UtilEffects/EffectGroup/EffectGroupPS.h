@@ -107,7 +107,7 @@ public:
     EffectFaderPS  *effectFader = nullptr;
 
     ~EffectGroupPS(){
-        delete effectFader;
+        effectFader->~EffectFaderPS();
     }
 
     //sets a new fade run time and also resets the fader
@@ -118,7 +118,7 @@ public:
         fadeInStarted = false;
         fadeOutStarted = false;
         if (!effectFader) { //if a fader has not been created, do so
-            delete effectFader;
+            //effectFader->~EffectFaderPS();
             effectFader = new EffectFaderPS(group, numEffects, false, fadeRunTime);
         } else { //if we have an effect fader, reset it with the new run time
             effectFader->reset(group, numEffects, false);
@@ -205,7 +205,9 @@ public:
             // call all the effects' update functions
             if (infinite || (currentTime - startTime) <= runTime) {
                 for (int i = 0; i < numEffects; i++) {
-                    (group[i])->update();
+                    if(group[i]){ //don't try to update an effect that doesn't exist (it's pointer is nullptr)
+                        (group[i])->update();
+                    }
                 }
             } else {
                 done = true;
@@ -220,16 +222,23 @@ public:
         }
     };
 
-    //deletes all the effects in the effect array (for freeing memory) 
+    //Calls the destructor for all the effects in the effect array (for freeing memory) 
+    //Note that the destructor for EffectBasePS is virtual.
+    //Every effect is an inherited class from EffectBasePS, so calling the virtual EffectBase destructor
+    //calls the individual effect constructor
+    //This allows you to clear all current effects without knowing their names/types individually
     void destructAllEffects(void){
         for (int i = 0; i < numEffects; i++) {
-            delete group[i];
+            destructEffects(i);
         }
     };
 
     //deletes the effect at the specified index in the effect array (for freeing memory)
+    //(see notes on destructAllEffects() above)
     void destructEffects(uint8_t index){
-        delete group[index];
+        if(group[index]){ //don't try to delete an effect that doesn't exist (it's pointer is nullptr)
+            group[index]->~EffectBasePS();
+        }
     };
 
 private:
@@ -237,8 +246,8 @@ private:
          startTime, 
          currentTime;
 
-    EffectBasePS** 
-        group;
+    EffectBasePS
+        **group = nullptr;
 };
 
 #endif

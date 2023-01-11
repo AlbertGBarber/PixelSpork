@@ -16,6 +16,9 @@ Like with particles you can set the trail type, trail size, particle size, speed
 (see particlePS.h for more info on particles)
 You can set these properties on the fly, but all the particles share the same values.
 
+Much of the code follows the same principles as ParticlesSL.h, but with the restriction that all particles
+have the same properties (speed, trails, etc), but can switch colors as part of the effect
+
 Particles can be set to:
     *Either bounce or wrap at each segment set end
     *Either change colors every time they bounce/wrap, every other time they bounce, or not at all.
@@ -165,15 +168,15 @@ class ScannerSL : public EffectBasePS {
 
         CRGB 
             bgColorOrig,
-            *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
         
         palettePS
             paletteTemp,
-            *palette;
+            *palette = nullptr;
         
         patternPS
             patternTemp,
-            *pattern;
+            *pattern = nullptr;
 
         particleSetPS 
             particleSet;
@@ -217,10 +220,10 @@ class ScannerSL : public EffectBasePS {
             startDirect;
 
         particlePS
-            *particlePtr;
+            *particlePtr = nullptr;
 
         CRGB 
-            *trailEndColors, //used to store the last colors of each trail, so the background color can be set
+            *trailEndColors = nullptr, //used to store the last colors of each trail, so the background color can be set
             colorTarget,
             partColor,
             nextColor,

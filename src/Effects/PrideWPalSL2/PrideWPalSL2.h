@@ -7,7 +7,8 @@
 An effect based on Pride2015 by Mark Kriegsman (https://gist.github.com/kriegsman) and
 work done by Jason Coon: https://github.com/jasoncoon/fibonacci-demoreel 
 It has been adapted to work with segments
-This version of the effect draws bands of color along segment lines,
+This version of the effect draws bands of color that shift out/in along segment lines,
+while brightness waves rotate around the segment set (each line gets one brightess that changes over time)
 creating ever-changing waves of color that shift and blend.
 Overall it looks similar to Jason Coon's Pride version as applied to his fibonacci:
 https://www.youtube.com/watch?list=PLUYGVM-2vDxJpEjrSeHCH8u1hxFz4qawU&v=b4lfvXZvJuk&feature=emb_title
@@ -158,7 +159,7 @@ class PrideWPalSL2 : public EffectBasePS {
         
         palettePS
             paletteTemp,
-            *palette;
+            *palette = nullptr;
         
         bool
             direct,

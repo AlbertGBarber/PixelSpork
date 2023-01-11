@@ -57,7 +57,7 @@ struct particlePS {
     //particlePS *particleArr[] = { &particle1, &particle2, etc}; //can leave this blank and fill it in using buildParticleSet() below
     //particleSetPS particleSet = {particleArr, SIZE(particleArr)};
 struct particleSetPS {
-    particlePS **particleArr; //pointer to an array of particle pointers
+    particlePS **particleArr = nullptr; //pointer to an array of particle pointers
     uint8_t length; //the size of the particle array (num of particles)
 
     //returns the pointer to a particle at the specified index

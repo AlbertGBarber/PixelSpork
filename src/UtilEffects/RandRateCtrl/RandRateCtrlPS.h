@@ -70,14 +70,14 @@ class RandRateCtrlPS : public EffectBasePS {
         ~RandRateCtrlPS();  
 
         RateRandomizerPS
-            *RR;
+            *RR = nullptr;
         
         RateCtrlPS
-            *RC;
+            *RC = nullptr;
         
         uint16_t
             holdTime = 0,
-            *outputRate;
+            *outputRate = nullptr;
         
         bool
             holdActive = false;

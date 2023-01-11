@@ -35,9 +35,9 @@ StreamerSL::StreamerSL(SegmentSet &SegmentSet, CRGB Color, uint8_t ColorLength, 
 
 //destructor
 StreamerSL::~StreamerSL(){
-    delete[] paletteTemp.paletteArr;
-    delete[] patternTemp.patternArr;
-    delete[] prevLineColors;
+    free(paletteTemp.paletteArr);
+    free(pattern_arr);
+    free(prevLineColors);
 }
 
 //intilization of core variables and pointers
@@ -66,8 +66,8 @@ void StreamerSL::setPatternAsPattern(patternPS *inputPattern, uint8_t colorLengt
     uint16_t patternLength = inputPattern->length;
     uint16_t totalPatternLength = patternLength * repeatLength; 
     //create new storage for the pattern array
-    delete[] patternTemp.patternArr;
-    uint8_t *pattern_arr = new uint8_t[totalPatternLength];
+    free(pattern_arr);
+    pattern_arr = (uint8_t*) malloc(totalPatternLength*sizeof(uint8_t));
 
     //for each color in the inputPattern, we fill in the color and spacing for the output pattern
     for(uint16_t i = 0; i < patternLength; i++){
@@ -99,8 +99,8 @@ void StreamerSL::setPaletteAsPattern(uint8_t colorLength, uint8_t spacing){
     uint8_t palettelength = palette->length;
     uint16_t totalPatternLength = palettelength * repeatLength; //the total length taken up by a single color and spacing
     //create new storage for the pattern array
-    delete[] patternTemp.patternArr;
-    uint8_t *pattern_arr = new uint8_t[totalPatternLength];
+    free(pattern_arr);
+    pattern_arr = (uint8_t*) malloc(totalPatternLength*sizeof(uint8_t));
 
     //for each color in the palette, we fill in the color and spacing for the output pattern
     for(uint16_t i = 0; i < palettelength; i++){
@@ -130,8 +130,8 @@ void StreamerSL::reset(){
 
     numSegs = segmentSet.numSegs;
 
-    delete[] prevLineColors;
-    prevLineColors = new CRGB[numSegs];
+    free(prevLineColors);
+    prevLineColors = (CRGB*) malloc(numSegs*sizeof(CRGB));
 }
 
 //the main update function

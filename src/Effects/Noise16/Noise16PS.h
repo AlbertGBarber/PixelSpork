@@ -112,7 +112,7 @@ class Noise16PS : public EffectBasePS {
         
         palettePS 
             paletteTemp,
-            *palette;
+            *palette = nullptr;
 
         void 
             update(void);

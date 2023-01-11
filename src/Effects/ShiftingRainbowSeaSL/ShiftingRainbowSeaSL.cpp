@@ -25,7 +25,7 @@ ShiftingRainbowSeaSL::ShiftingRainbowSeaSL(SegmentSet& SegmentSet, uint8_t GradL
     }
 
 ShiftingRainbowSeaSL::~ShiftingRainbowSeaSL(){
-    delete[] offsets;
+    free(offsets);
 }
 
 //initlizes core variables for effect
@@ -61,8 +61,8 @@ void ShiftingRainbowSeaSL::setGrouping(uint16_t newGrouping) {
 //re-builds the offset array with new values
 void ShiftingRainbowSeaSL::resetOffsets() {
     numLines = segmentSet.maxSegLength;
-    delete[] offsets;
-    offsets = new uint16_t[numLines];
+    free(offsets);
+    offsets = (uint16_t*) malloc(numLines * sizeof(uint16_t));
     //255 is the maxiumum length of the rainbow
     uint8_t gradLengthTemp = gradLength;
     if(sMode == 0){

@@ -28,7 +28,7 @@ PacificaHueSL::PacificaHueSL(SegmentSet &SegmentSet, bool AddWhiteCaps, uint8_t 
 	}
 
 PacificaHueSL::~PacificaHueSL(){
-    delete PacificaPalette;
+    PacificaPalette->~PacificaHuePalPS();
 }
 
 //sets up core effect variables

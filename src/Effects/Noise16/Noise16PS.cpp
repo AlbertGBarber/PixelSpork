@@ -23,7 +23,7 @@ Noise16PS::Noise16PS(SegmentSet &SegmentSet, uint8_t numColors, uint16_t BlendSt
 	}
 
 Noise16PS::~Noise16PS(){
-    delete[] paletteTemp.paletteArr;
+    free(paletteTemp.paletteArr);
 }
 
 void Noise16PS::init(uint16_t Rate){

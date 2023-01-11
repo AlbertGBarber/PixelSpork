@@ -28,7 +28,7 @@ TwinkleSL::TwinkleSL(SegmentSet &SegmentSet, CRGB BgColor, uint16_t NumTwinkles,
 	}
 
 TwinkleSL::~TwinkleSL(){
-    delete[] paletteTemp.paletteArr;
+    free(paletteTemp.paletteArr);
     deleteTwinkleArrays();
 }
 
@@ -44,7 +44,7 @@ void TwinkleSL::init(uint8_t FadeInSteps, uint8_t FadeOutSteps, CRGB BgColor, ui
 
 //creates an palette of length 1 containing the passed in color
 void TwinkleSL::setSingleColor(CRGB Color){
-    delete[] paletteTemp.paletteArr;
+    free(paletteTemp.paletteArr);
     paletteTemp = paletteUtilsPS::makeSingleColorPalette(Color);
     palette = &paletteTemp;
 }
@@ -66,13 +66,13 @@ void TwinkleSL::initTwinkleArrays(){
     //create new 2D arrays
     //we need to make the rows first, and then fill them
     //with pointers to the column arrays
-    ledArray = new uint16_t*[numTwinkles];
+    ledArray = (uint16_t**) malloc(numTwinkles * sizeof(uint16_t*));
 
-    colorIndexArr = new CRGB*[numTwinkles];
+    colorIndexArr = (CRGB**) malloc(numTwinkles * sizeof(CRGB*));
 
     for(uint16_t i = 0; i < numTwinkles; i++){
-        ledArray[i] = new uint16_t[totFadeSteps];
-        colorIndexArr[i] = new CRGB[totFadeSteps];
+        ledArray[i] = (uint16_t*) malloc(totFadeSteps * sizeof(uint16_t));
+        colorIndexArr[i] = (CRGB*) malloc(totFadeSteps * sizeof(CRGB));
     }
     reset();
 }
@@ -83,11 +83,11 @@ void TwinkleSL::deleteTwinkleArrays(){
     if(ledArray){
         uint16_t twinkleArrSize = SIZE(ledArray);
         for(uint16_t i = 0; i < twinkleArrSize; i++){
-            delete[] ledArray[i];
-            delete[] colorIndexArr[i];
+            free(ledArray[i]);
+            free(colorIndexArr[i]);
         }
-        delete[] ledArray;
-        delete[] colorIndexArr;
+        free(ledArray);
+        free(colorIndexArr);
     }
 }
 
@@ -100,25 +100,30 @@ void TwinkleSL::reset(){
 }
 
 //sets the number of fade in and out steps (min value of 1)
-//it's easier to set the both together since we need to recreate the location and color arrays
-//when every we set either of them
+//it's easier to set the both together since we need to recreate the location and color arrays whenever we set either of them
+//(only resets the arrays if the either of the new step numbers are different than the current number)
 void TwinkleSL::setSteps(uint8_t newfadeInSteps, uint8_t newfadeOutSteps){
-    fadeInSteps = newfadeInSteps;
-    if(fadeInSteps < 1){
-       fadeOutSteps = 1; 
-    }
+    if(fadeInSteps != newfadeInSteps || fadeOutSteps != newfadeOutSteps){
+        fadeInSteps = newfadeInSteps;
+        if(fadeInSteps < 1){
+        fadeOutSteps = 1; 
+        }
 
-    fadeOutSteps = newfadeOutSteps;
-    if(fadeOutSteps < 1){
-       fadeOutSteps = 1; 
+        fadeOutSteps = newfadeOutSteps;
+        if(fadeOutSteps < 1){
+        fadeOutSteps = 1; 
+        }
+        initTwinkleArrays();
     }
-    initTwinkleArrays();
 }
 
 //sets the number of random pixels
+//(Will reset the effect if the new number of pixels is different than the current number)
 void TwinkleSL::setNumTwinkles(uint16_t newNumTwinkles){
-    numTwinkles = newNumTwinkles;
-    initTwinkleArrays();
+    if(numTwinkles != newNumTwinkles){
+        numTwinkles = newNumTwinkles;
+        initTwinkleArrays();
+    }
 }
 
 //updates the effect

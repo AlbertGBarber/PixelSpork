@@ -4,13 +4,13 @@
 RainSL::RainSL(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, bool BgPrefill, uint8_t SpawnChance, 
                     uint8_t MaxNumDrops, uint16_t Size, uint8_t TrailType, uint8_t TrailSize, uint16_t Rate, bool Direct):
                     
-    segmentSet(SegmentSet), palette(Palette), bgPrefill(BgPrefill), spawnChance(SpawnChance), maxNumDrops(MaxNumDrops),
+    segmentSet(SegmentSet), palette(Palette), bgPrefill(BgPrefill), spawnChance(SpawnChance), 
     size(Size), trailType(TrailType), trailSize(TrailSize), direct(Direct)
     {    
         speedRange = 0;
         sizeRange = 0;
         trailRange = 0;
-        init(Rate, BgColor);
+        init(Rate, MaxNumDrops, BgColor);
 	}
 
 //constructor for palette colors with range and trail options
@@ -19,20 +19,19 @@ RainSL::RainSL(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, bool Bg
                     uint8_t TrailRange, bool NoTrails, bool OneTrail, bool TwoTrail, bool RevTrail, 
                     bool InfTrail, uint16_t Rate, uint16_t SpeedRange, bool Direct):
 
-    segmentSet(SegmentSet), palette(Palette), bgPrefill(BgPrefill), spawnChance(SpawnChance), maxNumDrops(MaxNumDrops),
-    size(Size), sizeRange(SizeRange), trailSize(TrailSize), trailRange(TrailRange), noTrails(NoTrails), oneTrail(OneTrail),
+    segmentSet(SegmentSet), palette(Palette), bgPrefill(BgPrefill), spawnChance(SpawnChance), size(Size), sizeRange(SizeRange), 
+    trailSize(TrailSize), trailRange(TrailRange), noTrails(NoTrails), oneTrail(OneTrail),
     twoTrail(TwoTrail), revTrail(RevTrail), infTrail(InfTrail), speedRange(SpeedRange), direct(Direct)
     {   
         trailType = 6; //we're picking from the boolean trail options, this is indicated by trailType 6
-        init(Rate, BgColor);
+        init(Rate, MaxNumDrops, BgColor);
 	}
 
 //constructor for single color, no range options
 RainSL::RainSL(SegmentSet &SegmentSet, CRGB Color, CRGB BgColor, bool BgPrefill, uint8_t SpawnChance, 
                     uint8_t MaxNumDrops, uint16_t Size, uint8_t TrailType, uint8_t TrailSize, uint16_t Rate, bool Direct):
 
-    segmentSet(SegmentSet), bgPrefill(BgPrefill), spawnChance(SpawnChance), maxNumDrops(MaxNumDrops),
-    size(Size), trailType(TrailType), trailSize(TrailSize), direct(Direct)
+    segmentSet(SegmentSet), bgPrefill(BgPrefill), spawnChance(SpawnChance), size(Size), trailType(TrailType), trailSize(TrailSize), direct(Direct)
     {    
         speedRange = 0;
         sizeRange = 0;
@@ -40,7 +39,7 @@ RainSL::RainSL(SegmentSet &SegmentSet, CRGB Color, CRGB BgColor, bool BgPrefill,
         //make a single colored palette
         paletteTemp = paletteUtilsPS::makeSingleColorPalette(Color);
         palette = &paletteTemp;
-        init(Rate, BgColor);
+        init(Rate, MaxNumDrops, BgColor);
 	}
 
 //constructor for single colors with range and trail options
@@ -49,33 +48,33 @@ RainSL::RainSL(SegmentSet &SegmentSet, CRGB Color, CRGB BgColor, bool BgPrefill,
                     uint8_t TrailRange, bool NoTrails, bool OneTrail, bool TwoTrail, bool RevTrail, 
                     bool InfTrail, uint16_t Rate, uint16_t SpeedRange, bool Direct):
 
-    segmentSet(SegmentSet), bgPrefill(BgPrefill), spawnChance(SpawnChance), maxNumDrops(MaxNumDrops),
-    size(Size), sizeRange(SizeRange), trailSize(TrailSize), trailRange(TrailRange), noTrails(NoTrails), oneTrail(OneTrail),
+    segmentSet(SegmentSet), bgPrefill(BgPrefill), spawnChance(SpawnChance), size(Size), sizeRange(SizeRange), 
+    trailSize(TrailSize), trailRange(TrailRange), noTrails(NoTrails), oneTrail(OneTrail),
     twoTrail(TwoTrail), revTrail(RevTrail), infTrail(InfTrail), speedRange(SpeedRange), direct(Direct)
     {    
         trailType = 6; //we're picking from the boolean trail options, this is indicated by trailType 6
         //make a single colored palette
         paletteTemp = paletteUtilsPS::makeSingleColorPalette(Color);
         palette = &paletteTemp;
-        init(Rate, BgColor);
+        init(Rate, MaxNumDrops, BgColor);
 	}
 
 RainSL::~RainSL(){
-    particleUtilsPS::deleteAllParticles(&particleSetTemp);
-    delete[] particleSetTemp.particleArr;
-    delete[] partActive;
-    delete[] trailEndColors;
-    delete[] paletteTemp.paletteArr;
+    //Free all particles and the particle array pointer
+    particleUtilsPS::freeParticleSet(&particleSetTemp);
+    free(partActive);
+    free(trailEndColors);
+    free(paletteTemp.paletteArr);
 }
 
 //general setup function for class vars
-void RainSL::init(uint16_t Rate, CRGB BgColor){
+void RainSL::init(uint16_t Rate, uint8_t MaxNumDrops, CRGB BgColor){
     //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
     bindSegPtrPS();
     bindClassRatesPS();
     //bind background color pointer
     bindBGColorPS();
-    setupDrops(maxNumDrops);
+    setupDrops(MaxNumDrops);
 }
 
 //Creates a new set of particles for the effect based on the passed in value 
@@ -91,10 +90,12 @@ void RainSL::setupDrops(uint8_t newMaxNumDrops){
     //check for any active particles on the segment set
     //we need to clear them before we make a new set of particles
     uint16_t numParticles = numLines * maxNumDrops;
-    for (uint8_t i = 0; i < numParticles; i++) {
-        if( partActive[i] ){
-            spawnOkTest = false;
-            break;
+    if(partActive){ //if the partActive array exists (isn't a nullptr)
+        for (uint8_t i = 0; i < numParticles; i++) {
+            if( partActive[i] ){
+                spawnOkTest = false;
+                break;
+            }
         }
     }
 
@@ -104,27 +105,30 @@ void RainSL::setupDrops(uint8_t newMaxNumDrops){
         segDrawUtils::fillSegSetColor(segmentSet, *bgColor, bgColorMode);
     }
     
-    //delete and re-create all the arrays and the particle set
-    maxNumDrops = newMaxNumDrops;
-    numLines = segmentSet.maxSegLength;
-    numParticles = numLines * maxNumDrops;
-    numSegs = segmentSet.numSegs;
+    //delete and re-create all the arrays and the particle set (if needed)
+    if(maxNumDrops != newMaxNumDrops){
+        maxNumDrops = newMaxNumDrops;
+        numLines = segmentSet.maxSegLength;
+        numParticles = numLines * maxNumDrops;
+        numSegs = segmentSet.numSegs;
 
-    delete[] trailEndColors;
-    trailEndColors = new CRGB[numParticles];
+        free(trailEndColors);
+        trailEndColors = (CRGB*) malloc(numParticles * sizeof(CRGB));
 
-    delete[] partActive;
-    partActive = new bool[numParticles];
+        free(partActive);
+        partActive = (bool*) malloc(numParticles * sizeof(bool) );
 
-    particleUtilsPS::deleteAllParticles(&particleSetTemp);
-    delete[] particleSetTemp.particleArr;
+        //Free all particles and the particle array pointer
+        particleUtilsPS::freeParticleSet(&particleSetTemp);
 
-    particleSetTemp = particleUtilsPS::buildParticleSet(numParticles, 0, true, *rate, speedRange, size, sizeRange, 
-                                                        trailType, trailSize, trailRange, false, palette->length, true);
-    particleSet = &particleSetTemp;
-    //for trailType 6, we'll set the particle trails randomly based on the trail flags
-    if(trailType == 6){
-        particleUtilsPS::setAllTrailRand(particleSet, noTrails, oneTrail, twoTrail, revTrail, infTrail);
+        //create a new set of particles
+        particleSetTemp = particleUtilsPS::buildParticleSet(numParticles, 0, true, *rate, speedRange, size, sizeRange, 
+                                                            trailType, trailSize, trailRange, false, palette->length, true);
+        particleSet = &particleSetTemp;
+        //for trailType 6, we'll set the particle trails randomly based on the trail flags
+        if(trailType == 6){
+            particleUtilsPS::setAllTrailRand(particleSet, noTrails, oneTrail, twoTrail, revTrail, infTrail);
+        }
     }
 
     //set all the particles to inactive

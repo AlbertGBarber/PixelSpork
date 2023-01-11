@@ -1,6 +1,14 @@
 #ifndef ParticlesSLPS_h
 #define ParticlesSLPS_h
 
+//KNOWN BUG -- The first led in the segment set will be set to a static color
+//             This bug is very inconsistent, and seems to depend on a memory issue somewhere
+//             It seems to mainly affect effects using particles, but exhaustive testing has not been done
+//             (only tested on an esp8266)
+//             This seems to be a bug with FastLED somewhere? (putting an led[0] = 0 right before calling FastLED.show() didn't stop it)
+//             To fix it, you simply need to call a Serial.println(<a program var>) somewhere in your code
+//             (probably best to put it in the setup() and print out an random program var)
+
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
 #include "MathUtils/mathUtilsPS.h"
@@ -70,9 +78,14 @@ Please note the following bounce behavior of particles:
 For a particle to bounce, it must reverse it's direction once it hits either end of the segmentSet
 However, how/when it bounces is a matter of opinion. I have opted for the following:
 The particle only bounces when it's main body (not trail) reaches an end point.
-This means that a trail in front of the particle disappears off the strip before the bounce. This was done to mimic the classic cylon eye look.
-However, trails behind the particle wrap back on themselves as the particle bounces. 
-This means that the trail naturally fades as like it would for a physical streamer/flame/etc
+Both the front and rear trails wrap back on themselves as the particle bounces
+Ie the head of the trail moves back down the strip, opposite the direction of the particle
+The rear trail is always drawn last.
+In paractice this means that particles with two trails mimics the classic "cyclon" scanner look, where the front of the 
+trail moves disappears off the strip (it is actually wrapping back, but is over written by the rear trail, which is drawn after)
+While for particles with only a rear trail, it naturally fades as like it would for a physical streamer/flame/etc
+Finally, for particles with only a front trail the trail also wraps back, but under the particle,
+this does look a little weird, but there's not a good real world approximation to this kind of particle, so w/e.
 For particles where the body size is larger than one, when bounce happens, the entire body reverses direction at once
 This is not visually noticable, and makes coding easier. But it does mean there's no "center" of a particle
 
@@ -182,13 +195,13 @@ class ParticlesSL : public EffectBasePS {
 
         CRGB 
             bgColorOrig,
-            *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
         
         palettePS
-            *palette;
+            *palette = nullptr;
 
         particleSetPS 
-            *particleSet, //the particle set used in the effect
+            *particleSet = nullptr, //the particle set used in the effect
             particleSetTemp; //storage for self created particle sets
 
         void 
@@ -233,10 +246,10 @@ class ParticlesSL : public EffectBasePS {
             movePart;
         
         particlePS
-            *particlePtr;
+            *particlePtr = nullptr;
 
         CRGB 
-            *trailEndColors, //used to store the last colors of each trail, so the background color can be set
+            *trailEndColors = nullptr, //used to store the last colors of each trail, so the background color can be set
             colorTarget,
             partColor,
             colorFinal;

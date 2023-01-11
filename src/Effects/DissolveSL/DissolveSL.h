@@ -127,11 +127,11 @@ class DissolveSL : public EffectBasePS {
         
         patternPS
             patternTemp,
-            *pattern;
+            *pattern = nullptr;
 
         palettePS
             paletteTemp,
-            *palette;
+            *palette = nullptr;
         
         void
             setPaletteAsPattern(),
@@ -159,7 +159,7 @@ class DissolveSL : public EffectBasePS {
         
         bool
             randColorPicked = false,
-            *pixelArray;
+            *pixelArray = nullptr;
         
         CRGB 
             pickColor(),

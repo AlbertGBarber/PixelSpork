@@ -34,7 +34,7 @@ Twinkle2SLSeg::Twinkle2SLSeg(SegmentSet &SegmentSet, CRGB BgColor, uint16_t NumT
 	}
 
 Twinkle2SLSeg::~Twinkle2SLSeg(){
-    delete[] paletteTemp.paletteArr;
+    free(paletteTemp.paletteArr);
     deleteTwinkleSet();
 }
 
@@ -51,7 +51,7 @@ void Twinkle2SLSeg::init(uint8_t FadeInSteps, uint8_t FadeOutSteps, CRGB BgColor
 
 //creates an palette of length 1 containing the passed in color
 void Twinkle2SLSeg::setSingleColor(CRGB Color){
-    delete[] paletteTemp.paletteArr;
+    free(paletteTemp.paletteArr);
     paletteTemp = paletteUtilsPS::makeSingleColorPalette(Color);
     palette = &paletteTemp;
 }
@@ -64,11 +64,11 @@ void Twinkle2SLSeg::initTwinkleArrays(){
 
     //make a new set of twinkles and a twinkleSet
     //and bind the twinkleSet to the twinkles
-    twinkleArr = new twinkleStarPS*[numTwinkles];
+    twinkleArr = (twinkleStarPS**) malloc(numTwinkles * sizeof(twinkleStarPS*));
     twinkleSetTemp = { twinkleArr, numTwinkles };
     twinkleSet = &twinkleSetTemp;
     for(uint8_t i = 0; i < numTwinkles; i++ ){
-        twinkleStarPS* t = new twinkleStarPS();
+        twinkleStarPS *t = (twinkleStarPS*) malloc(sizeof( struct twinkleStarPS));
         twinkleSetTemp.setTwinkle(t, i);
     }
     reset();
@@ -78,11 +78,13 @@ void Twinkle2SLSeg::initTwinkleArrays(){
 //We need to do this because twinkleSetTemp is always created using new
 //So we need to free up the memory if we ever create a new twinkleSet
 void Twinkle2SLSeg::deleteTwinkleSet(){
-    //we need to delete all the twinkles in the set before deleting the twinkle array
-    for(uint8_t i = 0; i < twinkleSetTemp.length; i++ ){
-        delete[] twinkleSetTemp.twinkleArr[i];
+    if(twinkleSetTemp.twinkleArr){ //check that the twinkle set array exists
+        //we need to delete all the twinkles in the set before deleting the twinkle array
+        for(uint8_t i = 0; i < twinkleSetTemp.length; i++ ){
+            free(twinkleSetTemp.twinkleArr[i]);
+        }
     }
-    delete[] twinkleSetTemp.twinkleArr;
+    free(twinkleSetTemp.twinkleArr);
 }
 
 //resets all the twinkles to be inactive
@@ -112,8 +114,10 @@ void Twinkle2SLSeg::setSteps(uint8_t newfadeInSteps, uint8_t newfadeOutSteps){
 
 //Sets the number of twinkles, and re-creates the twinkle array and twinkleSet
 void Twinkle2SLSeg::setNumTwinkles(uint16_t newNumTwinkles){
-    numTwinkles = newNumTwinkles;
-    initTwinkleArrays();
+    if(numTwinkles != newNumTwinkles){
+        numTwinkles = newNumTwinkles;
+        initTwinkleArrays();
+    }
 }
 
 //changes the segMode, will re-gen the twinkle arrays if the new segMode is different

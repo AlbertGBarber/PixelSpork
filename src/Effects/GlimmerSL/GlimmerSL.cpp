@@ -20,8 +20,8 @@ GlimmerSL::GlimmerSL(SegmentSet &SegmentSet, uint16_t NumGlims, CRGB GlimmerColo
 	}
 
 GlimmerSL::~GlimmerSL(){
-    delete[] fadePixelLocs;
-    delete[] totFadeSteps;
+    free(fadePixelLocs);
+    free(totFadeSteps);
 }
 
 void GlimmerSL::init(CRGB GlimmerColor, CRGB BgColor, uint16_t Rate){
@@ -37,22 +37,29 @@ void GlimmerSL::init(CRGB GlimmerColor, CRGB BgColor, uint16_t Rate){
     setupPixelArray();
 }
 
-//creates the pixel location and fade value arrays
-//these store the locations for the fading pixels, and how much they will fade by
-//if we're doing twoPixelSets, then there will be one set of pixels fading in
-//while another is fading out
-//these sets are tracked in the same array, so the array's length is 2 * numGlims
-//pixels up to numGlims in the array are fading in,
-//while pixels from numGlims to the end are fading out
+//Sets the number of glimmering particles to be the passed in value
+//If the new number of glims is different from the current one: (If they're the same nothing happens)
+    //creates the pixel location and fade value arrays
+    //these store the locations for the fading pixels, and how much they will fade by
+    //if we're doing twoPixelSets, then there will be one set of pixels fading in
+    //while another is fading out
+    //these sets are tracked in the same array, so the array's length is 2 * numGlims
+    //pixels up to numGlims in the array are fading in,
+    //while pixels from numGlims to the end are fading out
 void GlimmerSL::setupPixelArray(){
+
     glimArrLen = numGlims;
+    //if we have two sets of glimmers, the glimmer array needs to be double the length
     if(twoPixelSets){
         glimArrLen = numGlims * 2;
     }
-    delete[] fadePixelLocs;
-    delete[] totFadeSteps;
-    fadePixelLocs = new uint16_t[ glimArrLen ];
-    totFadeSteps = new uint8_t[ glimArrLen ];
+
+    free(fadePixelLocs);
+    fadePixelLocs = (uint16_t*) malloc(glimArrLen * sizeof(uint16_t));
+
+    free(totFadeSteps);
+    totFadeSteps = (uint8_t*) malloc(glimArrLen * sizeof(uint8_t));
+    
     //we need to set firstFade to since the arrays
     //are only filled up to numGlims because we don't 
     //want to start with set that is already faded when the effect begins
@@ -78,6 +85,7 @@ void GlimmerSL::fillPixelArray(){
     } else {
         numLines = segmentSet.numLeds;
     }
+
     numSegs = segmentSet.numSegs;
     for(uint16_t i = 0; i < numGlims; i++){
         totFadeSteps[i] = random8(fadeMin, fadeMax); //target fade amount between the bgColor and the glimmer color
@@ -97,10 +105,14 @@ void GlimmerSL::advancePixelArray(){
 }
 
 //sets the number of random pixels choosen per cycle
-//Note that the pixel arrays will be reset, restarting the effect
+//If the number of pixels is different than the current numGlims,
+//the glimmer arrays will be re-created, and the effect will be reset
+//(otherwise, nothing will happen)
 void GlimmerSL::setNumGlims(uint16_t newNumGlims){
-    numGlims = newNumGlims;
-    setupPixelArray();
+    if(newNumGlims != numGlims){
+        numGlims = newNumGlims;
+        setupPixelArray();
+    }
 }
 
 //changes the effect to use one or two sets for fading
@@ -118,7 +130,7 @@ void GlimmerSL::setTwoSets(bool newSetting){
     //each led fades a random amount towards glimmerColor, but all leds fade together (their fades finish at the same time)
     //Note that we start at the background color, fade towards the glimmer color, then fade back down
     //To keep track of the fading led locations and the fade amounts we use two arrays (uint16_t for the locations and uint8_t for the fade)
-    //these are set by setupPixelArray(), and fillPixelArray()
+    //these are set by fillPixelArray()
     //the fade amounts are the number of steps out to fadeMax steps towards the glimmerColor
     //we work out the faded glimmer color on the fly to account for different colorModes
 
@@ -197,7 +209,7 @@ void GlimmerSL::update(){
                     //get the final faded color
                     fadeColor = getFadeColor(i);
 
-                    segDrawUtils::setPixelColor(segmentSet, pixelNum, targetColor, 0, j, fadePixelLocs[i]);
+                    segDrawUtils::setPixelColor(segmentSet, pixelNum, fadeColor, 0, j, fadePixelLocs[i]);
                 }
             } else {
                 //For single pixel's we need to get the info of where the pixel is in the segment set, then set its color

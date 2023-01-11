@@ -151,18 +151,18 @@ class SegWavesFast : public EffectBasePS {
 
         CRGB 
             bgColorOrig,
-           *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
 
         SegmentSet 
             &segmentSet; 
         
         patternPS
             patternTemp,
-            *pattern;
+            *pattern = nullptr;
         
         palettePS
             paletteTemp,
-            *palette;
+            *palette = nullptr;
         
         void 
             setPatternAsPattern(patternPS *inputPattern, uint8_t colorLength, uint8_t spacing),

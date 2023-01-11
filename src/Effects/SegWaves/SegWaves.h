@@ -180,18 +180,18 @@ class SegWaves : public EffectBasePS {
 
         CRGB 
             bgColorOrig,
-           *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
 
         SegmentSet 
             &segmentSet; 
         
         patternPS
             patternTemp,
-            *pattern;
+            *pattern = nullptr;
         
         palettePS
             paletteTemp,
-            *palette;
+            *palette = nullptr;
         
         bool 
             fadeOn = true,
@@ -233,7 +233,7 @@ class SegWaves : public EffectBasePS {
             currentColor,
             colorOut,
             randColor,
-            *segColors,
+            *segColors = nullptr,
             getNextColor(uint16_t segNum, uint16_t segNumRaw);
         
         void

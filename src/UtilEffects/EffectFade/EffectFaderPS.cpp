@@ -7,7 +7,7 @@ EffectFaderPS::EffectFaderPS(EffectBasePS** effGroup, uint8_t newNumEffects, boo
     }
 
 EffectFaderPS::~EffectFaderPS(){
-    delete[] origBrightness_arr;
+    free(origBrightness_arr);
 }
 // sets a new set of effects for fading, as well as a new direction
 void EffectFaderPS::reset(EffectBasePS** newGroup, uint8_t newNumEffects, bool direction) {
@@ -47,13 +47,13 @@ void EffectFaderPS::resetSegVars() {
     maxBrightness = 0;
     // clear the current brightness array for memory
     // and make a new one
-    delete[] origBrightness_arr;
-    origBrightness_arr = new uint8_t[numEffects];
+    free(origBrightness_arr);
+    origBrightness_arr = (uint8_t*) malloc(numEffects * sizeof(uint8_t));
     // for each effect, get it's segment pointer
     // and save it's current brightness setting
     // then find the maximum brightness across all segmentSets
     // and use it to determine the step rate
-    for (int i = 0; i < numEffects; i++) {
+    for (uint8_t i = 0; i < numEffects; i++) {
         segmentSet = getSegPtr(i);
         if (segmentSet) {
             uint8_t brightnessTemp = segmentSet->brightness;

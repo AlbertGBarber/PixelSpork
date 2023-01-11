@@ -83,7 +83,7 @@ class SegOffsetCyclerPS : public EffectBasePS {
 
         uint8_t 
             colorModeOrig, //local storage of the colorMode, by default colorMode points to this
-            *colorMode;
+            *colorMode = nullptr;
         
         bool 
             runOffset = true, //turns the cycle on/off, default is on
@@ -114,8 +114,8 @@ class SegOffsetCyclerPS : public EffectBasePS {
             prevTime;
 
         SegmentSet
-            **segGroupTemp, //temp pointer used for setting up single segmentSets, seperate from group to allow safe deletion
-            **segGroup;
+            **segGroupTemp = nullptr, //temp pointer used for setting up single segmentSets, seperate from group to allow safe deletion
+            **segGroup = nullptr;
         
         void
             init(bool direction, uint8_t ColorMode, uint16_t rate);

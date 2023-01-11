@@ -68,6 +68,11 @@ Other Settings:
                                    15 seemed to look good in my tests
     shiftStep (default 1, min 1) -- The maximum value (is choosen randomly) of the offset increment if the shiftThreshold is met
 
+Reference Vars:
+    grouping -- (see notes above) set this using setGrouping()
+    sMode -- (see notes above) set this using setMode()
+    gradLength -- (see notes above) set this using setGradLength()
+
 Notes:
 */
 class ShiftingRainbowSeaSL : public EffectBasePS {
@@ -117,7 +122,7 @@ class ShiftingRainbowSeaSL : public EffectBasePS {
             step;
         
         uint16_t
-            *offsets,
+            *offsets = nullptr,
             numLines;
         
         void

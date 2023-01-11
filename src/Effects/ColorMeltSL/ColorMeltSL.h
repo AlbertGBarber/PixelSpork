@@ -106,7 +106,7 @@ class ColorMeltSL : public EffectBasePS {
 
         palettePS
             paletteTemp,
-            *palette;
+            *palette = nullptr;
         
         void 
             update(void);

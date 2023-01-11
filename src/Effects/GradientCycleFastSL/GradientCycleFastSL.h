@@ -105,11 +105,11 @@ class GradientCycleFastSL : public EffectBasePS {
 
         patternPS
             patternTemp,
-            *pattern;
+            *pattern = nullptr;
 
         palettePS
             paletteTemp,
-            *palette;
+            *palette = nullptr;
 
         SegmentSet 
             &segmentSet; 

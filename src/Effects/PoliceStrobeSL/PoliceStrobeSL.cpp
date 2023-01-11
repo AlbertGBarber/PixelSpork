@@ -21,7 +21,7 @@ PoliceStrobeSL::PoliceStrobeSL(SegmentSet &SegmentSet, palettePS *Palette, CRGB 
 	}
 
 PoliceStrobeSL::~PoliceStrobeSL(){
-    delete[] paletteTemp.paletteArr;
+    free(paletteTemp.paletteArr);
 }
 
 //restarts the effect

@@ -26,8 +26,8 @@ GradientCycleSL::GradientCycleSL(SegmentSet &SegmentSet, uint8_t NumColors, uint
 	}
 
 GradientCycleSL::~GradientCycleSL(){
-    delete[] paletteTemp.paletteArr;
-    delete[] patternTemp.patternArr;
+    free(paletteTemp.paletteArr);
+    free(patternTemp.patternArr);
 }
 
 //inits core variables for the effect

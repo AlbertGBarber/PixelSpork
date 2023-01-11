@@ -15,7 +15,7 @@
 //CRGB palette_arr[] = { CRGB::Red, CRGB::Blue, CRGB::Green, CRGB::Purple, CRGB::Yellow };
 //palettePS palette = {palette_arr, SIZE(palette_arr)};
 struct palettePS {
-  CRGB *paletteArr;
+  CRGB *paletteArr = nullptr;
   uint8_t length;
 } ;
 

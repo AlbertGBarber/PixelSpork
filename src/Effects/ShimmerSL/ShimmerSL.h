@@ -83,7 +83,7 @@ class ShimmerSL : public EffectBasePS {
         
         palettePS
             paletteTemp,
-            *palette;
+            *palette = nullptr;
 
         void
             setSingleColor(CRGB Color),

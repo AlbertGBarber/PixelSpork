@@ -44,7 +44,7 @@ LavaPS::~LavaPS(){
     //Only delete the temp palette color array if it was created randomly
     //otherwise we'd be deleting the lava colors array
     if(randPaletteCreated){
-        delete[] paletteTemp.paletteArr;
+        free(paletteTemp.paletteArr);
     }
 }
 

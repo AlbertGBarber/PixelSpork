@@ -49,8 +49,8 @@ SegWavesFast::SegWavesFast(SegmentSet &SegmentSet, CRGB Color, uint8_t WaveThick
 	}
 
 SegWavesFast::~SegWavesFast(){
-    delete[] paletteTemp.paletteArr;
-    delete[] patternTemp.patternArr;
+    free(paletteTemp.paletteArr);
+    free(patternTemp.patternArr);
 }
 
 //intilization of core variables and pointers
@@ -86,8 +86,8 @@ void SegWavesFast::setPatternAsPattern(patternPS *inputPattern, uint8_t colorLen
     uint8_t repeatLength = (colorLength + spacing);
     uint16_t patternLength = inputPattern->length;
     uint16_t totalPatternLength = patternLength * repeatLength;
-    delete[] patternTemp.patternArr;
-    uint8_t *pattern_arr = new uint8_t[totalPatternLength];
+    free(patternTemp.patternArr);
+    uint8_t *pattern_arr = (uint8_t*) malloc(totalPatternLength * sizeof(uint8_t));
 
     for(uint16_t i = 0; i < patternLength; i++){
         patternIndex = patternUtilsPS::getPatternVal(inputPattern, i);
@@ -112,8 +112,8 @@ void SegWavesFast::setPaletteAsPattern(uint8_t colorLength, uint8_t spacing){
     uint8_t repeatLength = (colorLength + spacing);
     uint8_t palettelength = palette->length;
     uint16_t totalPatternLength = palettelength * repeatLength;
-    delete[] patternTemp.patternArr;
-    uint8_t *pattern_arr = new uint8_t[totalPatternLength];
+    free(patternTemp.patternArr);
+    uint8_t *pattern_arr = (uint8_t*) malloc(totalPatternLength * sizeof(uint8_t));
 
     for(uint16_t i = 0; i < palettelength; i++){
         for(uint8_t j = 0; j < repeatLength; j++){

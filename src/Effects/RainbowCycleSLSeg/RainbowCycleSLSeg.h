@@ -45,7 +45,7 @@ Constructor Inputs:
     length (optional) -- The length of each rainbow, if omitted, 255 will be used
     direction -- The direction the rainbows will move in (true is forward)
     segMode -- Sets if the rainbows will be drawn along segment lines or whole segments
-               (true will do whole segents)
+               (true will do whole segments)
     Rate -- update rate (ms)
 
 Functions:

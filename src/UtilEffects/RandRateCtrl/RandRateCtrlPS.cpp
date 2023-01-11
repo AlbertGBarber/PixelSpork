@@ -19,8 +19,8 @@ RandRateCtrlPS::RandRateCtrlPS(uint16_t BaseRate, int16_t RateRangeMin, int16_t 
 
 //destructor, cleans up the RateRandomizer and RateCtrl instances
 RandRateCtrlPS::~RandRateCtrlPS(){
-    delete RR;
-    delete RC;
+    RR->~RateRandomizerPS();
+    RC->~RateCtrlPS();
 }
 
 //Changes the rateRangeMin used in the RateRandomizer instance 

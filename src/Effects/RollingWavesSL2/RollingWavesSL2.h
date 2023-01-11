@@ -152,15 +152,15 @@ class RollingWavesSL2 : public EffectBasePS {
         
         CRGB 
             bgColorOrig,
-           *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
 
         patternPS
             patternTemp,
-            *pattern;
+            *pattern = nullptr;
 
         palettePS
             paletteTemp,
-            *palette;
+            *palette = nullptr;
 
         SegmentSet 
             &segmentSet; 
@@ -196,7 +196,7 @@ class RollingWavesSL2 : public EffectBasePS {
             numLines,
             numLinesLim,
             pixelNum,
-            *nextLine;
+            *nextLine = nullptr;
         
         bool
             setBg = false;

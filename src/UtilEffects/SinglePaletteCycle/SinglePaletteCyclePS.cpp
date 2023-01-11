@@ -20,8 +20,8 @@ SinglePaletteCyclePS::SinglePaletteCyclePS(palettePS *Palette, uint8_t BlendMode
 	}
 
 SinglePaletteCyclePS::~SinglePaletteCyclePS(){
-    delete[] paletteColorArr1;
-    delete[] paletteColorArr2;
+    free(paletteColorArr1);
+    free(paletteColorArr2);
     PB->~PaletteBlenderPS();
 }
 
@@ -65,10 +65,10 @@ void SinglePaletteCyclePS::switchPalette(){
     uint8_t paletteLengthTemp = paletteOrig->length;
     if(paletteLength != paletteLengthTemp){
         paletteLength = paletteLengthTemp;
-        delete[] paletteColorArr1;
-        delete[] paletteColorArr2;
-        paletteColorArr1 = new CRGB[paletteLength];
-        paletteColorArr2 = new CRGB[paletteLength];
+        free(paletteColorArr1);
+        free(paletteColorArr2);
+        paletteColorArr1 = (CRGB*) malloc(paletteLength * sizeof(CRGB));
+        paletteColorArr2 = (CRGB*) malloc(paletteLength * sizeof(CRGB));
         currentPalette = { paletteColorArr1, paletteLength };
         nextPalette = { paletteColorArr2, paletteLength };
         for(uint8_t i = 0; i < paletteLength; i++ ){

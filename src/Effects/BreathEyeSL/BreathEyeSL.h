@@ -163,7 +163,7 @@ class BreathEyeSL : public EffectBasePS {
 
         uint8_t
             breathFreqOrig,
-            *breathFreq, //pointer to the breath frequency (dby default it's bound to the the Rate)
+            *breathFreq = nullptr, //pointer to the breath frequency (dby default it's bound to the the Rate)
             minBreath = 60, //The minimum breath fade amount (0 is min, should be less than maxBreath)
             maxBreath = 255, //How far the breath color will fade towards the background (255 is max)
             breathEndOffset = 5, //The offset from maxBreath after which a new color is choosen (see comments in update() code)
@@ -187,14 +187,14 @@ class BreathEyeSL : public EffectBasePS {
         
         CRGB 
             bgColorOrig,
-            *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
 
         palettePS
-            *palette,
+            *palette = nullptr,
             paletteTemp;
         
         patternPS
-            *pattern,
+            *pattern = nullptr,
             patternTemp;
         
         void 

@@ -133,10 +133,12 @@ Other Settings:
                             See explanation of this in more detail above in effect intro
     fillBG (default false) -- Sets the background to be redrawn every update, useful for bgColorModes that are dynamic
                              Warning!: Not compatible with infinite trails (mode 4). They will be drawn over.
+                            
+Reference Vars: 
+    maxNumDrops -- (see notes above) set using setupDrops();
 
 Notes:
-    you can change the drop variables (speed, size, the ranges) on the fly. As drops spawn they will use the 
-    new values 
+    you can change the drop variables (speed, size, the ranges) on the fly. As drops spawn they will use the new values 
 */
 class RainSeg : public EffectBasePS {
     public:
@@ -169,7 +171,7 @@ class RainSeg : public EffectBasePS {
             dimPow = 80; //80 range -127 -> 127 -80 good for colored bg's
         
         uint8_t
-            maxNumDrops,
+            maxNumDrops = 0, //for reference only, set using setupDrops()
             spawnChance,
             colorMode = 0,
             bgColorMode = 0,
@@ -186,7 +188,7 @@ class RainSeg : public EffectBasePS {
             bgPrefill,
             fillBG = false,
             blend = false,
-            *partActive;
+            *partActive = nullptr;
         
         //trail type flags
         bool
@@ -198,14 +200,14 @@ class RainSeg : public EffectBasePS {
 
         CRGB 
             bgColorOrig,
-           *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
         
         palettePS
             paletteTemp,
-            *palette;
+            *palette = nullptr;
 
         particleSetPS 
-            *particleSet, //the particle set used in the effect
+            *particleSet = nullptr, //the particle set used in the effect
             particleSetTemp; //storage for self created particle sets
 
         void 
@@ -250,16 +252,16 @@ class RainSeg : public EffectBasePS {
             movePart; //flag for if a particle should move thise cycle
         
         particlePS
-            *particlePtr;
+            *particlePtr = nullptr;
 
         CRGB 
-            *trailEndColors, //used to store the last colors of each trail, so the background color can be set
+            *trailEndColors = nullptr, //used to store the last colors of each trail, so the background color can be set
             colorEnd,
             colorOut,
             colorTemp;
         
         void
-            init(uint16_t Rate, CRGB BgColor),
+            init(uint16_t Rate, uint8_t MaxNumDrops, CRGB BgColor),
             setDropSpawnPos(particlePS *particlePtr, uint8_t segNum),
             moveParticle(particlePS *particlePtr),
             drawParticlePixel(uint16_t trailLedLocation, uint8_t trailPixelNum, uint8_t trailSize, uint8_t segNum, bool bodyPixel),

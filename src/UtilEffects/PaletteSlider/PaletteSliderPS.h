@@ -98,14 +98,14 @@ class PaletteSliderPS : public EffectBasePS {
             singleShift;
         
         CRGB 
-            *sliderPalColArr; //for reference only. Storage array for the slider palette colors
+            *sliderPalColArr = nullptr; //for reference only. Storage array for the slider palette colors
 
         palettePS
-            *paletteTarget, //The palette being slid across
+            *paletteTarget = nullptr, //The palette being slid across
             sliderPalette; //The output palette of the utility
         
         patternPS
-            *pattern,
+            *pattern = nullptr,
             patternTemp; //used when using the palette as the pattern
  
         void 

@@ -26,9 +26,9 @@ RollingWavesSL2::RollingWavesSL2(SegmentSet &SegmentSet, uint8_t NumColors, CRGB
 	}
 
 RollingWavesSL2::~RollingWavesSL2(){
-    delete[] paletteTemp.paletteArr;
-    delete[] patternTemp.patternArr;
-    delete[] nextLine;
+    free(paletteTemp.paletteArr);
+    free(patternTemp.patternArr);
+    free(nextLine);
 }
 
 //inits core variables for the effect
@@ -89,8 +89,8 @@ void RollingWavesSL2::setTotalEffectLength(){
 //!!! You should call this if you ever change the segment set
 void RollingWavesSL2::buildLineArr(){
     numSegs = segmentSet.numSegs;
-    delete[] nextLine;
-    nextLine = new uint16_t[numSegs];
+    free(nextLine);
+    nextLine = (uint16_t*) malloc(numSegs * sizeof(uint16_t));
 
     //fetch some core vars
     numLines = segmentSet.maxSegLength;

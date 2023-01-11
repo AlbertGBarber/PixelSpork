@@ -94,13 +94,13 @@ class LarsonScannerSL : public EffectBasePS {
 
         CRGB 
             bgColorOrig,
-            *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
         
         palettePS
             palette; //palette used for ParticlePS instance
         
         ParticlesSL
-            *scannerInst; //pointer to the ParticlePS instance
+            *scannerInst = nullptr; //pointer to the ParticlePS instance
             
         particleSetPS
             particleSet; //the particle set used in the ParticlePS instance

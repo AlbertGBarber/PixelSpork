@@ -126,18 +126,18 @@ class StreamerSL : public EffectBasePS {
 
         CRGB 
             bgColorOrig,
-           *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
 
         SegmentSet 
             &segmentSet; 
         
         patternPS
             patternTemp,
-            *pattern;
+            *pattern = nullptr;
         
         palettePS
             paletteTemp,
-            *palette;
+            *palette = nullptr;
         
         bool 
             fadeOn = true;
@@ -155,6 +155,7 @@ class StreamerSL : public EffectBasePS {
             prevTime = 0;
         
         uint8_t
+            *pattern_arr = nullptr,
             nextPattern,
             blendStep = 0,
             cycleCount = 0;
@@ -169,7 +170,7 @@ class StreamerSL : public EffectBasePS {
             pixelNum;
         
         CRGB 
-            *prevLineColors,
+            *prevLineColors = nullptr,
             nextColor,
             colorOut,
             getNextColor(uint16_t lineNum, uint16_t segNum),

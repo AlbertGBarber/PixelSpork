@@ -91,10 +91,10 @@ class Fire2012SL : public EffectBasePS {
         
         CRGB 
             bgColorOrig,
-           *bgColor; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
         
         palettePS
-            *palette;
+            *palette = nullptr;
 
         void 
             reset(),
@@ -105,16 +105,10 @@ class Fire2012SL : public EffectBasePS {
             currentTime,
             prevTime = 0;
 
-        //bool
-            //doBg;
-
         uint8_t
-            *heat,
-            //colorIndex,
+            *heat = nullptr,
             cooldown,
             paletteLength,
-            //paletteLimit,
-            //secHeatLimit,
             paletteSecLen,
             sparkPoint;
         
@@ -127,9 +121,7 @@ class Fire2012SL : public EffectBasePS {
             ledLoc;
         
         CRGB 
-            //startColor,
             colorOut;
-            //targetColor;
 };  
 
 #endif

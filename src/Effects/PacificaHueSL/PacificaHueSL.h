@@ -103,7 +103,7 @@ class PacificaHueSL : public EffectBasePS {
             &segmentSet; 
 
         PacificaHuePalPS
-            *PacificaPalette;
+            *PacificaPalette = nullptr;
         
         bool
             addWhiteCaps = false;
@@ -115,7 +115,7 @@ class PacificaHueSL : public EffectBasePS {
 
         uint16_t
             hueRateOrig, //Will be set to the inital hue rate as passed into constructors
-            *hueRate; //Is initially pointed to hueRateOrig, but can be pointed to an external variable if wanted
+            *hueRate = nullptr; //Is initially pointed to hueRateOrig, but can be pointed to an external variable if wanted
 
         void 
             setHue(uint8_t newHue),
@@ -159,7 +159,7 @@ class PacificaHueSL : public EffectBasePS {
             sindex16;
         
         CRGB
-            *bgColor, //bgColor is a pointer, it is tied to the bgColor in the PacificaHuePalPS
+            *bgColor = nullptr, //bgColor is a pointer, it is tied to the bgColor in the PacificaHuePalPS
             colorOut;
         
         void 

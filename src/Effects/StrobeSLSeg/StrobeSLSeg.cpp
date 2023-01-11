@@ -39,7 +39,7 @@ void StrobeSLSeg::init(CRGB BgColor, uint16_t Rate){
 }
 
 StrobeSLSeg::~StrobeSLSeg(){
-    delete[] paletteTemp.paletteArr;
+    free(paletteTemp.paletteArr);
 }
 
 //sets the newColor flag

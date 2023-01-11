@@ -34,11 +34,10 @@ FirefliesSL::FirefliesSL(SegmentSet &SegmentSet, CRGB Color, uint8_t MaxNumFiref
 
 
 FirefliesSL::~FirefliesSL(){
-    particleUtilsPS::deleteAllParticles(&particleSetTemp);
-    delete[] particleSetTemp.particleArr;
-    delete[] trailEndColors;
-    delete[] particlePrevPos;
-    delete[] paletteTemp.paletteArr;
+    particleUtilsPS::freeParticleSet(&particleSetTemp);
+    free(trailEndColors);
+    free(particlePrevPos);
+    free(paletteTemp.paletteArr);
 }
 
 //common initilzation function for core vars
@@ -65,10 +64,12 @@ void FirefliesSL::setupFireflies(uint8_t newMaxNumFireflies){
     //check for any active particles on the segment set
     //we need to clear them before we make a new set of particles
     bool clearStrip = false;
-    for (uint8_t i = 0; i < maxNumFireflies; i++) {
-        if( particleSet->particleArr[i]->life > 0){
-            clearStrip = true;
-            break;
+    if(particleSet){ //if we already have a set of firefly particles (particleSet is not a nullptr)
+        for (uint8_t i = 0; i < maxNumFireflies; i++) {
+            if( particleSet->particleArr[i]->life > 0){
+                clearStrip = true;
+                break;
+            }
         }
     }
 
@@ -81,24 +82,28 @@ void FirefliesSL::setupFireflies(uint8_t newMaxNumFireflies){
     if(newMaxNumFireflies == 0){
         newMaxNumFireflies = 1;
     }
-    maxNumFireflies = newMaxNumFireflies;
 
-    //delete and re-create all the arrays and the particle set
-    delete[] trailEndColors;
-    trailEndColors = new CRGB[maxNumFireflies];
+    //Only need to generate a new arrays for fireflies if the new number of flies is different from the current number 
+    if(maxNumFireflies != newMaxNumFireflies){
+        maxNumFireflies = newMaxNumFireflies;
 
-    delete[] particlePrevPos;
-    particlePrevPos = new uint16_t[maxNumFireflies];
+        //delete and re-create all the arrays and the particle set
+        free(trailEndColors);
+        trailEndColors = (CRGB*) malloc(maxNumFireflies * sizeof(CRGB));
 
-    particleUtilsPS::deleteAllParticles(&particleSetTemp);
-    delete[] particleSetTemp.particleArr;
+        free(particlePrevPos);
+        particlePrevPos = (uint16_t*) malloc(maxNumFireflies * sizeof(uint16_t));
+        
+        //free the existing particles, and the particle array pointer
+        particleUtilsPS::freeParticleSet(&particleSetTemp);
 
-    //to allow the effect to work along segment lines, we use the maximum number of lines
-    //as the range of the particle's motion
-    numLines = segmentSet.maxSegLength;
-    particleSetTemp = particleUtilsPS::buildParticleSet(maxNumFireflies, numLines, true, speedBase, speedRange, 1, 0, 
-                                                        0, 0, 0, false, palette->length, true);
-    particleSet = &particleSetTemp;
+        //to allow the effect to work along segment lines, we use the maximum number of lines
+        //as the range of the particle's motion
+        numLines = segmentSet.maxSegLength;
+        particleSetTemp = particleUtilsPS::buildParticleSet(maxNumFireflies, numLines, true, speedBase, speedRange, 1, 0, 
+                                                            0, 0, 0, false, palette->length, true);
+        particleSet = &particleSetTemp;
+    }
 
     //set all the Fireflies to inactive, ready to be spawned
     for (uint8_t i = 0; i < maxNumFireflies; i++) {

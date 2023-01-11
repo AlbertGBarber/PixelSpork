@@ -16,7 +16,7 @@ PaletteSliderPS::PaletteSliderPS(palettePS *PaletteTarget, uint16_t SliderPalLen
 	}
 
 PaletteSliderPS::~PaletteSliderPS(){
-    delete[] sliderPalColArr;
+    free(sliderPalColArr);
 }
 
 //setup core vars
@@ -49,8 +49,8 @@ void PaletteSliderPS::setPaletteAsPattern(){
 void PaletteSliderPS::makeSliderPalette(uint16_t paletteLength){
     //create a new palette of the passed in length
     sliderPalLen = paletteLength;
-    delete[] sliderPalColArr;
-    sliderPalColArr = new CRGB[sliderPalLen];
+    free(sliderPalColArr);
+    sliderPalColArr = (CRGB*) malloc(sliderPalLen * sizeof(CRGB));
     sliderPalette = {sliderPalColArr, sliderPalLen};
     //The new palette will be blank, so we need to call update() once to fill it with colors
     reset();

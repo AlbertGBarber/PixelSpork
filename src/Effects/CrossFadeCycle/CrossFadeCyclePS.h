@@ -88,11 +88,11 @@ class CrossFadeCyclePS : public EffectBasePS {
             &segmentSet; 
 
         palettePS
-            *palette,
+            *palette = nullptr,
             paletteTemp;
         
         patternPS
-            *pattern,
+            *pattern = nullptr,
             patternTemp;
         
         void 

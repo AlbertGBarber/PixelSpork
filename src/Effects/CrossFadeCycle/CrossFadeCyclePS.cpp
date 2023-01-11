@@ -31,8 +31,8 @@ CrossFadeCyclePS::CrossFadeCyclePS(SegmentSet &SegmentSet, uint16_t NumFades, ui
 	}
 
 CrossFadeCyclePS::~CrossFadeCyclePS(){
-    delete[] paletteTemp.paletteArr;
-    delete[] patternTemp.patternArr;
+    free(paletteTemp.paletteArr);
+    free(patternTemp.patternArr);
 }
 
 //bind core class vars

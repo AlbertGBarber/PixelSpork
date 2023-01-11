@@ -13,7 +13,7 @@
 //struct used to hold a palette array and it's length in one spot
 //also provides code for getting palette objects
 struct paletteSetPS {
-    palettePS **paletteArr;
+    palettePS **paletteArr = nullptr;
     uint8_t length;
 
     palettePS *getPalette(uint8_t index){
@@ -44,7 +44,7 @@ Example calls:
     paletteSetPS paletteSet = {paletteArr, SIZE(paletteArr)};
 
     to declare a paletteCycle
-    PaletteCyclePS(*paletteSet, true, 50, 80);
+    PaletteCyclePS(&paletteSet, true, 50, 80);
     Blends between each palette in the array in order, looping back to the first palette at the end
     each blend takes 50 steps, with 80ms between each step
 
@@ -106,13 +106,13 @@ class PaletteCyclePS : public EffectBasePS {
             looped = false;
         
         paletteSetPS
-            *paletteSet;
+            *paletteSet = nullptr;
                                  
         palettePS
-            *cyclePalette; //ouput palette
+            *cyclePalette = nullptr; //ouput palette
         
         PaletteBlenderPS
-            *PB; //PaletteBlenderPS instance
+            *PB = nullptr; //PaletteBlenderPS instance
 
         void 
             reset(),

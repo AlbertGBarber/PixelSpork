@@ -28,7 +28,7 @@ ShimmerSL::ShimmerSL(SegmentSet &SegmentSet, palettePS *Palette, uint8_t Shimmer
 	}
 
 ShimmerSL::~ShimmerSL(){
-    delete[] paletteTemp.paletteArr;
+    free(paletteTemp.paletteArr);
 }
 
 void ShimmerSL::init(uint16_t Rate){
@@ -39,7 +39,7 @@ void ShimmerSL::init(uint16_t Rate){
 
 //creates an palette of length 1 containing the passed in color
 void ShimmerSL::setSingleColor(CRGB Color){
-    delete[] paletteTemp.paletteArr;
+    free(paletteTemp.paletteArr);
     paletteTemp = paletteUtilsPS::makeSingleColorPalette(Color);
     palette = &paletteTemp;
 }
