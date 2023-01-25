@@ -190,6 +190,7 @@ An explaination of segment structure:
 						getSegDirection(uint16_t segNum): returns a bool direction of the specified segment
 						setAllSegDirection(bool dirct): sets all the segments in the segmentSet to the specified direction
 						setSegDirection(uint16_t segNum, bool dirct): sets the direction of the specified segment to the specified direction 
+						flipSegDirects(): Flips the direction of all the segments in the segment set, ie all segments with direct = true become false, and visa versa
 						flipSegDirectionEvery(uint8_t freq, bool startAtFirst): flips the direction of every freq segment, starting with the first segment according to startAtFirst
 						setsegDirectionEvery(uint8_t freq, bool direction, bool startAtFirst): sets the direction of every freq segment, starting with the first segment according to startAtFirst
 						getSegHasSingle(uint16_t segNum): Returns true if the segment has any "single" sections
@@ -411,6 +412,7 @@ class SegmentSet {
 	  	void
 		  	resetGradVals(),
 			//flipSetOrder(),
+			flipSegDirects(),
 			setAllSegDirection(bool direction),
 			setSegDirection(uint16_t segNum, bool dirct),
 			flipSegDirectionEvery(uint8_t freq, bool startAtFirst),

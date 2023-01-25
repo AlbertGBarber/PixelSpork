@@ -182,7 +182,7 @@ void PrideWPalSL2::update(){
 
                 //Need to check to dim the pixel color manually
                 //b/c we're not calling setPixelColor directly
-                segDrawUtils::handleBri(segmentSet, pixelNum);
+                segDrawUtils::handleBri(segmentSet, pixelnumber);
             }
         }          
         showCheckPS();

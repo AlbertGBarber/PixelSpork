@@ -153,6 +153,12 @@ void SegmentSet::setAllSegDirection(bool direction){
 	}
 }
 
+//Flips the direction of all the segments in the segment set
+//ie all segments with direct = true become false, and visa versa
+void SegmentSet::flipSegDirects(){
+	flipSegDirectionEvery(1, true);
+}
+
 //flips the direction of every freq segment, starting with the first segment according to startAtFirst
 //ie if you have three segments and do flipSegDirectionEvery(2, true), the first and third segment will be flipped
 //but if you do flipSegDirectionEvery(2, false), only the second segment will be flipped

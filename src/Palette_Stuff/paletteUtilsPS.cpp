@@ -9,7 +9,6 @@ void paletteUtilsPS::setColor(palettePS *palette, CRGB color, uint8_t index){
     palette->paletteArr[ mod8(index, palette->length) ] = color;
 }
 
-
 //returns the color at a specified index
 //the index wraps, so running off the end of the palette, will put you back at the start
 CRGB paletteUtilsPS::getPaletteColor(palettePS *palette, uint8_t index){
