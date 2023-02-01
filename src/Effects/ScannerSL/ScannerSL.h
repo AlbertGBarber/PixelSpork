@@ -1,8 +1,6 @@
 #ifndef ScannerSL_h
 #define ScannerSL_h
 
-//TODO -- add random modes for picking colors?
-
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
 #include "MathUtils/mathUtilsPS.h"

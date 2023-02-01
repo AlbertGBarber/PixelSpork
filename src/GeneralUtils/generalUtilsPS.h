@@ -19,6 +19,7 @@
 namespace generalUtilsPS {
 
     patternPS
-        setPaletteAsPattern(palettePS *palette);
+        setPaletteAsPattern(palettePS *palette),
+        setPaletteAsPattern(palettePS *palette, uint16_t colorLength);
 };
 #endif

@@ -1,7 +1,7 @@
 #ifndef BreathPS_h
 #define BreathPS_h
 
-//TODO -- add fixed number of modes? Like CrossFadeCycle.
+//TODO -- add fixed number of cycles? Like CrossFadeCycle.
 
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"

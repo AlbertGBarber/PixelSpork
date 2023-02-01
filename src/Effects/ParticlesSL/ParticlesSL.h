@@ -1,7 +1,8 @@
 #ifndef ParticlesSLPS_h
 #define ParticlesSLPS_h
 
-//KNOWN BUG -- The first led in the segment set will be set to a static color
+//KNOWN BUG (seems to be fixed in current fastled code) 
+//          -- The first led in the segment set will be set to a static color
 //             This bug is very inconsistent, and seems to depend on a memory issue somewhere
 //             It seems to mainly affect effects using particles, but exhaustive testing has not been done
 //             (only tested on an esp8266)

@@ -2,7 +2,6 @@
 #define CrossFadeCyclePS_h
 
 //TODO:
-    //Add direction setting?
     //Add hang time?
 
 #include "Effects/EffectBasePS.h"

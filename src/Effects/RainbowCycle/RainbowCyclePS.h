@@ -1,8 +1,5 @@
 #ifndef RainbowCyclePS_h
 #define RainbowCyclePS_h
-
-//TODO
-    //Add spacing setting? -> use streamer effect + colorMode + segment rainbow shifting instead?
     
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"

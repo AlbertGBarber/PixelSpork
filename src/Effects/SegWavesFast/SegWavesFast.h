@@ -1,9 +1,6 @@
 #ifndef SegWavesFast_h
 #define SegWavesFast_h
 
-//TODO -- add constructor for random options?
-//     -- When picking random colors, use getShuffleIndex instead of just randoming
-
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
 #include "MathUtils/mathUtilsPS.h"
