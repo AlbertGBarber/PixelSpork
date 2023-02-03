@@ -58,15 +58,15 @@ Example calls:
  
 Constructor Inputs:
     Palette-- The palette used for the fire, should be arranged from coldest to hottest colors
-    BgColor -- The color used for the coldest parts of the fire ( usually blank (0) )
-    Cooling -- Indicates how fast a flame cools down. More cooling means shorter flames,
+    bgColor -- The color used for the coldest parts of the fire ( usually blank (0) )
+    cooling -- Indicates how fast a flame cools down. More cooling means shorter flames,
               Recommended values are between 20 and 100. 50 seems the nicest.
-    Sparking -- indicates the chance (out of 255) that a spark will ignite. A higher value makes the fire more active.
+    sparking -- indicates the chance (out of 255) that a spark will ignite. A higher value makes the fire more active.
                Suggested values lay between 50 and 200. 90 & 120 work well.
-    Blend -- Determines if the fire colors will be blended together according to temperature
+    blend -- Determines if the fire colors will be blended together according to temperature
             Blended fires are smoother, but need more processing power
-    Rate -- The update rate (ms) (recommended between 30-80ms)
-    Direct -- The direction of the fire (true means it will start at the first segment, false, at the last)
+    direct -- The direction of the fire (true means it will start at the first segment, false, at the last)
+    rate -- The update rate (ms) (recommended between 30-80ms)
 
 Functions:
     reset() -- Resets the effect, use this if you change any segment lengths
@@ -74,7 +74,7 @@ Functions:
 */
 class Fire2012SL : public EffectBasePS {
     public:
-        Fire2012SL(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint8_t Cooling, uint8_t Sparking, bool Blend, uint16_t Rate, bool Direct);  
+        Fire2012SL(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint8_t Cooling, uint8_t Sparking, bool Blend, bool Direct, uint16_t Rate);  
         
         ~Fire2012SL();
 

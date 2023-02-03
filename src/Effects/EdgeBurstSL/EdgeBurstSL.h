@@ -43,7 +43,6 @@ passing in a segmentSet with only one segment containing the whole strip.
 Rainbow colors are controlled by rainbowMode, true will do rainbows.
 
 Randomize Notes:
-
     The randomize palette option is set by randomizePal. Note that the effect stores a *palette
     and a paletteTemp. If you pass in your own palette, *palette is bound to your palette, otherwise
     I bind *palette to paletteTemp (which is set to a random set of colors)
@@ -79,7 +78,7 @@ Constructor inputs:
                                                  (see randomize note on this setting above)
     burstFreq (min value 1) -- How fast the bursts happen and move, recommend value of 5 - 30
                                Higher -> faster
-    Rate -- The update rate (ms) note that this is synced with all the particles.
+    rate -- The update rate (ms) note that this is synced with all the particles.
 
 Functions:
     update() -- updates the effect 
@@ -92,6 +91,10 @@ Other Settings:
                                                         so you'll want to reduce your burstFreq
     rainbowMode (default false) -- If true, colors from the rainbow will be used. This is set automatically
                                    to true for the rainbow mode constructor.
+                                
+Reference vars:
+    burstCount -- The number of bursts we've done (note this is not reset by any function, so you'll have to manually reset it if needed)
+
 */
 class EdgeBurstSL : public EffectBasePS {
     public:
@@ -113,6 +116,9 @@ class EdgeBurstSL : public EffectBasePS {
         uint8_t
             burstPause = 2,
             burstFreq = 15;
+        
+        uint16_t 
+            burstCount = 0;
         
         bool
             randomizePal = true,

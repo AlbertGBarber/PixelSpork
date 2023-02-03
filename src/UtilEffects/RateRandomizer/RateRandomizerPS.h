@@ -23,10 +23,10 @@ Example calls:
     the output rate will change every 300ms
 
 Constructor Inputs:
-    BaseRate -- The base rate that the random rate is added/subtracted from
-    RateRangeMin (int16_t, so it can be negative) -- The lowest possible random amount to be added to the baseRate
-    RateRangeMax (int16_t, so it can be negative) -- The highest possible random amount to be added to the baseRate
-    Rate -- The update rate (ms)
+    baseRate -- The base rate that the random rate is added/subtracted from
+    rateRangeMin (int16_t, so it can be negative) -- The lowest possible random amount to be added to the baseRate
+    rateRangeMax (int16_t, so it can be negative) -- The highest possible random amount to be added to the baseRate
+    rate -- The update rate (ms)
 
 Functions:
     resetToBaseRate() -- resets the outputRate to the baseRate

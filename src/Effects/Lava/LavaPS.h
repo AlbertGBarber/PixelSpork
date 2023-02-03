@@ -39,22 +39,22 @@ Example calls:
 
 Constructor inputs: 
     palette (optional, see constructors) -- A custom palette passed to the effect, the default is the 
-                                          lava colors palette encoded below
+                                            lava colors palette encoded below
     numColors (optional, see constructors) -- How many colors will be in the randomly created palette
     blendSteps (optional, see constructors) -- Sets how many steps are used to blend between each color
-                                              Basically changes how fast the colors blend
-                                              Between 20 - 100 looks good
+                                               Basically changes how fast the colors blend
+                                               Between 20 - 100 looks good
     blendScale (optional, see constructors) -- Sets how large the areas that a blended are
-                                              (test it out yourself to see what I mean)
-                                              Between 10 - 100 looks good
-    Rate -- The update rate (ms) note that this is synced with all the particles.
+                                               (test it out yourself to see what I mean)
+                                               Between 10 - 100 looks good
+    rate -- The update rate (ms)
 
 Functions:
     update() -- updates the effect 
 
 Other Settings:
     brightnessScale (default 150) -- Sets the noise range for the brightness
-                                    It doesn't seem to change much in my testing 
+                                     It doesn't seem to change much in my testing 
 */
 class LavaPS : public EffectBasePS {
     public:
@@ -81,7 +81,7 @@ class LavaPS : public EffectBasePS {
             brightnessScale = 150;
         
         //the default lava palette, basically a blend from dark red to yellow
-         CRGB 
+        CRGB 
             lavalPalette_arr[5] = { CRGB::DarkRed, CRGB::Maroon, CRGB::Red, CRGB::Orange, CRGB(245, 202, 10) };
         
         palettePS

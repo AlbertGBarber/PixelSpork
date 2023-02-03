@@ -38,11 +38,11 @@ Constructor Inputs:
     glitterColor -- The color of the glitter particles
     glitterNum -- How many glitter particles there are
     glitterMode -- What glitter mode will be used (see above)
-    glitterRate -- How often new particle locations are set
-    Rate -- The update rate (ms) (should be the same as the rate in the effect you want to add glitter to)
+    glitterRate -- How often new particle locations are set (ms)
+    rate -- The update rate (ms) (should be the same as the rate in the effect you want to add glitter to)
 
 Functions:
-    setGlitterNum(uint16_t newNum) -- Set the total number of glitter particles
+    setGlitterNum(newNum) -- Set the total number of glitter particles
     update() -- updates the effect
 
 Reference Vars:
@@ -59,7 +59,7 @@ class AddGlitterPS : public EffectBasePS {
             &segmentSet; 
         
         uint16_t 
-            glitterNum,
+            glitterNum, //for reference, use setGlitterNum() to set
             *glitterRate = nullptr,
             glitterRateOrig;
         

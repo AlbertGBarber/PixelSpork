@@ -74,36 +74,36 @@ Example calls:
     the same as the above constructors, but a patternPS is included before the palette)
 
 Constructor inputs for using a default scan type:
-    Pattern(optional, see constructors) -- The pattern used for the streamers, made up of palette indexes 
-    Palette(optional, see constructors) -- The repository of colors used in the pattern
+    pattern(optional, see constructors) -- The pattern used for the streamers, made up of palette indexes 
+    palette(optional, see constructors) -- The repository of colors used in the pattern
     bgColor -- The background color used for the effect.
-    ScanType -- The type of scan type (see above)
+    scanType -- The type of scan type (see above)
     trailSize -- The length of the trails. Using 0 will turn off the trails for the scanner.
     size -- The size of the particles (min value 1)
     bounce -- Sets if the particles will bounce or wrap at each segment set end
     bounceChange -- Sets if the particles change colors every time they bounce (or every other time)
-    Rate -- The update rate (ms) note that this is synced with all the particles.
+    rate -- The update rate (ms) note that this is synced with all the particles.
 
 Constructor inputs for using the automated evenly spaced waves:
-    Pattern(optional, see constructors) -- The pattern used for the streamers, made up of palette indexes 
-    Palette(optional, see constructors) -- The repository of colors used in the pattern
+    pattern(optional, see constructors) -- The pattern used for the streamers, made up of palette indexes 
+    palette(optional, see constructors) -- The repository of colors used in the pattern
     bgColor -- The background color used for the effect.
-    NumWaves -- How many particles will be created
+    numWaves -- How many particles will be created
     trailType -- The trail type of the particles
     trailSize -- The length of the trails. Using 0 will turn off the trails for the scanner.
     size -- The size of the particles (min value 1)
-    Direction -- The starting direction for the particles
-    Alternate -- Sets if every other particle will have its starting direction swapped
+    direction -- The starting direction for the particles
+    alternate -- Sets if every other particle will have its starting direction swapped
     bounce -- Sets if the particles will bounce or wrap at each segment set end
     bounceChange -- Sets if the particles change colors every time they bounce (or every other time)
     blend -- Sets if the particles will be blended togther as they pass over one another
-    Rate -- The update rate (ms) note that this is synced with all the particles.
+    rate -- The update rate (ms) note that this is synced with all the particles.
 
 Functions:
     setPaletteAsPattern() -- Sets the palette to be the pattern (each color in the palette, inorder)
-    setScanType(uint8_t newType) -- sets the scan mode (note this re-creates all the particles from scratch)
-    makeWaveSet(uint16_t numWaves, bool direction, bool alternate) -- Creates a set of evenly space repeating particles
-                                                                      (note this re-creates all the particles from scratch)
+    setScanType(newType) -- sets the scan mode (note this re-creates all the particles from scratch)
+    makeWaveSet(numWaves, direction, alternate) -- Creates a set of evenly space repeating particles
+                                                   (note this re-creates all the particles from scratch)
     update() -- updates the effect 
 
 Other Settings:

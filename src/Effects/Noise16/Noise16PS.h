@@ -78,7 +78,7 @@ Constructor inputs:
     x_val -- The scaling factor for the x noise input (see Inputs Guide above)
     y_val -- The scaling factor for the y noise input (see Inputs Guide above)
     z_val -- The scaling factor for the z noise input (see Inputs Guide above)
-    Rate -- The update rate (ms) note that this is synced with all the particles.
+    rate -- The update rate (ms) note that this is synced with all the particles.
 
 Functions:
     update() -- updates the effect  

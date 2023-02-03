@@ -99,9 +99,10 @@ Constructor Inputs:
 Functions:
     reset() -- Resets the effect vars, restarting the wipes
     setPaletteAsPattern() -- Sets the effect pattern to match the current palette
-    setWipeLength() -- Sets the wipe length, does NOT restart the effect
+    setWipeLength(newWipeLength) -- Sets the wipe length, does NOT restart the effect
     resetLoop() -- Resets the current loop, will switch to the next loop, only relevant when looping (you shouldn't need to call this)
-    setUpLoop() -- A quick way of setting all the loop variables (see intro for notes on loops)
+    setUpLoop(nLooped, nShiftPatLoop, nBgLoop, nAltWipeDirLoop, nBgAltLoop, nAltSegDirLoop) 
+             -- A quick way of setting all the loop variables (see intro for notes on loops)
     update() -- updates the effect
 
 Other Settings:

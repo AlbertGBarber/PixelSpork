@@ -115,10 +115,6 @@ Functions:
                               (See segMode notes above) (will reset the effect if value is different from current value)
     update() -- updates the effect
 
-Reference Vars:
-    numTwinkles -- (see notes above) set using setNumTwinkles()
-    segMode -- (see notes above) set using setSegMode()
-
 Other Settings:
     colorMode (default 0) -- sets the color mode for the random twinkles (see segDrawUtils::setPixelColor)
     bgColorMode (default 0) -- sets the color mode for the background (see segDrawUtils::setPixelColor)
@@ -128,6 +124,10 @@ Other Settings:
     fillBG (default false) -- sets the background to be redrawn every cycle, useful for bgColorModes that are dynamic
     limitSpawing -- Limits the twinkles so that only one new one can become active per update cycle (see inputs guide above)
 
+Reference Vars:
+    numTwinkles -- (see notes above) set using setNumTwinkles()
+    segMode -- (see notes above) set using setSegMode()
+    
 Notes:
     The twinkles are stored in a twinkleSet as part of the effect. The set is public to 
     allow editing of its length (see note at end of inputs guide). 

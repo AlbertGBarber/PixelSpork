@@ -1,6 +1,6 @@
-#include "BGRateFillPS.h"
+#include "ColorModeFillPS.h"
 
-BGRateFillPS::BGRateFillPS(SegmentSet &SegmentSet, uint8_t ColorMode, uint16_t Rate):
+ColorModeFillPS::ColorModeFillPS(SegmentSet &SegmentSet, uint8_t ColorMode, uint16_t Rate):
     segmentSet(SegmentSet), colorMode(ColorMode)
     {    
         //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
@@ -8,7 +8,7 @@ BGRateFillPS::BGRateFillPS(SegmentSet &SegmentSet, uint8_t ColorMode, uint16_t R
         bindClassRatesPS();
 	}
 
-void BGRateFillPS::update(){
+void ColorModeFillPS::update(){
     currentTime = millis();
 
     if( ( currentTime - prevTime ) >= *rate ) {

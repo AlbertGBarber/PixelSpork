@@ -25,7 +25,7 @@ Example call:
 Constructor Inputs:
     length (optional) -- The length of each rainbow, if omitted, the rainbow will be set to the default of 255
     direction -- The direction the rainbows will move in (true is forward)
-    Rate -- update rate (ms)
+    rate -- update rate (ms)
 
 Functions:
     setLength(newLength) -- sets a new rainbow length
@@ -34,10 +34,9 @@ Other Settings:
     satur (default 255) -- rainbow saturation value
     value (default 255) -- rainbow value value
 
-Reference Vars (do not set these directly):
-    length -- The length of the rainbow. Set this using setLength();
+Reference Vars:
+    length -- The length of the rainbow. Set using setLength().
 
-Notes: 
 */
 class RainbowCyclePS : public EffectBasePS {
     public:
@@ -72,7 +71,7 @@ class RainbowCyclePS : public EffectBasePS {
             stepDirect;
         
         uint16_t
-            cycleCount,
+            cycleNum,
             ledCount = 0,
             numSegs,
             numLeds,

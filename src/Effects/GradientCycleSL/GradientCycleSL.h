@@ -32,13 +32,13 @@ Example calls:
     Will do a gradient cycle using 3 randomly choosen colors, with 15 steps to each gradient,and an 80ms update rate
  
 Constructor Inputs:
-    Pattern(optional, see constructors) -- A pattern is struct made from a 1-d array of palette indexes ie {0, 1, 3, 6, 7} 
+    pattern(optional, see constructors) -- A pattern is struct made from a 1-d array of palette indexes ie {0, 1, 3, 6, 7} 
                                           and the length of the array 
                                           (see patternPS.h)   
-    Palette(optional, see constructors) -- The repository of colors used in the pattern, or can be used as the pattern itself
-    NumColors (optional, see contructors) -- The number of randomly choosen colors for the gradients
-    GradLength -- How many steps for each gradient
-    Rate -- The update rate (ms)
+    palette(optional, see constructors) -- The repository of colors used in the pattern, or can be used as the pattern itself
+    numColors (optional, see contructors) -- The number of randomly choosen colors for the gradients
+    gradLength -- How many steps for each gradient
+    rate -- The update rate (ms)
 
 Functions:
     setTotalEffectLength() -- Calculates the total length of all the gradients combined, you shouldn't need to call this

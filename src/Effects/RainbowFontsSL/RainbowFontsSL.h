@@ -43,7 +43,7 @@ Example calls:
 Constructor inputs: 
     waveFreq (min value 1) -- How fast the waves happen and move, recommend value of 5 - 30
                               Higher -> faster
-    Rate -- The update rate (ms) note that this is synced with all the particles.
+    rate -- The update rate (ms) note that this is synced with all the particles.
 
 Functions:
     update() -- updates the effect 

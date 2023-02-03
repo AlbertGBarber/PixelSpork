@@ -81,13 +81,13 @@ Example calls:
 Constructor Inputs:
     pattern(optional, see constructors) -- The pattern used for the waves, made up of palette indexes 
     palette(optional, see constructors) -- The repository of colors used in the pattern
-    Color(optional, see constructors) -- Used for making a single color wave
-    WaveThickness (optional, see constructors, max 255) -- The number pixels a wave color is. Used for automated pattern creation.
-    Spacing (optional, see constructors, max 255) -- The number of pixels between each wave color (will be set to bgColor).  Used for automated pattern creation.
-    BgColor -- The color of the spacing pixels. It is a pointer, so it can be tied to an external variable
+    color(optional, see constructors) -- Used for making a single color wave
+    waveThickness (optional, see constructors, max 255) -- The number pixels a wave color is. Used for automated pattern creation.
+    spacing (optional, see constructors, max 255) -- The number of pixels between each wave color (will be set to bgColor).  Used for automated pattern creation.
+    bgColor -- The color of the spacing pixels. It is a pointer, so it can be tied to an external variable
     direct --  The direction the wave move
                True will make the waves move from the last to first segment, false, the reverse.e 
-    Rate -- The update rate (ms)
+    rate -- The update rate (ms)
 
 Functions:
     reset() -- Restarts the wave pattern
@@ -97,7 +97,7 @@ Functions:
                                                                    setPatternAsPattern(&pattern, 3, 4) 
                                                                    Will do a wave using the first three colors of the palette (taken from the pattern)
                                                                    Each wave will be length 3, followed by 4 spaces
-    setPaletteAsPattern(uint8_t colorLength, uint8_t spacing) -- Like the previous function, but all of the current palette will be used for the pattern                                                       
+    setPaletteAsPattern(colorLength, spacing) -- Like the previous function, but all of the current palette will be used for the pattern                                                       
     makeSingleWave() -- Creates a wave pattern so that there's only a single wave of thickness 1 active on the segment set at one time
     update() -- updates the effect
 
@@ -117,6 +117,11 @@ Flags:
                     This needs to happen before running the first update cycle
                     If false, preFill() will be called when first updating
                     Set true once the first update cycle has been finished
+
+Reference vars:
+    cycleNum -- Tracks what how many patterns we've gone through, 
+                resets every pattern length number of cycles (ie once we've gone through the whole pattern)
+
 
 Notes:
     If the constructor made your pattern, it will be stored in patternTemp
@@ -139,8 +144,10 @@ class SegWavesFast : public EffectBasePS {
         ~SegWavesFast();
 
         uint8_t
-            randMode = 0,
-            cycleCount = 0;
+            randMode = 0;
+        
+        uint16_t
+            cycleNum = 0; // tracks what how many patterns we've gone through, for reference
             
         bool
             initFillDone = false,
@@ -174,10 +181,12 @@ class SegWavesFast : public EffectBasePS {
             prevTime = 0;
         
         int8_t
+            loopStep;
+        
+        uint8_t
             nextPattern,
             prevPattern,
-            nextPatternRand,
-            loopStep;
+            nextPatternRand;
         
         uint16_t
             numSegs,

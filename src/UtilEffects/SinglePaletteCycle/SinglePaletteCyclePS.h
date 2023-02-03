@@ -3,9 +3,6 @@
 
 //NOT TESTED!!!
 
-//TODO
-// -- Add cycle limit
-
 #include "Effects/EffectBasePS.h"
 #include "UtilEffects/PaletteBlender/PaletteBlenderPS.h"
 
@@ -51,10 +48,10 @@ Example calls:
     each blend takes 50 steps, with 80ms between each step
 
 Constructor Inputs:
-    *palette -- The pointer to the set of palette used in the blend
-    BlendMode -- The mode used to blend the palette (see blend modes above). You should be able to change this on the fly
-    TotalSteps (max 255) -- The total number of steps taken to blend between the palettes
-    Rate -- The update rate of the blend (ms)
+    palette -- The pointer to the palette used in the blend
+    blendMode -- The mode used to blend the palette (see blend modes above). You should be able to change this on the fly
+    totalSteps (max 255) -- The total number of steps taken to blend between the palettes
+    rate -- The update rate of the blend (ms)
 
 Functions:
     switchPalette() -- Adjusts the current start/end palettes used for the current blend. Should only be called if you manually changed the palette
@@ -70,11 +67,14 @@ Other Settings:
 
 Public Vars:
    *paletteOrig -- The pointer to the input palette (as supplied when you created the class instance)
-                 You can change it by calling setPalette(), but this resets the cycle
-                 To avoid reseting, you can change it manually, but you may need to call switchPalette()
+                   You can change it by calling setPalette(), but this resets the cycle
+                   To avoid reseting, you can change it manually, but you may need to call switchPalette()
    cyclePalette -- The output palette for the blend, length is set depending on mode (see notes below for more)
-   current/nextPalette -- //starting/end palette for the current blend
    *PB -- The PaletteBlendPS instance, public for reference 
+
+Reference Vars:
+    cycleNum -- How many blend cycle's we've done, resets every palette length number of cycles (all the palette colors have been shifted once)
+    current/nextPalette -- starting/end palette for the current blend
 
 Notes:
 If you switch modes, the output palette may change length, either from 1 to the input palette length or vise versa

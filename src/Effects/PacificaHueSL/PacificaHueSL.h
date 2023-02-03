@@ -71,12 +71,17 @@ Example calls:
     Sets addWhiteCaps to true, with the hue starting at 50 and incrementing every 500ms
     The effect updates at 40ms
 
+Constructor inputs: 
+    addWhiteCaps (optional, default false) -- If true, the addWhiteCaps() function will be called as part of the update cycle
+    hue (optional, default 130) -- The hue used in the effect (see hue notes above)
+    hueRate (optional, default 0) -- How quickly the hue shifts (ms)
+    rate -- The update rate of the effect (ms)
+
 Functions:
-    setHue(uint8_t newHue) -- Changes the hue value
+    setHue(newHue) -- Changes the hue value
     update() -- updates the effect 
 
 Other Settings:
-    addWhiteCaps (default false) -- If true, the addWhiteCaps() function will  be called as part of the update cycle
     thresholdMax (default 230) -- caps the white cap light level to prevent pixels from getting too white
                                   as part of the addWhiteCaps() function
     PacificaPalette -- The PacificaHuePal object. You shouldn't need to access this.
@@ -109,7 +114,7 @@ class PacificaHueSL : public EffectBasePS {
             addWhiteCaps = false;
         
         uint8_t 
-            hue, //for reference, call setHue() to change the hue
+            hue, //for reference, call setHue() to change the hue (defaulted to 130 in PacificaHuePalPS.h)
             numSteps, //probably shouldn't change this
             thresholdMax = 230; //cap on light level for addWhiteCaps(), stops colors from going full white
 

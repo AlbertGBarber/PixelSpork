@@ -72,8 +72,8 @@ Reference Vars:
     grouping -- (see notes above) set this using setGrouping()
     sMode -- (see notes above) set this using setMode()
     gradLength -- (see notes above) set this using setGradLength()
+    cycleNum -- tracks how many update's we've done, resets every 255 cycles (each pixel will have gone through the rainbow once)
 
-Notes:
 */
 class ShiftingRainbowSeaSL : public EffectBasePS {
     public:
@@ -98,7 +98,7 @@ class ShiftingRainbowSeaSL : public EffectBasePS {
             gradLength; //for reference, set this using setGradLength()
         
         uint16_t
-            cycleNum = 0; //tracks how many update's we've done, max value of totalCycleLength
+            cycleNum = 0; //tracks how many update's we've done, max value of 255
         
         bool
             randomShift = false;

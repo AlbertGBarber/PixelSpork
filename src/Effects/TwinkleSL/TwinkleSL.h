@@ -34,12 +34,12 @@ Example call:
     with 2 fade in and 2 fade out steps, at a rate of 80ms
 
 Constructor Inputs:
-    Palette(optional, see constructors) -- the palette from which colors will be choosen randomly
-    Color(optional, see constructors) -- the color that the randomly choosen pixels will be set to
+    palette(optional, see constructors) -- the palette from which colors will be choosen randomly
+    color(optional, see constructors) -- the color that the randomly choosen pixels will be set to
     numTwinkles -- The amount of random pixels choosen each cycle 
-    BgColor -- The color of the background, this is what pixels will fade to and from
-    FadeInSteps and FadeOutSteps -- The number of steps taken to fade pixels in and out (min value of 1, max of 255)
-    Rate -- The update rate (ms)
+    bgColor -- The color of the background, this is what pixels will fade to and from
+    fadeInSteps and FadeOutSteps -- The number of steps taken to fade pixels in and out (min value of 1, max of 255)
+    rate -- The update rate (ms)
 
 Functions:
     setSteps(newfadeInSteps, newfadeOutSteps) -- Sets the number of fade in and out steps
@@ -108,7 +108,7 @@ class TwinkleSL : public EffectBasePS {
 
         uint8_t 
             fadeInSteps = 0, //Set using setSteps(), for reference only!!
-            fadeOutSteps =0; //Set using setSteps(), for reference only!!
+            fadeOutSteps = 0; //Set using setSteps(), for reference only!!
 
         SegmentSet 
             &segmentSet; 

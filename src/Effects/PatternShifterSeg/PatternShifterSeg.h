@@ -81,7 +81,7 @@ Constructor inputs:
                     make sure the pattern's segment set matches the effect's!!!
                     You can change the shiftPattern later using setShiftPattern()
     palette -- The colors used to color the pattern
-    BgColor -- The color of the background, specified by 255 in the shiftPattern
+    bgColor -- The color of the background, specified by 255 in the shiftPattern
     repeatLine -- Sets if the pattern "rows" are to be repeated along the segment lines
     repeatSeg -- Sets if the segment part of the pattern "rows" are to be repeated along the segments
     direct -- Sets the direction the pattern moves along the segments, true is from the first to last segment
@@ -89,9 +89,13 @@ Constructor inputs:
 
 Functions:
     setShiftPattern(shiftPatternPS *newShiftPattern) -- Sets the effect shiftPattern, will restart the effect
-    setRepeat(bool newRepeatSeg, bool newRepeatLine) -- Sets if the shiftPattern will be repeated along the segment set lines or/and segments
+    setRepeat(newRepeatSeg, newRepeatLine) -- Sets if the shiftPattern will be repeated along the segment set lines or/and segments
     reset() -- Restarts the effect
     update() -- updates the effect 
+
+Other Settings:
+    colorMode (default 0) -- sets the color mode for the pattern pixels (see segDrawUtils::setPixelColor)
+    bgColorMode (default 0) -- sets the color mode for the background pixels (see segDrawUtils::setPixelColor)
 
 Reference Vars:
     cycleNum -- How many times the pattern has be shifted,
@@ -99,12 +103,7 @@ Reference Vars:
     repeatLine -- (see notes above), set using setRepeat()
     repeatSeg -- (see notes above), set using setRepeat()
 
-Other Settings:
-    colorMode (default 0) -- sets the color mode for the pattern pixels (see segDrawUtils::setPixelColor)
-    bgColorMode (default 0) -- sets the color mode for the background pixels (see segDrawUtils::setPixelColor)
-
 */
-
 class PatternShifterSeg : public EffectBasePS {
     public:
         PatternShifterSeg(SegmentSet &SegmentSet, shiftPatternPS *ShiftPattern, palettePS *Palette, CRGB BgColor, 

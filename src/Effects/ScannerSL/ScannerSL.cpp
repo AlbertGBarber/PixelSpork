@@ -468,7 +468,7 @@ void ScannerSL::setPartColor(particlePS *particlePtr){
         //(don't want to have every particle repeat the pattern individually, rather all the particles do the pattern together)
         particlePtr->maxLife = patternUtilsPS::getPatternVal(pattern, patternIndexCount + numParticles);
         //Once we've set a color, we need to advance the pattern index for the next particle
-        patternIndexCount = addmod8(patternIndexCount, 1, pattern->length);
+        patternIndexCount = addMod16PS(patternIndexCount, 1, pattern->length);
     } else if(randMode == 1){
         //get a color at random from the pattern
         particlePtr->maxLife = patternUtilsPS::getRandVal(pattern);

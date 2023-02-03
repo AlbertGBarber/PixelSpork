@@ -138,6 +138,9 @@ Other Settings:
                                    shouldn't need to change this, see comments in update() function
     rainbowSat (default 255) -- The saturation of the rainbow mode 
     rainbowVal (default 255) -- The value of the rainbow mode (as part of setting the rainbow color)
+
+Reference vars:
+    breathCount -- The number of breath cycles we've gone through.
 */
 class BreathEyeSL : public EffectBasePS {
     public:
@@ -176,7 +179,8 @@ class BreathEyeSL : public EffectBasePS {
             eyePos,
             eyeHalfSize,
             eyeHalfSizeMax,
-            eyeCenterSize = 0;
+            eyeCenterSize = 0,
+            breathCount = 0; //How many total breath cycles we've gone through
         
         bool
             fillBG = false, //sets if the background is to be filled before after each fade, 

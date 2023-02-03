@@ -60,7 +60,7 @@ void StrobeSLSeg::reset(){
     pulseCount = 1;
     colorNum = 0;
     pulseMode = -1;
-    cycleCount = 0;
+    cycleNum = 0;
     pulseBG = false;
     firstHalf = true;
     pause = false;
@@ -108,7 +108,7 @@ void StrobeSLSeg::reset(){
 //When we pulse, we choose the area of the strip to pulse based on a few flag variables and the mode
 //Each time we pulse the color (not the background) we advance a pulse counter
 //Once this reaches the number of set pulses we choose what to do for the next set of pulses:
-//We increment the cycleCount (this tracks how many sets of pulses we've done)
+//We increment the cycleNum (this tracks how many sets of pulses we've done)
 //If this matches cycleCountMax, then we need to pick a new mode and pause (if pulseEvery is false)
 //We then need to check if we need to advance the colorNum, which tracks the palette color index we're at
 //to set a new color
@@ -142,8 +142,8 @@ void StrobeSLSeg::update(){
             switch(pulseMode) {
                 case 0:
                     //the next seg moves forward by one for each set of pulses
-                    //(cycleCount always increments by 1 after a pulse set)
-                    nextSeg = mod16PS( cycleCount, numSegs ); //cycleCount % numSegs;
+                    //(cycleNum always increments by 1 after a pulse set)
+                    nextSeg = mod16PS( cycleNum, numSegs ); //cycleNum % numSegs;
                     //if we're starting from the last seg moving out
                     //we need to reverse our count
                     if(!direct){
@@ -162,7 +162,7 @@ void StrobeSLSeg::update(){
                     break;
                 case 2:
                     //similar to case 0, but we're filling seg lines instead of segments
-                    nextSeg = mod16PS( cycleCount, maxSegLength );//cycleCount % maxSegLength;
+                    nextSeg = mod16PS( cycleNum, maxSegLength );//cycleNum % maxSegLength;
                     if(!direct){
                         nextSeg = maxSegLength - 1 - nextSeg;
                     }
@@ -196,11 +196,11 @@ void StrobeSLSeg::update(){
             }
         } else {
             //if we've finished a set of pulses we need to decide what to do next
-            //we advance the cycleCount since we've finished a set of pulses
-            cycleCount = addMod16PS( cycleCount, 1, cycleCountMax );//(cycleCount + 1) % cycleCountMax;
-            //if the cycleCount is 0 then we've gone through a full strobe cycle for the current mode
+            //we advance the cycleNum since we've finished a set of pulses
+            cycleNum = addMod16PS( cycleNum, 1, cycleCountMax );//(cycleNum + 1) % cycleCountMax;
+            //if the cycleNum is 0 then we've gone through a full strobe cycle for the current mode
             //so we need to move to the next mode and trigger a pause (maybe)
-            if( cycleCount == 0 ){
+            if( cycleNum == 0 ){
                 setPulseMode();
                 setCycleCountMax();
                 //if we only want to pause once a strobe cycle is finished, do so
@@ -211,7 +211,7 @@ void StrobeSLSeg::update(){
 
             //The cycle loop limit is the number of cycles until all the segments have been filled with color once
             //if this has happened we need to chooses a new color and flip the direction (maybe)
-            boolTemp = mod16PS( cycleCount, cycleLoopLimit ) == 0; //(cycleCount % cycleLoopLimit == 0);
+            boolTemp = mod16PS( cycleNum, cycleLoopLimit ) == 0; //(cycleNum % cycleLoopLimit == 0);
             //if newColor is true, we always choose a the next color for each pulse cycle
             //otherwise we only do it at the end of a full strobe cycle
             if(newColor || boolTemp){

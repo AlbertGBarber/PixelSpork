@@ -79,18 +79,18 @@ Constructor Inputs:
     Rate -- The update rate (ms)
 
 Trail Modes:
-The waves can be drawn with a lead or trailing tail or both
-The gradLength sets how long the waves will be
-The same gradLength will be used for each wave type, so for double waves the wave lengths will be half the gradLength
-The Modes:
-  0: Only ending trail will be drawn
-  1: Both ending and leading trails will be drawn (at half gradLength)
-  2: Only the leading trail will be drawn
-For example, with a trail length of 7, the modes will produce:
-(The trail head is *, - are the trail)
-  0: ------* 
-  2: ---*---
-  3: *------
+    The waves can be drawn with a lead or trailing tail or both
+    The gradLength sets how long the waves will be
+    The same gradLength will be used for each wave type, so for double waves the wave lengths will be half the gradLength
+    The Modes:
+    0: Only ending trail will be drawn
+    1: Both ending and leading trails will be drawn (at half gradLength)
+    2: Only the leading trail will be drawn
+    For example, with a trail length of 7, the modes will produce:
+    (The trail head is *, - are the trail)
+    0: ------* 
+    2: ---*---
+    3: *------
 
 Functions:
     setPalette(*newPalette) -- Sets the palette used for the waves
@@ -119,6 +119,10 @@ Other Settings:
 Flags:
     initFillDone -- Flag for doing the initial fill of the gradients on the strip
                     Set true once the fill is done
+
+Reference Vars:
+    totalCycleLength -- Total length of all the gradients combined, set by setTotalEffectLength()
+    cycleNum -- Tracks what how many patterns we've gone through, resets every totalCycleLength cycles, set during update()
 
 Notes:
 */

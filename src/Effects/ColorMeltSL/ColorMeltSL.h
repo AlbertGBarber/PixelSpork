@@ -67,7 +67,7 @@ Constructor inputs:
     phaseFreq -- How quickly the melts are shifted arround, can cause weirdness
                  Recommend values between 1 - 5
                  Passing in 0 to constructor will set phaseEnable to false
-    Rate -- The update rate (ms) note that this is synced with all the particles.
+    rate -- The update rate (ms) note that this is synced with all the particles.
 
 Functions:
     update() -- updates the effect 

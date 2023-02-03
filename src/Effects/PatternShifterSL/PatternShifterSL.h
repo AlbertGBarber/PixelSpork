@@ -71,27 +71,26 @@ Constructor inputs:
                     make sure the pattern's segment set matches the effect's!!!
                     You can change the shiftPattern later using setShiftPattern()
     palette -- The colors used to color the pattern
-    BgColor -- The color of the background, specified by 255 in the shiftPattern
+    bgColor -- The color of the background, specified by 255 in the shiftPattern
     repeat -- If the pattern is to be repeated along the segment set
-    Rate -- The update rate (ms) note that this is synced with all the particles.
+    rate -- The update rate (ms) note that this is synced with all the particles.
 
 Functions:
     setShiftPattern(shiftPatternPS *newShiftPattern) -- Sets the effect shiftPattern, will restart the effect
-    setRepeat(bool newRepeat) -- Sets if the shiftPattern will be repeated along the segment set
+    setRepeat(newRepeat) -- Sets if the shiftPattern will be repeated along the segment set
     reset() -- Restarts the effect
     update() -- updates the effect 
+
+Other Settings:
+    colorMode (default 0) -- sets the color mode for the pattern pixels (see segDrawUtils::setPixelColor)
+    bgColorMode (default 0) -- sets the color mode for the background pixels (see segDrawUtils::setPixelColor)
 
 Reference Vars:
     cycleNum -- How many times the pattern has be shifted,
                 resets every time the pattern has been cycled across the whole segment set
     repeat -- (see notes above), set using setRepeat(bool newRepeat)
 
-Other Settings:
-    colorMode (default 0) -- sets the color mode for the pattern pixels (see segDrawUtils::setPixelColor)
-    bgColorMode (default 0) -- sets the color mode for the background pixels (see segDrawUtils::setPixelColor)
-
 */
-
 class PatternShifterSL : public EffectBasePS {
     public:
         PatternShifterSL(SegmentSet &SegmentSet, shiftPatternPS *ShiftPattern, palettePS *Palette, CRGB BgColor, bool Repeat, uint16_t Rate);  

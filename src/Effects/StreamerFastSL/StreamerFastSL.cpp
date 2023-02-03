@@ -95,7 +95,7 @@ void StreamerFastSL::setPaletteAsPattern(uint8_t colorLength, uint8_t spacing){
 
 //resets the streamer to it's original starting point
 void StreamerFastSL::reset(){
-    cycleCount = 0;
+    cycleNum = 0;
     initFillDone = false;
 }
 
@@ -160,7 +160,7 @@ CRGB StreamerFastSL::pickStreamerColor(uint8_t nextPattern){
 //note that a spacing pixel is indicated by a pattern value of 255, these pixels will be filled in with the bgColor
 void StreamerFastSL::initalFill(){
     
-    cycleCount = 0;
+    cycleNum = 0;
 
     //fetch some core vars
     numLines = segmentSet.maxSegLength;
@@ -170,15 +170,15 @@ void StreamerFastSL::initalFill(){
     prevPattern = 255; //base value for previous pattern value (we don't expect the first value of the pattern to be spacing)
 
     for(int32_t i = numLinesLim; i >= 0; i--){
-        nextPattern = patternUtilsPS::getPatternVal(pattern, cycleCount);
+        nextPattern = patternUtilsPS::getPatternVal(pattern, cycleNum);
         nextColor = pickStreamerColor(nextPattern);
 
         //write out the copied color to the whole line
         segDrawUtils::drawSegLineSimple(segmentSet, i, nextColor, 0);
         //every time we draw a pixel, we're basically doing one whole update()
-        //so we need to increment the cycleCount, so that once the preFill is done, the 
+        //so we need to increment the cycleNum, so that once the preFill is done, the 
         //next update() call will sync properly
-        cycleCount = addMod16PS( cycleCount, 1, patternLength );
+        cycleNum = addMod16PS( cycleNum, 1, patternLength );
     }
 
     initFillDone = true;
@@ -211,7 +211,7 @@ void StreamerFastSL::update(){
             //if we're at the final pixel, we need to insert a new color
             //otherwise, we just copy the color from the next pixel location into the current one
             if (i == 0) {
-                nextPattern = patternUtilsPS::getPatternVal(pattern, cycleCount);
+                nextPattern = patternUtilsPS::getPatternVal(pattern, cycleNum);
                 nextColor = pickStreamerColor(nextPattern);
             } else {
                 //Copy the pixel color from the previous line
@@ -225,7 +225,7 @@ void StreamerFastSL::update(){
             segDrawUtils::drawSegLineSimple(segmentSet, i, nextColor, 0);
 
         }
-        cycleCount = addMod16PS( cycleCount, 1, pattern->length ); //one update = one cycle
+        cycleNum = addMod16PS( cycleNum, 1, pattern->length ); //one update = one cycle
 
         showCheckPS();
     }

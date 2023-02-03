@@ -4,7 +4,6 @@
 //TODO
 //  --Change bool array to uint8_t's where the bools are stored as the bits of the uint8_t's
 //    Will have to caculate the length of the array and write function for getting/setting
-//  --Add a set number of dissolves?, like CrossFadeCycle
 
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
@@ -64,12 +63,12 @@ Constructor Inputs
     randMode -- The randMode that will be used for the dissolves (see above)
     spawnRateInc -- The rate increase at which the total number of lines that are set each cycle (ms)
                     Setting this closeish (up to double?) to the update rate looks the best
-    Rate -- update rate (ms)
+    rate -- update rate (ms)
 
 Functions:
     setPaletteAsPattern() -- Sets the effect pattern to match the current palette
     resetPixelArray() -- effectively restarts the current dissolve
-    setLineMode(bool newLineMode) -- Sets the line mode (see Other Settings below), 
+    setLineMode(newLineMode) -- Sets the line mode (see Other Settings below), 
                                      also restarts the dissolve, and sets the setAllTheshold to 1/10 the numLines
     update() -- updates the effect
 
@@ -88,7 +87,9 @@ Other Settings:
                                !!FOR reference only, set using setLineMode();
 
 Reference vars:
-    hangTimeOn - If true, then the effect is paused. Note that the effect is not re-draw while hanging.
+    hangTimeOn -- If true, then the effect is paused. Note that the effect is not re-draw while hanging.
+    dissolveCount -- The number of dissolves we've done (note this is not reset by any function, so you'll have to manually reset it if needed)
+    numCycles -- How many update cycles we've been through (resets when we've gone through the whole pattern)
 
 Notes:
     Requires an array of bools of equal size to the number of pixels in the segment set
@@ -110,13 +111,14 @@ class DissolveSL : public EffectBasePS {
         uint8_t
             randMode,
             colorMode = 0,
-            numCycles = 0, //how many update cycles we've been through, for reference
             maxNumSpawnBase = 1;
 
         uint16_t
             setAllThreshold,
             hangTime = 0,
-            spawnRateInc;
+            spawnRateInc,
+            dissolveCount = 0, //The number of full dissolves we've done
+            numCycles = 0; //how many update cycles we've been through (resets when we've gone through the whole pattern)
 
         bool
             lineMode = true, //for reference, set using setLineMode()

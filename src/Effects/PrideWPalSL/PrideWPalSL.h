@@ -104,7 +104,7 @@ Constructor inputs:
     briDirect -- Sets if the brightness waves move with or against the colors, true is with
     randomBriInc -- Set to true will randomize briThetaInc16 min and max, and the briThetaFreq
                     See init() for the ranges
-    Rate -- The update rate (ms) note that this is synced with all the particles.
+    rate -- The update rate (ms) note that this is synced with all the particles.
 
     For the constuctor will all the inputs, the variables in order are:
         GradLength, BrightDepthMin, BrightDepthMax, BriThetaFreq, BriThetaInc16Min,

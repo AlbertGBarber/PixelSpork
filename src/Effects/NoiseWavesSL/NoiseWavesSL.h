@@ -66,7 +66,7 @@ Constructor inputs:
     palette (optional, see constructors) -- A custom palette passed to the effect, the default is the 
                                            lava colors palette encoded below
     numColors (optional, see constructors) -- How many colors will be in the randomly created palette
-    BgColor --  The color of the background pixels
+    bgColor --  The color of the background pixels
     blendScale -- Sets how "zoomed-in" the noise is. (See Inputs Guide above)
     phaseScale -- Changes how fast the waves move. Must be greater than 0. (See Inputs Guide above)
     freqScale -- Sets how long the waves are. Must be greater than 0. (See Inputs Guide above)

@@ -67,7 +67,7 @@ Inputs:
                                                      1 for the offsets to be picked from between the first two colors
     grouping -- Min value of 1. The maximum number of consecutive pixels that can share the same offset
                (the offsets are grouped in randomly lengths up to the Grouping value)
-    Rate -- The update rate (ms)
+    rate -- The update rate (ms)
 
 Functions:
     resetOffsets() -- Resets the offset array, recaulating offsets for each pixel, will cause a jump if done mid-effect
@@ -86,6 +86,8 @@ Other Settings:
 Reference Vars:
     grouping -- (see notes above) set this using setGrouping()
     sMode -- (see notes above) set this using setMode()
+    totalCycleLength -- The total number of possible offsets a pixel can have (one for each fade color)
+    cycleNum -- Tracks how many update's we've done, resets at totalCycleLength (each pixel will have cycled through the pattern once)
 
 Notes:
 */

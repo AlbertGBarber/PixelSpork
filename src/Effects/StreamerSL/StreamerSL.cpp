@@ -126,7 +126,7 @@ void StreamerSL::setPaletteAsPattern(uint8_t colorLength, uint8_t spacing){
 //Also re-creates the prevLineColors array
 void StreamerSL::reset(){
     blendStep = 0;
-    cycleCount = 0;
+    cycleNum = 0;
 
     numSegs = segmentSet.numSegs;
 
@@ -207,7 +207,7 @@ void StreamerSL::updateFade(){
     //But prevLineColors[] only set at the end of each loop, so we need to pre-fill it for the first loop iteration
     //(note that we use numLinesLim as the 0th line, this is because to get the effect moving in the same
     //direction as the segments, we actually need to draw the lines in reverse, hence we start at the last line)
-    nextPattern = patternUtilsPS::getPatternVal(pattern, cycleCount); //cycleCount is the next index of the pattern
+    nextPattern = patternUtilsPS::getPatternVal(pattern, cycleNum); //cycleNum is the next index of the pattern
     for(uint16_t j = 0; j < numSegs; j++){
         prevLineColors[j] = getNextColor(numLinesLim, j);
     }
@@ -216,10 +216,10 @@ void StreamerSL::updateFade(){
     for(uint16_t i = 0; i < numLines; i++){
 
         //the next color is the color of the next line
-        nextPatternIndex = (i + cycleCount + 1);
+        nextPatternIndex = (i + cycleNum + 1);
         nextPattern = patternUtilsPS::getPatternVal(pattern, nextPatternIndex);
 
-        //Based on the colorMode, lines will either be a soild color or not
+        //Based on the colorMode, lines will either be a solid color or not
         //For color modes where each line pixel is a different color, we walk over the line, blending each pixel in order
         //Otherwise, the lines are solid colors, so we only fetch and blend the line color once, then draw the whole line
         switch(colorMode){
@@ -248,10 +248,10 @@ void StreamerSL::updateFade(){
 
     //each cycle we advance the blend step
     //if the blend step wraps back to zero, then a blend is finished
-    //and we need to advance the cycleCount, so that all the streamer colors shift forwards
+    //and we need to advance the cycleNum, so that all the streamer colors shift forwards
     blendStep = addmod8(blendStep, 1, fadeSteps); 
     if(blendStep == 0){
-        cycleCount = addMod16PS( cycleCount, 1, patternLength );
+        cycleNum = addMod16PS( cycleNum, 1, patternLength );
     }
 
 }
@@ -267,7 +267,7 @@ void StreamerSL::updateNoFade(){
     for(uint16_t i = 0; i < numLines; i++){
 
         //the next color is the color of the next line
-        nextPatternIndex = i + cycleCount;
+        nextPatternIndex = i + cycleNum;
         nextPattern = patternUtilsPS::getPatternVal(pattern, nextPatternIndex);
 
         //For each segment pixel in the line, get its color (accouting for colorModes)
@@ -281,5 +281,5 @@ void StreamerSL::updateNoFade(){
         }   
     }
     //No blending, so the color change after each step
-    cycleCount = addMod16PS( cycleCount, 1, patternLength );
+    cycleNum = addMod16PS( cycleNum, 1, patternLength );
 }

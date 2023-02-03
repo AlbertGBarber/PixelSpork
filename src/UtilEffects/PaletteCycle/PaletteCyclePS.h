@@ -50,9 +50,9 @@ Example calls:
 
 Constructor Inputs:
     *paletteSet -- The pointer to the set of palettes used for the blends
-    Looped -- set true, it will reset the blend once it has ended, cycling back to the start palette
-    TotalSteps (max 255) -- The total number of steps taken to blend between the palettes
-    Rate -- The update rate of the blend (ms)
+    looped -- set true, it will reset the blend once it has ended, cycling back to the start palette
+    totalSteps (max 255) -- The total number of steps taken to blend between the palettes
+    rate -- The update rate of the blend (ms)
 
 Functions:
     reset(*newPaletteSet) -- Restarts the blend with a new palette set, with the same steps and update rate
@@ -63,13 +63,17 @@ Functions:
     update() -- updates the effect
 
 Other Settings:
-    randomize (default false) -- //Will randomize the each palette in the cycle, every cycle
+    randomize (default false) --  Will randomize the each palette in the cycle, every cycle
                                   note that this will permanently modify palettes
                                   so make sure you aren't using them elsewhere!
                                   Combine this with looped, to produce constantly changing palettes
 
 Flags:
     cycleEnd -- Set when we've blended through all the palettes in the palette array 
+
+Reference Vars:
+    nextIndex -- The index of the palette we're shifting towards in the paletteSet (will reset to 0 if looped, once all the palettes have been cycled)
+    currentIndex -- The index of the palette we're shifting from in the paletteSet
 
 Notes:
 To make sure this works well with various effects, we manually set the length of the blendPalette to be the same each cycle
@@ -87,7 +91,8 @@ The caculations for the 3 and 2 blends will be done 5 times, instead of the 3 if
 
 Most palettes aren't very long, so it shouldn't be a huge issue, but something to be aware of!
 
-the PaletteBlendPS instance  (PB) is public, but don't mess with it unless you know what you're doing */
+the PaletteBlendPS instance (PB) is public, but don't mess with it unless you know what you're doing 
+*/
 class PaletteCyclePS : public EffectBasePS {
     public:
         PaletteCyclePS(paletteSetPS *PaletteSet, bool Looped, uint8_t TotalSteps, uint16_t Rate);  
@@ -95,9 +100,8 @@ class PaletteCyclePS : public EffectBasePS {
         ~PaletteCyclePS();
         
         uint8_t
-            nextIndex,
-            currentIndex = 0,
-            maxPaletteLength = 0,
+            nextIndex, //For reference only!!
+            currentIndex = 0, //For reference only!!
             getTotalSteps();
 
         bool 
@@ -127,7 +131,8 @@ class PaletteCyclePS : public EffectBasePS {
             prevTime = 0;
         
         uint8_t
-            paletteLength;
+            paletteLength,
+            maxPaletteLength = 0;
 };
 
 #endif

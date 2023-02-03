@@ -131,9 +131,11 @@ void EdgeBurstSL::update(){
 
 //randomizes the wave start point (the offset)
 //sets the flipFlop so we know not to set the offset more than once per wave cycle
+//Also increments the burstCount var to track how many bursts we've done
 //If randomizePal is true, the colors in paletteTemp will be set randomly
 void EdgeBurstSL::pickRandStart(){
     offsetFlipFlop = !offsetFlipFlop;
+    burstCount++;
     offset = random16(numLines);
     if(randomizePal){
         paletteUtilsPS::randomize(&paletteTemp);

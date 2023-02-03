@@ -65,7 +65,7 @@ void SegWavesFast::init(CRGB BgColor, uint16_t Rate){
 
 //resets the wave to it's original starting point
 void SegWavesFast::reset(){
-    cycleCount = 0;
+    cycleNum = 0;
     initFillDone = false;
 }
 
@@ -161,7 +161,7 @@ void SegWavesFast::getDirection(){
 //To do this we basically do one full update cycle, drawing the wave pattern onto the whole strip
 //note that a spacing pixel is indicated by a pattern value of 255, these pixels will be filled in with the bgColor
 void SegWavesFast::initalFill(){
-    cycleCount = 0;
+    cycleNum = 0;
     uint16_t patternLength = pattern->length;
     prevPattern = 255; //base value for previous pattern value, it's set to the spacing value b.c we don't expect a pattern to start with spacing
     
@@ -173,14 +173,14 @@ void SegWavesFast::initalFill(){
     //So that the loop either runs from the first to last segment, or visa versa
     for (int32_t i = startLimit; i != endLimit; i += loopStep) {
 
-        nextPattern = patternUtilsPS::getPatternVal(pattern, cycleCount);
+        nextPattern = patternUtilsPS::getPatternVal(pattern, cycleNum);
         nextColor = pickStreamerColor(nextPattern);
 
         segDrawUtils::fillSegColor(segmentSet, i, nextColor, 0);
         //every time we fill a segment, we're basically doing one whole update()
-        //so we need to increment the cycleCount, so that once the preFill is done, the 
+        //so we need to increment the cycleNum, so that once the preFill is done, the 
         //next update() call will sync properly
-        cycleCount = addMod16PS( cycleCount, 1, patternLength );
+        cycleNum = addMod16PS( cycleNum, 1, patternLength );
     }
     initFillDone = true;
 }
@@ -214,7 +214,7 @@ void SegWavesFast::update(){
             //If we're at the final segment, we need to insert a new color
             //otherwise, we just copy the color from the next segment into the current one
             if (i == coloredSeg) {
-                nextPattern = patternUtilsPS::getPatternVal(pattern, cycleCount);
+                nextPattern = patternUtilsPS::getPatternVal(pattern, cycleNum);
                 nextColor = pickStreamerColor(nextPattern);
             } else {
                 //Copy the pixel color from the previous segment, based on the direction (loopStep)
@@ -225,7 +225,7 @@ void SegWavesFast::update(){
             //Color the segment
             segDrawUtils::fillSegColor(segmentSet, i, nextColor, 0);
         }
-        cycleCount = addMod16PS( cycleCount, 1, pattern->length );//one update = one cycle
+        cycleNum = addMod16PS( cycleNum, 1, pattern->length );//one update = one cycle
 
         showCheckPS();
     }

@@ -50,15 +50,15 @@ Example calls:
     The fire updates at 70ms
  
 Constructor Inputs:
-    Palette-- The palette used for the fire, should be arranged from coldest to hottest colors
-    BgColor -- The color used for the coldest parts of the fire ( usually blank (0) )
-    Cooling -- Indicates how fast a flame cools down. More cooling means shorter flames,
+    palette-- The palette used for the fire, should be arranged from coldest to hottest colors
+    bgColor -- The color used for the coldest parts of the fire ( usually blank (0) )
+    cooling -- Indicates how fast a flame cools down. More cooling means shorter flames,
               Recommended values are between 20 and 100. 50 seems the nicest.
-    Sparking -- indicates the chance (out of 255) that a spark will ignite. A higher value makes the fire more active.
+    sparking -- indicates the chance (out of 255) that a spark will ignite. A higher value makes the fire more active.
                Suggested values lay between 50 and 200. 90 & 120 work well.
-    Blend -- Determines if the fire colors will be blended together according to temperature
+    blend -- Determines if the fire colors will be blended together according to temperature
             Blended fires are smoother, but need more processing power
-    Rate -- The update rate (ms) (recommended between 30-80ms)
+    rate -- The update rate (ms) (recommended between 30-80ms)
 
 Functions:
     reset() -- Resets the effect, use this if you change any segment lengths

@@ -94,22 +94,22 @@ Constructor inputs for creating a particle set:
     Direct -- The direction the drops will fall
  
 Trail Modes:
-Taken from particlePS.h:
-Trails blend cleanly into the background color over the trail length
-(like waving a flame around, or a metor trail)
-Trail options:
-   0: no trails
-   1: one trail facing away from the direction of motion (like a comet)
-   2: two trails, facing towards both directions of motion
-   3: one trail facing towards the direction of motion
-   4: Infinite trails that persist after the particle (no fading)
-For example, with a trail length of 4, the modes will produce:
-(The trail head is *, - are the trail, particle is moving to the right ->)
- 0:     *
- 1: ----* 
- 2: ----*----
- 3:     *----
- 4: *****
+    Taken from particlePS.h:
+    Trails blend cleanly into the background color over the trail length
+    (like waving a flame around, or a metor trail)
+    Trail options:
+    0: no trails
+    1: one trail facing away from the direction of motion (like a comet)
+    2: two trails, facing towards both directions of motion
+    3: one trail facing towards the direction of motion
+    4: Infinite trails that persist after the particle (no fading)
+    For example, with a trail length of 4, the modes will produce:
+    (The trail head is *, - are the trail, particle is moving to the right ->)
+    0:     *
+    1: ----* 
+    2: ----*----
+    3:     *----
+    4: *****
 
 Trail flags:
     There is a flag for each type of trail. When used with trailType of 6, each drop's trail will be picked randomly
@@ -118,19 +118,19 @@ Trail flags:
     if no flags are set, drops will spawn with no trails
 
 DimPow:
-The rate of dimming for the trails can be adjusted using dimPow. This allows you to produce a brighter head
-making the comet effect more noticable
-The range of dimPow is -127 to 127, it's defaulted to 80
-Positive values quicken the dimming, while negative ones slow it down
-setting the negative value below 80, seems to bug it out tho
-Slowing the dimming down is useful for colored backgrounds, as it makes the particles stand out more
+    The rate of dimming for the trails can be adjusted using dimPow. This allows you to produce a brighter head
+    making the comet effect more noticable
+    The range of dimPow is -127 to 127, it's defaulted to 80
+    Positive values quicken the dimming, while negative ones slow it down
+    setting the negative value below 80, seems to bug it out tho
+    Slowing the dimming down is useful for colored backgrounds, as it makes the particles stand out more
 
 Functions:
-    setupDrops(uint8_t newMaxNumDrops) -- Changes the maximum number of drops, but will also clear any active drops
-                                         If you want to increase the number of drops without clearing, set the
-                                         maxNumDrops to your maximum in the constructor. Then lower it before running the
-                                         effect. You can safely raise it again without reseting (set maxNumDrops manualy)
-                                         !!If you lower the maximum number of drops, some active drops may be left on the segments
+    setupDrops(newMaxNumDrops) -- Changes the maximum number of drops, but will also clear any active drops
+                                  If you want to increase the number of drops without clearing, set the
+                                  maxNumDrops to your maximum in the constructor. Then lower it before running the
+                                  effect. You can safely raise it again without reseting (set maxNumDrops manualy)
+                                  !!If you lower the maximum number of drops, some active drops may be left on the segments
     update() -- updates the effect 
 
 Other Settings:

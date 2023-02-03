@@ -82,8 +82,8 @@ Constructor inputs:
                   Basically changes how fast the colors blend
                   Between 20 - 100 looks good
     randomize -- Set to true will randomize and shift the phase values over time (and also randomize the freqs once)
-    Rate -- The update rate (ms) note that this is synced with all the particles.
-
+    rate -- The update rate (ms) note that this is synced with all the particles.
+vb
 Functions:
     randomizeFreq(freqMin, freqMax) -- Sets both wave frequencies to be a random value between the passed in min and max
     update() -- updates the effect 
@@ -133,7 +133,6 @@ class PlasmaSL : public EffectBasePS {
             phase2Range = 255;
         
         uint16_t
-            holdTime = 5000,
             blendSteps;
         
         bool 

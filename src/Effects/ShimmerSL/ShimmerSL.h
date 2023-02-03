@@ -36,11 +36,11 @@ Example calls:
     Each pixel will be set to a color from the palette, dimmed randomly, refreshing at 80ms
 
 Constructor Inputs:
-    Palette(optional, see constructors) -- the palette from which colors will be choosen randomly
-    Color(optional, see constructors) -- the color that the randomly choosen pixels will be set to
-    ShimmerSLMin (min 0, max 255) -- The minimum amount of dim that will be applied to a pixel 
-    ShimmerSLMax (min 0, max 255) -- The maximum amount of dim that will be applied to a pixel
-    Rate -- The update rate (ms)
+    palette(optional, see constructors) -- the palette from which colors will be choosen randomly
+    color(optional, see constructors) -- the color that the randomly choosen pixels will be set to
+    shimmerSLMin (min 0, max 255) -- The minimum amount of dim that will be applied to a pixel 
+    shimmerSLMax (min 0, max 255) -- The maximum amount of dim that will be applied to a pixel
+    rate -- The update rate (ms)
 
 Functions:
     setSingleColor(Color) -- Sets the effect to use a single color for the pixels
@@ -52,8 +52,8 @@ Other Settings:
     lineMode (default true) -- If false, each pixel will have it's own shimmer amount (rather than it being the same along segment lines)
                                Only really useful if you want multi-segment color modes and don't want the shimmers in lines
     randMode (default 0) -- sets how colors will be picked
-                           0: Picks colors from the palette
-                           1: Picks colors at random
+                            0: Picks colors from the palette
+                            1: Picks colors at random
 */
 class ShimmerSL : public EffectBasePS {
     public:

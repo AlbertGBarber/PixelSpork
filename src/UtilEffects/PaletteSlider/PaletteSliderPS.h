@@ -69,7 +69,7 @@ Constructor Inputs:
     blendSteps -- The total number of steps taken to blend between the palette colors.
     singleShift -- Sets if the colors will cycle using single shifts, or shift by the whole palette
                    (see single shift explanation above)
-    Rate -- The update rate of the blend (ms)
+    rate -- The update rate of the blend (ms)
 
 Functions:
     setPaletteAsPattern() -- Sets the effect pattern to match the current palette.
@@ -79,6 +79,9 @@ Functions:
 
 Other Settings:
     holdTime (default 0) -- Sets a time (ms) that the sliderPalette will be pause for after finishing a transiton before starting the next
+
+Reference Vars:
+    patternIndex -- How many full palette blends we've done, resets every time we've finshed the pattern
 
 Notes:
 */
@@ -92,7 +95,8 @@ class PaletteSliderPS : public EffectBasePS {
 
         uint16_t
             blendSteps,
-            holdTime = 0;
+            holdTime = 0,
+            patternIndex = 0; //How many full palette blends we've done, for reference only
         
         bool
             singleShift;
@@ -128,8 +132,7 @@ class PaletteSliderPS : public EffectBasePS {
         uint16_t
             patternStep,
             sliderPalLen,
-            blendStep = 0,
-            patternIndex = 0;
+            blendStep = 0;
         
         bool
             holdActive = false;

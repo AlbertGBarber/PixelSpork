@@ -19,7 +19,7 @@ void RainbowCyclePS::init(uint16_t Rate){
     //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
     bindSegPtrPS();
     bindClassRatesPS();
-    cycleCount = 0;
+    cycleNum = 0;
     setLength(length);
 }
 
@@ -55,16 +55,16 @@ void RainbowCyclePS::update(){
         
         //prevents cycle count from overflowing by resetting it when the cycle loops
         //very important to keep the rainbow correct
-        cycleCount = addMod16PS(cycleCount, 1, maxCycleLength); //(cycleCount + 1) % (maxCycleLength); 
+        cycleNum = addMod16PS(cycleNum, 1, maxCycleLength); //(cycleNum + 1) % (maxCycleLength); 
         ledCount = 0; //reset the ledCount, the total number of leds we've set in the current cycle
 
         //stepVal is set so that it increases/decreases as a cycle progresses
         //offsetting the wheel input for each cycle
-        //cycleCount is clamped the maxCycleLength above
+        //cycleNum is clamped the maxCycleLength above
         //note that maxCycleLength is added so that the value is never negative 
         //(we use addMod16 on with this value later, which needs positive inputs, 
         //adding the maximum value of the a mod before doing the mod doesn't change the result)
-        stepVal = maxCycleLength + cycleCount * stepDirect; 
+        stepVal = maxCycleLength + cycleNum * stepDirect; 
 
         //for each segment, set each pixel in the segment to the appropriate rainbow color
         //we must call getSegmentPixel(segmentSet, i, j) to account for reversed segments
@@ -76,7 +76,7 @@ void RainbowCyclePS::update(){
                 ledCount++;
                 //we always need to make a rainbow of length # of steps
                 //this is determined using (stepVal + ledCount) % length * (256 / length)
-                //where stepVal = maxCycleLength + cycleCount * stepDirect; (see above for explination)
+                //where stepVal = maxCycleLength + cycleNum * stepDirect; (see above for explination)
                 //and ledCount is the current led number
                 //(stepVal + ledCount) % length offsets our position, while keeping it between 0 and length
                 //while * (256 / length) shifts the counter in (256/length) steps

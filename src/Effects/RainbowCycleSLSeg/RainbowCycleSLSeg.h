@@ -55,10 +55,9 @@ Other Settings:
     satur (default 255) -- rainbow saturation value
     value (default 255) -- rainbow value value
 
-Reference Vars (do not set these directly):
-    length -- The length of the rainbow. Set this using setLength();
-
-Notes: 
+Reference Vars:
+    length -- The length of the rainbow. Set using setLength();
+ 
 */
 class RainbowCycleSLSeg : public EffectBasePS {
     public:
@@ -94,7 +93,7 @@ class RainbowCycleSLSeg : public EffectBasePS {
             stepDirect;
         
         uint16_t
-            cycleCount,
+            cycleNum,
             numLines,
             numSegs,
             maxCycleLength,

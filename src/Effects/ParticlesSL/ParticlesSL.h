@@ -108,9 +108,9 @@ Constructor inputs for creating a particle set:
     palette -- The palette than will be used for the particle colors 
     BgColor -- The background color used for the effect
     numParticles -- The number of particles that will be created for the effect
-    Direction -- The direction of the particle's motion (pass in any number > 1 to set it randomly)
-    baseSpeed -- The minimum speed of the particles
-    speedRange -- The amount the speed may vary up from the base speed ( ie baseSpeed + random(range) )
+    direction -- The direction of the particle's motion (pass in any number > 1 to set it randomly)
+    baseSpeed -- The minimum speed of the particles (ms)
+    speedRange -- The amount the speed may vary up from the base speed ( ie baseSpeed + random(range) ) (ms)
     size -- The minimum size of the particles (min value 1)
     sizeRange -- The amount the size can vary from the base size (ie size + random(range))
     trailType -- The type of trails used for the particles (see below and particlePS.h),
@@ -125,30 +125,30 @@ Constructor inputs for creating a particle set:
     randColor -- If the colors are to be choosen randomly from the palette (up to the value passed in for colorIndex)
 
 Trail Modes:
-Taken from particlePS.h:
-Trails blend cleanly into the background color over the trail length
-(like waving a flame around, or a metor trail)
-Trail options:
-   0: no trails
-   1: one trail facing away from the direction of motion (like a comet)
-   2: two trails, facing towards both directions of motion
-   3: one trail facing towards the direction of motion
-   4: Infinite trails that persist after the particle (no fading)
-For example, with a trail length of 4, the modes will produce:
-(The trail head is *, - are the trail, particle is moving to the right ->)
- 0:     *
- 1: ----* 
- 2: ----*----
- 3:     *----
- 4: *****
+    Taken from particlePS.h:
+    Trails blend cleanly into the background color over the trail length
+    (like waving a flame around, or a metor trail)
+    Trail options:
+    0: no trails
+    1: one trail facing away from the direction of motion (like a comet)
+    2: two trails, facing towards both directions of motion
+    3: one trail facing towards the direction of motion
+    4: Infinite trails that persist after the particle (no fading)
+    For example, with a trail length of 4, the modes will produce:
+    (The trail head is *, - are the trail, particle is moving to the right ->)
+    0:     *
+    1: ----* 
+    2: ----*----
+    3:     *----
+    4: *****
 
 DimPow:
-The rate of dimming for the trails can be adjusted using dimPow. This allows you to produce a brighter head
-making the comet effect more noticable
-The range of dimPow is -127 to 127, it's defaulted to 80
-Positive values quicken the dimming, while negative ones slow it down
-setting the negative value below 80, seems to bug it out tho
-Slowing the dimming down is useful for colored backgrounds, as it makes the particles stand out more
+    The rate of dimming for the trails can be adjusted using dimPow. This allows you to produce a brighter head
+    making the comet effect more noticable
+    The range of dimPow is -127 to 127, it's defaulted to 80
+    Positive values quicken the dimming, while negative ones slow it down
+    setting the negative value below 80, seems to bug it out tho
+    Slowing the dimming down is useful for colored backgrounds, as it makes the particles stand out more
 
 Functions:
     reset() -- resets all particles to the starting locations
@@ -225,7 +225,7 @@ class ParticlesSL : public EffectBasePS {
 
         uint16_t 
             speed,
-            updateRate = 0, //initilized to 0 to garrentee an initial update
+            updateRate = 0, //initilized to 0 to ensure an initial update
             position,
             size,
             maxPosition,

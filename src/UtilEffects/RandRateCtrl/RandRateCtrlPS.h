@@ -32,11 +32,11 @@ Example calls:
     the output rate will change every 160ms
 
 Constructor Inputs:
-    BaseRate -- The base rate that the random rate is added/subtracted from
-    RateRangeMin (int16_t, so it can be negative) -- The lowest possible random amount to be added to the baseRate
-    RateRangeMax (int16_t, so it can be negative) -- The highest possible random amount to be added to the baseRate
-    Easing -- Sets the rate easing setting used in RateCtrl 
-    Rate -- The update rate of the utility (ms)
+    baseRate -- The base rate that the random rate is added/subtracted from
+    rateRangeMin (int16_t, so it can be negative) -- The lowest possible random amount to be added to the baseRate
+    rateRangeMax (int16_t, so it can be negative) -- The highest possible random amount to be added to the baseRate
+    easing -- Sets the rate easing setting used in RateCtrl 
+    rate -- The update rate of the utility (ms)
 
 Functions:
     Note: Most of these are setter functions for changing the varaibles in the RateRandomizer and RateCtrl instances
@@ -45,7 +45,7 @@ Functions:
     setRangeMax(newRangeMax) -- Changes the rateRangeMax used in the RateRandomizer instance 
     setBaseRate(newBaseRate) -- Changes the baseRate used in the RateRandomizer instance
     setRandomizer(newBaseRate, newRangeMin, newRangeMax) -- Changes the base rate, and min/max ranges of the RateRandomizer all at once
-    setEasing(bool newEasing) -- Changes the easing setting of the RateCtrl instance
+    setEasing(newEasing) -- Changes the easing setting of the RateCtrl instance
     reset() -- Ends the current transition instantly
     update() -- updates the effect
 

@@ -26,11 +26,11 @@ Example calls:
     easing is turned off, the utility updates every 100ms
 
 Constructor Inputs:
-    StartRate -- The initial rate for the transition
-    EndRate -- The final/target rate for the transition
-    Easing -- Sets the rate easing setting used in RateCtrl 
-    Cycle -- Sets the utility to cycle continuously between the start and end rates
-    Rate -- The update rate of the utility (ms)
+    startRate -- The initial rate for the transition
+    endRate -- The final/target rate for the transition
+    easing -- Sets the rate easing setting used in RateCtrl 
+    cycle -- Sets the utility to cycle continuously between the start and end rates
+    rate -- The update rate of the utility (ms)
 
 Functions:
     reset(StartRate, EndRate, Rate) -- resets the utility with a new start rate, end rate, and update rate
@@ -46,6 +46,8 @@ Other Settings:
 
 Flags:
     rateReached -- Set when the ulility reaches the end rate 
+
+Reference Vars:
     direct -- Shows what direction the rate is moving (either decreasing or increasing)
 */
 class RateCtrlPS : public EffectBasePS{

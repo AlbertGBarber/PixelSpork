@@ -44,7 +44,7 @@ Constructor Inputs:
     fadeMin (optional, max 255, default 50) -- The minimum amount that a pixel will fade by
     fademax (optional, max 255, default 255) -- The maximum amount that a pixel will fade by
     fadeSteps -- The number of steps it takes a pixel to fade (one step every update cycle)
-    Rate -- The update rate (ms)
+    rate -- The update rate (ms)
 
 Functions:
     setNumGlims(newnumGlims) -- Changes the number of pixels fading,
@@ -63,12 +63,12 @@ Other Settings:
     fillBG (default false) -- sets the background to be redrawn every cycle, useful for bgColorModes that are dynamic
     fadeMin  and fadeMax -- (see Constructor inputs)
 
-Flags / Counters (for reference): 
+Flags: 
     fadeIn -- Tracks is the set of leds is fading in or not, for two sets, this varaible will be toggled mid-set
-    step -- Tracks the fade step we're on, max value is fadeSteSLPS, is reset to 0 once a fade is finished
 
 Reference Vars:
     numGlims -- The number of glimmering particles, set using setNumGlims()
+    step -- Tracks the fade step we're on, max value is fadeSteSLPS, is reset to 0 once a fade is finished
 
 Notes:
     Requires uint16_t array and uint8_t arrays of length up to 2*numGlims to work, make sure you have the memory for them!

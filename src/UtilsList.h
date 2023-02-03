@@ -5,7 +5,7 @@
 #include "UtilEffects/SegOffsetCycler/SegOffsetCyclerPS.h"
 #include "UtilEffects/EffectFade/EffectFaderPS.h"
 #include "UtilEffects/EffectGroup/EffectGroupPS.h"
-#include "UtilEffects/BGRateFill/BGRateFillPS.h"
+#include "UtilEffects/ColorModeFill/ColorModeFillPS.h"
 #include "UtilEffects/PaletteBlender/PaletteBlenderPS.h"
 #include "UtilEffects/RateRandomizer/RateRandomizerPS.h"
 #include "UtilEffects/RandRateCtrl/RandRateCtrlPS.h"

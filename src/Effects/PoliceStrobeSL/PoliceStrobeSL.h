@@ -31,19 +31,19 @@ ie depending on the mode, halve the segment lines will be pulsed at a time.
 Also see StrobeSeg for a segment based strobe effect. Lets you create more complex strobe patterns.
 
 Pausing:
-After a strobe cycle is finished there is a user configurable pause time between cycles
-(or after every set of pulses of pauseEvery is set)
-after which, the strobe will restart
-this can be set to 0
+    After a strobe cycle is finished there is a user configurable pause time between cycles
+    (or after every set of pulses of pauseEvery is set)
+    after which, the strobe will restart
+    this can be set to 0
 
 Backgrounds:
-By default the background is filled in after the end of every pulse set and duing a pause
-Both these can be disabled with the fillBG and fillBGOnPause flags respectively
-This causes the last pulse color to persist after the pulse set is done
+    By default the background is filled in after the end of every pulse set and duing a pause
+    Both these can be disabled with the fillBG and fillBGOnPause flags respectively
+    This causes the last pulse color to persist after the pulse set is done
 
-This effect is fully compatible with color modes, and the bgColor is a pointer, so you can bind it
-to an external color variable
-(see segDrawUtils::setPixelColor)
+    This effect is fully compatible with color modes, and the bgColor is a pointer, so you can bind it
+    to an external color variable
+    (see segDrawUtils::setPixelColor)
 
 Example calls: 
     PoliceStrobeSL(mainSegments, CRGB::Red, CRGB::Blue, 0, 1, 0, 1, 200);
@@ -61,14 +61,14 @@ Example calls:
     The background color is purple
  
 Constructor Inputs:
-    Palette(optional, see constructors) -- Used for making a strobe from a specific palette
-    ColorOne(optional, see constructors) -- Used for making a dual color strobe
-    ColorTwo(optional, see constructors) -- Used for making a dual color strobe
-    BgColor -- The color between strobe pulses. It is a pointer, so it can be tied to an external variable
-    NumPulses -- The number of pulses per strobe
-    PauseTime -- The pause time between strobe cycles
-    PulseMode -- The type of strobe that will be used (see modes above)
-    Rate -- The update rate of the strobe (ms)
+    palette(optional, see constructors) -- Used for making a strobe from a specific palette
+    colorOne(optional, see constructors) -- Used for making a dual color strobe
+    colorTwo(optional, see constructors) -- Used for making a dual color strobe
+    bgColor -- The color between strobe pulses. It is a pointer, so it can be tied to an external variable
+    numPulses -- The number of pulses per strobe
+    pauseTime -- The pause time between strobe cycles
+    pulseMode -- The type of strobe that will be used (see modes above)
+    rate -- The update rate of the strobe (ms)
 
 Functions:
     reset() -- Restarts the effect
@@ -87,7 +87,7 @@ Other Settings:
 Flags:
     pause -- set true if a pause is active
 
-Reference Vars (read only, don't change these unless you know what you're doing):
+Reference Vars:
     colorNum -- the palette index of the color currently being pulsed
 
 Notes:

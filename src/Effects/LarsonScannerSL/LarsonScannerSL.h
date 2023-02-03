@@ -45,33 +45,35 @@ Example calls:
     The particle moves at 80ms
 
 Constructor inputs for creating a particle set:
-    ScanColor -- The color of the scan particles
-    ScanType -- The type of scan type (see above)
-    EyeSize -- The size of the particles (min value 1)
-    Traillength -- The length of the trails. Using 0 will turn off the trails for the scanner.
+    scanColor -- The color of the scan particles
+    scanType -- The type of scan type (see above)
+    eyeSize -- The size of the particles (min value 1)
+    traillength -- The length of the trails. Using 0 will turn off the trails for the scanner.
     bgColor -- The background color used for the effect.
-    Rate -- The update rate (ms) note that this is synced with all the particles.
+    rate -- The update rate (ms) note that this is synced with all the particles.
 
 Functions:
-    setColorMode(uint8_t colorMode, bool bgColorMode) -- sets either the main or background color mode for the particles
-                                                        (bgColorMode = true will set the background color mode)
-    setColor(CRGB color) -- sets the scan particle color
-    setScanType(uint8_t newType) -- sets the scan mode (note this re-creates all the particles from scratch)
-    setTrailLength(uint8_t newTrailLength) -- Changes the particle trail lengths. 
-                                             Trials will be turned off if you set the length to 0
-    setEyeSize(uint8_t newEyeSize) -- Sets the eye size of the scanner (the non-trail portion)
-    setBounce(bool newBounce) -- Sets the bounce property of the scanner particles, ie sets if the partciles reverse
-                                when they reach the end of the segments
+    setColorMode(colorMode, bool bgColorMode) -- Sets either the main or background color mode for the particles
+                                                 (bgColorMode = true will set the background color mode)
+    setColor(color) -- sets the scan particle color
+    setScanType(newType) -- sets the scan mode (note this re-creates all the particles from scratch)
+    setTrailLength(newTrailLength) -- Changes the particle trail lengths. 
+                                      Trials will be turned off if you set the length to 0
+    setEyeSize(newEyeSize) -- Sets the eye size of the scanner (the non-trail portion)
+    setBounce(newBounce) -- Sets the bounce property of the scanner particles, ie sets if the partciles reverse
+                            when they reach the end of the segments
     update() -- updates the effect 
 
 Other Settings:
-    scanType -- The current scan mode, for reference only. Change it using the setScanType() function.
-    trailLength -- The The length of the trails, for reference only. Change it using the setTrailLength() function.
-    eyeSize -- The length of the scan particle's body (not trail), for reference only. Change it using the setEyeSize() function.
-    bounce (default true) -- The bounce property of the scan particles, for reference only. Change it using the setBounce() function.
     palette -- The palette than will be used for the particle color (this is always a single length palette since scanners are a single color)
     *scannerInst -- The local ParticlePS instance
     particleSet -- The particleSet used to store the scan particles (and passed to the ParticlePS instance)
+
+Referenc Vars:
+    trailLength -- The The length of the trails. Set using the setTrailLength() function.
+    bounce (default true) -- The bounce property of the scan particles. Set using the setBounce() function.
+    scanType -- The current scan mode. Set using the setScanType() function.
+    eyeSize -- The length of the scan particle's body (not trail). Set using the setEyeSize() function.
 */
 class LarsonScannerSL : public EffectBasePS {
     public:

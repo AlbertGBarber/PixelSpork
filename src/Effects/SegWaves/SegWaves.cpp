@@ -101,7 +101,7 @@ void SegWaves::init(CRGB BgColor, uint16_t Rate){
 //Also recreates the random wave color tracking array
 void SegWaves::reset(){
     blendStep = 0;
-    cycleCount = 0;
+    cycleNum = 0;
     resetSegColors();
     initFillDone = false;
 }
@@ -226,13 +226,13 @@ void SegWaves::update(){
 //So that the segColors array is filled in
 void SegWaves::initFill(){
     for(uint16_t i = 0; i < numSegs; i++){
-        cycleCount = i;
+        cycleNum = i;
         handleRandColors();
     }
     //if we're not doing random colors, we want to reset the 
-    //cycleCount back to 0 so as to not disrupt the fixed pattern cycling
+    //cycleNum back to 0 so as to not disrupt the fixed pattern cycling
     if(randMode == 0){
-        cycleCount = 0;
+        cycleNum = 0;
     }
 }
 
@@ -322,7 +322,7 @@ void SegWaves::handleRandColors(){
     //To do this we first get some info about the final segment (where the color will enter)
     //and the next pattern value
     segNum = numSegsLim;
-    nextPattern = patternUtilsPS::getPatternVal(pattern, cycleCount);
+    nextPattern = patternUtilsPS::getPatternVal(pattern, cycleNum);
     pixelNum = segDrawUtils::getSegmentPixel(segmentSet, segNum, 0);
 
     //Pick the new color
@@ -374,7 +374,7 @@ void SegWaves::handleRandColors(){
 //The colors are re-fetched each cycle to account for color modes and palette blending
 void SegWaves::updateFade(){
 
-    nextPatternIndex = cycleCount;
+    nextPatternIndex = cycleNum;
     //we need the target color for the first segment.
     //before be beginning of the loop since currentColor is only set at the end of each loop step
     currentColor = getNextColor(0, 0);
@@ -382,7 +382,7 @@ void SegWaves::updateFade(){
     for(uint16_t i = 0; i < numSegs; i++){
         
         //the next color is the color of the next segment in line
-        nextPatternIndex = (i + cycleCount + 1);
+        nextPatternIndex = (i + cycleNum + 1);
         nextColor = getNextColor( addMod16PS(i, 1, numSegs), i);
 
         //if the next segment is the same color as the current one, we don't need to do any blending
@@ -402,10 +402,10 @@ void SegWaves::updateFade(){
 
     //each cycle we advance the blend step
     //if the blend step wraps back to zero, then a blend is finished
-    //and we need to advance the cycleCount, so that all the wave colors shift forwards
+    //and we need to advance the cycleNum, so that all the wave colors shift forwards
     blendStep = addmod8(blendStep, 1, fadeSteps); 
     if(blendStep == 0){
-        cycleCount = addMod16PS( cycleCount, 1, patternLength );
+        cycleNum = addMod16PS( cycleNum, 1, patternLength );
         //If the blend has finished, we need to advance the segColors array
         //and pick a new entering color 
         //(only used for random modes)
@@ -419,7 +419,7 @@ void SegWaves::updateFade(){
 void SegWaves::updateNoFade(){
     for(uint16_t i = 0; i < numSegs; i++){
 
-        nextPatternIndex = i + cycleCount;
+        nextPatternIndex = i + cycleNum;
         nextColor = getNextColor( addMod16PS(i, 1, numSegs), i );
 
         //depending on the direction, we reverse the output segment
@@ -428,7 +428,7 @@ void SegWaves::updateNoFade(){
         segDrawUtils::fillSegColor(segmentSet, segNum, nextColor, 0);
     }
 
-    cycleCount = addMod16PS( cycleCount, 1, patternLength );
+    cycleNum = addMod16PS( cycleNum, 1, patternLength );
     //Pick new colors for random modes
     handleRandColors();
 }

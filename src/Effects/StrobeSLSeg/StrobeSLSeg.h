@@ -103,25 +103,25 @@ Example calls:
     a new color from the palette will be choosen for each pulse cycle
  
 Constructor Inputs:
-    Palette(optional, see constructors) -- Used for making a strobe from a specific palette
-    Color(optional, see constructors) -- Used for making a single color strobe
+    palette(optional, see constructors) -- Used for making a strobe from a specific palette
+    color(optional, see constructors) -- Used for making a single color strobe
     numColors (optional, see constructors) -- Used for making a strobe from a randomply generated palette of length numColors
-    BgColor -- The color between strobe pulses. It is a pointer, so it can be tied to an external variable
-    NumPulses -- The number of pulses per strobe
-    PauseTime -- The pause time between strobe cycles
+    bgColor -- The color between strobe pulses. It is a pointer, so it can be tied to an external variable
+    numPulses -- The number of pulses per strobe
+    pauseTime -- The pause time between strobe cycles
     segEach -- If true, strobe mode 0 will be run
     segDual -- If true, strobe mode 1 will be run
     segLine -- If true, strobe mode 2 will be run
     segLineDual -- If true, strobe mode 3 will be run
     segAll -- If true, strobe mode 4 will be run
-    Rate -- The update rate (ms)
+    rate -- The update rate (ms)
 
 Functions:
     reset() -- Restarts the strobe using the first mode
-    setNewColorBool(bool newColorBool) -- Changes the newColor flag
-                                         The newColor flag determines if a new color is choosen every set of pulses
-                                         or after every strobe cycle
-    setpalette(palettePS *newPalette) -- Changes the palette, also re-caculates the number of strobe cycles to do
+    setNewColorBool(newColorBool) -- Changes the newColor flag
+                                     The newColor flag determines if a new color is choosen every set of pulses
+                                     or after every strobe cycle
+    setpalette(*newPalette) -- Changes the palette, also re-caculates the number of strobe cycles to do
     setPulseMode() -- Advances the pulse mode to the next mode (only call this if you manually want to change the mode)
     setCycleCountMax() -- Re-caculates how many strobe cycles to do based on the palette length (only need to call manually if you're doing something funky)                                                     
     update() -- updates the effect
@@ -132,7 +132,6 @@ Other Settings:
     fillBG (default true) -- flag to fill the background after each set of pulses
     fillBGOnPause (default true) -- flag to fill the background during each pause
     pauseEvery (default false) -- pause after every set of pulses rather than after every full strobe cycle
-    newColor (default false) -- reference only, set using setNewColorBool()
     direct (default true) -- The direction of the pulses for modes 0 and 2 (true starts at segment 0)
     alternate (default false) -- Set this to alternate the direction of pulses after each strobe cycle for modes 0 and 2
     randMode (default 0) -- Sets how colors are choosen from the palette
@@ -143,10 +142,11 @@ Other Settings:
 Flags:
     pause -- set true if a pause is active
 
-Reference Vars (read only, don't change these unless you know what you're doing):
+Reference Vars:
+    newColor (default false) -- see Color options notes above, set using setNewColorBool()
     colorNum -- the palette index of the color currently being pulsed
-    pulseMode -- The current pulse mode
-    cycleCount -- The current cycle we're on out of cycleCountMax
+    pulseMode -- The current pulse mode, set using setPulseMode()
+    cycleNum -- How full pulse cycles we've done, resets every cycleCountMax cycles
     cycleCountMax -- The total number of cycles to pulse all segments with all colors shown somewhere at least once 
 */
 class StrobeSLSeg : public EffectBasePS {
@@ -197,7 +197,7 @@ class StrobeSLSeg : public EffectBasePS {
             pauseTime;
         
         uint16_t
-            cycleCount = 0,
+            cycleNum = 0,
             cycleCountMax;
         
         palettePS

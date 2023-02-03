@@ -117,20 +117,20 @@ Example calls:
     !!If using pre-build FastLED colors you need to pass them as CRGB( *color code* )
 
 Constructor Inputs:
-    Palette(optional, see constructors) -- The set of colors that firework colors will be picked from
-    NumColors (optional, see contructors) -- The number of randomly choosen colors for fireworks
-    Color (optional, see contructors) -- A single color for all the fireworks
-    MaxNumFireworks -- The maximum number of simultaneous fireworks that can be active at one time
-    MaxNumSparks -- The number of sparks spawned per firework
-    SpawnChance -- The likelyhood of a firework spawning (percent out of 100, larger is more likley)
-    LifeBase -- The longest time a spark can exist (in ms)
-    SpeedDecay -- The percent a spark's speed is reduced by per update cycle (out of 100)
-    Rate -- The maxium speed for the sparks, also the effect update rate (is a pointer like in other effects)
-    SpeedRange -- The cap for the slowest speed for the sparks (speed is rate + speedRange)
+    palette(optional, see constructors) -- The set of colors that firework colors will be picked from
+    numColors (optional, see contructors) -- The number of randomly choosen colors for fireworks
+    color (optional, see contructors) -- A single color for all the fireworks
+    maxNumFireworks -- The maximum number of simultaneous fireworks that can be active at one time
+    maxNumSparks -- The number of sparks spawned per firework
+    spawnChance -- The likelyhood of a firework spawning (percent out of 100, larger is more likley)
+    lifeBase -- The longest time a spark can exist (in ms)
+    speedDecay -- The percent a spark's speed is reduced by per update cycle (out of 100)
+    rate -- The maxium speed for the sparks, also the effect update rate (is a pointer like in other effects)
+    speedRange -- The cap for the slowest speed for the sparks (speed is rate + speedRange) (ms)
 
 Functions:
-    setupFireworks(mazFireworks, maxSparks) -- //Create the data structures for a set of fireworks
-                                                 You should call this if you ever want to change maxNumFireworks or maxNumSparks
+    setupFireworks(maxFireworks, maxSparks) -- Create the data structures for a set of fireworks
+                                               You should call this if you ever want to change maxNumFireworks or maxNumSparks
     update() -- updates the effect
 
 Other Settings:
@@ -138,17 +138,17 @@ Other Settings:
     bgColorMode (default 0) -- sets the color mode for the spacing pixels (see segDrawUtils::setPixelColor)
     burstBlendLimit (default 100) -- The number of steps (out of 255) to blend from the burst color to the spark color                        
     lifeRange ( default 500 (ms) ) -- Added to the lifeBase as random(lifeRange) to set the maximum spark life
-                                     Adds a bit of variation so not all the sparks decay at the same time at lower caps
+                                      Adds a bit of variation so not all the sparks decay at the same time at lower caps
     centerLife (default lifeBase/10 + 100 ) -- How long the centeral "bomb" lives for in ms
     size (default 1) -- The size of the sparks, only change this for big fireworks
     sizeRange (default 0) -- A random factor for setting the spark sizes 
-                            Sparks will be size + random(sizeRange)
-                            Only change this for big fireworks
+                             Sparks will be size + random(sizeRange)
+                             Only change this for big fireworks
     centerSize (default 3) -- How large the center "bomb" burst is 
     fillBG (default false) -- Sets whether to fill the background in every update cycle,
-                             You should set this true if you are using an animated background mode
+                              You should set this true if you are using an animated background mode
     blend (default false) -- Causes sparks to add their colors to the strip, rather than set them
-                            See explanation of this in more detail above in effect intro
+                             See explanation of this in more detail above in effect intro
     randSparkColors (default false) -- If true, each spark will have its own color picked from the palette
     burstColor (default CRGB::White) -- The color of the inital firework burst
     spawnRangeDiv (default 5) -- Sets what range of the strip fireworks spawn in: from numLEDs / spawnRangeDiv to (numLEDs - numLEDs / spawnRangeDiv)

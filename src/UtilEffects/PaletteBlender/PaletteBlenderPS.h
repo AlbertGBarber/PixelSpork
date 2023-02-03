@@ -27,9 +27,9 @@ Example calls:
 Constructor Inputs:
     startPalette -- The palette the blendPalette will start as
     endPalette -- The palette that the blendPalette will end as
-    Looped -- set true, it will reset the blend once it has ended, switching the start and end palettes
-    TotalSteps (max 255) -- The total number of steps taken to blend between the palettes
-    Rate -- The update rate of the blend (ms)
+    looped -- set true, it will reset the blend once it has ended, switching the start and end palettes
+    totalSteps (max 255) -- The total number of steps taken to blend between the palettes
+    rate -- The update rate of the blend (ms)
 
 Functions:
     reset(StartPalette, EndPalette) -- Restarts the blend with a new start/end palette, with the same steps and update rate
@@ -40,8 +40,8 @@ Functions:
 
 Other Settings:
     holdTime (default 0) -- Sets a time (ms) that the blendPalette will be pause at after finishing a transiton before starting the next
-                           Only relevant if looped is true
-    randomize (default false) -- //randomize will randomize the end palette note that this will permanently modify the end palette
+                            Only relevant if looped is true
+    randomize (default false) --  Randomize will randomize the end palette note that this will permanently modify the end palette
                                   so make sure you aren't using it elsewhere!
                                   Combine this with looped, to produce constantly changing palettes
 

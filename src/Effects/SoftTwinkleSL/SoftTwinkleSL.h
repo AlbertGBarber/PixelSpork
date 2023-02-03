@@ -73,7 +73,7 @@ surprised at how little actual code was needed to make it work.
 
 Example Call:
 
-    SoftTwinklePSminaSegments, 150, 20);
+    SoftTwinklePS(mainSegments, 150, 20);
     soft twinkles with density of 150, updating at a rate of 20ms
 
 Functions:
@@ -81,7 +81,7 @@ Functions:
     update() -- updates the effect
 
 Constructor Inputs:
-    Density -- max 255, the threshold for turning on an led, higher will turn on more leds at once
+    density -- max 255, the threshold for turning on an led, higher will turn on more leds at once
 
 Other Settings:
     lightcolor default( CRGB{8,5,1} ) -- The color used to increment the pixel colors

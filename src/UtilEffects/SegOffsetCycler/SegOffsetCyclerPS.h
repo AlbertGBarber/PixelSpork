@@ -52,17 +52,17 @@ Example calls:
 
 Constructor Inputs:
     segmentSet (optional, see constructors) -- A single segmentSet whose offset will be changed
-    SegmentSetArr (optional, see constructors) -- An array of segmentSets whose offsets will be changed
-    ColorMode -- The colorMode used for the offset
-    Direction -- The direction of the offset (true is forward)
-    Rate -- The update rate of the utility (ms)
+    segmentSetArr (optional, see constructors) -- An array of segmentSets whose offsets will be changed
+    colorMode -- The colorMode used for the offset
+    direction -- The direction of the offset (true is forward)
+    rate -- The update rate of the utility (ms)
 
 Functions:
-    setCycle() -- Sets the direction and can turn the offset on/off in one function
-    setDirect() -- Sets the offset direction
-    setOffsetActive() -- Turns the offset on or off
-    setRate() -- Changes the offset rate (also changes it for all the segmentSets)
-    setGroup(SegmentSet** SegmentSetArr, uint8_t NumSegSets) -- Sets the Util to act on the passed in segmentSet array
+    setCycle(newDirect, newRunOffset) -- Sets the direction and can turn the offset on/off in one function
+    setDirect(newDirect) -- Sets the offset direction
+    setOffsetActive(newRunOffset) -- Turns the offset on or off
+    setRate(newRate) -- Changes the offset rate (also changes it for all the segmentSets)
+    setGroup(SegmentSet** SegmentSetArr, NumSegSets) -- Sets the Util to act on the passed in segmentSet array
     setGroup(SegmentSet &segmentSet) -- Sets the Util to act on the passed in segmentSet only
     update() -- updates the effect
 
@@ -70,7 +70,7 @@ Other Settings:
     runOffset (default true) -- For reference, records if the offset is active or not
     direct -- For reference, the offset's direction of motion
     colorMode -- The colorMode used for the offset, is a pointer so it can be bound to an external variable
-                By default it is bound to colorModeOrig
+                 By default it is bound to colorModeOrig
 */
 class SegOffsetCyclerPS : public EffectBasePS {
     public:

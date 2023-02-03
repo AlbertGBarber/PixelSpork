@@ -78,12 +78,12 @@ Example calls:
 Constructor Inputs:
     pattern(optional, see constructors) -- The pattern used for the streamers, made up of palette indexes 
     palette(optional, see constructors) -- The repository of colors used in the pattern
-    Color(optional, see constructors) -- Used for making a single color streamer
-    ColorLength (optional, see constructors, max 255) -- The number pixels a streamer color is. Used for automated pattern creation.
-    Spacing (optional, see constructors, max 255) -- The number of pixels between each streamer color (will be set to bgColor).  Used for automated pattern creation.
+    color(optional, see constructors) -- Used for making a single color streamer
+    colorLength (optional, see constructors, max 255) -- The number pixels a streamer color is. Used for automated pattern creation.
+    spacing (optional, see constructors, max 255) -- The number of pixels between each streamer color (will be set to bgColor).  Used for automated pattern creation.
     bgColor -- The color of the spacing pixels. It is a pointer, so it can be tied to an external variable
     fadeSteps -- The number of steps to transition from one color to the next as the streamers move down the strip
-    Rate -- The update rate (ms)
+    rate -- The update rate (ms)
 
 Functions:
     reset() -- Restarts the streamer pattern, you should call this if you change segment sets as well.
@@ -102,6 +102,10 @@ Other Settings:
     fadeOn (default true) -- If false, the streamer will jump directly to the next color instead of fading
                              Note that if 1 or 0 are passed in as the FadeSteps in the constructor, 
                              fadeOn will be set to false automatically
+    
+Reference Vars:
+    cycleNum -- How many update cycles we've done, resets every pattern length number of cycles (the pattern has been streamed once)
+
 */
 class StreamerSL : public EffectBasePS {
     public:
@@ -123,6 +127,9 @@ class StreamerSL : public EffectBasePS {
             colorMode = 0,
             bgColorMode = 0,
             fadeSteps;
+        
+        uint16_t 
+            cycleNum = 0; //How many update cycles we've done, for reference
 
         CRGB 
             bgColorOrig,
@@ -157,8 +164,7 @@ class StreamerSL : public EffectBasePS {
         uint8_t
             *pattern_arr = nullptr,
             nextPattern,
-            blendStep = 0,
-            cycleCount = 0;
+            blendStep = 0;
         
         uint16_t
             patternLength,

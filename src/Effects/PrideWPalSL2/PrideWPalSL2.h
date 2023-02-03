@@ -95,7 +95,7 @@ Constructor inputs:
     direct -- The direction the colors move across segments. True is from the center segment to the outer
     randomBriInc -- Set to true will randomize briThetaInc16 min and max, and the briThetaFreq
                     See init() for the ranges
-    Rate -- The update rate (ms) note that this is synced with all the particles.
+    rate -- The update rate (ms) note that this is synced with all the particles.
 
     For the constuctor will all the inputs, the variables in order are:
         GradLength, BrightDepthMin, BrightDepthMax, BriThetaFreq, BriThetaInc16Min,

@@ -11,10 +11,9 @@
 Cross fades the entire segmentSet from one solid color to the next
 following either a pattern and palette, a palette alone, or using random colors
 each fade is done in a specified number of steps, at a specified rate
-fades continue until the speficied number of fades is reached, or indefinitly if the flag is set
-(passing 0 for the number of fades sets the infinite flag)
-once the fade number is reached, the done flag will be set
 see constructors below for inputs
+
+The number of fades we've done is recorded by fadeCount.
 
 Does not work with color modes from segDrawUtils::setPixelColor()
 
@@ -26,16 +25,16 @@ randModes are: (default 0)
 Example calls: 
     uint8_t pattern_arr = {0, 1, 4};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-    CrossFadeCyclePS(mainSegments, &pattern, palette, 0, 40, 30);
-    Will fade from color 0, to color 1, to color 4 of the palette, infinitly, 
+    CrossFadeCyclePS(mainSegments, &pattern, palette, 40, 30);
+    Will fade from color 0, to color 1, to color 4 of the palette
     taking 40 steps for each fade, with 30ms between steps
 
-    CrossFadeCyclePS(mainSegments, palette, 5, 40, 30);
-    Will fade through the colors of the palette in order until 5 fades have been completed, 
+    CrossFadeCyclePS(mainSegments, palette, 40, 30);
+    Will fade through the colors of the palette in order
     taking 40 steps for each fade, with 30ms between steps
 
-    CrossFadeCyclePS(mainSegments, 0, 40, 30);
-    Will fade from one random color to the next infinitly, 
+    CrossFadeCyclePS(mainSegments, 40, 30);
+    Will fade from one random color to the next
     taking 40 steps for each fade, with 30ms between steps
 
 Constructor Inputs
@@ -43,32 +42,30 @@ Constructor Inputs
                                           and the length of the array 
                                           (see patternPS.h)                                     
     palette(optional, see constructors) -- The repository of colors used in the pattern, or can be used as the pattern itself
-    numFades -- The total number of crossfades(colors) the effect will go through, setting this to 0 will flag for infinite fades
     steps -- How many steps for each fade
-    Rate -- update rate (ms)
+    rate -- update rate (ms)
 
 Functions:
     setPaletteAsPattern() -- Sets the effect pattern to match the current palette
     reset() -- restarts the effect
     update() -- updates the effect
 
-Flags:
-    infinite (default false) -- Sets the effect to run though an contiuous cycle of fades with no stop point
-    done (starts false) -- set to true flag for if we've done the total number of fades
-
 Other Settings:
     randMode (defualt 0) -- see mode note above
+
+Reference Vars:
+    fadeCount -- The number of fade cycles we've gone through.
 */
 class CrossFadeCyclePS : public EffectBasePS {
     public:
         //Constructor for pattern and palette
-        CrossFadeCyclePS(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, uint16_t NumFades, uint8_t Steps, uint16_t Rate);
+        CrossFadeCyclePS(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, uint8_t Steps, uint16_t Rate);
         
         //Constructor for palette as the pattern
-        CrossFadeCyclePS(SegmentSet &SegmentSet, palettePS *Palette, uint16_t NumFades, uint8_t Steps, uint16_t Rate);  
+        CrossFadeCyclePS(SegmentSet &SegmentSet, palettePS *Palette, uint8_t Steps, uint16_t Rate);  
         
         //Constructor for random colors
-        CrossFadeCyclePS(SegmentSet &SegmentSet, uint16_t NumFades, uint8_t Steps, uint16_t Rate);
+        CrossFadeCyclePS(SegmentSet &SegmentSet, uint8_t Steps, uint16_t Rate);
 
         ~CrossFadeCyclePS();
 
@@ -77,12 +74,8 @@ class CrossFadeCyclePS : public EffectBasePS {
             randMode = 0; //see description above
         
         uint16_t 
-            numFades; //total number of fades to do
+            fadeCount; //how many total fades we've done
         
-        bool
-            infinite = false, //for ignoring the done flag
-            done = false; //flag for if we've done the total number of fades
-
         SegmentSet 
             &segmentSet; 
 
@@ -113,9 +106,6 @@ class CrossFadeCyclePS : public EffectBasePS {
             patternIndex = 0, //What index we're fading to in the pattern
             palIndex = 0, //the index of the pattern that we are currently fading away from, mainly used for shuffle()
             currentStep = 0; //current step of the current fade
-        
-        uint16_t 
-            fadeCount = 0; //how many total fades we've done
         
         void
             getNextColor(),

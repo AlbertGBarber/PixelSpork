@@ -30,7 +30,7 @@ Example calls:
 Constructor Inputs:
     testMode -- The type of test (0 or 1, see above) to be done
                 Passing in 2+ will do both tests
-    Rate (optional, default 500ms) -- The update rate of the utility (ms)
+    rate (optional, default 500ms) -- The update rate of the utility (ms)
 
 Functions:
     update() -- updates the effect

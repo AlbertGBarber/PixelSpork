@@ -74,13 +74,13 @@ Example calls:
     The effect updates at a rate of 140ms
  
 Constructor Inputs:
-    Pattern(optional, see constructors) -- The pattern used for the streamers, made up of palette indexes 
-    Palette(optional, see constructors) -- The repository of colors used in the pattern
-    Color(optional, see constructors) -- Used for making a single color streamer
-    ColorLength (optional, see constructors, max 255) -- The number pixels a streamer color is. Used for automated pattern creation.
-    Spacing (optional, see constructors, max 255) -- The number of pixels between each streamer color (will be set to bgColor).  Used for automated pattern creation.
-    BgColor -- The color of the spacing pixels. It is a pointer, so it can be tied to an external variable
-    Rate -- The update rate (ms)
+    pattern(optional, see constructors) -- The pattern used for the streamers, made up of palette indexes 
+    palette(optional, see constructors) -- The repository of colors used in the pattern
+    color(optional, see constructors) -- Used for making a single color streamer
+    colorLength (optional, see constructors, max 255) -- The number pixels a streamer color is. Used for automated pattern creation.
+    spacing (optional, see constructors, max 255) -- The number of pixels between each streamer color (will be set to bgColor).  Used for automated pattern creation.
+    bgColor -- The color of the spacing pixels. It is a pointer, so it can be tied to an external variable
+    rate -- The update rate (ms)
 
 Functions:
     reset() -- Restarts the streamer pattern
@@ -90,7 +90,7 @@ Functions:
                                                                    setPatternAsPattern(&pattern, 3, 4) 
                                                                    Will do a streamer using the first three colors of the palette (taken from the pattern)
                                                                    Each streamer will be length 3, followed by 4 spaces
-    setPaletteAsPattern(uint8_t colorLength, uint8_t spacing) -- Like the previous function, but all of the current palette will be used for the pattern                                                       
+    setPaletteAsPattern(colorLength, spacing) -- Like the previous function, but all of the current palette will be used for the pattern                                                       
     update() -- updates the effect
 
 Other Settings:
@@ -109,6 +109,9 @@ Flags:
                     This needs to happen before running the first update cycle
                     If false, preFill() will be called when first updating
                     Set true once the first update cycle has been finished
+
+Reference Vars:
+    cycleNum -- How many update cycles we've done, resets every pattern length cycles (the effect has gone through the pattern once)
 
 Notes:
     If the constructor made your pattern, it will be stored in patternTemp
@@ -131,14 +134,15 @@ class StreamerFastSL : public EffectBasePS {
         ~StreamerFastSL();
 
         uint8_t
-            randMode = 0,
-            cycleCount = 0;
+            randMode = 0;
+        
+        uint16_t
+            cycleNum = 0;
             
         bool
             initFillDone = false;
 
         CRGB 
-            prevColor, //The color of the newest wave (excluding the background color)
             bgColorOrig,
             *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
 

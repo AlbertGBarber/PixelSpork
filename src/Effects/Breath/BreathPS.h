@@ -1,8 +1,6 @@
 #ifndef BreathPS_h
 #define BreathPS_h
 
-//TODO -- add fixed number of cycles? Like CrossFadeCycle.
-
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
 //#include "MathUtils/mathUtilsPS.h"
@@ -104,6 +102,9 @@ Other Settings:
                                    shouldn't need to change this, see comments in update() function
     rainbowSat (default 255) -- The saturation of the rainbow mode 
     rainbowVal (default 255) -- The value of the rainbow mode (as part of setting the rainbow color)
+
+Reference vars:
+    breathCount -- The number of breath cycles we've gone through.
 */
 class BreathPS : public EffectBasePS {
     public:
@@ -135,6 +136,9 @@ class BreathPS : public EffectBasePS {
             rainbowVal = 255,
             rainbowRate = 20,
             randMode = 0; //see description above
+        
+        uint16_t
+            breathCount = 0; //How many total breath cycles we've gone through
         
         CRGB 
             bgColorOrig,

@@ -91,39 +91,39 @@ Example calls:
     The effect updates at 80ms
 
 Constructor Inputs:
-    Palette(optional, see constructors) -- The set of colors that firefly colors will be picked from
-    NumColors (optional, see contructors) -- The number of randomly choosen colors for fireflys
-    Color (optional, see contructors) -- A single color for all the fireflys
-    MaxNumfireflies -- The maximum number of simultaneous fireflies  that can be active at one time
-    spawnChance: How likely an inactive firefly is to spawn each update cycle (a percent out of 100)
-    lifeBase: -- The minimum time (in ms) a firefly will live for
-    lifeRange -- Sets the maxmium possible ammount added to lifeBase. 
-              The overall firefly life is caculated as lifeBase + random(lifeRange);
-    speedBase -- The slowest speed a particle will move (this is a multiplier, see more below)
-    speedRange -- Sets the maxmium possible ammount added to speedBase. 
-              The overall firefly speed is caculated as speedBase + random(speedRange);
-    Rate -- The update rate for the effect (ms)
+    palette(optional, see constructors) -- The set of colors that firefly colors will be picked from
+    numColors (optional, see contructors) -- The number of randomly choosen colors for fireflys
+    color (optional, see contructors) -- A single color for all the fireflys
+    maxNumfireflies -- The maximum number of simultaneous fireflies  that can be active at one time
+    spawnChance -- How likely an inactive firefly is to spawn each update cycle (a percent out of 100)
+    lifeBase -- The minimum time (in ms) a firefly will live for
+    lifeRange -- Sets the maxmium possible ammount added to lifeBase. (ms)
+                 The overall firefly life is caculated as lifeBase + random(lifeRange);
+    speedBase -- The slowest speed a particle will move (this is a multiplier, see more below) (ms)
+    speedRange -- Sets the maxmium possible ammount added to speedBase. (ms)
+                  The overall firefly speed is caculated as speedBase + random(speedRange);
+    rate -- The update rate for the effect (ms)
 
 Functions:
-    setupfireflies(maxNumfireflies) -- //Create the data structures for a set of fireflies
-                                         You should call this if you ever want to change maxNumfireflies
+    setupfireflies(maxNumfireflies) -- Create the data structures for a set of fireflies
+                                       You should call this if you ever want to change maxNumfireflies
     update() -- updates the effect
 
 Other Settings:
     colorMode (default 0) -- sets the color mode for the waves (see segDrawUtils::setPixelColor)
     bgColorMode (default 0) -- sets the color mode for the spacing pixels (see segDrawUtils::setPixelColor)
     fillBG (default false) -- Sets whether to fill the background in every update cycle,
-                             You should set this true if you are using an animated background mode
+                              You should set this true if you are using an animated background mode
     blend (default false) -- Causes sparks to add their colors to the strip, rather than set them
-                            See explanation of this in more detail above in effect intro
+                             See explanation of this in more detail above in effect intro
     flicker (default true) -- Turns the firefly brightness flicker on or off
     fadeThresh (default 50) -- The number of steps (out of 255) for the flyflies to fade in or out
-                              The fireflies spend 255 steps in total fading in, staying at a peak color, then fading out
-                              The value of fadeThresh reduces how long the they will stay at peak color
-                              Note that setting it to 255 will only doa fade in, and then the fireflys will disappear instantly
-                              128 will cause them to fade in then out with no pause at the peak 
+                               The fireflies spend 255 steps in total fading in, staying at a peak color, then fading out
+                               The value of fadeThresh reduces how long the they will stay at peak color
+                               Note that setting it to 255 will only doa fade in, and then the fireflys will disappear instantly
+                               128 will cause them to fade in then out with no pause at the peak 
 
-Reference Vars
+Reference Vars:
     maxNumFireflies -- The maximum number of fireflies that can be active at any one time
                        call setupFireflies() to change
 */

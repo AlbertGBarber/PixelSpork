@@ -196,8 +196,9 @@ void DissolveSL::update(){
         //turn the hang time on, and increment the cycle number
         if(numSpawned >= numLines){
             resetPixelArray();
+            dissolveCount++;
             hangTimeOn = true;
-            numCycles = addmod8(numCycles, 1, pattern->length);
+            numCycles = addMod16PS(numCycles, 1, pattern->length);
         }
 
         showCheckPS();

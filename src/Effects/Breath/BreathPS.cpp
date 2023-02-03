@@ -72,6 +72,7 @@ void BreathPS::reset(){
     patternIndex = 0;
     palIndex = 0;
     hue = 0;
+    breathCount = 0;
     getNextColor();
 }
 
@@ -151,6 +152,7 @@ void BreathPS::update(){
         //After the color is set, we wait until the brightness is below the limit to unlock the color again, ready for the next cycle.
         breathEndVal = maxBreath - breathEndOffset; 
         if(!lockColor && breath >= breathEndVal){
+            breathCount++;
             getNextColor();
             lockColor = true;
         } else if(lockColor && breath < breathEndVal){

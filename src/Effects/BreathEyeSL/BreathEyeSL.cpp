@@ -81,6 +81,7 @@ void BreathEyeSL::reset(){
     patternIndex = 0;
     palIndex = 0;
     hue = 0;
+    breathCount = 0;
 
     //Set the eye center position
     //If it's not being choosen randonmly we default to the center of the segment set
@@ -213,6 +214,7 @@ void BreathEyeSL::update(){
         //After the color is set, we wait until the brightness is below the limit to unlock the color again, ready for the next cycle.
         breathEndVal = maxBreath - breathEndOffset; 
         if(!lockColor && breath >= breathEndVal){
+            breathCount++;
             lockColor = true;
             getNextColor();
 

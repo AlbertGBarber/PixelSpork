@@ -48,14 +48,14 @@ Example calls:
     Each cycle, a new line will be turned on, while an old is turned off (mode 2), with 80ms in between each cycle
 
 Constructor Inputs:
-    Palette(optional, see constructors) -- the palette from which colors will be choosen randomly
-    Color(optional, see constructors) -- the color that the randomly choosen twinkles will be set to
-    NumTwinkles -- The amount of random twinkles choosen for twinkling
-    BgColor -- The color of the background, this is what twinkles will fade to and from
+    palette(optional, see constructors) -- the palette from which colors will be choosen randomly
+    color(optional, see constructors) -- the color that the randomly choosen twinkles will be set to
+    numTwinkles -- The amount of random twinkles choosen for twinkling
+    bgColor -- The color of the background, this is what twinkles will fade to and from
     tMode -- The twinkling mode for the effect (see above for descriptions)
     segMode -- Sets if twinkles will be drawn on segment lines, whole segments or individual pixels
                (See segMode notes above)
-    Rate -- The update rate (ms)
+    rate -- The update rate (ms)
 
 Functions:
     setSingleColor(Color) -- Sets the effect to use a single color for the twinkles, will restart the effect
@@ -76,18 +76,23 @@ Other Settings:
     reDrawAll (default false) -- Will re-draw all the twinkles each cycle, is slower than default, but you need this if you want to layer this effect with another
                                 (is set true if fillBG is true)
 
-Reference Vars:
+Flags:
     turnOff -- Tracks if we're turning the twinkles on or off, depending on the mode 
+
+Reference Vars:
+    segMode -- (see constructor notes above) set using setSegMode()
+    numTwinkles -- The amount of random twinkles choosen for twinkling, set using setNumTwinkles()
+    cycleNum -- How many twinkles have been drawn (resets once numTwinkles updates have been done)
 */
 class FairyLightsSLSeg : public EffectBasePS {
     public:
-        //palette based constructor
+        //Palette based constructor
         FairyLightsSLSeg(SegmentSet &SegmentSet, palettePS *Palette, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode, uint8_t SegMode, uint16_t Rate);
         
-        //single color constructor
+        //Single color constructor
         FairyLightsSLSeg(SegmentSet &SegmentSet, CRGB Color, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode, uint8_t SegMode, uint16_t Rate);
         
-        //random colors constructor
+        //Random colors constructor
         FairyLightsSLSeg(SegmentSet &SegmentSet, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode, uint8_t SegMode, uint16_t Rate); 
 
         //destructor
@@ -97,9 +102,9 @@ class FairyLightsSLSeg : public EffectBasePS {
             &segmentSet; 
         
         uint8_t
-            segMode, //(for reference, use setSegMode() to set)
+            segMode, //for reference, use setSegMode() to set
             randMode = 0,
-            cycleNum = 0,
+            cycleNum = 0, //for reference, how many twinkles have been drawn (resets once numTwinkles updates have been done)
             numTwinkles, //for reference only, set using setNumTwinkles()
             tMode,
             colorMode = 0,

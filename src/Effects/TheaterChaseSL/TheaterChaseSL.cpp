@@ -36,7 +36,7 @@ void TheaterChaseSL::setSpacing(uint8_t newSpacing){
 //Each time we update, we first re-draw the background color 
 //Then we run across all the pixels, skipping forward in blocks of totalDrawLength (the sum of the spot the litLength and the spacing)
 //For each block we fill the colored spot in up to litLength
-//The position of the spot is based in the cycleCount, with cycles from 0 to totalDrawLength - 1, and increments once per update
+//The position of the spot is based in the cycleNum, with cycles from 0 to totalDrawLength - 1, and increments once per update
 //Basically, the strip is broken up into lengths of totalDrawLength size
 //each length has its own spot that moves back and forth based on what cycle number we're on
 //since the spots are all the same, they line up when the end/start, so it looks like they move down the strip
@@ -60,13 +60,13 @@ void TheaterChaseSL::update(){
                 //when we draw the spot, we start with the first pixel of the spot,
                 //if the spot size is greater than 1 (litLength), then we will run into the next 
                 //spot region. To prevent this, loop the spot round by modding by totalDrawLength
-                lineNum = i + addMod16PS( j, cycleCount, totalDrawLength ); //i + (j + cycleCount) % totalDrawLength;
+                lineNum = i + addMod16PS( j, cycleNum, totalDrawLength ); //i + (j + cycleNum) % totalDrawLength;
                 segDrawUtils::drawSegLineSimple(segmentSet, lineNum, *color, colorMode);
                 //segDrawUtils::setPixelColor(segmentSet, pixelLoc, *color, colorMode);
             }
         }
         
-        cycleCount = addMod16PS( cycleCount, 1, totalDrawLength ); //(cycleCount + 1) % (totalDrawLength);
+        cycleNum = addMod16PS( cycleNum, 1, totalDrawLength ); //(cycleNum + 1) % (totalDrawLength);
         showCheckPS();
     }
 }

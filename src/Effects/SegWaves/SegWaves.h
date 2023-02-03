@@ -98,18 +98,18 @@ Example calls:
     The effect updates at a rate of 80ms
  
 Constructor Inputs:
-    Pattern(optional, see constructors) -- The pattern used for the waves, made up of palette indexes 
-    Palette(optional, see constructors) -- The repository of colors used in the pattern
-    Color(optional, see constructors) -- Used for making a single color wave
-    WaveThickness (optional, see constructors, max 255) -- The number pixels a wave color is. Used for automated pattern creation.
+    pattern(optional, see constructors) -- The pattern used for the waves, made up of palette indexes 
+    palette(optional, see constructors) -- The repository of colors used in the pattern
+    color(optional, see constructors) -- Used for making a single color wave
+    waveThickness (optional, see constructors, max 255) -- The number pixels a wave color is. Used for automated pattern creation.
                                                            Passing 0 will create a pattern of single length waves (see intro above)
-    Spacing (optional, see constructors, max 255) -- The number of pixels between each wave color (will be set to bgColor).  Used for automated pattern creation.
+    spacing (optional, see constructors, max 255) -- The number of pixels between each wave color (will be set to bgColor).  Used for automated pattern creation.
     bgColor -- The color of the spacing pixels. It is a pointer, so it can be tied to an external variable
     fadeSteps -- The number of steps to transition from one color to the next as the waves move down the strip
                  Passing 0 or 1 will set fadeOn to false (no fading)
     direct --  The direction the wave move
                True will make the waves move from the last to first segment, false, the reverse.
-    Rate -- The update rate (ms)
+    rate -- The update rate (ms)
 
 Functions:
     reset() -- Restarts the wave pattern (also calls resetSegColors())
@@ -121,7 +121,7 @@ Functions:
                                                                    setPatternAsPattern(&pattern, 3, 4) 
                                                                    Will do a wave using the first three colors of the palette (taken from the pattern)
                                                                    Each wave will be length 3, followed by 4 spaces
-    setPaletteAsPattern(uint8_t colorLength, uint8_t spacing) -- Like the previous function, but all of the current palette will be used for the pattern                                                       
+    setPaletteAsPattern(colorLength, spacing) -- Like the previous function, but all of the current palette will be used for the pattern                                                       
     makeSingleWave() -- Creates a wave pattern so that there's only a single wave of thickness 1 active on the segment set at one time
     update() -- updates the effect
 
@@ -137,6 +137,10 @@ Other Settings:
                          -- 2: Colors will be choosen at random from the palette,
                                but the same color won't be repeated in a row
                          -- 3: Colors will be choosen randomly from the palette (allowing repeats)
+
+Reference vars:
+    cycleNum -- Tracks what how many patterns we've gone through, 
+                resets every pattern length number of cycles (ie once we've gone through the whole pattern)
 
 Notes:
     You can change the palette, and patterns on the fly, but there's no way to smoothly transition
@@ -177,6 +181,9 @@ class SegWaves : public EffectBasePS {
             bgColorMode = 0,
             randMode = 0,
             fadeSteps;
+        
+        uint16_t
+            cycleNum = 0; // tracks what how many patterns we've gone through, for reference
 
         CRGB 
             bgColorOrig,
@@ -213,8 +220,7 @@ class SegWaves : public EffectBasePS {
         uint8_t
             nextPattern,
             prevPattern,
-            blendStep = 0,
-            cycleCount = 0;
+            blendStep = 0;
         
         uint16_t
             patternLength,

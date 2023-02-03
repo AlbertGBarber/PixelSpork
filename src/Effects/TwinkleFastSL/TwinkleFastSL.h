@@ -23,13 +23,13 @@ Example call:
     Will choose 5 segment lines to fade from red at 50 rate every cycle
 
 Inputs:
-    Palette(optional, see constructors) -- the palette from which colors will be choosen randomly
-    Color(optional, see constructors) -- the color that the randomly choosen pixels will be set to
-    NumTwinkles -- The amount of random pixels choosen each cycle 
-    BgColor -- The color of the background, this is what pixels will fade to and from
-    Sparkle -- Turns the fading on and off (on will produce a blank background)
-    FadeOutRate -- The number of steps taken to fade pixels out, if turned on (min 1, max 255), higher = fasted fade
-    Rate -- The update rate
+    palette(optional, see constructors) -- the palette from which colors will be choosen randomly
+    color(optional, see constructors) -- the color that the randomly choosen pixels will be set to
+    numTwinkles -- The amount of random pixels choosen each cycle 
+    bgColor -- The color of the background, this is what pixels will fade to and from
+    sparkle -- Turns the fading on and off (on will produce a blank background)
+    fadeOutRate -- The number of steps taken to fade pixels out, if turned on (min 1, max 255), higher = fasted fade
+    rate -- The update rate
 
 Functions:
     setSingleColor(Color) -- Sets the effect to use a single color for the pixels, will restart the effect
