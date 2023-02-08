@@ -31,7 +31,7 @@ void PaletteSliderPS::init(uint16_t Rate){
 void PaletteSliderPS::reset(){
     blendStep = 0;
     patternIndex = 0;
-    holdActive = false;
+    paused = false;
     prevTime = 0;
 }
 
@@ -64,7 +64,7 @@ void PaletteSliderPS::makeSliderPalette(uint16_t paletteLength){
 //Since each color follows the same pattern, we use the patternIndex to offset what pattern each slider palette color is on
 //Once blendStep == blendSteps (the total blend length) then a color cycle is finished
 //We then advance the patternIndex, and also trigger a hold
-//The hold continues for holdTime, and then the color cycle starts again
+//The hold continues for pauseTime, and then the color cycle starts again
 //(while holding the colors are fixed --  a pause before continuing the cycle)
 //Note that there are two modes of switching colors: using a single shift, and shifting the whole palette length
 //  When single shifting:
@@ -85,62 +85,57 @@ void PaletteSliderPS::update(){
 
     if( ( currentTime - prevTime ) >= *rate ) {
         prevTime = currentTime;
-        
-        if(!holdActive){
-            //if we're not holding, we need to advance slider palette colors to thier next steps
-            sliderPalLen = sliderPalette.length;
 
-            //If we're shifting the colors forward by 1 for each blend then
-            //the patternStep is only one. So that each color follows the one ahead of it
-            //Otherwise we doing whole pattern chunks, where all the colors need to jump forward by the 
-            //length of the slider palette
-            if(singleShift){
-                patternStep = 1;
-            } else {
-                patternStep = sliderPalLen;
+        if(paused){
+            if( (currentTime - pauseStartTime) >= pauseTime) {
+                //If it's time to continue blending the colors we deactivate the pause 
+                paused = false;
+            } else{
+                return;
             }
-
-            //advance the blend step 
-            //we do this here rather than at the end so that we catch hold times correctly
-            blendStep++;
-
-            //All the colors blend at the same rate so the blend ratio is the same for all of them
-            ratio = blendStep * 255 / blendSteps;
-            
-            //Loop over the sliderPalette and set it's blended colors
-            for(uint16_t i = 0; i < sliderPalLen; i++){
-                
-                //Get the starting color offset by the patternIndex
-                startIndex = patternUtilsPS::getPatternVal(pattern, i + patternIndex);
-                startColor = paletteUtilsPS::getPaletteColor(paletteTarget, startIndex);
-
-                //get the target color. We offset it by the patternStep.
-                endIndex = patternUtilsPS::getPatternVal(pattern, i + patternIndex + patternStep);
-                endColor = paletteUtilsPS::getPaletteColor(paletteTarget, endIndex);
-
-                //get the blended color between the start and end colors
-                sliderPalColArr[i] = colorUtilsPS::getCrossFadeColor(startColor, endColor, ratio);
-            }
-
-            //If we're at the last blend step, then we need start a new blend with new colors
-            //(and also trigger a hold)
-            if(blendStep == blendSteps){
-                blendStep = 0;
-                //Advance the patternIndex so the palette colors will advance
-                //We advance by patternStep, which is either 1 or the sliderPalette length
-                patternIndex = addMod16PS(patternIndex, patternStep, pattern->length);
-                //Start a hold at the current time
-                holdActive = true;
-                holdStartTime = currentTime;
-            }
-
-        } else if( (currentTime - holdStartTime) >= holdTime) {
-            //If it's time to continue blending the colors
-            //we deactivate the hold and then imediatly force an update()
-            //(otherwise we'd be skipping one update cycle because we we're checking the hold still)
-            holdActive = false;
-            prevTime = 0;
-            update();
         }
+        
+        //We need to advance slider palette colors to thier next steps
+        sliderPalLen = sliderPalette.length;
+        //If we're shifting the colors forward by 1 for each blend then
+        //the patternStep is only one. So that each color follows the one ahead of it
+        //Otherwise we doing whole pattern chunks, where all the colors need to jump forward by the 
+        //length of the slider palette
+        if(singleShift){
+            patternStep = 1;
+        } else {
+            patternStep = sliderPalLen;
+        }
+        //advance the blend step 
+        //we do this here rather than at the end so that we catch hold times correctly
+        blendStep++;
+        //All the colors blend at the same rate so the blend ratio is the same for all of them
+        ratio = blendStep * 255 / blendSteps;
+        
+        //Loop over the sliderPalette and set it's blended colors
+        for(uint16_t i = 0; i < sliderPalLen; i++){
+            
+            //Get the starting color offset by the patternIndex
+            startIndex = patternUtilsPS::getPatternVal(pattern, i + patternIndex);
+            startColor = paletteUtilsPS::getPaletteColor(paletteTarget, startIndex);
+            //get the target color. We offset it by the patternStep.
+            endIndex = patternUtilsPS::getPatternVal(pattern, i + patternIndex + patternStep);
+            endColor = paletteUtilsPS::getPaletteColor(paletteTarget, endIndex);
+            //get the blended color between the start and end colors
+            sliderPalColArr[i] = colorUtilsPS::getCrossFadeColor(startColor, endColor, ratio);
+        }
+
+        //If we're at the last blend step, then we need start a new blend with new colors
+        //(and also trigger a hold)
+        if(blendStep == blendSteps){
+            blendStep = 0;
+            //Advance the patternIndex so the palette colors will advance
+            //We advance by patternStep, which is either 1 or the sliderPalette length
+            patternIndex = addMod16PS(patternIndex, patternStep, pattern->length);
+            //Start a hold at the current time
+            paused = true;
+            pauseStartTime = currentTime;
+        }
+    
     }
 }

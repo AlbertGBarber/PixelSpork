@@ -41,10 +41,6 @@ void FireworksPS::init(uint8_t maxNumFireworks, uint8_t maxNumSparks, uint16_t R
     //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
     bindSegPtrPS();
     bindClassRatesPS();
-    //bind background color pointer (if needed)
-    //By default the background color is 0
-    CRGB BgColor = 0;
-    bindBGColorPS();
     //set how long the center "bomb" pixel is alive for in ms.
     //This seems to look good in practice, but you might need to adjust centerLife
     //for more extreme values of lifeBase
@@ -321,7 +317,7 @@ void FireworksPS::drawParticlePixel(particlePS *particlePtr, uint16_t trailLedLo
     //which only ever fades from the burst color 
     //(this seems to look better overall than fading like a normal particle)
     if(firstPart){ //&& !matchBurst for TODO
-        colorTemp = burstColor;
+        colorTemp = *burstColor;
     } else {
         colorTemp = pixelInfo.color;
     }
@@ -335,7 +331,7 @@ void FireworksPS::drawParticlePixel(particlePS *particlePtr, uint16_t trailLedLo
     //otherwise we fade from the firework color to the background
     //This is all one blend of 255 steps, burstBlendLimit sets what step we switch the blend colors at
     if(dimRatio < burstBlendLimit){ //&& !matchBurst for TODO
-        colorFinal = colorUtilsPS::getCrossFadeColor(burstColor, colorTemp, dimRatio, burstBlendLimit);
+        colorFinal = colorUtilsPS::getCrossFadeColor(*burstColor, colorTemp, dimRatio, burstBlendLimit);
     } else {
         colorFinal = colorUtilsPS::getCrossFadeColor(colorTemp, colorFinal, dimRatio);
     }
@@ -430,7 +426,7 @@ void FireworksPS::spawnFirework(uint8_t fireworkNum){
 
         //we need to store the trailEndColor for size 1 particles
         //otherwise, when they next update, trailEndColors will be empty
-        trailEndColors[particleIndex] = burstColor;
+        trailEndColors[particleIndex] = *burstColor;
     }
 
     //set up the center "bomb" particle properties

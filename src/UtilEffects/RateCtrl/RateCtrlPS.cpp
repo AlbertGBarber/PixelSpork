@@ -34,10 +34,10 @@ void RateCtrlPS::reset(uint16_t StartRate, uint16_t EndRate, uint16_t Rate ){
 //This slows/speeds up the rate of change of the output rate as needed
 //so even if the difference between the start/end rates is small, we still get an easing effect
 //Once the outputRate is reached, we set the rateReached flag, which will prevent changing the output
-//If we're cycling, then we'll swap the start/end rates, wait through the changeHold, then reset
+//If we're cycling, then we'll swap the start/end rates, wait through the pauseTime, then reset
 void RateCtrlPS::update(){
     currentTime = millis();
-    if( rateReached && cycle && ( currentTime - prevTime ) >= changeHold ){ 
+    if( rateReached && cycle && ( currentTime - prevTime ) >= pauseTime ){ 
         reset(); 
     }
 

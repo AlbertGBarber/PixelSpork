@@ -39,11 +39,6 @@ void ColorWipeSL::init(uint16_t Rate){
     //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
     bindSegPtrPS();
     bindClassRatesPS();
-    //bind background color pointer (if needed)
-    //By default the background color is 0
-    CRGB BgColor = 0;
-    bindBGColorPS();
-
     //Store the inital wipe direction for reference later
     startingDirect = wipeDirect;
     setWipeLength(wipeLength);

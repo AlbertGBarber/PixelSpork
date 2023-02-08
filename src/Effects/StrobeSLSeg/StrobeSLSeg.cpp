@@ -1,10 +1,19 @@
 #include "StrobeSLSeg.h"
 
+//constructor for pattern and palette ver
+StrobeSLSeg::StrobeSLSeg(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, CRGB BgColor, uint8_t NumPulses, 
+                        uint16_t PauseTime, bool SegEach, bool SegDual, bool SegLine, bool SegLineDual, bool SegAll, uint16_t Rate):
+    segmentSet(SegmentSet), pattern(Pattern), palette(Palette), numPulses(NumPulses), pauseTime(PauseTime), segEach(SegEach), segDual(SegDual), segLineDual(SegLineDual), segLine(SegLine), segAll(SegAll)
+    {    
+        init(BgColor, Rate);
+	}
+
 //constructor for palette ver
 StrobeSLSeg::StrobeSLSeg(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, 
                         bool SegEach, bool SegDual, bool SegLine, bool SegLineDual, bool SegAll, uint16_t Rate):
     segmentSet(SegmentSet), palette(Palette), numPulses(NumPulses), pauseTime(PauseTime), segEach(SegEach), segDual(SegDual), segLineDual(SegLineDual), segLine(SegLine), segAll(SegAll)
     {    
+        setPaletteAsPattern();
         init(BgColor, Rate);
 	}
 
@@ -16,6 +25,7 @@ StrobeSLSeg::StrobeSLSeg(SegmentSet &SegmentSet, CRGB Color, CRGB BgColor, uint8
     {    
         paletteTemp = paletteUtilsPS::makeSingleColorPalette(Color);
         palette = &paletteTemp;
+        setPaletteAsPattern();
         init(BgColor, Rate);
 	}
 
@@ -26,6 +36,7 @@ StrobeSLSeg::StrobeSLSeg(SegmentSet &SegmentSet, uint8_t numColors, CRGB BgColor
     {    
         paletteTemp = paletteUtilsPS::makeRandomPalette(numColors);
         palette = &paletteTemp;
+        setPaletteAsPattern();
         init(BgColor, Rate);
 	}
 
@@ -40,6 +51,15 @@ void StrobeSLSeg::init(CRGB BgColor, uint16_t Rate){
 
 StrobeSLSeg::~StrobeSLSeg(){
     free(paletteTemp.paletteArr);
+    free(patternTemp.patternArr);
+}
+
+//sets the pattern to match the current palette
+//ie for a palette length 5, the pattern would be 
+//{0, 1, 2, 3, 4}
+void StrobeSLSeg::setPaletteAsPattern(){
+    patternTemp = generalUtilsPS::setPaletteAsPattern(palette);
+    pattern = &patternTemp;
 }
 
 //sets the newColor flag
@@ -50,21 +70,22 @@ void StrobeSLSeg::setNewColorBool(bool newColorBool){
     setCycleCountMax();
 }
 
-void StrobeSLSeg::setpalette(palettePS *newPalette){
-    palette = newPalette;
+//Sets a new pattern, also re-caculates how long the strobe cycle should be
+void StrobeSLSeg::setPattern(patternPS *newPattern){
+    pattern = newPattern;
     setCycleCountMax();
 }
 
 //resets the core cycle variables to restart the effect
 void StrobeSLSeg::reset(){
+    totalCycles = 0;
     pulseCount = 1;
     colorNum = 0;
     pulseMode = -1;
     cycleNum = 0;
     pulseBG = false;
     firstHalf = true;
-    pause = false;
-    prevGuess = 0;
+    paused = false;
     setPulseMode();
     setCycleCountMax();
 }
@@ -79,19 +100,19 @@ void StrobeSLSeg::reset(){
     //Each mode that is selected will be used after the previous mode has finished (with a pause in between)
 //The strobe of each segment will continue for a set number of on/off cycles (ie making the strobe)
 //A full cycle is once each of the segments has been strobed at least one time (gone through a set number of pulses)
-//and all colors of the palette have been used at least once
+//and all colors of the pattern have been used at least once
 //Color options and Strobe cycle behavior (set with newColor)
-    //A new color can be picked from the palette either for each new set of pulses, or after a strobe cycle
-    //The number of strobe cycles will always be enough to go through all the colors in the palette,
+    //A new color can be picked from the pattern either for each new set of pulses, or after a strobe cycle
+    //The number of strobe cycles will always be enough to go through all the colors in the pattern,
     //rounded up to a whole number of cycles
-    //For example, for a palette of 3 colors with a segment set having 5 segments, doing strobe mode 0:
+    //For example, for a pattern of 3 colors with a segment set having 5 segments, doing strobe mode 0:
     //If newColor is set, 1 full strobe cycle (5 sets of pulses, one for each segment)
-    //with each pulse having a new color from the palette 
-    //However if the palette was length 6, then two full strobe cycles would 
-    //happen so that all the colors in the palette showed up
-    //If newColor is not set, then the number of full strobe cycles is the palette length (number of colors)
+    //with each pulse having a new color from the pattern 
+    //However if the pattern was length 6, then two full strobe cycles would 
+    //happen so that all the colors in the pattern showed up
+    //If newColor is not set, then the number of full strobe cycles is the pattern length (number of colors)
     //so that the segment is pulsed in each color one time
-    //**The number of cycles is full dependent on the palette length, even if colors are choosen at random
+    //**The number of cycles is full dependent on the pattern length, even if colors are choosen at random
 //Pausing:
 //We pause for a set time after each full strobe cycle (or after every set of pulses of pauseEvery is set)
 //Ie for mode 0, we'd pause after pulsing each segment once (or after each color if pauseEvery is set)
@@ -110,7 +131,7 @@ void StrobeSLSeg::reset(){
 //Once this reaches the number of set pulses we choose what to do for the next set of pulses:
 //We increment the cycleNum (this tracks how many sets of pulses we've done)
 //If this matches cycleCountMax, then we need to pick a new mode and pause (if pulseEvery is false)
-//We then need to check if we need to advance the colorNum, which tracks the palette color index we're at
+//We then need to check if we need to advance the colorNum, which tracks the pattern color index we're at
 //to set a new color
 //And we check if we need to change the direction of the pulse cycle (for modes 0 and 2)
 //We flip the firstHalf flag (sets segments pulsed for modes 1 and 3)
@@ -122,8 +143,19 @@ void StrobeSLSeg::update(){
     if( ( currentTime - prevTime ) >= *rate ) {
         prevTime = currentTime;
 
+        //code for pausing the effect after pulse set is finished
+        //if we're paused, we simply return to break out of the function 
+        if(paused){
+            //if we're pausing between pulse sets, then we just have to wait until the pause time is up
+            if( ( currentTime - pauseStartTime ) >= pauseTime){
+                paused = false;
+            } else {
+                return;
+            }
+        }
+
         //if we have not reached the number of pulses we need to do a pulse
-        if(pulseCount <= numPulses && !pause){ 
+        if(pulseCount <= numPulses){ 
 
             //every other pulse we need to fill in the background instead
             //pulseBG is flipped each time we do a pulse
@@ -189,20 +221,16 @@ void StrobeSLSeg::update(){
             }
             pulseBG = !pulseBG;
 
-        } else if(pause) {
-            //if we're pausing between pulse sets, then we just have to wait until the pause time is up
-            if( ( currentTime - pauseStartTime ) >= pauseTime){
-                pause = false;
-            }
         } else {
             //if we've finished a set of pulses we need to decide what to do next
             //we advance the cycleNum since we've finished a set of pulses
-            cycleNum = addMod16PS( cycleNum, 1, cycleCountMax );//(cycleNum + 1) % cycleCountMax;
+            cycleNum = addMod16PS( cycleNum, 1, cycleCountMax );
             //if the cycleNum is 0 then we've gone through a full strobe cycle for the current mode
             //so we need to move to the next mode and trigger a pause (maybe)
             if( cycleNum == 0 ){
                 setPulseMode();
                 setCycleCountMax();
+                totalCycles++;
                 //if we only want to pause once a strobe cycle is finished, do so
                 if(!pauseEvery){
                     startPause();
@@ -211,13 +239,13 @@ void StrobeSLSeg::update(){
 
             //The cycle loop limit is the number of cycles until all the segments have been filled with color once
             //if this has happened we need to chooses a new color and flip the direction (maybe)
-            boolTemp = mod16PS( cycleNum, cycleLoopLimit ) == 0; //(cycleNum % cycleLoopLimit == 0);
+            boolTemp = mod16PS( cycleNum, cycleLoopLimit ) == 0;
             //if newColor is true, we always choose a the next color for each pulse cycle
             //otherwise we only do it at the end of a full strobe cycle
             if(newColor || boolTemp){
                 //color is picked via pickColor() above
-                //color num tracks the palette color index we're on
-                colorNum = addmod8( colorNum, 1, palette->length ); //(colorNum + 1) % palette->length;
+                //color num tracks the pattern color index we're on
+                colorNum = addmod8( colorNum, 1, pattern->length );
             }
 
             //switch the direction if alternate is on and
@@ -276,7 +304,7 @@ void StrobeSLSeg::setPulseMode(){
 //sets the reset point for a strobe cycle based on the current pulseMode
 //(a strobe cycle is finished once all the segments have been pulsed)
 //the reset point is cycleLoopLimit
-//while cycleCountMax is sets the total number of strobe cycles to do to show all the colors in the palette
+//while cycleCountMax is sets the total number of strobe cycles to do to show all the colors in the pattern
 //This is rounded up to a whole number of strobe cycles
 void StrobeSLSeg::setCycleCountMax(){
     numSegs = segmentSet.numSegs;
@@ -295,16 +323,16 @@ void StrobeSLSeg::setCycleCountMax(){
         cycleLoopLimit = 1;
     }
 
-    //we want to show each color in the palette at least once
+    //we want to show each color in the pattern at least once
     //so we need to set the number of strobe cycles accordingly
     if(newColor){
         //if we're doing a new color with each pulse then
         //the number of cycles we need to do is ratioed by the number of colors
         //rounded up so we do a whole number of strobe cycles
-        cycleCountMax = cycleLoopLimit * ceil( (float)palette->length / cycleLoopLimit);
+        cycleCountMax = cycleLoopLimit * ceil( (float)pattern->length / cycleLoopLimit);
     } else {
         //if we're doing one color for each strobe cycle
-        cycleCountMax = cycleLoopLimit * palette->length;
+        cycleCountMax = cycleLoopLimit * pattern->length;
     }
 }
 
@@ -315,7 +343,7 @@ void StrobeSLSeg::startPause(){
     if(fillBGOnPause){
         segDrawUtils::fillSegSetColor(segmentSet, *bgColor, bgColorMode);
     }
-    pause = true && (pauseTime != 0);
+    paused = true && (pauseTime != 0);
     pauseStartTime = millis();
 }
 
@@ -324,19 +352,19 @@ void StrobeSLSeg::startPause(){
 //at the start of a set of pulses
 void StrobeSLSeg::pickColor(){
     if(randMode == 0){
-        colorTemp = paletteUtilsPS::getPaletteColor( palette, colorNum );
+        palIndex = patternUtilsPS::getPatternVal(pattern, colorNum);
+        colorTemp = paletteUtilsPS::getPaletteColor( palette, palIndex );
     } else if(randMode == 1 && pulseCount <= 1) {
         //choose a completely random color
         colorTemp = colorUtilsPS::randColor();
     } else {
         //choose a color randomly from the pattern (making sure it's not the same as the current color)
         if(pulseCount <= 1) {
-            randGuess = random8(palette->length);
-            if(randGuess == prevGuess){
-                randGuess = addmod8(prevGuess, 1, palette->length); //(prevGuess + 1) % palette->length;
-            }
-            prevGuess = randGuess;
+            //Use the current palIndex value to get a shuffled value
+            //This may look confusing, but the pattern shuffle function a pattern value and spits out a different one
+            //palIndex is only set in pickColor(), so it's safe to store it in itself for the next pickColor() is called
+            palIndex = patternUtilsPS::getShuffleIndex(pattern, palIndex);
         }
-        colorTemp = paletteUtilsPS::getPaletteColor( palette, randGuess );
+        colorTemp = paletteUtilsPS::getPaletteColor( palette, palIndex );
     }
 }

@@ -13,7 +13,7 @@
 the palette is blended at the passed in rate (ms) in the passed in totalSteps steps
 the resulting palette can be accessed as "blendPalette", it will be the length of the longest of the passed in palettes
 The blend can be looped (so it repeats), or just set to happen once
-A hold time can be set, that will pause the loop once a blend is finished
+A pause time can be set, that will pause the loop once a blend is finished
 While looping, the palettes can be set to be randomized, which will blend to a random palette each time
 
 pass blendPalette to your effects to use the blended palette 
@@ -39,16 +39,16 @@ Functions:
     update() -- updates the effect
 
 Other Settings:
-    holdTime (default 0) -- Sets a time (ms) that the blendPalette will be pause at after finishing a transiton before starting the next
+    pauseTime (default 0) -- Sets a time (ms) that the blendPalette will be pause at after finishing a transiton before starting the next
                             Only relevant if looped is true
     randomize (default false) --  Randomize will randomize the end palette note that this will permanently modify the end palette
                                   so make sure you aren't using it elsewhere!
                                   Combine this with looped, to produce constantly changing palettes
 
 Flags:
-    blendEnd -- Set when the blend has ended, causes the hold to start
-    holdActive -- Set when the class is in the holding time after transitioning between palettes
-                 Is reset to false once the hold time has passed
+    blendEnd -- Set when the blend has ended, causes the pause to start
+    paused -- Set when the effect is paused after transitioning between palettes
+              Is reset to false once the pause time has passed
 
 Notes:
 The passed in start and end palettes are not modified by the blend unless randomize is active
@@ -71,12 +71,12 @@ class PaletteBlenderPS : public EffectBasePS {
             totalSteps; //The total number of steps taken to blend between the palettes, you can change this on the fly
         
         uint16_t 
-            holdTime = 0;
+            pauseTime = 0;
         
         bool
             looped,
             randomize = false,
-            holdActive = false,
+            paused = false,
             blendEnd = false;
         
         palettePS
@@ -96,7 +96,7 @@ class PaletteBlenderPS : public EffectBasePS {
     private:
         unsigned long
             currentTime,
-            holdStartTime = 0,
+            pauseStartTime = 0,
             prevTime = 0;
 
         CRGB

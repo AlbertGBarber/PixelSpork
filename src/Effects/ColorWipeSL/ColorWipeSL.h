@@ -142,8 +142,8 @@ class ColorWipeSL : public EffectBasePS {
             &segmentSet;
 
         CRGB 
-            bgColorOrig,
-            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color) 
+            bgColorOrig = 0, //default background color (blank)
+            *bgColor = &bgColorOrig; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color) 
         
         uint8_t
             style,

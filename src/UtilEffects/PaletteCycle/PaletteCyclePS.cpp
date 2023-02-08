@@ -58,9 +58,9 @@ void PaletteCyclePS::setTotalSteps(uint8_t newTotalSteps){
     PB->totalSteps = newTotalSteps;
 }
 
-//sets the hold time between each palette blend (see PaletteBlendPS)
-void PaletteCyclePS::setHoldTime(uint16_t newHoldTime){
-    PB->holdTime = newHoldTime;
+//sets the pause time between each palette blend (see PaletteBlendPS)
+void PaletteCyclePS::setPauseTime(uint16_t newPauseTime){
+    PB->pauseTime = newPauseTime;
 }
 
 //returns the current totalSteps in the PaletteBlendPS instance
@@ -70,7 +70,7 @@ uint8_t PaletteCyclePS::getTotalSteps(){
 
 //updates the blend
 //each time, we update the PaletteBlendPS instance
-//if the current blend has ended, and the hold has finished
+//if the current blend has ended, and the pause has finished
 //we check if we're reached the last palette in the set, if we have (and we're not looping)
 //we flag cycleEnd, and stop blending
 //otherwise we move on to the next palette and start the blend again
@@ -81,8 +81,8 @@ void PaletteCyclePS::update(){
         prevTime = currentTime;
         PB->update();
 
-        //if we've finished the current blend (and hold time), we need to move onto the next one 
-        if( PB->blendEnd && !PB->holdActive){
+        //if we've finished the current blend (and pause time), we need to move onto the next one 
+        if( PB->blendEnd && !PB->paused){
             paletteLength = paletteSet->length;
             //if we're not looping, and the end palette was the last on in the set, we need to set the end flag
             //otherwise move onto the next palette

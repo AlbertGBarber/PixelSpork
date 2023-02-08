@@ -53,8 +53,8 @@ class PacificaPS : public EffectBasePS {
             numSteps = 240 / pacificaPal1PS.length;
         
         CRGB 
-            bgColorOrig,
-            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+            bgColorOrig = CRGB( 2, 6, 10 ), //CRGB(10, 0, 0); for lava colors? Messing with this is tricky.
+            *bgColor = &bgColorOrig; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
         
         void 
             update(void);

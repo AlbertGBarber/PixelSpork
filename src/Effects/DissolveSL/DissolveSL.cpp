@@ -87,7 +87,7 @@ void DissolveSL::resetPixelArray(){
     numSpawned = 0;
     thresStartPoint = 0;
     randColorPicked = false;
-    hangTimeOn = false;
+    paused = false;
 }
 
 //set a color based on the pattern and randMode
@@ -143,21 +143,21 @@ CRGB DissolveSL::pickColor(){
     //If numSpawned passes setAllThreshold, we'll set any remaining lines in order (up to maxNumSpawn lines per cycle)
     //Once all the lines have been set (numSpawned >= numLines)
     //We reset the pixel array, maxNumSpawn, thresStartPoint (used when setting the lines once the threshold is met)
-    //We also set hangTimeOn, and increment the numCycles (which tracks how many dissolves we've done, used for setting colors)
+    //We also set paused, and increment the numCycles (which tracks how many dissolves we've done, used for setting colors)
     //Hang Time:
         //Hang time holds the current dissolve for a certain period before starting a new one
-        //It is triggered after a dissolve is complete using hangTimeOn
-        //during hangTime nothing from the effect is drawn or incremented
+        //It is triggered after a dissolve is complete using paused
+        //during pauseTime nothing from the effect is drawn or incremented
 void DissolveSL::update(){
     currentTime = millis();
 
     if( ( currentTime - prevTime ) >= *rate) {
         
         //code for pausing the effect after a dissolve is finished
-        //if we're in hang time, we simply return to break out of the function 
-        if(hangTimeOn){
-            if( (currentTime - prevTime) > hangTime ){
-                hangTimeOn = false;
+        //if we're in pause time, we simply return to break out of the function 
+        if(paused){
+            if( (currentTime - prevTime) > pauseTime ){
+                paused = false;
             } else {
                 return;
             }
@@ -193,21 +193,21 @@ void DissolveSL::update(){
 
         //check if the disolve is finished
         //if it is we need to reset to start a new dissolve
-        //turn the hang time on, and increment the cycle number
+        //turn the pause time on, and increment the cycle number
         if(numSpawned >= numLines){
             resetPixelArray();
             dissolveCount++;
-            hangTimeOn = true;
+            paused = true;
             numCycles = addMod16PS(numCycles, 1, pattern->length);
         }
 
         showCheckPS();
     }
 
-    //Determines if it's time to increase the spawn cap
+    //Determines if it's time to increase the spawn cap (if we're not paused)
     //This is checked independent of the effect loop, 
     //to decouple the spawn increase time from the effect rate
-    if( ( currentTime - prevSpawnTime ) >= spawnRateInc ){
+    if( !paused && ( currentTime - prevSpawnTime ) >= spawnRateInc ){
         prevSpawnTime = currentTime;
         maxNumSpawn++;
     }

@@ -6,9 +6,6 @@ PacificaPS::PacificaPS(SegmentSet &SegmentSet, uint16_t Rate):
         //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
         bindSegPtrPS();
         bindClassRatesPS();
-        CRGB BgColor = CRGB( 2, 6, 10 );
-        //CRGB BgColor = CRGB(10, 0, 0); //for lava colors
-        bindBGColorPS();
         //We can pre-allocate the number of gradient steps between the palette colors
         //This speeds up execution
         totBlendLength = numSteps * pacificaPal1PS.length;

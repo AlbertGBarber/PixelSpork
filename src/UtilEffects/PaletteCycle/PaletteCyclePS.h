@@ -59,7 +59,7 @@ Functions:
     reset() -- Restarts the blend (all settings and palettes stay the same)
     setTotalSteps(newTotalSteps) -- changes the total number of steps used in the blends (set in the PB instance, see PaletteBlenderPS)
     getTotalSteps() -- Returns the number of steps being used for the blend (set in the PB instance, see PaletteBlenderPS)
-    setHoldTime(newHoldTime) -- Changes the pause between blends (set in the PB instance, see PaletteBlenderPS)
+    setHoldTime(newPauseTime) -- Changes the pause between blends (set in the PB instance, see PaletteBlenderPS)
     update() -- updates the effect
 
 Other Settings:
@@ -122,7 +122,7 @@ class PaletteCyclePS : public EffectBasePS {
             reset(),
             reset(paletteSetPS *newPaletteSet),
             setTotalSteps(uint8_t newTotalSteps),
-            setHoldTime(uint16_t newHoldTime),
+            setPauseTime(uint16_t newPauseTime),
             update(void);
     
     private:

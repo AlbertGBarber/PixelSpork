@@ -45,9 +45,6 @@ void FirefliesSL::init(uint8_t maxNumFireflies, uint16_t Rate){
     //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
     bindSegPtrPS();
     bindClassRatesPS();
-    //bind background color pointer (if needed)
-    CRGB BgColor = 0;
-    bindBGColorPS();
     setupFireflies(maxNumFireflies);
     //do a quick clear of the strip
     segDrawUtils::fillSegSetColor(segmentSet, *bgColor, bgColorMode);

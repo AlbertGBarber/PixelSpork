@@ -41,9 +41,9 @@ uint8_t SinglePaletteCyclePS::getTotalSteps(){
     return PB->totalSteps;
 }
 
-//sets the hold time used in the PaletteBlenderPS instance
-void SinglePaletteCyclePS::setHoldTime(uint16_t newHoldTime){
-    PB->holdTime = newHoldTime;
+//sets the pause time used in the PaletteBlenderPS instance
+void SinglePaletteCyclePS::setPauseTime(uint16_t newPauseTime){
+    PB->pauseTime = newPauseTime;
 }
 
 //changes the palette used as the basis for the blends
@@ -207,8 +207,8 @@ void SinglePaletteCyclePS::update(){
         //update the PaletteBlendPS instance
         PB->update();
 
-        //if we've finished the current blend (and hold time), we need to move onto the next one
-        if(PB->blendEnd && !PB->holdActive){
+        //if we've finished the current blend (and pause time), we need to move onto the next one
+        if(PB->blendEnd && !PB->paused){
             cycleNum = addmod8( cycleNum, 1, paletteOrig->length );
             switchPalette();
             PB->reset( &currentPalette, &nextPalette );

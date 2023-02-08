@@ -1,8 +1,6 @@
 #ifndef PoliceStrobeSLPS_h
 #define PoliceStrobeSLPS_h
 
-//TODO: add color pattern to strobe?
-
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
 #include "MathUtils/mathUtilsPS.h"
@@ -11,8 +9,8 @@
 An effect to strobe a strip to mimic police lights, with some additional options
 A strobe is a rapid blinking of light.
 
-The base constuctor takes two colors, but you can optionally pass in a palette instead
-The are a few options for randomly choosing the strobe colors from the palette
+The base constuctor takes two colors, but you can optionally pass in a pattern and palette, or just a palette instead.
+The are a few options for randomly choosing the strobe colors from the pattern.
 
 Strobe Modes:
     0: Pulse half the segmentSet in each color (alternating halves and colors), then pulse each color on the whole segmentSet
@@ -21,7 +19,7 @@ Strobe Modes:
 
 The strobe of each color will continue for a set number of on/off cycles (ie making the strobe)
 
-If using a palette, all the colors will be cycled through before reseting 
+If using a pattern, all the pattern indexes will be cycled through before reseting 
 For mode 0, this means all the colors will be strobed in halves, then strobed on the full strip
 
 The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
@@ -34,7 +32,6 @@ Pausing:
     After a strobe cycle is finished there is a user configurable pause time between cycles
     (or after every set of pulses of pauseEvery is set)
     after which, the strobe will restart
-    this can be set to 0
 
 Backgrounds:
     By default the background is filled in after the end of every pulse set and duing a pause
@@ -44,6 +41,15 @@ Backgrounds:
     This effect is fully compatible with color modes, and the bgColor is a pointer, so you can bind it
     to an external color variable
     (see segDrawUtils::setPixelColor)
+
+Notes:
+    When using the dual color constructor option, the colors will be formed into a pattern and palette within the effect
+    They are stored as paletteTemp and patternTemp
+    So if you want to change the colors, you'll have to change them in paletteTemp.
+    paletteUtilsPS::setColor(<your strobe effect name>->paletteTemp, <your new color>,  color index (0 or 1)); 
+
+    When using the constructor with only a palette, a pattern matching the palette will be automatically created
+    and stored in patternTemp.
 
 Example calls: 
     PoliceStrobeSL(mainSegments, CRGB::Red, CRGB::Blue, 0, 1, 0, 1, 200);
@@ -55,13 +61,21 @@ Example calls:
     PoliceStrobeSL(mainSegments, &palette1, CRGB:Purple, 4, 500, 0, 50);
     A more dynamic strobe
     Will strobe all the colors in the palette1, with 4 pulses at 50ms each
-    strobe mode 0 is used, so the strobe will alternate between strobing halfs of the strip
-    and the whole strip
+    strobe mode 0 is used, so the strobe will alternate between strobing halfs of the strip and the whole strip
     There is a 500ms pause between cycles
     The background color is purple
+
+    uint8_t pattern_arr = {0, 1, 4};
+    patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
+    PoliceStrobeSL(mainSegments, &pattern, &palette1, CRGB:green, 6, 300, 0, 50);
+    Will strobe colors from the palette based on the pattern (ie colors 0, 1, and 4 in order), with 6 pulses at 50ms each
+    strobe mode 0 is used, so the strobe will alternate between strobing halfs of the strip and the whole strip
+    There is a 300ms pause between cycles
+    The background color is green
  
 Constructor Inputs:
-    palette(optional, see constructors) -- Used for making a strobe from a specific palette
+    pattern(optional, see constructors) -- Used for making a strobe that follows a specific pattern (using colors from a palette) (see patternPS.h)  
+    palette(optional, see constructors) -- Used for making a strobe from a specific palette (using the palette as the pattern)
     colorOne(optional, see constructors) -- Used for making a dual color strobe
     colorTwo(optional, see constructors) -- Used for making a dual color strobe
     bgColor -- The color between strobe pulses. It is a pointer, so it can be tied to an external variable
@@ -71,12 +85,14 @@ Constructor Inputs:
     rate -- The update rate of the strobe (ms)
 
 Functions:
+    setPaletteAsPattern() -- Sets the effect pattern to match the current palette
     reset() -- Restarts the effect
     update() -- updates the effect
 
 Other Settings:
     colorMode (default 0) -- sets the color mode for the random pixels (see segDrawUtils::setPixelColor)
     bgColorMode (default 0) -- sets the color mode for the background (see segDrawUtils::setPixelColor)
+    pauseEvery (default false) -- If true, the effect will pause after every set of pulses, rather than after a whole strobe cycle
     fillBG (default true) -- flag to fill the background after each set of pulses
     fillBGOnPause (default true) -- flag to fill the background during each pause
     randMode (default 0) -- Sets how colors are choosen from the palette
@@ -84,26 +100,23 @@ Other Settings:
                         -- 1: Colors will be choosen completly at random (not using the palette)
                         -- 2: Colors will be choosen randomly from the palette, same color will not be choosen in a row
 
+Reference Vars:
+    colorNum -- The pattern index of the color currently being pulsed (resets once every step in the pattern has been pulsed)
+
 Flags:
     pause -- set true if a pause is active
-
-Reference Vars:
-    colorNum -- the palette index of the color currently being pulsed
-
-Notes:
-    When using the dual color constructor option, the colors will be formed into a palette within the effect
-    This is stored as paletteTemp and is then bound to the effect palette.
-    So if you want to change the colors, you'll have to change them in paletteTemp.
-    paletteUtilsPS::setColor(<your strobe effect name>->paletteTemp, <your new color>,  color index (0 or 1)); 
 */
 class PoliceStrobeSL : public EffectBasePS {
     public:
 
         //Constructor for a traditional two color strobe
-        PoliceStrobeSL(SegmentSet &SegmentSet, CRGB ColorOne, CRGB ColorTwo, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, uint8_t PulseMode, uint16_t Rate);  
+        PoliceStrobeSL(SegmentSet &SegmentSet, CRGB ColorOne, CRGB ColorTwo, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, uint8_t PulseMode, bool SegMode, uint16_t Rate);  
 
-        //Constructor for using any palette for the colors
-        PoliceStrobeSL(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, uint8_t PulseMode, uint16_t Rate);
+        //Constructor using both pattern and palette
+        PoliceStrobeSL(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, uint8_t PulseMode, bool SegMode, uint16_t Rate);
+
+        //Constructor for using palette as the pattern
+        PoliceStrobeSL(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, uint8_t PulseMode, bool SegMode, uint16_t Rate);
 
         ~PoliceStrobeSL();
 
@@ -113,16 +126,19 @@ class PoliceStrobeSL : public EffectBasePS {
         bool
             fillBG = true,
             fillBGOnPause = true,
-            pause = false,
-            pauseEvery = false;
+            paused = false,
+            pauseEvery = false,
+            segMode;
         
         uint8_t 
-            colorNum = 0, //palette index of the color currently being pulsed
             randMode = 0,
             pulseMode,
             numPulses,
             colorMode = 0,
             bgColorMode = 0;
+        
+        uint16_t
+            colorNum = 0; //pattern index of the color currently being pulsed
             
         unsigned long
             pauseTime;
@@ -134,9 +150,14 @@ class PoliceStrobeSL : public EffectBasePS {
         palettePS
             paletteTemp,
             *palette = nullptr; //the palette used for the strobe colors
+
+        patternPS 
+            patternTemp,
+            *pattern = nullptr;
         
         void 
             reset(),
+            setPaletteAsPattern(),
             update(void);
     
     private:
@@ -147,8 +168,7 @@ class PoliceStrobeSL : public EffectBasePS {
 
         uint8_t
             pulseCount = 1,
-            randGuess,
-            prevGuess = 0, //the last color index guessed
+            palIndex,
             modeOut;
 
         uint16_t

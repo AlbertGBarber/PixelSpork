@@ -14,7 +14,7 @@ this uses FastLED's ease8InOutApprox function
 The utility can be set to cycle continuously between the start and end rates
 ie it will constantly transition back and forth between them
 
-You can also pause the rate after it has transitioned using the changeHold variable
+You can also pause the rate after it has transitioned using the pauseTime variable
 
 The transition rate is stored in outputRate. Use &outputRate to bind it to an effect rate.
 
@@ -39,7 +39,7 @@ Functions:
     update() -- updates the effect
 
 Other Settings:
-    changeHold (default 0) -- Sets a time (ms) that the output rate will be held at after finishing a transiton
+    pauseTime (default 0) -- Sets a time (ms) that the output rate will be held at after finishing a transiton
     cycle -- Sets if the utility will cycle continuously between the start and end rates
     easing -- Sets if easing will be used for the rate transtion
     outputRate -- The output rate of the transition
@@ -57,7 +57,7 @@ class RateCtrlPS : public EffectBasePS{
     uint16_t
         startRate,
         endRate,
-        changeHold = 0,
+        pauseTime = 0,
         outputRate;
     
     bool

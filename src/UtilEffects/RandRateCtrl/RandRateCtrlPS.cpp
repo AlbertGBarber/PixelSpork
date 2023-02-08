@@ -68,19 +68,19 @@ void RandRateCtrlPS::update(){
         RC->update();
         
         //if the end rate has been reached, we need to choose a new one
-        //and pause for the holdTime
+        //and pause for the pauseTime
         if(RC->rateReached){
             //if we haven't started holding, set the flag
             //and record the start time
-            if(!holdActive){
-                holdActive = true;
-                holdStartTime = currentTime;
+            if(!paused){
+                paused = true;
+                pauseStartTime = currentTime;
             }
 
-            //If we've passed the hold time, cancel the hold flag
+            //If we've passed the pause time, cancel the paused flag
             //It's time to choose a new end rate to transition to
-            if( ( currentTime - holdStartTime ) >= holdTime){
-                holdActive = false;
+            if( ( currentTime - pauseStartTime ) >= pauseTime){
+                paused = false;
                 //Since we're starting a new transtion, 
                 //we set the starting rate of the RateCtrl instance
                 //as whatever we ended the current one at

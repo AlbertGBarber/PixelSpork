@@ -12,7 +12,7 @@ for example, you could shift all of the palette's colors forward by one
 the palettes are blended at the passed in rate (ms) in the passed in totalSteps steps
 the resulting palette can be accessed as "cyclePalette", it's length will vary depending on the mode
 The blend is always looped, so it will repeat indefinitly 
-A hold time can be set, that will pause the the cycle once a blend has finished before starting the next
+A pause time can be set, that will pause the the cycle once a blend has finished before starting the next
 Modes can be changed mid-cycle
 Some modes have a diection setting (see below)
 
@@ -25,7 +25,7 @@ The PaletteCyclePS update rate is a pointer, and can be bound externally, like i
 Uses an instance of paletteBlenderPS to do the blends. 
 The instance is public and can be accessed as "PB"
 
-The hold time and totalSteps are variables of the PaletteBlenderPS instance
+The pause time and totalSteps are variables of the PaletteBlenderPS instance
 so they use setter functions as shown below
 
 Examples below use a palette of  {blue, red, green}
@@ -59,7 +59,7 @@ Functions:
     reset() -- Restarts the blend (all settings and palettes stay the same)
     setTotalSteps(newTotalSteps) -- changes the total number of steps used in the blends (set in the PB instance, see PaletteBlenderPS)
     getTotalSteps() -- Returns the number of steps being used for the blend (set in the PB instance, see PaletteBlenderPS)
-    setHoldTime(newHoldTime) -- Changes the pause between blends (set in the PB instance, see PaletteBlenderPS)
+    setPauseTime(newPauseTime) -- Changes the pause between blends (set in the PB instance, see PaletteBlenderPS)
     update() -- updates the effect
 
 Other Settings:
@@ -116,7 +116,7 @@ class SinglePaletteCyclePS : public EffectBasePS {
             switchPalette(),
             setPalette(palettePS *palette),
             setTotalSteps(uint8_t newTotalSteps),
-            setHoldTime(uint16_t newHoldTime),
+            setPauseTime(uint16_t newPauseTime),
             reset(),
             update(void);
     

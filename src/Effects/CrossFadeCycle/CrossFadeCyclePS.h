@@ -1,9 +1,6 @@
 #ifndef CrossFadeCyclePS_h
 #define CrossFadeCyclePS_h
 
-//TODO:
-    //Add hang time?
-
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
 
@@ -14,6 +11,8 @@ each fade is done in a specified number of steps, at a specified rate
 see constructors below for inputs
 
 The number of fades we've done is recorded by fadeCount.
+
+You can set the effect to pause between between fades for a fixed length of time.
 
 Does not work with color modes from segDrawUtils::setPixelColor()
 
@@ -51,10 +50,15 @@ Functions:
     update() -- updates the effect
 
 Other Settings:
-    randMode (defualt 0) -- see mode note above
+    randMode (default 0) -- see mode note above
+    pauseTime (default 0) -- The time that the effect will wait for between fades (ms)
 
 Reference Vars:
     fadeCount -- The number of fade cycles we've gone through.
+
+Flags:
+    paused -- If true then the effect is paused, it will begin fading again after pauseTime has passed
+
 */
 class CrossFadeCyclePS : public EffectBasePS {
     public:
@@ -74,7 +78,11 @@ class CrossFadeCyclePS : public EffectBasePS {
             randMode = 0; //see description above
         
         uint16_t 
+            pauseTime = 0,
             fadeCount; //how many total fades we've done
+        
+        bool
+            paused = false;
         
         SegmentSet 
             &segmentSet; 

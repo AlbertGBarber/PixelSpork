@@ -2,9 +2,8 @@
 #define FireworksPS_h
 
 //TODO -- Add more options for setting the burst color
-//        1. Make it a pointer so you can address it externally?
-//        2. Let it be set to match firework color?
-//        3. Make it match colorMode? -- Do 2 and 3 together in drawParticlePixel? (would need to modify the blend limit as well)
+//        1. Let it be set to match firework color?
+//        2. Make it match colorMode? -- Do 2 and 3 together in drawParticlePixel? (would need to modify the blend limit as well)
 
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
@@ -22,13 +21,16 @@ You have the option of having the constructor make a random palette for you
 By default all a firework's sparks are the same color, but you can set them all to be random (from the palette)
 using randSparkColors
 
-By default, all fireworks "burst" as white initially before fading to their spark color
-The burst color is stored as burstColor, which you may change
+All fireworks "burst" as initially before fading to their spark color
+The burst color is stored as burstColor, which is a pointer, so you can bind it to an eternal variable
+By default it is bound to burstColOrig, which is set to white.
 
 In general you can change most variables on the fly except for maxFireworks and maxNumSparks
 
-This effect is fully compatible with color modes, and the bgColor is a pointer, so you can bind it
-to an external color variable
+This effect is fully compatible with color modes.
+
+The bgColor is a pointer, so you can bind it to an external color variable.
+By default it is bound to bgColorOrig, which is set to 0 (blank color).
 
 If you have a non-zero background color be sure to set fillBG to true!!
 
@@ -150,7 +152,10 @@ Other Settings:
     blend (default false) -- Causes sparks to add their colors to the strip, rather than set them
                              See explanation of this in more detail above in effect intro
     randSparkColors (default false) -- If true, each spark will have its own color picked from the palette
-    burstColor (default CRGB::White) -- The color of the inital firework burst
+    burstColOrig (default CRGB::White) -- The default color of the inital firework burst (bound to the burstColor pointer by default)
+    *burstColor (default bound to burstColOrig) -- The color of the initial firework burst, is a pointer so it can be bound to an external variable 
+    bgColorOrig (default 0) -- The default color of the background (bound to the bgColor pointer by default)
+    *bgColor (default bound to bgColorOrig) -- The color of the background, is a pointer so it can be bound to an external variable 
     spawnRangeDiv (default 5) -- Sets what range of the strip fireworks spawn in: from numLEDs / spawnRangeDiv to (numLEDs - numLEDs / spawnRangeDiv)
  */
 class FireworksPS : public EffectBasePS {
@@ -199,9 +204,10 @@ class FireworksPS : public EffectBasePS {
             *fireWorkActive = nullptr;
         
         CRGB 
-            burstColor = CRGB::White,
-            bgColorOrig = 0,
-            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+            burstColOrig = CRGB::White, //default burst color
+            *burstColor = &burstColOrig, //the burstColor is a pointer, so it can be tied to and external var if needed
+            bgColorOrig = 0, //default background color
+            *bgColor = &bgColorOrig; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
 
         palettePS
             paletteTemp,

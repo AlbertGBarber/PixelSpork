@@ -49,6 +49,7 @@ void CrossFadeCyclePS::reset(){
     patternIndex = 0;
     currentStep = 0;
     palIndex = 0;
+    paused = false;
     //a pattern of length 1 is nonsensical
     //the only result is a single solid color
     //once that is drawn set done to true, as there is nothing else to draw
@@ -103,6 +104,17 @@ void CrossFadeCyclePS::getNextColor(){
 void CrossFadeCyclePS::update(){
     currentTime = millis();
     if( (currentTime - prevTime) >= *rate ) {
+
+        //code for pausing the effect after a fade is finished
+        //if we're in pause time, we simply return to break out of the function 
+        if(paused){
+            if( (currentTime - prevTime) > pauseTime ){
+                paused = false;
+            } else {
+                return;
+            }
+        }
+
         prevTime = currentTime;
         
         //caculate the next step of the current fade and display it
@@ -113,6 +125,7 @@ void CrossFadeCyclePS::update(){
         //if we've reached the end of the current fade
         //we need to choose the next color to fade to
         //and advance the fade count since we've finished a fade
+        //We also start the pause time
         if(currentStep == steps){
             currentStep = 0;
             //since the fade is done, the new starting color is the previous next color
@@ -120,6 +133,7 @@ void CrossFadeCyclePS::update(){
             //set the next color depending on the mode
             getNextColor();
             fadeCount++;
+            paused = true;
         }
 
         showCheckPS();

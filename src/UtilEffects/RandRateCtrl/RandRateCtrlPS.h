@@ -19,7 +19,7 @@ To produce the rates, the class uses an instance of both RateCtrl and RateRandom
 These are automatically set up when the RandRateCtrl is created
 You can change their settings using the functions listed below
 
-You can also pause the rate after it has transitioned using the holdTime variable
+You can also pause the rate after it has transitioned using the pauseTime variable
 
 The randomized rate is stored in outputRate. Use outputRate to bind it to an effect rate.
 
@@ -50,10 +50,10 @@ Functions:
     update() -- updates the effect
 
 Other Settings:
-    holdTime (default 0) -- Sets a time (ms) that the output rate will be held at after finishing a transiton before starting the next
+    pauseTime (default 0) -- Sets a time (ms) that the output rate will be held at after finishing a transiton before starting the next
 
 Flags:
-    holdActive -- Set when the class is in the holding time after transitioning between rates
+    paused -- Set when the class is in the holding time after transitioning between rates
 
 Notes:
     The update rate used in the RateCtrl instance is bound (via pointers) to the rate used in the RandRateCtrlPS
@@ -76,11 +76,11 @@ class RandRateCtrlPS : public EffectBasePS {
             *RC = nullptr;
         
         uint16_t
-            holdTime = 0,
+            pauseTime = 0,
             *outputRate = nullptr;
         
         bool
-            holdActive = false;
+            paused = false;
         
         void 
             setRangeMin(int16_t newRangeMin),
@@ -94,7 +94,7 @@ class RandRateCtrlPS : public EffectBasePS {
     private:
         unsigned long
             currentTime,
-            holdStartTime = 0,
+            pauseStartTime = 0,
             prevTime = 0;
 };
 

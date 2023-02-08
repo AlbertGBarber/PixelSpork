@@ -32,7 +32,7 @@ There are two modes of shifting through colors, using a single shift, and shifti
         The target color is 3 away from the starting color.
 You can switch which mode you're using at any time.
 
-You can also set the palette to pause for a time after each transition by setting the holdTime var (in ms)
+You can also set the palette to pause for a time after each transition by setting the pauseTime var (in ms)
 
 The output palette of the utlity is "sliderPalette". Pass it to your effects to use it.
 
@@ -78,12 +78,15 @@ Functions:
     update() -- updates the effect
 
 Other Settings:
-    holdTime (default 0) -- Sets a time (ms) that the sliderPalette will be pause for after finishing a transiton before starting the next
+    pauseTime (default 0) -- Sets a time (ms) that the sliderPalette will be pause for after finishing a transiton before starting the next
 
 Reference Vars:
     patternIndex -- How many full palette blends we've done, resets every time we've finshed the pattern
 
-Notes:
+Flags:
+    paused -- Set when the effect is paused after transitioning between palettes indexes
+              Is reset to false once the pause time has passed
+
 */
 class PaletteSliderPS : public EffectBasePS {
     public:
@@ -95,10 +98,11 @@ class PaletteSliderPS : public EffectBasePS {
 
         uint16_t
             blendSteps,
-            holdTime = 0,
+            pauseTime = 0,
             patternIndex = 0; //How many full palette blends we've done, for reference only
         
         bool
+            paused = false,
             singleShift;
         
         CRGB 
@@ -122,7 +126,7 @@ class PaletteSliderPS : public EffectBasePS {
         unsigned long
             currentTime,
             prevTime = 0,
-            holdStartTime;
+            pauseStartTime;
         
         uint8_t 
             ratio,
@@ -133,9 +137,6 @@ class PaletteSliderPS : public EffectBasePS {
             patternStep,
             sliderPalLen,
             blendStep = 0;
-        
-        bool
-            holdActive = false;
         
         CRGB 
             startColor,

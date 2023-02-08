@@ -10,11 +10,20 @@
 // If the randomShift is on, then with each cycle we do a random check to see if we should change the pixel's offset
 // if so, then we increment it by a random amount up to shiftStep.
 
+//Constructor for effect with pattern and palette
+ShiftingSeaSL::ShiftingSeaSL(SegmentSet& SegmentSet, patternPS *Pattern, palettePS* Palette, uint8_t GradLength, uint8_t Smode, uint8_t Grouping, uint16_t Rate):
+    segmentSet(SegmentSet), pattern(Pattern), palette(Palette), gradLength(GradLength), sMode(Smode), grouping(Grouping) 
+{
+    init(Rate);
+}
+
 //Constructor for effect with palette
 ShiftingSeaSL::ShiftingSeaSL(SegmentSet& SegmentSet, palettePS* Palette, uint8_t GradLength, uint8_t Smode, uint8_t Grouping, uint16_t Rate):
     segmentSet(SegmentSet), palette(Palette), gradLength(GradLength), sMode(Smode), grouping(Grouping) 
 {
+    setPaletteAsPattern();
     init(Rate);
+
 }
 
 //Constructor for effect with randomly created palette
@@ -23,12 +32,14 @@ ShiftingSeaSL::ShiftingSeaSL(SegmentSet& SegmentSet, uint8_t NumColors, uint8_t 
 {
     paletteTemp = paletteUtilsPS::makeRandomPalette(NumColors);
     palette = &paletteTemp;
+    setPaletteAsPattern();
     init(Rate);
 }
 
 ShiftingSeaSL::~ShiftingSeaSL(){
     free(offsets);
     free(paletteTemp.paletteArr);
+    free(patternTemp.patternArr);
 }
 
 //initializes core variables
@@ -37,6 +48,15 @@ void ShiftingSeaSL::init(uint16_t Rate){
     bindSegPtrPS();
     bindClassRatesPS();
     resetOffsets();
+}
+
+//sets the pattern to match the current palette
+//ie for a palette length 5, the pattern would be 
+//{0, 1, 2, 3, 4}
+void ShiftingSeaSL::setPaletteAsPattern(){
+    patternTemp = generalUtilsPS::setPaletteAsPattern(palette);
+    pattern = &patternTemp;
+    setTotalCycleLen();
 }
 
 //changes the mode, also resets the offset array
@@ -64,8 +84,8 @@ void ShiftingSeaSL::resetOffsets() {
 
 //caculates the totalCycleLength, which represents the total number of possible offsets a pixel can hav
 void ShiftingSeaSL::setTotalCycleLen(){
-    paletteLen = palette->length;
-    totalCycleLength = gradLength * (paletteLen + (uint8_t)addBlank); //addBlank is a bool, so will be either 0 or 1
+    patternLen = pattern->length;
+    totalCycleLength = gradLength * (patternLen + (uint8_t)addBlank); //addBlank is a bool, so will be either 0 or 1
 }
 
 //Updates the effect
@@ -92,22 +112,29 @@ void ShiftingSeaSL::update() {
         for (uint16_t i = 0; i < numLines; i++) {
             step = addMod16PS( cycleNum, offsets[i], totalCycleLength); // where we are in the cycle of all the colors
             gradStep = addMod16PS( cycleNum, offsets[i], gradLength); // what step we're on between the current and next color
-            currentColorIndex = step / gradLength; // what color (palette index) we've started from (integers always round down)
-            currentColor = paletteUtilsPS::getPaletteColor(palette, currentColorIndex);
-            nextColor = paletteUtilsPS::getPaletteColor(palette, currentColorIndex + 1); // the next color, wrapping to the start of the palette as needed
+            curPatIndex = step / gradLength; // what pattern index we've started from (integers always round down)
+
+            //Get the palette index from the pattern then the color from the palette
+            curColorIndex = patternUtilsPS::getPatternVal(pattern, curPatIndex);
+            currentColor = paletteUtilsPS::getPaletteColor(palette, curColorIndex);
+
+            //Get the next pattern index, wrapping to the start of the pattern as needed, then the color from the palette
+            nextColorIndex = patternUtilsPS::getPatternVal(pattern, curPatIndex + 1); 
+            nextColor = paletteUtilsPS::getPaletteColor(palette, nextColorIndex);
 
             //if we're adding a blank color at the end of the cycle, we need to to catch the end
             //since the palette doesn't include the blank color
             //so we have the case where we're transitioning from the last palette color to the blank color
             //and the case after where we're transitioning from the blank color back to the start of the palette
             if(addBlank){
-                if(currentColorIndex + 1 == paletteLen){
+                if(curPatIndex + 1 == patternLen){
                     //going from the end of the palette to the blank color
                     nextColor = *blankColor;
-                } else if(currentColorIndex == paletteLen){
+                } else if(curPatIndex == patternLen){
                     //going from the blankColor to the start of the palette
                     currentColor = *blankColor;
-                    nextColor = paletteUtilsPS::getPaletteColor(palette, 0);
+                    nextColorIndex = patternUtilsPS::getPatternVal(pattern, 0); 
+                    nextColor = paletteUtilsPS::getPaletteColor(palette, nextColorIndex);
                 }
             }
             

@@ -1,29 +1,28 @@
 #ifndef ShiftingSeaSLPS_h
 #define ShiftingSeaSLPS_h
 
-//TODO:
-//  -- Add option to use a pattern based on a palette?
-//  -- Add a constructor with random shift and blank options?
-
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
 #include "MathUtils/mathUtilsPS.h"
 #include "Utils/ShiftingSeaUtilsPS.h"
 
 /*
-Cycles each line of a segment set through a palette of colors. Each segment line is given an random 
-offset to place it somewhere mid-fade between the palette colors, so the result is a shifting sea of palette colors. 
+Cycles each line of a segment set through a pattern of colors. Each segment line is given an random 
+offset to place it somewhere mid-fade between the pattern colors, so the result is a shifting sea of colors. 
+
+The pattern colors are taken from passed in palette. There are constructor options for just using a palette
+(in which case a pattern will be created that matches the palette)
 
 There are two modes: 
     0: Where the offsets are choosen randomly from any point of fading between any 
-       two consecutive colors of the palette (so the overall output is a mix of the palette colors)
+       two consecutive colors of the pattern (so the overall output is a mix of the pattern colors)
     1: Where the offsets are choosen randomly from the fade between the first and second colors
        in mode 1, the lines will all generally shift from color to color, 
        but some will be ahead of others, creating a varied look.
 
 You can specify a grouping for the lines, this will set the offsets of consecutive pixels to be the same
 the number of lines grouped together is choosen randomly (up to the grouping amount).
-This makes the effect more uniform, and may look better with larger palettes or segments sets
+This makes the effect more uniform, and may look better with larger patterns or segments sets
 
 By default, once the offsets are set, they do not change. This can make the effect look a bit repetitive
 to counter this, you can turn on random shifting, which will increment the offset of a line
@@ -34,7 +33,7 @@ You can change how many gradient steps between colors there are on the fly.
 In some cases the effect looks better if there is a "blank" inserted into the cycle
 so that pixels will cycle to off every so often.
 However most palettes don't include off as a color, so I've build an off state into the effect directly.
-This will not modify any palettes, the blank state is tacked on to the end of the palette color cycle.
+This will not modify any palettes or patterns, the blank state is tacked on to the end of the pattern color cycle.
 You can include the off state by setting addBlank to true.
 You can also set the blank color (default is 0) using the *blankColor var.
 Note that turning this on or off while the effect is running will cause colors to jump.
@@ -48,9 +47,18 @@ passing in a segmentSet with only one segment containing the whole strip.
 Also note that the class needs a uint16_t array the length of the number of pixels in the segment in order to work
 So if you are short on ram, you might not be able to run this!
 
-For a similar effect you could try Lava or one of the other noise effects
+This effect can is a little computationally heavy since you are caculating blends for each pixel or line.
+For a similar effect you could try Lava or one of the other noise effects.
 
 Example call: 
+
+    uint8_t pattern_arr = {0, 2, 1};
+    patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
+    ShiftingSeaSL(mainSegments, &pattern, &palette1, 20, 0, 3, 40);
+    Will shift through the colors of palette1 according to the pattern (color 0, then 2, then 1),
+    with 20 steps between each shift, using mode 0
+    grouping pixels by 3, at a rate of 40ms
+
     ShiftingSeaSL(mainSegments, &palette1, 20, 0, 3, 40);
     Will shift through the colors of palette1, with 20 steps between each shift, using mode 0
     grouping pixels by 3, at a rate of 40ms
@@ -60,6 +68,7 @@ Example call:
     grouping pixels by 1, at a rate of 60ms
 
 Inputs:
+    pattern(optional, see constructors) -- Used for making a strobe that follows a specific pattern (using colors from a palette) (see patternPS.h) 
     palette (optional, see constructors) -- The palette from which colors will be choosen
     numColors (optional, see constructors) -- The length of the randonly created palette used for the effect
     gradLength -- (max 255) the number of steps to fade from one color to the next
@@ -73,6 +82,7 @@ Functions:
     resetOffsets() -- Resets the offset array, recaulating offsets for each pixel, will cause a jump if done mid-effect
     setMode(newMode) -- Changes the mode of the effect, also resets the offset array
     setGrouping(newGrouping) -- Sets a new grouping value for the effect, also resets the offset array since that's where the grouping is set
+    setPaletteAsPattern() -- Sets the effect pattern to match the current palette
     update() -- updates the effect
 
 Other Settings:
@@ -89,10 +99,12 @@ Reference Vars:
     totalCycleLength -- The total number of possible offsets a pixel can have (one for each fade color)
     cycleNum -- Tracks how many update's we've done, resets at totalCycleLength (each pixel will have cycled through the pattern once)
 
-Notes:
 */
 class ShiftingSeaSL : public EffectBasePS {
     public:
+        //Constructor for effect with pattern and palette
+        ShiftingSeaSL(SegmentSet& SegmentSet, patternPS *Pattern, palettePS* Palette, uint8_t GradLength, uint8_t Smode, uint8_t Grouping, uint16_t Rate);
+
         //Constructor for effect with palette
         ShiftingSeaSL(SegmentSet &SegmentSet, palettePS *Palette, uint8_t GradLength, uint8_t Smode, uint8_t Grouping, uint16_t Rate);  
 
@@ -128,10 +140,15 @@ class ShiftingSeaSL : public EffectBasePS {
             paletteTemp,
             *palette = nullptr;
         
+        patternPS
+            patternTemp,
+            *pattern = nullptr;
+        
         void
             setMode(uint8_t newMode),
             setGrouping(uint16_t newGrouping),
             resetOffsets(),
+            setPaletteAsPattern(),
             update(void);
     
     private:
@@ -145,12 +162,14 @@ class ShiftingSeaSL : public EffectBasePS {
             nextColor;
 
         uint8_t 
-            paletteLen,
-            currentColorIndex, 
+            patternLen,
+            curColorIndex, 
+            nextColorIndex,
             gradStep;
 
         uint16_t
             numLines,
+            curPatIndex,
             *offsets = nullptr,
             step = 0;
         

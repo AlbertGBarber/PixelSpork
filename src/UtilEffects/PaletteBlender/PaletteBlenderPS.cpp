@@ -44,7 +44,7 @@ void PaletteBlenderPS::reset(){
     step = 0;
     prevTime = 0;
     blendEnd = false;
-    holdActive = false;
+    paused = false;
 }
 
 //creates the blend palette and the color storage arrays
@@ -68,7 +68,7 @@ void PaletteBlenderPS::update(){
 
     //if the blend is active, and enougth time has passed, update the palette
     if( ( currentTime - prevTime ) >= *rate ){
-        if(!holdActive && !blendEnd){
+        if(!paused && !blendEnd){
             prevTime = currentTime;
 
             step++;
@@ -88,12 +88,12 @@ void PaletteBlenderPS::update(){
             //set flags, and loop if needed
             if(step >= totalSteps){
                 blendEnd = true;
-                holdActive = true;
-                holdStartTime = currentTime;
+                paused = true;
+                pauseStartTime = currentTime;
             }
         //if we're in a hold, check if the hold time has passed
-        } else if( ( currentTime - holdStartTime ) >= holdTime) {
-            holdActive = false;
+        } else if( ( currentTime - pauseStartTime ) >= pauseTime) {
+            paused = false;
             if(looped){
                 reset(endPalette, startPalette);
             }

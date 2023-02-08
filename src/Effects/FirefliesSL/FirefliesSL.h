@@ -16,7 +16,7 @@ In general you can change most variables on the fly except for maxnumFireflies
 You can also turn the twinking off
 
 This effect is fully compatible with color modes, and the bgColor is a pointer, so you can bind it
-to an external color variable
+to an external color variable. By default it is bound to bgColorOrig, which is set to 0 (blank color).
 
 If you have a non-zero background color be sure to set fillBG to true!!
 
@@ -117,6 +117,8 @@ Other Settings:
     blend (default false) -- Causes sparks to add their colors to the strip, rather than set them
                              See explanation of this in more detail above in effect intro
     flicker (default true) -- Turns the firefly brightness flicker on or off
+    bgColorOrig (default 0) -- The default color of the background (bound to the bgColor pointer by default)
+    *bgColor (default bound to bgColorOrig) -- The color of the background, is a pointer so it can be bound to an external variable 
     fadeThresh (default 50) -- The number of steps (out of 255) for the flyflies to fade in or out
                                The fireflies spend 255 steps in total fading in, staying at a peak color, then fading out
                                The value of fadeThresh reduces how long the they will stay at peak color
@@ -166,8 +168,8 @@ class FirefliesSL : public EffectBasePS {
             flicker = true;
 
         CRGB 
-            bgColorOrig,
-            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+            bgColorOrig = 0, //default background color (blank)
+            *bgColor = &bgColorOrig; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
 
         palettePS
             paletteTemp,

@@ -17,7 +17,7 @@ By default we start by spawning one segment line at a time, increasing the numbe
 so the spawing steadily accelerates. This helps keep the spawing consistent, since we're picking at random
 Once a certain threshold has been met (default of 1/10 of the number of lines in the segment set remaining)
 All the remaining lines are set. This prevents us from getting stuck looking for the last line.
-Once a morph is finished, the effect can be set to pause for a period using the hangTime variable.
+Once a morph is finished, the effect can be set to pause for a period using the pauseTime variable.
 
 You can increase the starting number of lines set at once (maxNumSpawnBase), which will
 acclerate the morphing, and may be good on longer segment sets.
@@ -74,11 +74,11 @@ Functions:
 
 Other Settings:
     setAllThreshold (defaults to 1/10th of the segment set length) -- The number of leds that will be set randomly
-                                                                     Before they are set in order
-                                                                     This is a fail safe so that you don't get stuck with one led that is never
-                                                                     randomly picked, so the dissolve doesn't end
-    hangTime (default 0ms) -- The length of time that the effect will wait between dissolves, useful for adjusting the next dissolve color/settings
-                             If the hang time is active, it is indicated with the hangTimeOn flag
+                                                                      Before they are set in order
+                                                                      This is a fail safe so that you don't get stuck with one led that is never
+                                                                      randomly picked, so the dissolve doesn't end
+    pauseTime (default 0ms) -- The length of time that the effect will wait between dissolves, useful for adjusting the next dissolve color/settings
+                               If the pause time is active, it is indicated with the paused flag
     colorMode (default 0) -- sets the color mode for the random pixels (see segDrawUtils::setPixelColor)
     maxNumSpawnBase (default 1) -- The starting value of the number of pixels set in one cycle
                                    Higher numbers may work better for longer pixel lengths
@@ -87,9 +87,11 @@ Other Settings:
                                !!FOR reference only, set using setLineMode();
 
 Reference vars:
-    hangTimeOn -- If true, then the effect is paused. Note that the effect is not re-draw while hanging.
     dissolveCount -- The number of dissolves we've done (note this is not reset by any function, so you'll have to manually reset it if needed)
     numCycles -- How many update cycles we've been through (resets when we've gone through the whole pattern)
+
+Flags:
+    paused -- If true, then the effect is paused. Note that the effect is not re-draw while paused.
 
 Notes:
     Requires an array of bools of equal size to the number of pixels in the segment set
@@ -115,14 +117,14 @@ class DissolveSL : public EffectBasePS {
 
         uint16_t
             setAllThreshold,
-            hangTime = 0,
+            pauseTime = 0,
             spawnRateInc,
             dissolveCount = 0, //The number of full dissolves we've done
             numCycles = 0; //how many update cycles we've been through (resets when we've gone through the whole pattern)
 
         bool
             lineMode = true, //for reference, set using setLineMode()
-            hangTimeOn = false; //for reference
+            paused = false; 
 
         SegmentSet 
             &segmentSet; 
