@@ -1,8 +1,6 @@
 #ifndef patternUtilsPS_h
 #define patternUtilsPS_h
 
-//TODO
-//Add direction to patterns? Ie you can set them to be read backwards or forwards
 #include "FastLED.h"
 #include "patternPS.h"
 #include "MathUtils/mathUtilsPS.h"
@@ -13,7 +11,8 @@
 namespace patternUtilsPS{
     void
         setVal(patternPS *pattern, uint8_t val, uint16_t index),
-        shuffle(patternPS *pattern);
+        shuffle(patternPS *pattern),
+        reverse(patternPS *pattern);
     
     uint8_t 
         getPatternVal(patternPS *pattern, uint16_t index),

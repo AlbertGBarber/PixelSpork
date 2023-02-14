@@ -1,8 +1,8 @@
 #include "ColorMeltSL.h"
 
 //Constructor for rainbow mode
-ColorMeltSL::ColorMeltSL(SegmentSet &SegmentSet, uint8_t MeltFreq, uint8_t PhaseFreq, uint16_t Rate):
-    segmentSet(SegmentSet), meltFreq(MeltFreq), phaseFreq(PhaseFreq)
+ColorMeltSL::ColorMeltSL(SegmentSet &SegmentSet, uint8_t MeltFreq, uint8_t PhaseFreq, bool BriInvert, uint16_t Rate):
+    segmentSet(SegmentSet), meltFreq(MeltFreq), phaseFreq(PhaseFreq), briInvert(BriInvert)
     {    
         rainbowMode = true;
         init(Rate);
@@ -14,15 +14,15 @@ ColorMeltSL::ColorMeltSL(SegmentSet &SegmentSet, uint8_t MeltFreq, uint8_t Phase
 	}
 
 //Constructor for colors from palette
-ColorMeltSL::ColorMeltSL(SegmentSet &SegmentSet, palettePS *Palette, uint8_t MeltFreq, uint8_t PhaseFreq, uint16_t Rate):
-    segmentSet(SegmentSet), palette(Palette), meltFreq(MeltFreq), phaseFreq(PhaseFreq)
+ColorMeltSL::ColorMeltSL(SegmentSet &SegmentSet, palettePS *Palette, uint8_t MeltFreq, uint8_t PhaseFreq, bool BriInvert, uint16_t Rate):
+    segmentSet(SegmentSet), palette(Palette), meltFreq(MeltFreq), phaseFreq(PhaseFreq), briInvert(BriInvert)
     {    
         init(Rate);
 	}
 
 //Constructor for a randomly created palette
-ColorMeltSL::ColorMeltSL(SegmentSet &SegmentSet, uint8_t numColors, uint8_t MeltFreq, uint8_t PhaseFreq, uint16_t Rate):
-    segmentSet(SegmentSet), meltFreq(MeltFreq), phaseFreq(PhaseFreq)
+ColorMeltSL::ColorMeltSL(SegmentSet &SegmentSet, uint8_t numColors, uint8_t MeltFreq, uint8_t PhaseFreq, bool BriInvert, uint16_t Rate):
+    segmentSet(SegmentSet), meltFreq(MeltFreq), phaseFreq(PhaseFreq), briInvert(BriInvert)
     {    
         init(Rate);
         paletteTemp = paletteUtilsPS::makeRandomPalette(numColors);
@@ -77,7 +77,7 @@ void ColorMeltSL::update(){
         numSegs = segmentSet.numSegs;
         numLines = segmentSet.maxSegLength;
 
-        hl = numLines/2;
+        hl = numLines/hlDiv;
         t1 = beat8(meltFreq); 
         t2 = beat8(7); 
 
@@ -94,12 +94,17 @@ void ColorMeltSL::update(){
         //set a color for each line and then color in all the pixels on the line
         for (uint16_t i = 0; i < numLines; i++) {
 
-            c1 = 255 - abs(i - hl) * 255 / hl;
+            c1 = 255 - ( (abs(i - hl) * 255) / hl );
             c2 = sin8(c1 + phase); //adding the phase here seems to work best
             c3 = sin8(c2 + c1);
 
             v = sin8(c3 + t1);
-            v = v * v / 255;
+            v = (uint16_t)v * v / 255;
+
+            //Inverts the wave brightness to make light areas dark and visa versa
+            if(briInvert){
+                v = 255 - v;
+            }
 
             //If we're in rainbow mode, pick a color using th HSV color wheel
             //Otherwise pick a color from the palette. Note that we use 255 blend steps for the whole palette.

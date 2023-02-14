@@ -1,14 +1,14 @@
 #include "PaletteCyclePS.h"
 
-PaletteCyclePS::PaletteCyclePS(paletteSetPS *PaletteSet, bool Looped, uint8_t TotalSteps, uint16_t Rate):
-    paletteSet(PaletteSet), looped(Looped)
+PaletteCyclePS::PaletteCyclePS(paletteSetPS *PaletteSet, bool Looped, bool RandomizePal, bool Shuffle, uint8_t TotalSteps, uint16_t Rate):
+    paletteSet(PaletteSet), looped(Looped), randomizePal(RandomizePal), shuffle(Shuffle)
     {    
         bindClassRatesPS();
         //create an instance of PaletteBlenderPS to do the blends
         //the initial start/end palettes are set just to setup the PaletteBlenderPS instance
         //we'll change the initial start and end palettes officially below
         currentIndex = 0;
-        nextIndex = addmod8( currentIndex, 1, paletteSet->length ); //(currentIndex + 1) % paletteSet->length;
+        nextIndex = addmod8( currentIndex, 1, paletteSet->length );
         PB = new PaletteBlenderPS(paletteSet->getPalette(currentIndex), paletteSet->getPalette(nextIndex), false, TotalSteps, Rate);
         //point the PB update rate to the same rate as the PaletteCyclePS instance, so they stay in sync
         PB->rate = rate;
@@ -24,9 +24,10 @@ PaletteCyclePS::~PaletteCyclePS(){
 
 //restarts the blend cycle
 void PaletteCyclePS::reset(){
-    cycleEnd = false;
+    cycleNum = 0;
+    done = false;
     currentIndex = 0;
-    nextIndex = addmod8( currentIndex, 1, paletteSet->length ); //(currentIndex + 1) % paletteSet->length;
+    nextIndex = addmod8( currentIndex, 1, paletteSet->length );
     PB->startPalette = paletteSet->getPalette(currentIndex);
     PB->endPalette = paletteSet->getPalette(nextIndex);
     PB->reset();
@@ -43,7 +44,7 @@ void PaletteCyclePS::reset(paletteSetPS *newPaletteSet){
     //choose a new maximum palette length based on the palettes in the palette set
     maxPaletteLength = 0;
     for(uint8_t i = 0; i < paletteSet->length; i++){
-        uint8_t paletteLength = ( paletteSet->getPalette(currentIndex) )->length;
+        uint8_t paletteLength = ( paletteSet->getPalette(i) )->length;
         if( paletteLength > maxPaletteLength){
             maxPaletteLength = paletteLength;
         }
@@ -72,29 +73,42 @@ uint8_t PaletteCyclePS::getTotalSteps(){
 //each time, we update the PaletteBlendPS instance
 //if the current blend has ended, and the pause has finished
 //we check if we're reached the last palette in the set, if we have (and we're not looping)
-//we flag cycleEnd, and stop blending
+//we flag done, and stop blending
 //otherwise we move on to the next palette and start the blend again
 void PaletteCyclePS::update(){
     currentTime = millis();
     
-    if( (!cycleEnd || looped) && ( currentTime - prevTime ) >= *rate ) {
+    if( (!done || looped) && ( currentTime - prevTime ) >= *rate ) {
         prevTime = currentTime;
         PB->update();
 
         //if we've finished the current blend (and pause time), we need to move onto the next one 
-        if( PB->blendEnd && !PB->paused){
-            paletteLength = paletteSet->length;
+        if( PB->blendEnd && !PB->paused ){
+            paletteSetLen = paletteSet->length;
             //if we're not looping, and the end palette was the last on in the set, we need to set the end flag
             //otherwise move onto the next palette
-            if(!looped && ( nextIndex >= (paletteLength - 1) ) ){
-                cycleEnd = true;
+            if(!looped && ( cycleNum >= (paletteSetLen - 1) ) ){
+                done = true;
             } else {
+                //Track how many blend's we've done
+                cycleNum++;
                 //setup the next palette to blend to
                 //the starting palette is the one we're just blended to (ie at nextIndex)
                 currentIndex = nextIndex;
-                nextIndex = mod8( (currentIndex + 1), paletteLength );
-                //if we're randomizing, we randomize the next palette
-                if(randomize){
+                nextIndex = mod8( (currentIndex + 1), paletteSetLen );
+                
+                //If we're shuffling, ie choosing the next palette at random, but making sure it's not the current palette
+                //Then we pick a random palette. If it's not the same as the current palette, we keep it.
+                //Otherwise we just go with the current nextIndex (the nest palette in line)
+                if(shuffle){
+                    indexGuess = random8(paletteSetLen);
+                    if(indexGuess != currentIndex){
+                       nextIndex = indexGuess;
+                    }
+                }
+
+                //If we're randomizing 
+                if(randomizePal){
                     paletteUtilsPS::randomize( paletteSet->getPalette(nextIndex) );
                 }
                 //set the palettes in the PaletteBlendPS instance manually

@@ -1,15 +1,12 @@
 #ifndef PaletteBlenderPS_h
 #define PaletteBlenderPS_h
 
-//TODO:
-//-- Add new blend version that lets you exclude some indexes from blending 
-//   (for randomizing when you want a const color), forced same length palettes, excluding colors at end?
-
 #include "PaletteFiles.h"
 #include "Effects/EffectBasePS.h"
 #include "MathUtils/mathUtilsPS.h"
 
-/* Takes two palettes, a start and and end one, and gives you a palette that is blended over time from the start towards the end
+/* 
+Takes two palettes, a start and and end one, and gives you a palette that is blended over time from the start towards the end
 the palette is blended at the passed in rate (ms) in the passed in totalSteps steps
 the resulting palette can be accessed as "blendPalette", it will be the length of the longest of the passed in palettes
 The blend can be looped (so it repeats), or just set to happen once
@@ -51,14 +48,14 @@ Flags:
               Is reset to false once the pause time has passed
 
 Notes:
-The passed in start and end palettes are not modified by the blend unless randomize is active
+    The passed in start and end palettes are not modified by the blend unless randomize is active
 
-If you have set an external variable pointing to one of the colors in the blendPalette (such as a bgColor for an effect)
-be warned that the blandPalette is allocated on the fly using new
-It is only re-allocated if it's size needs to change for a new blend 
-(ie new start/end palettes are set that don't have the same max size as the previous pair)
-So if you do set new palettes, either make sure they have the same max size a the previous pair,
-or re-bind you variable's pointer
+    If you have set an external variable pointing to one of the colors in the blendPalette (such as a bgColor for an effect)
+    be warned that the blandPalette is allocated on the fly using new
+    It is only re-allocated if it's size needs to change for a new blend 
+    (ie new start/end palettes are set that don't have the same max size as the previous pair)
+    So if you do set new palettes, either make sure they have the same max size a the previous pair,
+    or re-bind you variable's pointer
 */
 class PaletteBlenderPS : public EffectBasePS {
     public:

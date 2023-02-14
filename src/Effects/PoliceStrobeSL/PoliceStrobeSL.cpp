@@ -62,6 +62,14 @@ void PoliceStrobeSL::init(CRGB BgColor, uint16_t Rate){
     reset();
 }
 
+//sets the pattern to match the current palette
+//ie for a palette length 5, the pattern would be 
+//{0, 1, 2, 3, 4}
+void PoliceStrobeSL::setPaletteAsPattern(){
+    patternTemp = generalUtilsPS::setPaletteAsPattern(palette);
+    pattern = &patternTemp;
+}
+
 //Updates the effect
 //There are three seperate pulse modes that must be produced:
 //0: Pulse half the strip in each color (alternating halves and colors), then pulse each color on the whole strip

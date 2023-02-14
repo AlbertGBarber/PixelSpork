@@ -34,6 +34,25 @@ void paletteUtilsPS::randomize(palettePS *palette, uint8_t index){
     setColor(palette, colorUtilsPS::randColor(), index);
 }
 
+//Reverses the order of the palette colors
+void paletteUtilsPS::reverse(palettePS *palette){
+    uint8One = 0; //start index
+    uint8Two = palette->length - 1; //end index
+    
+    //To reverse the palette we use a common algo
+    //We basically swap pairs of colors, starting with the end and start of the array, and then moving inwards
+    //Once we reach the center of the array, we stop
+    while (uint8One < uint8Two){
+        colorOne = getPaletteColor(palette, uint8One); //get the start index color
+        colorTwo = getPaletteColor(palette, uint8Two); //get the end index color
+        setColor(palette, colorTwo, uint8One); //set the end color into the start index
+        setColor(palette, colorOne, uint8Two); //set the start color into the end index
+        //move to the next pair of indexes
+        uint8One++;
+        uint8Two--;
+    }
+}
+
 //randomizes the order of colors in a palette
 void paletteUtilsPS::shuffle(palettePS *palette){
     uint8One = palette->length - 1; //loopStart
@@ -89,7 +108,7 @@ CRGB paletteUtilsPS::getPaletteGradColor(palettePS *palette, uint16_t num, uint1
 }
 
 //returns a gradient color between palette colors based on several inputs:
-//  num: The value of what you want to apply the gradient to (generally a pixel or segment number)\
+//  num: The value of what you want to apply the gradient to (generally a pixel or segment number)
 //  offset: Any offset of num (see segmentSet gradOffset)
 //  totalLength: The length the entire palette gradient is spread across (usually the length of a segmentSet or similar
 //  gradLength: The length of the gradient between the palette colors (ie totalLenth/paletteLength)

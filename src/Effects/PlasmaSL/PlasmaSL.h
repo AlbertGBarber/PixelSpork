@@ -1,7 +1,6 @@
 #ifndef PlasmaSLPS_h
 #define PlasmaSLPS_h
 
-//TODO -- add background color?
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
 #include "MathUtils/mathUtilsPS.h"

@@ -1,7 +1,6 @@
 #ifndef GradientCycleFastSL_h
 #define GradientCycleFastSL_h
 
-//TODO -- add constructor for random options?
 //GradientCycleFastSeg is in the extras folder of the library
 
 #include "Effects/EffectBasePS.h"
@@ -71,14 +70,13 @@ Other Settings:
                          -- 2: Colors will be choosen randomly from the pattern (will not repeat the same color in a row)
                          --                                                     (unless your pattern has the same color in a row, like { 2, 2, 3})
 
-Flags:
-    initFillDone -- Flag for doing the initial fill of the gradients on the strip
-                   Set true once the fill is done
-                
 Reference Vars:
     cycleNum -- Tracks how many cycles we've done, resets every gradLength cycles
 
-Notes: 
+Flags:
+    initFillDone -- Flag for doing the initial fill of the gradients on the strip
+                   Set true once the fill is done
+
 */
 class GradientCycleFastSL : public EffectBasePS {
     public:

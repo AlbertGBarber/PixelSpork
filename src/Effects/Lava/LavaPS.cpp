@@ -59,10 +59,25 @@ void LavaPS::update(){
 
     if( ( currentTime - prevTime ) >= *rate ) {
         prevTime = currentTime;
-        pixelCount = 0;
 
+        //if we're in rainbow mode and it's time to change the hue offset, do so
+        if(rainbowMode && (currentTime - prevHueTime) >= *hueRate){
+            hueoffset++;
+            prevHueTime = currentTime;
+        }
+
+        pixelCount = 0;
         numSegs = segmentSet.numSegs;
-        totBlendLength = blendSteps * palette->length;
+
+        //get the total blend length
+        if(rainbowMode){
+            //in rainbow mode, the blend length is one full cycle of the rainbow
+            totBlendLength = 255;
+        } else {
+            //in palette mode, the blend length is all the possible palette blend colors a pixel may have
+            totBlendLength = blendSteps * palette->length;
+        }
+
         //run over each of the leds in the segment set and set a noise/color value
         for (uint16_t i = 0; i < numSegs; i++) {
             totSegLen = segmentSet.getTotalSegLength(i);
@@ -78,8 +93,15 @@ void LavaPS::update(){
                 //scale color index to be somewhere between 0 and totBlendLength to put it somewhere in the blended palette
                 index = scale16by8( totBlendLength, index ); //colorIndex * totBlendLength /255;   
 
-                //get the blended color from the palette and set it's brightness
-                colorOut = paletteUtilsPS::getPaletteGradColor(palette, index, 0, totBlendLength, blendSteps);
+                if(rainbowMode){
+                    //get the rainbow color at the noise value
+                    colorOut = colorUtilsPS::wheel(index, hueoffset);
+                } else {
+                    //get the blended color from the palette
+                    colorOut = paletteUtilsPS::getPaletteGradColor(palette, index, 0, totBlendLength, blendSteps);
+                }
+
+                //set the output color's brightness
                 nscale8x3(colorOut.r, colorOut.g, colorOut.b, brightness);
                 segDrawUtils::setPixelColor(segmentSet, pixelNum, colorOut, 0, 0, 0);
 

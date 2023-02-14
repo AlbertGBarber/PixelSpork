@@ -48,7 +48,7 @@ Also note that the class needs a uint16_t array the length of the number of pixe
 So if you are short on ram, you might not be able to run this!
 
 This effect can is a little computationally heavy since you are caculating blends for each pixel or line.
-For a similar effect you could try Lava or one of the other noise effects.
+For a similar effects you could try Lava or NoiseSL.
 
 Example call: 
 

@@ -1,9 +1,6 @@
 #ifndef ShimmerSLPS_h
 #define ShimmerSLPS_h
 
-//TODO
-//-- add version with backgound color?, would need to use blend instead of scale8
-
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
 
@@ -11,7 +8,10 @@
 A simple effect
 Colors all the pixels in a segmentSet either using a single color, choosing colors from a palette, or at random
 each pixel is dimmed a random amount each cycle, which produces the effect
-The dim range is controlled by ShimmerSLMin and ShimmerSLMax
+The dim range is controlled by ShimmerSLMin and ShimmerSLMax.
+
+Each cycle each pixel's brightness and color are picked at random from the palette.
+If you do use your own palette it's probably best to pick colors that are similar to each other.
 
 If using a single color, it will be stored in the effect's paletteTemp palette
 You can change the color by using <your effect name>->paletteTemp.paletteArr[0] = <your color>

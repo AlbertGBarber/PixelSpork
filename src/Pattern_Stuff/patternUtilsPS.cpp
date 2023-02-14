@@ -26,6 +26,27 @@ uint8_t* patternUtilsPS::getValPtr(patternPS *pattern, uint16_t index){
     return &(pattern->patternArr[ index % pattern->length ]);
 }
 
+//Reverses the order of the pattern colors
+//Using the common uint16One etc vars makes this hard to read, 
+//but it's essentially the same as the reverse() in the paletteUtils
+patternUtilsPS::reverse(patternPS *pattern){
+    uint16One = 0; //start index
+    uint16Two = pattern->length - 1; //end index
+    
+    //To reverse the pattern we use a common algo
+    //We basically swap pairs of values, starting with the end and start of the array, and then moving inwards
+    //Once we reach the center of the array, we stop
+    while (uint16One < uint16Two){
+        uint8One = getPatternVal(pattern, uint16One); //get the start index value
+        uint8Two = getPatternVal(pattern, uint16Two); //get the end index value
+        setVal(pattern, uint8Two, uint16One); //set the end value into the start index
+        setVal(pattern, uint8One, uint16Two); //set the start value into the end index
+        //move to the next pair of indexes
+        uint16One++;
+        uint16Two--;
+    }
+}
+
 //randomizes the order of Vals in a pattern
 void patternUtilsPS::shuffle(patternPS *pattern){
     uint16One = pattern->length - 1; //loop starting val

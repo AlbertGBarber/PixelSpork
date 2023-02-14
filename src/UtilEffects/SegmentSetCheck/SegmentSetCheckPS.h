@@ -35,7 +35,7 @@ Constructor Inputs:
 Functions:
     update() -- updates the effect
 
-    */
+*/
 class SegmentSetCheckPS : public EffectBasePS {
     public:
         SegmentSetCheckPS(SegmentSet &SegmentSet, uint8_t TestMode);  

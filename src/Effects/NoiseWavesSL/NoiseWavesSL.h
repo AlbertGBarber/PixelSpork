@@ -6,11 +6,12 @@
 #include "MathUtils/mathUtilsPS.h"
 
 /*
-A version of NoiseWavesPS, but applied along segment lines
-produces varying colors with waves of brightness that both move and 
-grow/shrink across thesegment lines with time using noise
-The are various setting to control waves and colors, explained in the Inputs guide below.
-The effect requires a palette for colors, or it can generate on randomly for you.
+Uses FastLED noise to produce varying colors with waves of brightness that both move and 
+grow/shrink across the segment lines with time.
+There are various setting to control waves and colors, explained in the Inputs guide below.
+The effect requires a palette for colors, or one can generate on randomly for you.
+
+The noise waves will be blended towards a background color. 
 
 This effect is NOT compatible with color modes, but the background color is.
 
@@ -63,8 +64,7 @@ Example calls:
     The effect updates at 40ms
 
 Constructor inputs: 
-    palette (optional, see constructors) -- A custom palette passed to the effect, the default is the 
-                                           lava colors palette encoded below
+    palette (optional, see constructors) -- A custom palette passed to the effect
     numColors (optional, see constructors) -- How many colors will be in the randomly created palette
     bgColor --  The color of the background pixels
     blendScale -- Sets how "zoomed-in" the noise is. (See Inputs Guide above)

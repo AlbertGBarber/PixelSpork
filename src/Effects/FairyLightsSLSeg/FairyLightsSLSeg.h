@@ -16,11 +16,11 @@ tModes:
     Mode 2: Each cycle, a new twinkle is turned on while an old is turned off (first on first off)
 
 segMode:
-The effect is adapted to work on segment lines, whole segments for 2D use, or on single pixels (1D)
-This is contolled by the segMode var:
-    0: Twinkles will be drawn on segment lines
-    1: Twinkles will be drawn on whole segments
-    2: Twinkles will be drawn on individual pixels
+    The effect is adapted to work on segment lines, whole segments for 2D use, or on single pixels (1D)
+    This is contolled by the segMode var:
+        0: Twinkles will be drawn on segment lines
+        1: Twinkles will be drawn on whole segments
+        2: Twinkles will be drawn on individual pixels
 
 For segment sets with different segment lengths you may need to set fillBG to true
 otherwise you might end up with artifacts where multiple lines cross depending on the tMode
@@ -30,7 +30,6 @@ to an external color variable
 
 Requires an uint16_t array and CRGB array of length NumTwinkles to work, make sure you have the memory for them!
 If you turn fillBG on the off, make sure to also turn off reDrawAll
-
 
 Example calls: 
     FairyLightsSLSeg(mainSegments, palette, 5, 0, 0, 1, 150);

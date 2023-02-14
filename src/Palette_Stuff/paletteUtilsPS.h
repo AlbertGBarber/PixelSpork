@@ -1,9 +1,6 @@
 #ifndef paletteUtilsPS_h
 #define paletteUtilsPS_h
 
-//TODO
-//Add direction to palettes? Ie you can set them to be read backwards or forwards
-
 #include "palettePS.h"
 #include "ColorUtils/colorUtilsPS.h"
 #include "MathUtils/mathUtilsPS.h"
@@ -16,7 +13,8 @@ namespace paletteUtilsPS{
         setColor(palettePS *palette, CRGB color, uint8_t index),
         randomize(palettePS *palette),
         randomize(palettePS *palette, uint8_t index),
-        shuffle(palettePS *palette);
+        shuffle(palettePS *palette),
+        reverse(palettePS *palette);
     
     CRGB 
         getBlendedPaletteColor(palettePS *palette, uint8_t startIndex, uint8_t endIndex, uint8_t step, uint8_t totalSteps),
@@ -28,7 +26,6 @@ namespace paletteUtilsPS{
     
     palettePS
         makeSingleColorPalette(CRGB Color),
-        makeSingleColorPalette(CRGB Color, uint8_t length),
         makeRandomPalette(uint8_t length);
 
     static uint8_t

@@ -4,8 +4,6 @@
 //TODO:
 //-- Consolidate vars (sorta done, unless you want to make things hard to read)
 //-- Add shortcuts for situations with one segment in a set?
-//-- Add an "add glitter" function to show(), would be based on setting in segment set
-//   Could add it as its own effect instead?
 
 #include "FastLED.h"
 #include "segmentSection.h"
