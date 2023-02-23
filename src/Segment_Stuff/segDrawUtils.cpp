@@ -43,6 +43,7 @@ void segDrawUtils::getSegLocationFromPixel(SegmentSet &segmentSet, uint16_t segP
     }
 }
 
+//IF YOU'RE GONNA OPTIMIZE ANYTHING OPTIMIZE THIS FUNCTION
 //finds the pixel number of the pixel at a given position in a segment
 //ie we want to find the pixel number of the 5th pixel in the second segment
 //if the segment is in the reverse direction we want the pixel for the end of the segment
@@ -230,36 +231,6 @@ void segDrawUtils::fillSegSetlengthColor(SegmentSet &segmentSet, CRGB color, uin
     }
 }
 
-// draws a line between segments, does its best to make a straight line
-// the segment colors follow the provided pattern of palette indecies
-// the pattern length must match the number of segments
-void segDrawUtils::drawSegLine(SegmentSet &segmentSet, uint16_t lineNum, uint8_t Pattern[], CRGB palette[], uint8_t colorMode, uint8_t bgColorMode, bool brReplace) {
-    drawSegLineSection(segmentSet, 0, segmentSet.numSegs - 1, lineNum, Pattern, palette, colorMode, bgColorMode, brReplace);
-}
-
-// draws a line between segments, from startSeg to endSeg (including endSeg), does its best to make a straight line
-// the segment colors follow the provided pattern of palette indecies
-// the pattern length must match the number of segments!
-// if brReplace is true, any part of the pattern with a value of zero (ie first element in the palette) will be treated as a background colored pixel
-// and will use bgColorMode for it's color mode (same modes as colorMode)
-// if you don't want this, set brReplace to false
-void segDrawUtils::drawSegLineSection(SegmentSet &segmentSet, uint16_t startSeg, uint16_t endseg, uint16_t lineNum, uint8_t Pattern[], CRGB palette[], uint8_t colorMode, uint8_t bgColorMode, bool brReplace) {
-    pixelNum = 0;
-    colorFinal = 0;
-    uint8_t colorModeTemp = colorMode;
-    for (uint16_t i = startSeg; i <= endseg; i++) {
-        colorModeTemp = colorMode;
-        pixelNum = getPixelNumFromLineNum(segmentSet, segmentSet.maxSegLength, i, lineNum);
-        if (brReplace && Pattern[i] == 0) {
-            colorModeTemp = bgColorMode;
-        }
-        if (colorModeTemp == 0) { //color mode is to use the color from the pattern
-            colorFinal = palette[Pattern[i]];
-        }
-        setPixelColor(segmentSet, pixelNum, colorFinal, colorMode, i, lineNum);
-    }
-}
-
 // draws a segment line of one color, does not need a palette or pattern, passing -1 as the color will do a rainbow based on the Wheel() function
 void segDrawUtils::drawSegLineSimple(SegmentSet &segmentSet, uint16_t lineNum, CRGB color, uint8_t colorMode) {
     drawSegLineSimpleSection(segmentSet, 0, segmentSet.numSegs - 1, lineNum, color, colorMode);
@@ -340,66 +311,6 @@ void segDrawUtils::handleBri(SegmentSet &segmentSet, uint16_t pixelNum){
     //while for the segmentSet, 255 is acutally fully bright
     if(segmentSet.brightness != 255){
         segmentSet.leds[pixelNum].fadeToBlackBy(255 - segmentSet.brightness);
-    }
-}
-
-//Displays the current effect by calling FastLed.show()
-//The effect is only displayed if the effect's showNow var is true (it defaults to true)
-//This allow you to have multiple active effects, while only writing out to the leds once for all of them
-//ie if you have 3 effects, only one should have a true showNow var (usually the effect with shortest update rate)
-//Each effect is free to write to the FastLed Leds array (the color of each led), but they'll only be displayed
-//when the effect with the true showNow var is updated
-//This function also handles segments with single pixel sections by writing to all the leds in the single sections
-void segDrawUtils::show(SegmentSet &segmentSet, bool showNow){
-    //Before we try to write out the led colors we check if any segments have single pixel sections
-    for(uint16_t i = 0; i < segmentSet.numSegs; i++){
-
-        //If a segment has one or more single sections, we need to handle them
-        //by copying the color from the first led of each section
-        if(segmentSet.getSegHasSingle(i)){
-
-            //Check the type of sections the segment has (contiuous or mixed)
-            hasContSec = segmentSet.getSecArrPtr(i);
-
-            //For each segment section, if the seciton is single,
-            //copy the color from the first section pixel into all the other section pixels
-            for (uint8_t j = 0; j < numSec; j++) {
-                if(segmentSet.getSecIsSingle(i, j)){
-                    
-                    //get the actual length of the section
-                    secLength = segmentSet.getSecTrueLength(i, j);
-
-                    //Switch how we output to match the two possible segment section types
-                    //If the first if statment is true, then the segment has default sections, with starting pixels and lengths
-                    //Otherwise the segment will have a single mixed section, with an array of physical pixel locations and a length
-                    //( segmentSet.getSecArrPtr(segNum) returns false if the segment has a null section array pointer,
-                    //it should have a real mixed section pointer instead )
-                    if(hasContSec){
-                        secStartPixel = segmentSet.getSecStartPixel(i, j);
-                        colorFinal = segmentSet.leds[secStartPixel];
-
-                        step = (secLength > 0) - (secLength < 0); // account for negative lengths
-                        for (int16_t k = secStartPixel; k != (secStartPixel + secLength); k += step) {
-                            segmentSet.leds[k] = colorFinal;
-                        } 
-                    } else {
-                        colorFinal = segmentSet.leds[segmentSet.getSecMixPixel(i, j, 0)];
-                        //In this case the segment has a section of mixed pixel values
-                        //We just have to run across the section array and set every pixel in it
-                        for(uint16_t k = 0; k < secLength; k++){
-                            pixelNum = segmentSet.getSecMixPixel(i, j, k);
-                            //for the line number, since we only have on section, the pixel number is just i
-                            segmentSet.leds[pixelNum] = colorFinal;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    //if we're displaying the pixels for this effect, write them out
-    if(showNow){
-        FastLED.show();
     }
 }
 
@@ -505,6 +416,66 @@ CRGB segDrawUtils::getPixelColor(SegmentSet &segmentSet, uint16_t pixelNum, CRGB
     setGradOffset(segmentSet, offsetMax);
 
     return colorFinal;
+}
+
+//Displays the current effect by calling FastLed.show()
+//The effect is only displayed if the effect's showNow var is true (it defaults to true)
+//This allow you to have multiple active effects, while only writing out to the leds once for all of them
+//ie if you have 3 effects, only one should have a true showNow var (usually the effect with shortest update rate)
+//Each effect is free to write to the FastLed Leds array (the color of each led), but they'll only be displayed
+//when the effect with the true showNow var is updated
+//This function also handles segments with single pixel sections by writing to all the leds in the single sections
+void segDrawUtils::show(SegmentSet &segmentSet, bool showNow){
+    //Before we try to write out the led colors we check if any segments have single pixel sections
+    for(uint16_t i = 0; i < segmentSet.numSegs; i++){
+
+        //If a segment has one or more single sections, we need to handle them
+        //by copying the color from the first led of each section
+        if(segmentSet.getSegHasSingle(i)){
+
+            //Check the type of sections the segment has (contiuous or mixed)
+            hasContSec = segmentSet.getSecArrPtr(i);
+
+            //For each segment section, if the seciton is single,
+            //copy the color from the first section pixel into all the other section pixels
+            for (uint8_t j = 0; j < numSec; j++) {
+                if(segmentSet.getSecIsSingle(i, j)){
+                    
+                    //get the actual length of the section
+                    secLength = segmentSet.getSecTrueLength(i, j);
+
+                    //Switch how we output to match the two possible segment section types
+                    //If the first if statment is true, then the segment has default sections, with starting pixels and lengths
+                    //Otherwise the segment will have a single mixed section, with an array of physical pixel locations and a length
+                    //( segmentSet.getSecArrPtr(segNum) returns false if the segment has a null section array pointer,
+                    //it should have a real mixed section pointer instead )
+                    if(hasContSec){
+                        secStartPixel = segmentSet.getSecStartPixel(i, j);
+                        colorFinal = segmentSet.leds[secStartPixel];
+
+                        step = (secLength > 0) - (secLength < 0); // account for negative lengths
+                        for (int16_t k = secStartPixel; k != (secStartPixel + secLength); k += step) {
+                            segmentSet.leds[k] = colorFinal;
+                        } 
+                    } else {
+                        colorFinal = segmentSet.leds[segmentSet.getSecMixPixel(i, j, 0)];
+                        //In this case the segment has a section of mixed pixel values
+                        //We just have to run across the section array and set every pixel in it
+                        for(uint16_t k = 0; k < secLength; k++){
+                            pixelNum = segmentSet.getSecMixPixel(i, j, k);
+                            //for the line number, since we only have on section, the pixel number is just i
+                            segmentSet.leds[pixelNum] = colorFinal;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    //if we're displaying the pixels for this effect, write them out
+    if(showNow){
+        FastLED.show();
+    }
 }
 
 //increments/decements the gradOffset value of the passed in segmentSet

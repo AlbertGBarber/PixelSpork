@@ -51,4 +51,4 @@
 #include "Effects/BreathEyeSL/BreathEyeSL.h"
 #include "Effects/PatternShifterSL/PatternShifterSL.h"
 #include "Effects/PatternShifterSeg/PatternShifterSeg.h"
-#include "Effects/ColorWipeSL/ColorWipeSL.h"
+#include "Effects/ColorWipeSLSeg/ColorWipeSLSeg.h"

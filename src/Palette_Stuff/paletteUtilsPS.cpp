@@ -75,7 +75,7 @@ void paletteUtilsPS::shuffle(palettePS *palette){
 //the code checks to see if the random index matches the current color (passed in)
 //if it does we'll just advance the index by one and return its color
 //this stops the same color from being chosen again (assuming the palette doesn't repeat)
-CRGB paletteUtilsPS::getShuffleIndex(palettePS *palette, CRGB currentPaletteVal){
+CRGB paletteUtilsPS::getShuffleIndex(palettePS *palette, CRGB &currentPaletteVal){
     uint8One = random8(palette->length); //guess an index
     colorOne = paletteUtilsPS::getPaletteColor(palette, uint8One); //get the color at the guess
     if( colorOne == currentPaletteVal ){
@@ -87,7 +87,9 @@ CRGB paletteUtilsPS::getShuffleIndex(palettePS *palette, CRGB currentPaletteVal)
 
 //returns the blended result of two palette colors
 CRGB paletteUtilsPS::getBlendedPaletteColor(palettePS *palette, uint8_t startIndex, uint8_t endIndex, uint8_t step, uint8_t totalSteps){
-    return colorUtilsPS::getCrossFadeColor(getPaletteColor(palette, startIndex), getPaletteColor(palette, endIndex), step, totalSteps);
+    colorOne = getPaletteColor(palette, startIndex);
+    colorTwo = getPaletteColor(palette, endIndex);
+    return colorUtilsPS::getCrossFadeColor(colorOne, colorTwo, step, totalSteps); 
 }
 
 //returns a gradient color between palette colors based on several inputs: (see the next function below)
@@ -128,7 +130,9 @@ CRGB paletteUtilsPS::getPaletteGradColor(palettePS *palette, uint16_t num, uint1
     //get the blend ratio
     uint8Two = ( uint16One * 255 ) / gradLength;
 
-    return colorUtilsPS::getCrossFadeColor(getPaletteColor(palette, uint8One), getPaletteColor(palette, uint8One + 1), uint8Two);
+    colorOne = getPaletteColor(palette, uint8One);
+    colorTwo = getPaletteColor(palette, uint8One + 1);
+    return colorUtilsPS::getCrossFadeColor(colorOne, colorTwo, uint8Two);
 }
 
 //returns a palette of length 1 containing the passed in color

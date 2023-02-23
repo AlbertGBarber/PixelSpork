@@ -155,8 +155,7 @@ class TwinkleSL : public EffectBasePS {
 
         void
             init(uint8_t FadeInSteps, uint8_t FadeOutSteps, CRGB BgColor, uint16_t Rate),
-            incrementTwinkleArrays(),
-            pickColor(uint16_t pixelNum);
+            incrementTwinkleArrays();
 };
 
 #endif

@@ -29,7 +29,7 @@ uint8_t* patternUtilsPS::getValPtr(patternPS *pattern, uint16_t index){
 //Reverses the order of the pattern colors
 //Using the common uint16One etc vars makes this hard to read, 
 //but it's essentially the same as the reverse() in the paletteUtils
-patternUtilsPS::reverse(patternPS *pattern){
+void patternUtilsPS::reverse(patternPS *pattern){
     uint16One = 0; //start index
     uint16Two = pattern->length - 1; //end index
     

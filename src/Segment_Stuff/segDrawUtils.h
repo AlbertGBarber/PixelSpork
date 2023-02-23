@@ -30,7 +30,6 @@
 //!!YOU SHOULD ALWAYS USE THESE FUNCTIONS TO DRAW ON SEGMENTS
 //!!DO NOT TRY DRAWING DIRECTLY UNLESS YOU 100% KNOW WHAT YOU ARE DOING
 namespace segDrawUtils{
-    //Function Definitions
     void 
         turnSegSetOff(SegmentSet &segmentSet),
         getSegLocationFromPixel(SegmentSet &segmentSet, uint16_t segPixelNum, uint16_t locData[2] ),
@@ -39,8 +38,6 @@ namespace segDrawUtils{
         fillSegSecColor(SegmentSet &segmentSet, uint16_t segNum, uint16_t secNum, uint16_t pixelCount, CRGB color, uint8_t colorMode ),
         fillSegLengthColor(SegmentSet &segmentSet, CRGB color, uint8_t colorMode, uint16_t segNum, uint16_t startSegPixel, uint16_t endPixel),
         fillSegSetlengthColor(SegmentSet &segmentSet, CRGB color, uint8_t colorMode, uint16_t startSegPixel, uint16_t endPixel),
-        drawSegLine(SegmentSet &segmentSet, uint16_t lineNum, uint8_t Pattern[], CRGB palette[], uint8_t colorMode, uint8_t bgColorMode, bool brReplace),
-        drawSegLineSection(SegmentSet &segmentSet, uint16_t startSeg, uint16_t endseg, uint16_t lineNum, uint8_t Pattern[], CRGB palette[], uint8_t colorMode, uint8_t bgColorMode, bool brReplace),
         drawSegLineSimple(SegmentSet &segmentSet, uint16_t lineNum, CRGB color, uint8_t colorMode),
         drawSegLineSimpleSection(SegmentSet &segmentSet, uint16_t startSeg, uint16_t endSeg, uint16_t lineNum, CRGB color, uint8_t colorMode),
         setPixelColor(SegmentSet &segmentSet, uint16_t segPixelNum, CRGB color, uint8_t colorMode),
