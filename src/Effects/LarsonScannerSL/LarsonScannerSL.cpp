@@ -9,7 +9,7 @@ LarsonScannerSL::LarsonScannerSL(SegmentSet &SegmentSet, uint8_t ScanType, CRGB 
         //bind background color pointer
         bindBGColorPS();
         //create an instance of ParticlsPS to animate the particles for the scanner
-        scannerInst = new ParticlesSL(segmentSet, &particleSet, &palette, BgColor);
+        scannerInst = new ParticlesSL(segmentSet, particleSet, palette, BgColor);
         //bind the ParticlesSL instance background color to point to the LarsonScannerSL's background color
         scannerInst->bgColor = bgColor;
         setColor(scanColor);
@@ -19,7 +19,7 @@ LarsonScannerSL::LarsonScannerSL(SegmentSet &SegmentSet, uint8_t ScanType, CRGB 
 LarsonScannerSL::~LarsonScannerSL(){
     scannerInst->~ParticlesSL();
     //Free all particles and the particle array pointer
-    particleUtilsPS::freeParticleSet(&particleSet);
+    particleUtilsPS::freeParticleSet(particleSet);
     free(particleSet.particleArr);
 }
 
@@ -42,7 +42,7 @@ void LarsonScannerSL::setColor(CRGB color){
 //sets the bounce property on the scanner particles
 void LarsonScannerSL::setBounce(bool newBounce){
     bounce = newBounce;
-    particleUtilsPS::setParticleSetProp(&particleSet, 6, bounce, 0, 0);
+    particleUtilsPS::setParticleSetProp(particleSet, 6, bounce, 0, 0);
 }
 
 //builds the particle set for the type of scan
@@ -57,7 +57,7 @@ void LarsonScannerSL::setScanType(uint8_t newScanType){
     scanType = newScanType;
 
     //Free all particles and the particle array pointer
-    particleUtilsPS::freeParticleSet(&particleSet);
+    particleUtilsPS::freeParticleSet(particleSet);
 
     scannerInst->blend = false;
     if(scanType == 0){
@@ -66,14 +66,14 @@ void LarsonScannerSL::setScanType(uint8_t newScanType){
         particleSet = particleUtilsPS::buildParticleSet(1, numLines, true, *rate, 0, eyeSize, 0, 1, trailLength, 0, bounce, 0, false);
     } else if(scanType == 2){
         particleSet = particleUtilsPS::buildParticleSet(2, numLines, true, *rate, 0, eyeSize, 0, 1, trailLength, 0, bounce, 0, false);
-        particleUtilsPS::setParticleSetPosition(&particleSet, 0, 0, false);
-        particleUtilsPS::setParticleSetDirection(&particleSet, 0, false);
-        particleUtilsPS::setParticleSetPosition(&particleSet, 1, numLines - 1, false);
+        particleUtilsPS::setParticleSetPosition(particleSet, 0, 0, false);
+        particleUtilsPS::setParticleSetDirection(particleSet, 0, false);
+        particleUtilsPS::setParticleSetPosition(particleSet, 1, numLines - 1, false);
         scannerInst->blend = true; //need to turn on blend so that the two particles don't overwrite each other when they meet
     }
     //can't have 0 length trails, so we need to change the trail type
     if(trailLength == 0){
-        particleUtilsPS::setParticleSetProp(&particleSet, 4, 0, 0, 0);
+        particleUtilsPS::setParticleSetProp(particleSet, 4, 0, 0, 0);
     }
     scannerInst->reset();
 }
@@ -81,17 +81,17 @@ void LarsonScannerSL::setScanType(uint8_t newScanType){
 //changes the trail length of the scan particle
 void LarsonScannerSL::setTrailLength(uint8_t newTrailLength){
     trailLength = newTrailLength;
-    particleUtilsPS::setParticleSetProp(&particleSet, 5, trailLength, 0, 0);
+    particleUtilsPS::setParticleSetProp(particleSet, 5, trailLength, 0, 0);
     //can't have 0 length trails, so we need to change the trail type
     if(trailLength == 0){
-        particleUtilsPS::setParticleSetProp(&particleSet, 4, 0, 0, 0);
+        particleUtilsPS::setParticleSetProp(particleSet, 4, 0, 0, 0);
     }
 }
 
 //changes the size of the main body of the scan particle
 void LarsonScannerSL::setEyeSize(uint8_t newEyeSize){
     eyeSize = newEyeSize;
-    particleUtilsPS::setParticleSetProp(&particleSet, 3, eyeSize, 0, 0);
+    particleUtilsPS::setParticleSetProp(particleSet, 3, eyeSize, 0, 0);
 }
 
 //updates the effect
@@ -107,7 +107,7 @@ void LarsonScannerSL::update(){
         //makes sure that the scan particles rate is the same as the effect's update rate
         if(prevRate != *rate){
             prevRate = *rate;
-            particleUtilsPS::setParticleSetProp(&particleSet, 2, *rate, 0, 0);
+            particleUtilsPS::setParticleSetProp(particleSet, 2, *rate, 0, 0);
         }
 
         scannerInst->update();

@@ -55,7 +55,7 @@ void SegmentSetCheckPS::update(){
                     //pixelCount = segmentSet.getTotalSegLength(segNum);
                 //}
                 //clear the segment set
-                segDrawUtils::fillSegSetColor(segmentSet, 0, 0);
+                segDrawUtils::turnSegSetOff(segmentSet);
             }
 
             //if we've done all the segments we need to advance to the next testing mode
@@ -103,5 +103,5 @@ void SegmentSetCheckPS::nextStage(){
     }
     pixelCount = 1;
     segNum = 0;
-    segDrawUtils::fillSegSetColor(segmentSet, 0, 0);
+    segDrawUtils::turnSegSetOff(segmentSet);
 }

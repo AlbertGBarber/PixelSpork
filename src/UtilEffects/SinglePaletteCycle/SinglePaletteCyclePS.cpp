@@ -1,8 +1,8 @@
 #include "SinglePaletteCyclePS.h"
 
 
-SinglePaletteCyclePS::SinglePaletteCyclePS(palettePS *Palette, uint8_t BlendMode, uint8_t TotalSteps, uint16_t Rate):
-    paletteOrig(Palette), blendMode(BlendMode)
+SinglePaletteCyclePS::SinglePaletteCyclePS(palettePS &Palette, uint8_t BlendMode, uint8_t TotalSteps, uint16_t Rate):
+    paletteOrig(&Palette), blendMode(BlendMode)
     {     
         bindClassRatesPS();
         //make sure all the palette variables set so that new current/next palettes will be created
@@ -12,7 +12,7 @@ SinglePaletteCyclePS::SinglePaletteCyclePS(palettePS *Palette, uint8_t BlendMode
         //create the initial current/next palettes based on the mode
         switchPalette();
         //create a PaletteBlenderPS instance 
-        PB = new PaletteBlenderPS( &currentPalette, &nextPalette, false, TotalSteps, Rate);
+        PB = new PaletteBlenderPS( currentPalette, nextPalette, false, TotalSteps, Rate);
         //point the PB update rate to the same rate as the SinglePaletteCyclePS instance, so they stay in sync
         PB->rate = rate;
         //bind the output palette of PB to the output of the SinglePaletteCycle 
@@ -49,10 +49,10 @@ void SinglePaletteCyclePS::setPauseTime(uint16_t newPauseTime){
 //changes the palette used as the basis for the blends
 //also restarts the cycle
 //this may change the cyclePalette's length
-void SinglePaletteCyclePS::setPalette(palettePS *palette){
-    paletteOrig = palette;
+void SinglePaletteCyclePS::setPalette(palettePS &palette){
+    paletteOrig = &palette;
     switchPalette();
-    PB->reset( &currentPalette, &nextPalette );
+    PB->reset( currentPalette, nextPalette );
 }
 
 //sets the currentPalette and nextPalette depending on the cycleNum and the blendMode
@@ -72,8 +72,8 @@ void SinglePaletteCyclePS::switchPalette(){
         currentPalette = { paletteColorArr1, paletteLength };
         nextPalette = { paletteColorArr2, paletteLength };
         for(uint8_t i = 0; i < paletteLength; i++ ){
-            paletteColorArr1[i] = paletteUtilsPS::getPaletteColor(paletteOrig, i);
-            paletteColorArr1[i] = paletteUtilsPS::getPaletteColor(paletteOrig, i);
+            paletteColorArr1[i] = paletteUtilsPS::getPaletteColor(*paletteOrig, i);
+            paletteColorArr1[i] = paletteUtilsPS::getPaletteColor(*paletteOrig, i);
         }
     }
 
@@ -120,8 +120,8 @@ void SinglePaletteCyclePS::switchPalette(){
             //then copy the original palette into the next palette shifited forward/backwards by 1
             for(uint8_t i = 0; i < paletteLength; i++ ){
                 currentIndex = (i + stepDirect * (cycleNum + 1) ) + paletteLength; //we add paletteLength to prevent this from going negative
-                paletteColorArr1[i] = paletteUtilsPS::getPaletteColor(&nextPalette, i);
-                paletteColorArr2[i] = paletteUtilsPS::getPaletteColor(paletteOrig, mod8(currentIndex, paletteLength) );
+                paletteColorArr1[i] = paletteUtilsPS::getPaletteColor(nextPalette, i);
+                paletteColorArr2[i] = paletteUtilsPS::getPaletteColor(*paletteOrig, mod8(currentIndex, paletteLength) );
             }
             break;
         }
@@ -140,15 +140,15 @@ void SinglePaletteCyclePS::switchPalette(){
 
             for(uint8_t i = loopStart; i != loopEnd; i += stepDirect ){
                 currentIndex = (i + stepDirect * (cycleNum + 1) ) + paletteLength;
-                paletteColorArr1[i] = paletteUtilsPS::getPaletteColor(&nextPalette, i);
-                paletteColorArr2[i] = paletteUtilsPS::getPaletteColor(&nextPalette, mod8(currentIndex, paletteLength) );
+                paletteColorArr1[i] = paletteUtilsPS::getPaletteColor(nextPalette, i);
+                paletteColorArr2[i] = paletteUtilsPS::getPaletteColor(nextPalette, mod8(currentIndex, paletteLength) );
             }
 
             //randomize the start or end color
             if(direct){
-                paletteUtilsPS::randomize(&nextPalette, 0);
+                paletteUtilsPS::randomize(nextPalette, 0);
             } else {
-                paletteUtilsPS::randomize(&nextPalette, paletteLength - 1);
+                paletteUtilsPS::randomize(nextPalette, paletteLength - 1);
             }
             break;
         }
@@ -156,24 +156,24 @@ void SinglePaletteCyclePS::switchPalette(){
             //copy the next palette into the current palette
             //then copy the original palette into the next palette (to account for any palette changes)
             for(uint8_t i = 0; i < paletteLength; i++ ){
-                paletteColorArr1[i] = paletteUtilsPS::getPaletteColor(&nextPalette, i);
-                paletteColorArr2[i] = paletteUtilsPS::getPaletteColor(paletteOrig, i);
+                paletteColorArr1[i] = paletteUtilsPS::getPaletteColor(nextPalette, i);
+                paletteColorArr2[i] = paletteUtilsPS::getPaletteColor(*paletteOrig, i);
             }
             //since the next palette always ends up as the original palette again,
             //when we shuffle we may end up as the current palette again, 
             //to reduce this chance we'll shuffle twice
             //(An absolute solution would be to shuffle the original palette, then copy it in
             //but we want to avoid modifying the original)
-            paletteUtilsPS::shuffle(&nextPalette); 
-            paletteUtilsPS::shuffle(&nextPalette);
+            paletteUtilsPS::shuffle(nextPalette); 
+            paletteUtilsPS::shuffle(nextPalette);
             break;
         }
         case 3: {
             //cycles through each color in the original palette
             //the output is a palette with a single color of length 1
             currentIndex = ( stepDirect * (cycleNum + 1) ) + paletteLength;
-            paletteColorArr1[0] = paletteUtilsPS::getPaletteColor(&nextPalette, 0);
-            paletteColorArr2[0] = paletteUtilsPS::getPaletteColor(paletteOrig, mod8(currentIndex, paletteLength) );
+            paletteColorArr1[0] = paletteUtilsPS::getPaletteColor(nextPalette, 0);
+            paletteColorArr2[0] = paletteUtilsPS::getPaletteColor(*paletteOrig, mod8(currentIndex, paletteLength) );
             break;
         }
         case 4: {
@@ -183,16 +183,16 @@ void SinglePaletteCyclePS::switchPalette(){
             if(nextIndex == currentIndex){
                 nextIndex = (currentIndex + 1) % paletteLength;
             }
-            paletteColorArr1[0] = paletteUtilsPS::getPaletteColor(paletteOrig, currentIndex);
-            paletteColorArr2[0] = paletteUtilsPS::getPaletteColor(paletteOrig, nextIndex);
+            paletteColorArr1[0] = paletteUtilsPS::getPaletteColor(*paletteOrig, currentIndex);
+            paletteColorArr2[0] = paletteUtilsPS::getPaletteColor(*paletteOrig, nextIndex);
             currentIndex = nextIndex;
             break;
         }
         default: //mode 5 and up
             //a single color palette where the color is choosen randomly,
             //doesn't use the original palette at all
-            paletteColorArr1[0] = paletteUtilsPS::getPaletteColor(&nextPalette, 0);
-            paletteUtilsPS::randomize(&nextPalette, 0);
+            paletteColorArr1[0] = paletteUtilsPS::getPaletteColor(nextPalette, 0);
+            paletteUtilsPS::randomize(nextPalette, 0);
             break;
     }
 
@@ -211,7 +211,7 @@ void SinglePaletteCyclePS::update(){
         if(PB->blendEnd && !PB->paused){
             cycleNum = addmod8( cycleNum, 1, paletteOrig->length );
             switchPalette();
-            PB->reset( &currentPalette, &nextPalette );
+            PB->reset( currentPalette, nextPalette );
         }
     }
 }

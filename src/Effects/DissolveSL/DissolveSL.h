@@ -30,7 +30,7 @@ Each segment line will be filled in, rather than each pixel.
 Example calls: 
     uint8_t pattern_arr = {0, 1, 4};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-    DissolveSL(mainSegments, &pattern, palette, 0, 150, 70);
+    DissolveSL(mainSegments, pattern, palette, 0, 150, 70);
     Will dissolve from color 0 in the palette to color 1, to color 4, etc using randMode 0 (see below) 
     with the number of leds set on one cycle increasing every 150ms with the effect updating every 70ms
 
@@ -100,10 +100,10 @@ Notes:
 class DissolveSL : public EffectBasePS {
     public:
         //constructor for pattern
-        DissolveSL(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, uint8_t RandMode, uint16_t SpawnRateInc, uint16_t Rate); 
+        DissolveSL(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, uint8_t RandMode, uint16_t SpawnRateInc, uint16_t Rate); 
 
         //constructor for palette as pattern
-        DissolveSL(SegmentSet &SegmentSet, palettePS *Palette, uint8_t RandMode, uint16_t SpawnRateInc, uint16_t Rate); 
+        DissolveSL(SegmentSet &SegmentSet, palettePS &Palette, uint8_t RandMode, uint16_t SpawnRateInc, uint16_t Rate); 
         
         //constructor for randomly choosen colors (should only use randMode 2 or 3 with this constructor)
         DissolveSL(SegmentSet &SegmentSet, uint8_t RandMode, uint16_t SpawnRateInc, uint16_t Rate);

@@ -44,7 +44,7 @@ manually reduce it's length by setting its length property.
 The update rate is a pointer, and can be bound externally, like in other effects.
 
 Example calls: 
-    PaletteSliderPS(&palette1, 2, 20, true, 80);
+    PaletteSliderPS(palette1, 2, 20, true, 80);
     Creates a slider palette of length 2, using palette1 as the target palette
     The pattern will match the palette1 in order.
     Each transition will take 20 blend steps
@@ -53,7 +53,7 @@ Example calls:
 
     uint8_t pattern_arr = {0, 1, 3, 2};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-    PaletteSliderPS(&palette1, pattern, 2, 20, false, 80);
+    PaletteSliderPS(palette1, pattern, 2, 20, false, 80);
     Creates a slider palette of length 2, using palette1 as the target palette
     The pattern will match the pattern above.
     Each transition will take 20 blend steps
@@ -90,9 +90,9 @@ Flags:
 */
 class PaletteSliderPS : public EffectBasePS {
     public:
-        PaletteSliderPS(palettePS *PaletteTarget, patternPS *Pattern, uint16_t SliderPalLen, uint16_t BlendSteps, bool SingleShift, uint16_t Rate);  
+        PaletteSliderPS(palettePS &PaletteTarget, patternPS &Pattern, uint16_t SliderPalLen, uint16_t BlendSteps, bool SingleShift, uint16_t Rate);  
 
-        PaletteSliderPS(palettePS *PaletteTarget, uint16_t SliderPalLen, uint16_t BlendSteps, bool SingleShift, uint16_t Rate);
+        PaletteSliderPS(palettePS &PaletteTarget, uint16_t SliderPalLen, uint16_t BlendSteps, bool SingleShift, uint16_t Rate);
 
         ~PaletteSliderPS();
 

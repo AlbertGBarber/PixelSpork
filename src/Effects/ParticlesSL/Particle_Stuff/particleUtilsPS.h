@@ -28,55 +28,55 @@ namespace particleUtilsPS{
     //main build particleSet function
     particleSetPS
         buildParticleSet(uint8_t numParticles, uint16_t maxPosition, uint8_t direction, uint16_t baseSpeed, 
-                        uint16_t speedRange, uint16_t size, uint16_t sizeRange, uint8_t trailType, uint8_t trailSize, 
-                        uint8_t trailRange, uint8_t bounce, uint8_t colorIndex, bool randColor);
+                         uint16_t speedRange, uint16_t size, uint16_t sizeRange, uint8_t trailType, uint8_t trailSize, 
+                         uint8_t trailRange, uint8_t bounce, uint8_t colorIndex, bool randColor);
 
     //randomizes the particles in a particle set
     void 
-        randomizeParticleSet(particleSetPS *particleSet, uint16_t maxPosition, uint8_t direction, uint16_t baseSpeed, 
-                            uint16_t speedRange, uint16_t size, uint16_t sizeRange, uint8_t trailType, uint8_t trailSize, 
-                            uint8_t trailRange, uint8_t bounce, uint8_t colorIndex, bool randColor);
+        randomizeParticleSet(particleSetPS &particleSet, uint16_t maxPosition, uint8_t direction, uint16_t baseSpeed, 
+                             uint16_t speedRange, uint16_t size, uint16_t sizeRange, uint8_t trailType, uint8_t trailSize, 
+                             uint8_t trailRange, uint8_t bounce, uint8_t colorIndex, bool randColor);
 
     //randomizes properties of a specific particle in a particle set
     void
-        randomizeParticle(particleSetPS *particleSet, uint8_t partNum, uint16_t maxPosition, uint8_t direction, uint16_t baseSpeed, 
-                                       uint16_t speedRange, uint16_t size, uint16_t sizeRange, uint8_t trailType, uint8_t trailSize, 
-                                       uint8_t trailRange, uint8_t bounce, uint8_t colorIndex, bool randColor);
+        randomizeParticle(particleSetPS &particleSet, uint8_t partNum, uint16_t maxPosition, uint8_t direction, uint16_t baseSpeed, 
+                          uint16_t speedRange, uint16_t size, uint16_t sizeRange, uint8_t trailType, uint8_t trailSize, 
+                          uint8_t trailRange, uint8_t bounce, uint8_t colorIndex, bool randColor);
 
     //functions for deleting or reseting particles
     void 
         resetParticle(particlePS *particle),
-        resetParticleset(particleSetPS *particleSet),
-        resetParticle(particleSetPS *particleSet, uint8_t partNum),
-        freeParticleSet(particleSetPS *particleSet),
-        freeParticle(particleSetPS *particleSet, uint8_t partNum),
-        freeAllParticles(particleSetPS *particleSet);
+        resetParticleset(particleSetPS &particleSet),
+        resetParticle(particleSetPS &particleSet, uint8_t partNum),
+        freeParticleSet(particleSetPS &particleSet),
+        freeParticle(particleSetPS &particleSet, uint8_t partNum),
+        freeAllParticles(particleSetPS &particleSet);
 
     //functions for changing particle properties
     void
-        setParticleSetProp(particleSetPS *particleSet, uint8_t propNum, uint16_t opt1, uint16_t opt2, uint16_t opt3),
-        setParticleSetPosition(particleSetPS *particleSet, uint8_t partNum, uint16_t position, bool rand),
-        setParticleSetDirection(particleSetPS *particleSet, uint8_t partNum, uint8_t direction),
-        setParticleSetSpeed(particleSetPS *particleSet, uint8_t partNum, uint16_t baseSpeed, uint16_t range),
-        setParticleSetSize(particleSetPS *particleSet, uint8_t partNum, uint16_t size, uint16_t range),
-        setParticleSetTrailType(particleSetPS *particleSet, uint8_t partNum, uint8_t trailType),
-        setParticleSetTrailSize(particleSetPS *particleSet, uint8_t partNum, uint8_t trailSize, uint8_t range),
-        setParticleSetBounce(particleSetPS *particleSet, uint8_t partNum, uint8_t bounce),
-        setParticleSetColor(particleSetPS *particleSet, uint8_t partNum, uint8_t colorIndex, bool randColor);
+        setParticleSetProp(particleSetPS &particleSet, uint8_t propNum, uint16_t opt1, uint16_t opt2, uint16_t opt3),
+        setParticleSetPosition(particleSetPS &particleSet, uint8_t partNum, uint16_t position, bool rand),
+        setParticleSetDirection(particleSetPS &particleSet, uint8_t partNum, uint8_t direction),
+        setParticleSetSpeed(particleSetPS &particleSet, uint8_t partNum, uint16_t baseSpeed, uint16_t range),
+        setParticleSetSize(particleSetPS &particleSet, uint8_t partNum, uint16_t size, uint16_t range),
+        setParticleSetTrailType(particleSetPS &particleSet, uint8_t partNum, uint8_t trailType),
+        setParticleSetTrailSize(particleSetPS &particleSet, uint8_t partNum, uint8_t trailSize, uint8_t range),
+        setParticleSetBounce(particleSetPS &particleSet, uint8_t partNum, uint8_t bounce),
+        setParticleSetColor(particleSetPS &particleSet, uint8_t partNum, uint8_t colorIndex, bool randColor);
 
     //functions for more precise trail mode setting
     void
-        setAllTrailRand(particleSetPS *particleSet, bool noTrails, 
+        setAllTrailRand(particleSetPS &particleSet, bool noTrails, 
                         bool oneTrail, bool twoTrail, bool revTrail, bool infTrail),
-        setTrailRand(particleSetPS *particleSet, uint8_t partNum, bool noTrails, 
-                    bool oneTrail, bool twoTrail, bool revTrail, bool infTrail);
+        setTrailRand(particleSetPS &particleSet, uint8_t partNum, bool noTrails, 
+                     bool oneTrail, bool twoTrail, bool revTrail, bool infTrail);
                 
     int8_t
         getDirectStep(bool direction);
 
     //for setting colors of particles       
     CRGB
-        getTrailColor(CRGB color, CRGB targetColor, uint8_t step, uint8_t totalSteps, int8_t dimPow);
+        getTrailColor(CRGB &color, CRGB &targetColor, uint8_t step, uint8_t totalSteps, int8_t dimPow);
 
     //pre-allocate variables for speed
     static uint8_t

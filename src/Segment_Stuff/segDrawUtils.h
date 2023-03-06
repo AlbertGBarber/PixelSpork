@@ -33,19 +33,19 @@ namespace segDrawUtils{
     void 
         turnSegSetOff(SegmentSet &segmentSet),
         getSegLocationFromPixel(SegmentSet &segmentSet, uint16_t segPixelNum, uint16_t locData[2] ),
-        fillSegSetColor(SegmentSet &segmentSet, CRGB color, uint8_t colorMode),
-        fillSegColor(SegmentSet &segmentSet, uint16_t segNum, CRGB color, uint8_t colorMode),
-        fillSegSecColor(SegmentSet &segmentSet, uint16_t segNum, uint16_t secNum, uint16_t pixelCount, CRGB color, uint8_t colorMode ),
-        fillSegLengthColor(SegmentSet &segmentSet, CRGB color, uint8_t colorMode, uint16_t segNum, uint16_t startSegPixel, uint16_t endPixel),
-        fillSegSetlengthColor(SegmentSet &segmentSet, CRGB color, uint8_t colorMode, uint16_t startSegPixel, uint16_t endPixel),
-        drawSegLineSimple(SegmentSet &segmentSet, uint16_t lineNum, CRGB color, uint8_t colorMode),
-        drawSegLineSimpleSection(SegmentSet &segmentSet, uint16_t startSeg, uint16_t endSeg, uint16_t lineNum, CRGB color, uint8_t colorMode),
-        setPixelColor(SegmentSet &segmentSet, uint16_t segPixelNum, CRGB color, uint8_t colorMode),
-        setPixelColor(SegmentSet &segmentSet, uint16_t segPixelNum, uint16_t segNum, CRGB color, uint8_t colorMode),
-        setPixelColor(SegmentSet &segmentSet, uint16_t pixelNum, CRGB color, uint8_t colorMode, uint16_t segNum, uint16_t lineNum),
+        fillSegSetColor(SegmentSet &segmentSet, const CRGB &color, uint8_t colorMode),
+        fillSegColor(SegmentSet &segmentSet, uint16_t segNum, const CRGB &color, uint8_t colorMode),
+        fillSegSecColor(SegmentSet &segmentSet, uint16_t segNum, uint16_t secNum, uint16_t pixelCount, const CRGB &color, uint8_t colorMode ),
+        fillSegLengthColor(SegmentSet &segmentSet, const CRGB &color, uint8_t colorMode, uint16_t segNum, uint16_t startSegPixel, uint16_t endPixel),
+        fillSegSetlengthColor(SegmentSet &segmentSet, const CRGB &color, uint8_t colorMode, uint16_t startSegPixel, uint16_t endPixel),
+        drawSegLineSimple(SegmentSet &segmentSet, uint16_t lineNum, const CRGB &color, uint8_t colorMode),
+        drawSegLineSimpleSection(SegmentSet &segmentSet, uint16_t startSeg, uint16_t endSeg, uint16_t lineNum, const CRGB &color, uint8_t colorMode),
+        setPixelColor(SegmentSet &segmentSet, uint16_t segPixelNum, const CRGB &color, uint8_t colorMode),
+        setPixelColor(SegmentSet &segmentSet, uint16_t segPixelNum, uint16_t segNum, const CRGB &color, uint8_t colorMode),
+        setPixelColor(SegmentSet &segmentSet, uint16_t pixelNum, const CRGB &color, uint8_t colorMode, uint16_t segNum, uint16_t lineNum),
         handleBri(SegmentSet &segmentSet, uint16_t pixelNum),
         show(SegmentSet &segmentSet, bool showNow),
-        getPixelColor(SegmentSet &segmentSet, pixelInfoPS *pixelInfo, CRGB color, uint8_t colorMode, uint16_t segPixelNum),
+        getPixelColor(SegmentSet &segmentSet, pixelInfoPS *pixelInfo, const CRGB &color, uint8_t colorMode, uint16_t segPixelNum),
         setGradOffset(SegmentSet &segmentSet, uint16_t offsetMax),
         fadeSegSetToBlackBy(SegmentSet &segmentSet, uint8_t val),
         fadeSegToBlackBy(SegmentSet &segmentSet, uint16_t segNum, uint8_t val),
@@ -61,7 +61,7 @@ namespace segDrawUtils{
         getPixelNumFromLineNum(SegmentSet &segmentSet, uint16_t maxSegLength, uint16_t segNum, uint16_t lineNum);
         
     CRGB
-        getPixelColor(SegmentSet &segmentSet, uint16_t pixelNum, CRGB color, uint8_t colorMode, uint16_t segNum, uint16_t lineNum);
+        getPixelColor(SegmentSet &segmentSet, uint16_t pixelNum, const CRGB &color, uint8_t colorMode, uint16_t segNum, uint16_t lineNum);
     
     //pre-allocated space for function variables
     //Since these functions are all called a lot, it reduce call times

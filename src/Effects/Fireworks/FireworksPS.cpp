@@ -1,9 +1,9 @@
 #include "FireworksPS.h"
 
 //Constructor for effect with palette
-FireworksPS::FireworksPS(SegmentSet &SegmentSet, palettePS *Palette, uint8_t MaxNumFireworks, uint8_t MaxNumSparks, 
+FireworksPS::FireworksPS(SegmentSet &SegmentSet, palettePS &Palette, uint8_t MaxNumFireworks, uint8_t MaxNumSparks, 
                          uint8_t SpawnChance, uint16_t LifeBase, uint8_t SpeedDecay, uint16_t Rate, uint16_t SpeedRange):
-    segmentSet(SegmentSet), palette(Palette), spawnChance(SpawnChance), lifeBase(LifeBase), speedDecay(SpeedDecay), speedRange(SpeedRange)
+    segmentSet(SegmentSet), palette(&Palette), spawnChance(SpawnChance), lifeBase(LifeBase), speedDecay(SpeedDecay), speedRange(SpeedRange)
     {    
         init(MaxNumFireworks, MaxNumSparks, Rate);
 	}
@@ -30,7 +30,7 @@ FireworksPS::FireworksPS(SegmentSet &SegmentSet, CRGB Color, uint8_t MaxNumFirew
 	}
 
 FireworksPS::~FireworksPS(){
-    particleUtilsPS::freeParticleSet(&particleSetTemp);
+    particleUtilsPS::freeParticleSet(particleSetTemp);
     free(fireWorkActive);
     free(trailEndColors);
     free(paletteTemp.paletteArr);
@@ -102,7 +102,7 @@ void FireworksPS::setupFireworks(uint8_t newMaxNumFireworks, uint8_t newMaxNumSp
     fireWorkActive = (bool*) malloc(maxNumFireworks * sizeof(bool));
 
     //Free all particles and the particle array pointer
-    particleUtilsPS::freeParticleSet(&particleSetTemp);
+    particleUtilsPS::freeParticleSet(particleSetTemp);
 
     //create a new particle set
     particleSetTemp = particleUtilsPS::buildParticleSet(numParticles, 0, true, *rate, speedRange, size, sizeRange, 
@@ -189,7 +189,7 @@ void FireworksPS::update(){
                         partMaxLife = particlePtr->maxLife; //the particle's maximum life
                         
                         //get the particle's color from the palette
-                        colorOut = paletteUtilsPS::getPaletteColor(palette, particlePtr->colorIndex);
+                        colorOut = paletteUtilsPS::getPaletteColor(*palette, particlePtr->colorIndex);
 
                         //The maxPosition is the maxium position of the particle 
                         //This includes a "phantom zone" off the strip of size partSize
@@ -408,7 +408,7 @@ void FireworksPS::spawnFirework(uint8_t fireworkNum){
         //NOTE that speed is the particle's update rate, so higher speed value => slower particle
         speedRangeTemp = speedRange * i  / maxNumSparks;
         //randomize the particle properties
-        particleUtilsPS::randomizeParticle(particleSet, particleIndex, 0, initDirect, *rate, speedRangeTemp, size, sizeRange, 
+        particleUtilsPS::randomizeParticle(*particleSet, particleIndex, 0, initDirect, *rate, speedRangeTemp, size, sizeRange, 
                                            0, 0, 0, false, randColorIndex, false);    
            
         //reset the particle and set its new spawn location
@@ -435,7 +435,7 @@ void FireworksPS::spawnFirework(uint8_t fireworkNum){
     //so that it probably won't move before it decays
     particleIndex = fireworkNum * maxNumSparks;
     particlePtr = particleSet->particleArr[particleIndex];
-    particleUtilsPS::randomizeParticle(particleSet, particleIndex, 0, true, 65000, 0, centerSize, 0, 
+    particleUtilsPS::randomizeParticle(*particleSet, particleIndex, 0, true, 65000, 0, centerSize, 0, 
                                        0, 0, 0, false, randColorIndex, false); 
     particlePtr->lastUpdateTime = millis();
     particlePtr->maxLife = centerLife;

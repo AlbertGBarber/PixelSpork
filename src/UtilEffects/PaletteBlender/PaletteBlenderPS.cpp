@@ -1,11 +1,11 @@
 #include "PaletteBlenderPS.h"
 
-PaletteBlenderPS::PaletteBlenderPS(palettePS *StartPalette, palettePS *EndPalette, bool Looped, uint8_t TotalSteps, uint16_t Rate):
-    endPalette(EndPalette), startPalette(StartPalette), looped(Looped), totalSteps(TotalSteps)
+PaletteBlenderPS::PaletteBlenderPS(palettePS &StartPalette, palettePS &EndPalette, bool Looped, uint8_t TotalSteps, uint16_t Rate):
+    endPalette(&EndPalette), startPalette(&StartPalette), looped(Looped), totalSteps(TotalSteps)
     {   
         //bind the rate vars since they are inherited from BaseEffectPS
         bindClassRatesPS();
-        reset( startPalette, endPalette );
+        reset( *startPalette, *endPalette );
     }
 
 PaletteBlenderPS::~PaletteBlenderPS(){
@@ -13,7 +13,7 @@ PaletteBlenderPS::~PaletteBlenderPS(){
 }
 
 //resets the core class variables, allowing you to reuse class instances
-void PaletteBlenderPS::reset(palettePS *StartPalette, palettePS *EndPalette, uint8_t TotalSteps, uint16_t Rate){
+void PaletteBlenderPS::reset(palettePS &StartPalette, palettePS &EndPalette, uint8_t TotalSteps, uint16_t Rate){
     reset();
     reset(StartPalette, EndPalette);
     totalSteps = TotalSteps;
@@ -21,20 +21,22 @@ void PaletteBlenderPS::reset(palettePS *StartPalette, palettePS *EndPalette, uin
 }
 
 //resets just the start and end palettes
-void PaletteBlenderPS::reset(palettePS *StartPalette, palettePS *EndPalette){
+void PaletteBlenderPS::reset(palettePS &StartPalette, palettePS &EndPalette){
     reset();
-    //if we are randomizing, choose a randomized end palette
-    if(randomize){
-        paletteUtilsPS::randomize(EndPalette);
-    }
+    
     //setup the blendPalette palette
     //it must be as long as the longest passed in palette
     //this way we can always pair up a start and end color (even if the colors repeat)
     //otherwise you miss colors because you wouldn't have space for them
-    endPalette = EndPalette;
-    startPalette = StartPalette;
+    endPalette = &EndPalette;
+    startPalette = &StartPalette;
     uint8_t blendPaletteLengthTemp = max(startPalette->length, endPalette->length);
     
+    //if we are randomizing, choose a randomized end palette
+    if(randomize){
+        paletteUtilsPS::randomize(*endPalette);
+    }
+
     //create the blend palette
     setupBlendPalette(blendPaletteLengthTemp);
 }
@@ -48,7 +50,7 @@ void PaletteBlenderPS::reset(){
 }
 
 //creates the blend palette and the color storage arrays
-void PaletteBlenderPS::setupBlendPalette( uint8_t newBlendPaletteLength){
+void PaletteBlenderPS::setupBlendPalette(uint8_t newBlendPaletteLength){
     //if the new blend palette will be the same length as the current blend palette we don't need to make a new one
     if(newBlendPaletteLength != blendPaletteLength){
         //delete the current blendPalette array of colors to free up memory
@@ -77,10 +79,10 @@ void PaletteBlenderPS::update(){
             //using the getCrossFadeColor function (see colorUtilsPS.h)
             //it doesn't matter if one palette is shorter than the other, b/c palettes wrap automatically
             for(uint8_t i = 0; i < blendPalette.length; i++){
-                startColor = paletteUtilsPS::getPaletteColor(startPalette, i);
-                endColor = paletteUtilsPS::getPaletteColor(endPalette, i);
+                startColor = paletteUtilsPS::getPaletteColor(*startPalette, i);
+                endColor = paletteUtilsPS::getPaletteColor(*endPalette, i);
                 newColor = colorUtilsPS::getCrossFadeColor(startColor, endColor, step, totalSteps);
-                paletteUtilsPS::setColor(&blendPalette, newColor, i);
+                paletteUtilsPS::setColor(blendPalette, newColor, i);
             }
             
             //if we have reached the totalSteps,'
@@ -95,7 +97,7 @@ void PaletteBlenderPS::update(){
         } else if( ( currentTime - pauseStartTime ) >= pauseTime) {
             paused = false;
             if(looped){
-                reset(endPalette, startPalette);
+                reset(*endPalette, *startPalette);
             }
         }
     }

@@ -1,23 +1,23 @@
 #include "StreamerFastSL.h"
 
 //constructor for using the passed in pattern and palette for the streamer
-StreamerFastSL::StreamerFastSL(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, CRGB BgColor, uint16_t Rate):
-    segmentSet(SegmentSet), pattern(Pattern), palette(Palette)
+StreamerFastSL::StreamerFastSL(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint16_t Rate):
+    segmentSet(SegmentSet), pattern(&Pattern), palette(&Palette)
     {    
         init(BgColor, Rate);
 	}
 
 //constructor for building the streamer pattern from the passed in pattern and the palette, using the passed in colorLength and spacing
-StreamerFastSL::StreamerFastSL(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint16_t Rate):
-    segmentSet(SegmentSet), palette(Palette)
+StreamerFastSL::StreamerFastSL(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint16_t Rate):
+    segmentSet(SegmentSet), palette(&Palette)
     {    
         setPatternAsPattern(Pattern, ColorLength, Spacing);
         init(BgColor, Rate);
 	}
     
 //constructor for building a streamer using all the colors in the passed in palette, using the colorLength and spacing for each color
-StreamerFastSL::StreamerFastSL(SegmentSet &SegmentSet, palettePS *Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint16_t Rate):
-    segmentSet(SegmentSet), palette(Palette)
+StreamerFastSL::StreamerFastSL(SegmentSet &SegmentSet, palettePS &Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint16_t Rate):
+    segmentSet(SegmentSet), palette(&Palette)
     {    
         setPaletteAsPattern(ColorLength, Spacing);
         init(BgColor, Rate);
@@ -43,27 +43,8 @@ StreamerFastSL::~StreamerFastSL(){
 //then sets this pattern to be the streamer pattern
 //ex : inputPattern is {1, 2, 4} with color length 2, and 1 spacing
 //the streamer pattern would be: {1, 1, 255, 2, 2, 255, 4, 4, 255}
-void StreamerFastSL::setPatternAsPattern(patternPS *inputPattern, uint8_t colorLength, uint8_t spacing){
-    uint8_t nextPattern;
-    uint8_t repeatLength = (colorLength + spacing);
-    uint16_t patternLength = inputPattern->length;
-    uint16_t totalPatternLength = patternLength * repeatLength;
-    //create new storage for the pattern array
-    free(pattern_arr);
-    pattern_arr = (uint8_t*) malloc(totalPatternLength*sizeof(uint8_t));
-
-    for(uint16_t i = 0; i < patternLength; i++){
-        nextPattern = patternUtilsPS::getPatternVal(inputPattern, i);
-        for(uint8_t j = 0; j < repeatLength; j++){
-            if(j < colorLength){
-                pattern_arr[i * repeatLength + j] = nextPattern;
-            } else {
-                pattern_arr[i * repeatLength + j] = 255;
-            }
-        }
-    }
-
-    patternTemp = {pattern_arr, totalPatternLength};
+void StreamerFastSL::setPatternAsPattern(patternPS &inputPattern, uint8_t colorLength, uint8_t spacing){
+    patternTemp = generalUtilsPS::setPatternAsPattern(inputPattern, colorLength, spacing);
     pattern = &patternTemp;
 }
 
@@ -72,24 +53,7 @@ void StreamerFastSL::setPatternAsPattern(patternPS *inputPattern, uint8_t colorL
 //ex: for palette of lenth 3, and a colorLength of 2, and spacing of 1
 //the final streamer pattern would be : {0, 0, 255, 1, 1, 255, 2, 2, 255}
 void StreamerFastSL::setPaletteAsPattern(uint8_t colorLength, uint8_t spacing){
-    uint8_t repeatLength = (colorLength + spacing);
-    uint8_t palettelength = palette->length;
-    uint16_t totalPatternLength = palettelength * repeatLength;
-    //create new storage for the pattern array
-    free(patternTemp.patternArr);
-    pattern_arr = (uint8_t*) malloc(totalPatternLength * sizeof(uint8_t));
-
-    for(uint16_t i = 0; i < palettelength; i++){
-        for(uint8_t j = 0; j < repeatLength; j++){
-            if(j < colorLength){
-                pattern_arr[i * repeatLength + j] = i;
-            } else {
-                pattern_arr[i * repeatLength + j] = 255;
-            }
-        }
-    }
-
-    patternTemp = {pattern_arr, totalPatternLength};
+    patternTemp = generalUtilsPS::setPaletteAsPattern(*palette, colorLength, spacing);
     pattern = &patternTemp;
 }
 
@@ -124,7 +88,7 @@ CRGB StreamerFastSL::pickStreamerColor(uint8_t nextPattern){
         nextColor = *bgColor;
     } else if(randMode == 0){
         //the color we're at based on the current index
-        nextColor = paletteUtilsPS::getPaletteColor(palette, nextPattern);
+        nextColor = paletteUtilsPS::getPaletteColor(*palette, nextPattern);
     } else if(prevPattern != nextPattern){
         //if we're doing random colors, we still want to stick to the streamer lengths in the pattern
         //but replace the color with a random one 
@@ -137,17 +101,17 @@ CRGB StreamerFastSL::pickStreamerColor(uint8_t nextPattern){
         }  else if(randMode == 2) {
             //choose a color randomly from the palette (making sure it's not the same as the current color)
             //(Can't shuffle the pattern directly, because it contains repeats of the same index)
-            nextColor = paletteUtilsPS::getShuffleIndex(palette, randColor);
+            nextColor = paletteUtilsPS::getShuffleIndex(*palette, randColor);
             randColor = nextColor; //record the random color so we don't pick it again
         } else if(randMode == 3) {
             //choose a color randomly from the pattern (can repeat)
             //we use nextPatternRand because we don't want to interfere with nextPattern
             //since it keeps track of the spaces
-            nextPatternRand = patternUtilsPS::getPatternVal( pattern, random16(pattern->length) );
-            nextColor = paletteUtilsPS::getPaletteColor(palette, nextPatternRand);
+            nextPatternRand = patternUtilsPS::getPatternVal( *pattern, random16(pattern->length) );
+            nextColor = paletteUtilsPS::getPaletteColor(*palette, nextPatternRand);
         } else {
             //choose a color randomly from the palette (can repeat)
-            nextColor = paletteUtilsPS::getPaletteColor( palette, random8(palette->length) );
+            nextColor = paletteUtilsPS::getPaletteColor( *palette, random8(palette->length) );
         }
     }
     prevPattern = nextPattern; //save the current pattern value (only needed for the random color cases)
@@ -170,7 +134,7 @@ void StreamerFastSL::initalFill(){
     prevPattern = 255; //base value for previous pattern value (we don't expect the first value of the pattern to be spacing)
 
     for(int32_t i = numLinesLim; i >= 0; i--){
-        nextPattern = patternUtilsPS::getPatternVal(pattern, cycleNum);
+        nextPattern = patternUtilsPS::getPatternVal(*pattern, cycleNum);
         nextColor = pickStreamerColor(nextPattern);
 
         //write out the copied color to the whole line
@@ -211,7 +175,7 @@ void StreamerFastSL::update(){
             //if we're at the final pixel, we need to insert a new color
             //otherwise, we just copy the color from the next pixel location into the current one
             if (i == 0) {
-                nextPattern = patternUtilsPS::getPatternVal(pattern, cycleNum);
+                nextPattern = patternUtilsPS::getPatternVal(*pattern, cycleNum);
                 nextColor = pickStreamerColor(nextPattern);
             } else {
                 //Copy the pixel color from the previous line

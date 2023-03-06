@@ -70,7 +70,7 @@ Example calls:
     The blendSteps will be shifted every 5000ms (5 sec).
     The effect updates at 80ms.
     
-    NoiseGradSL(ringSegments, &palette1, 0, 8, 16, 5, 20, 10, 3000, 80);
+    NoiseGradSL(ringSegments, palette1, 0, 8, 16, 5, 20, 10, 3000, 80);
     NoiseGradSL.bgColorMode = 6;
     Will produce an effect using colors from palette1
     The background is blank (but using bgColorMode of 6, ie a shifting rainbow)
@@ -106,12 +106,12 @@ Functions:
 class NoiseGradSL : public EffectBasePS {
     public:
         //Constructor with palette
-        NoiseGradSL(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint16_t BlendStepsBase, uint16_t BlendStepsRange,
-                           uint8_t PhaseScale, uint8_t FreqScale, uint8_t BriScale, uint16_t BlendRate, uint16_t Rate);  
+        NoiseGradSL(SegmentSet &SegmentSet, palettePS &Palette, CRGB BgColor, uint16_t BlendStepsBase, uint16_t BlendStepsRange,
+                    uint8_t PhaseScale, uint8_t FreqScale, uint8_t BriScale, uint16_t BlendRate, uint16_t Rate);  
 
         //Constructor with randomly generated palette
         NoiseGradSL(SegmentSet &SegmentSet, uint8_t numColors, CRGB BgColor, uint16_t BlendStepsBase, uint16_t BlendStepsRange,
-                           uint8_t PhaseScale, uint8_t FreqScale, uint8_t BriScale, uint16_t BlendRate, uint16_t Rate);
+                    uint8_t PhaseScale, uint8_t FreqScale, uint8_t BriScale, uint16_t BlendRate, uint16_t Rate);
         
         ~NoiseGradSL();
 

@@ -1,15 +1,15 @@
 #include "RollingWavesSL2.h"
 
 //constructor with pattern
-RollingWavesSL2::RollingWavesSL2(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate):
-    segmentSet(SegmentSet), pattern(Pattern), palette(Palette), gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)
+RollingWavesSL2::RollingWavesSL2(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate):
+    segmentSet(SegmentSet), pattern(&Pattern), palette(&Palette), gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)
     {    
         init(BGColor,Rate);
 	}
 
 //constuctor with palette as pattern
-RollingWavesSL2::RollingWavesSL2(SegmentSet &SegmentSet, palettePS *Palette, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate):
-    segmentSet(SegmentSet), palette(Palette), gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)
+RollingWavesSL2::RollingWavesSL2(SegmentSet &SegmentSet, palettePS &Palette, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate):
+    segmentSet(SegmentSet), palette(&Palette), gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)
     {    
         setPaletteAsPattern();
         init(BGColor, Rate);
@@ -69,7 +69,7 @@ void RollingWavesSL2::setPattern(patternPS *newPattern){
 //ie for a palette length 5, the pattern would be 
 //{0, 1, 2, 3, 4}
 void RollingWavesSL2::setPaletteAsPattern(){
-    patternTemp = generalUtilsPS::setPaletteAsPattern(palette);
+    patternTemp = generalUtilsPS::setPaletteAsPattern(*palette);
     pattern = &patternTemp;
     setTotalEffectLength();
 }
@@ -307,7 +307,7 @@ CRGB RollingWavesSL2::getWaveColor(uint8_t step){
 //the maximum brightness is scaled by dimPow
 //dimPow 255 will produce a normal linear gradient, but for more shimmery waves we can dial the bightness down
 //The "head" wave pixel will still be drawn at full brightness since it's drawn seperatly 
-CRGB RollingWavesSL2::desaturate(CRGB color, uint8_t step, uint8_t totalSteps) {
+CRGB RollingWavesSL2::desaturate(CRGB &color, uint8_t step, uint8_t totalSteps) {
 
     dimRatio = (dimPow - (uint16_t)step * dimPow / (totalSteps + 1));
 
@@ -326,14 +326,14 @@ void RollingWavesSL2::setNextColors(uint16_t segPixelNum){
     if(randMode == 0){
         currentColorIndex = addMod16PS( segPixelNum, cycleNum, totalCycleLength ) / blendLimit; // what color we've started from (integers always round down)
         //the color we're at based on the current index
-        currentPattern = patternUtilsPS::getPatternVal(pattern, currentColorIndex);
-        currentColor = paletteUtilsPS::getPaletteColor(palette, currentPattern);
+        currentPattern = patternUtilsPS::getPatternVal(*pattern, currentColorIndex);
+        currentColor = paletteUtilsPS::getPaletteColor(*palette, currentPattern);
     } else if(randMode == 1){
         //choose a completely random color
         currentColor = colorUtilsPS::randColor();
     } else {
         //choose a color randomly from the pattern (making sure it's not the same as the current color)
-        currentPattern = patternUtilsPS::getShuffleIndex(pattern, currentPattern);
-        currentColor = paletteUtilsPS::getPaletteColor( palette, currentPattern );
+        currentPattern = patternUtilsPS::getShuffleIndex(*pattern, currentPattern);
+        currentColor = paletteUtilsPS::getPaletteColor( *palette, currentPattern );
     }
 }

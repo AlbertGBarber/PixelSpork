@@ -19,7 +19,9 @@
 namespace generalUtilsPS {
 
     patternPS
-        setPaletteAsPattern(palettePS *palette),
-        setPaletteAsPattern(palettePS *palette, uint16_t colorLength);
+        setPaletteAsPattern(palettePS &palette),
+        setPaletteAsPattern(palettePS &palette, uint16_t colorLength),
+        setPaletteAsPattern(palettePS &palette, uint8_t colorLength, uint8_t spacing),
+        setPatternAsPattern(patternPS &inputPattern, uint8_t colorLength, uint8_t spacing);
 };
 #endif

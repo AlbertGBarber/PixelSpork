@@ -55,7 +55,7 @@ Constructor Inputs:
 
 Functions:
     switchPalette() -- Adjusts the current start/end palettes used for the current blend. Should only be called if you manually changed the palette
-    setPalette(*palette) -- Restarts the blend with a new palette, with the same steps and update rate, and mode
+    setPalette(&palette) -- Restarts the blend with a new palette, with the same steps and update rate, and mode
     reset() -- Restarts the blend (all settings and palettes stay the same)
     setTotalSteps(newTotalSteps) -- changes the total number of steps used in the blends (set in the PB instance, see PaletteBlenderPS)
     getTotalSteps() -- Returns the number of steps being used for the blend (set in the PB instance, see PaletteBlenderPS)
@@ -85,7 +85,7 @@ the PaletteBlendPS instance  (PB) is public, but don't mess with it unless you k
 */
 class SinglePaletteCyclePS : public EffectBasePS {
     public:
-        SinglePaletteCyclePS(palettePS *Palette, uint8_t BlendMode, uint8_t TotalSteps, uint16_t Rate);
+        SinglePaletteCyclePS(palettePS &Palette, uint8_t BlendMode, uint8_t TotalSteps, uint16_t Rate);
 
         ~SinglePaletteCyclePS();
         
@@ -114,7 +114,7 @@ class SinglePaletteCyclePS : public EffectBasePS {
 
         void 
             switchPalette(),
-            setPalette(palettePS *palette),
+            setPalette(palettePS &palette),
             setTotalSteps(uint8_t newTotalSteps),
             setPauseTime(uint16_t newPauseTime),
             reset(),

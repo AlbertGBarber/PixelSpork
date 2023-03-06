@@ -46,18 +46,18 @@ CRGB Fire2012SegUtilsPS::getPixelHeatColorPalette(palettePS *palette, uint8_t pa
             //use the background color if we need to set the background
             targetColor = *bgColor;
         } else {
-            targetColor = paletteUtilsPS::getPaletteColor( palette, colorIndex );
+            targetColor = paletteUtilsPS::getPaletteColor( *palette, colorIndex );
         }
     } else {
         //if we are blending, we need to get the starting and ending colors
         if(doBg){
             //for the background, we're blending from the background to the first color in the palette
             startColor = *bgColor;
-            targetColor = paletteUtilsPS::getPaletteColor( palette, 0 );
+            targetColor = paletteUtilsPS::getPaletteColor( *palette, 0 );
         } else {
             //in general we're blending from the current color to the next in the palette
-            startColor = paletteUtilsPS::getPaletteColor( palette, colorIndex );
-            targetColor = paletteUtilsPS::getPaletteColor( palette, colorIndex + 1 );
+            startColor = paletteUtilsPS::getPaletteColor( *palette, colorIndex );
+            targetColor = paletteUtilsPS::getPaletteColor( *palette, colorIndex + 1 );
         }
         //get the blended color
         //The blend amount is the temperature - secHeatLimit

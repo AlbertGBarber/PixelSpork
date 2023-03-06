@@ -10,15 +10,15 @@
 //!!DO NOT try to patterns without using these functions
 namespace patternUtilsPS{
     void
-        setVal(patternPS *pattern, uint8_t val, uint16_t index),
-        shuffle(patternPS *pattern),
-        reverse(patternPS *pattern);
+        setVal(patternPS &pattern, uint8_t val, uint16_t index),
+        shuffle(patternPS &pattern),
+        reverse(patternPS &pattern);
     
     uint8_t 
-        getPatternVal(patternPS *pattern, uint16_t index),
-        getRandVal(patternPS *pattern),
-        *getValPtr(patternPS *pattern, uint16_t index),
-        getShuffleIndex(patternPS *pattern, uint8_t currentPatternVal);
+        getPatternVal(patternPS &pattern, uint16_t index),
+        getRandVal(patternPS &pattern),
+        *getValPtr(patternPS &pattern, uint16_t index),
+        getShuffleIndex(patternPS &pattern, uint8_t currentPatternVal);
     
     static uint8_t
         uint8One,

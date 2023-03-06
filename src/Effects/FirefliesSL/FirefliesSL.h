@@ -132,7 +132,7 @@ Reference Vars:
 class FirefliesSL : public EffectBasePS {
     public:
         //Constructor for effect with palette
-        FirefliesSL(SegmentSet &SegmentSet, palettePS *Palette, uint8_t MaxNumFireflies, uint8_t SpawnChance, 
+        FirefliesSL(SegmentSet &SegmentSet, palettePS &Palette, uint8_t MaxNumFireflies, uint8_t SpawnChance, 
                     uint16_t LifeBase, uint16_t LifeRange, uint16_t SpeedBase, uint16_t SpeedRange, uint16_t Rate);
 
         //Constructor for effect with palette of random colors

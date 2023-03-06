@@ -67,7 +67,7 @@ void ColorWipeSLSeg::reset(){
 //ie for a palette length 5, the pattern would be 
 //{0, 1, 2, 3, 4}
 void ColorWipeSLSeg::setPaletteAsPattern(){
-    patternTemp = generalUtilsPS::setPaletteAsPattern(palette);
+    patternTemp = generalUtilsPS::setPaletteAsPattern(*palette);
     pattern = &patternTemp;
 }
 
@@ -382,17 +382,17 @@ void ColorWipeSLSeg::doLineWipe(uint16_t wipeNum, uint16_t wipeStep, uint16_t li
             switch (style) {
                 case 0: //alternates colors for each wipe
                 default:
-                    palIndex = patternUtilsPS::getPatternVal( pattern, wipeNum + patOffset);
+                    palIndex = patternUtilsPS::getPatternVal( *pattern, wipeNum + patOffset);
                     break;
                 case 1: //alternates colors for each line
-                    palIndex = patternUtilsPS::getPatternVal( pattern, wipeStep + patOffset );
+                    palIndex = patternUtilsPS::getPatternVal( *pattern, wipeStep + patOffset );
                     break;
                 case 2: //alternates colors for each segment
-                    palIndex = patternUtilsPS::getPatternVal( pattern, j + patOffset );
+                    palIndex = patternUtilsPS::getPatternVal( *pattern, j + patOffset );
                     break;
             }
             modeOut = colorMode;
-            colorOut = paletteUtilsPS::getPaletteColor( palette, palIndex );
+            colorOut = paletteUtilsPS::getPaletteColor( *palette, palIndex );
         }
         
         //output the color to the pixel, note that if the color mode is non-zero, it will override the wipe style
@@ -415,17 +415,17 @@ void ColorWipeSLSeg::doSegWipe(uint16_t wipeNum, uint16_t wipeStep, uint16_t seg
             switch (style) {
                 case 0: //alternates colors for each wipe
                 default:
-                    palIndex = patternUtilsPS::getPatternVal( pattern, wipeNum + patOffset);
+                    palIndex = patternUtilsPS::getPatternVal( *pattern, wipeNum + patOffset);
                     break;
                 case 1: //alternates colors for each line
-                    palIndex = patternUtilsPS::getPatternVal( pattern, j + patOffset );
+                    palIndex = patternUtilsPS::getPatternVal( *pattern, j + patOffset );
                     break;
                 case 2: //alternates colors for each segment
-                    palIndex = patternUtilsPS::getPatternVal( pattern, wipeStep + patOffset );
+                    palIndex = patternUtilsPS::getPatternVal( *pattern, wipeStep + patOffset );
                     break;
             }
             modeOut = colorMode;
-            colorOut = paletteUtilsPS::getPaletteColor( palette, palIndex );
+            colorOut = paletteUtilsPS::getPaletteColor( *palette, palIndex );
         }
 
         //output the color to the pixel, note that if the color mode is non-zero, it will override the wipe style

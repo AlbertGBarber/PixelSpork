@@ -54,6 +54,7 @@ Randomize Notes:
     Do this with: 
     <your effect instance name>->paletteTemp.length = <a length value>
     <your effect instance name>->palette = <your effect instance name>->&paletteTemp;
+    paletteUtilsPS::randomize(*<your effect instance name>->palette);
 
 Example calls: 
 
@@ -61,7 +62,7 @@ Example calls:
     Will do a a rainbow edge burst with a burst freq of 15
     The effect updates at 80ms
 
-    EdgeBurstSL(ringSegments, &palette1, 10, 80);
+    EdgeBurstSL(ringSegments, palette1, 10, 80);
     Will do a an edge burst using colors from palette1 with a burst freq of 10
     The effect updates at 80ms
 
@@ -102,7 +103,7 @@ class EdgeBurstSL : public EffectBasePS {
         EdgeBurstSL(SegmentSet &SegmentSet, uint8_t BurstFreq, uint16_t Rate);  
 
         //Constructor for colors from palette
-        EdgeBurstSL(SegmentSet &SegmentSet, palettePS *Palette, uint8_t BurstFreq, uint16_t Rate);
+        EdgeBurstSL(SegmentSet &SegmentSet, palettePS &Palette, uint8_t BurstFreq, uint16_t Rate);
 
         //Constructor for a randomly created palette
         //RandomizePal = true will randomize the palette for each wave

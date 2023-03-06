@@ -21,8 +21,8 @@ LavaPS::LavaPS(SegmentSet &SegmentSet, uint16_t BlendSteps, uint16_t BlendScale,
 	}
 
 //constructor for a custom palette
-LavaPS::LavaPS(SegmentSet &SegmentSet, palettePS *Palette, uint16_t BlendSteps, uint16_t BlendScale, uint16_t Rate):
-    segmentSet(SegmentSet), palette(Palette), blendSteps(BlendSteps), blendScale(BlendScale)
+LavaPS::LavaPS(SegmentSet &SegmentSet, palettePS &Palette, uint16_t BlendSteps, uint16_t BlendScale, uint16_t Rate):
+    segmentSet(SegmentSet), palette(&Palette), blendSteps(BlendSteps), blendScale(BlendScale)
     {    
         paletteTemp = {lavalPalette_arr, SIZE(lavalPalette_arr)};
         init(Rate);
@@ -98,7 +98,7 @@ void LavaPS::update(){
                     colorOut = colorUtilsPS::wheel(index, hueoffset);
                 } else {
                     //get the blended color from the palette
-                    colorOut = paletteUtilsPS::getPaletteGradColor(palette, index, 0, totBlendLength, blendSteps);
+                    colorOut = paletteUtilsPS::getPaletteGradColor(*palette, index, 0, totBlendLength, blendSteps);
                 }
 
                 //set the output color's brightness

@@ -1,15 +1,15 @@
 #include "PaletteSliderPS.h"
 
 //Constructor for slider palette using a pattern
-PaletteSliderPS::PaletteSliderPS(palettePS *PaletteTarget, patternPS *Pattern, uint16_t SliderPalLen, uint16_t BlendSteps, bool SingleShift, uint16_t Rate): 
-    paletteTarget(PaletteTarget), pattern(Pattern), sliderPalLen(SliderPalLen), blendSteps(BlendSteps), singleShift(SingleShift)
+PaletteSliderPS::PaletteSliderPS(palettePS &PaletteTarget, patternPS &Pattern, uint16_t SliderPalLen, uint16_t BlendSteps, bool SingleShift, uint16_t Rate): 
+    paletteTarget(&PaletteTarget), pattern(&Pattern), sliderPalLen(SliderPalLen), blendSteps(BlendSteps), singleShift(SingleShift)
     {    
         init(Rate);
 	}
 
 //Constructor for slider palette using the target palette as the pattern
-PaletteSliderPS::PaletteSliderPS(palettePS *PaletteTarget, uint16_t SliderPalLen, uint16_t BlendSteps, bool SingleShift, uint16_t Rate): 
-    paletteTarget(PaletteTarget), sliderPalLen(SliderPalLen), blendSteps(BlendSteps), singleShift(SingleShift)
+PaletteSliderPS::PaletteSliderPS(palettePS &PaletteTarget, uint16_t SliderPalLen, uint16_t BlendSteps, bool SingleShift, uint16_t Rate): 
+    paletteTarget(&PaletteTarget), sliderPalLen(SliderPalLen), blendSteps(BlendSteps), singleShift(SingleShift)
     {    
         setPaletteAsPattern();
         init(Rate);
@@ -39,7 +39,7 @@ void PaletteSliderPS::reset(){
 //ie for a palette of length 5, the pattern will be 0, 1, 2, 3, 4
 //(all the palette indexes in order)
 void PaletteSliderPS::setPaletteAsPattern(){
-    patternTemp = generalUtilsPS::setPaletteAsPattern(paletteTarget);
+    patternTemp = generalUtilsPS::setPaletteAsPattern(*paletteTarget);
     pattern = &patternTemp;
 }
 
@@ -116,11 +116,11 @@ void PaletteSliderPS::update(){
         for(uint16_t i = 0; i < sliderPalLen; i++){
             
             //Get the starting color offset by the patternIndex
-            startIndex = patternUtilsPS::getPatternVal(pattern, i + patternIndex);
-            startColor = paletteUtilsPS::getPaletteColor(paletteTarget, startIndex);
+            startIndex = patternUtilsPS::getPatternVal(*pattern, i + patternIndex);
+            startColor = paletteUtilsPS::getPaletteColor(*paletteTarget, startIndex);
             //get the target color. We offset it by the patternStep.
-            endIndex = patternUtilsPS::getPatternVal(pattern, i + patternIndex + patternStep);
-            endColor = paletteUtilsPS::getPaletteColor(paletteTarget, endIndex);
+            endIndex = patternUtilsPS::getPatternVal(*pattern, i + patternIndex + patternStep);
+            endColor = paletteUtilsPS::getPaletteColor(*paletteTarget, endIndex);
             //get the blended color between the start and end colors
             sliderPalColArr[i] = colorUtilsPS::getCrossFadeColor(startColor, endColor, ratio);
         }

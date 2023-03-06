@@ -52,7 +52,7 @@ Example calls:
         z is mode 0, so is static at 0;
     The effect updates at 40ms
     
-    Noise16PS(mainSegments, &palette1, 20, 600, 1, 0, 2, 40, 10, 5, 60);
+    Noise16PS(mainSegments, palette1, 20, 600, 1, 0, 2, 40, 10, 5, 60);
     Will produce a noise effect using colors from palette1
     There are 40 blend steps between each color
     An overall scaling value of 600 is applied to the noise
@@ -86,7 +86,7 @@ Functions:
 class Noise16PS : public EffectBasePS {
     public:
         //Constructor with palette
-        Noise16PS(SegmentSet &SegmentSet, palettePS *Palette, uint16_t BlendSteps, uint16_t BlendScale,
+        Noise16PS(SegmentSet &SegmentSet, palettePS &Palette, uint16_t BlendSteps, uint16_t BlendScale,
                   uint8_t X_mode, uint8_t Y_mode, uint8_t Z_mode, uint16_t X_val, uint16_t Y_val, uint16_t Z_val, uint16_t Rate);
 
         //Constructor with randomly generated palette

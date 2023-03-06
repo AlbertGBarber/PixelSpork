@@ -5,39 +5,39 @@ using namespace paletteUtilsPS;
 
 //sets the palette color at the specified index
 //the index wraps, so running off the end of the palette, will put you back at the start
-void paletteUtilsPS::setColor(palettePS *palette, CRGB color, uint8_t index){
-    palette->paletteArr[ mod8(index, palette->length) ] = color;
+void paletteUtilsPS::setColor(palettePS &palette, CRGB color, uint8_t index){
+    palette.paletteArr[ mod8(index, palette.length) ] = color;
 }
 
 //returns the color at a specified index
 //the index wraps, so running off the end of the palette, will put you back at the start
-CRGB paletteUtilsPS::getPaletteColor(palettePS *palette, uint8_t index){
-    return palette->paletteArr[ mod8(index, palette->length) ];
+CRGB paletteUtilsPS::getPaletteColor(palettePS &palette, uint8_t index){
+    return palette.paletteArr[ mod8(index, palette.length) ];
 }
 
 //returns a pointer to the color in the palette array at the specified index (wrapping if needed)
 //useful for background color syncing
 //Note: maybe remove the wrapping?, 
-CRGB* paletteUtilsPS::getColorPtr(palettePS *palette, uint8_t index){
-    return &(palette->paletteArr[ mod8(index, palette->length) ]);
+CRGB* paletteUtilsPS::getColorPtr(palettePS &palette, uint8_t index){
+    return &(palette.paletteArr[ mod8(index, palette.length) ]);
 }
 
 //randomizes all the colors in a palette
-void paletteUtilsPS::randomize(palettePS *palette){
-    for(uint8_t i = 0; i < palette->length; i++){
+void paletteUtilsPS::randomize(palettePS &palette){
+    for(uint8_t i = 0; i < palette.length; i++){
         randomize(palette, i);
     }
 }
 
 //randomize the color in palette at the specified index
-void paletteUtilsPS::randomize(palettePS *palette, uint8_t index){
+void paletteUtilsPS::randomize(palettePS &palette, uint8_t index){
     setColor(palette, colorUtilsPS::randColor(), index);
 }
 
 //Reverses the order of the palette colors
-void paletteUtilsPS::reverse(palettePS *palette){
+void paletteUtilsPS::reverse(palettePS &palette){
     uint8One = 0; //start index
-    uint8Two = palette->length - 1; //end index
+    uint8Two = palette.length - 1; //end index
     
     //To reverse the palette we use a common algo
     //We basically swap pairs of colors, starting with the end and start of the array, and then moving inwards
@@ -54,8 +54,8 @@ void paletteUtilsPS::reverse(palettePS *palette){
 }
 
 //randomizes the order of colors in a palette
-void paletteUtilsPS::shuffle(palettePS *palette){
-    uint8One = palette->length - 1; //loopStart
+void paletteUtilsPS::shuffle(palettePS &palette){
+    uint8One = palette.length - 1; //loopStart
     // Start from the last element and swap
     // one by one. We don't need to run for
     // the first element that's why i > 0
@@ -75,8 +75,8 @@ void paletteUtilsPS::shuffle(palettePS *palette){
 //the code checks to see if the random index matches the current color (passed in)
 //if it does we'll just advance the index by one and return its color
 //this stops the same color from being chosen again (assuming the palette doesn't repeat)
-CRGB paletteUtilsPS::getShuffleIndex(palettePS *palette, CRGB &currentPaletteVal){
-    uint8One = random8(palette->length); //guess an index
+CRGB paletteUtilsPS::getShuffleIndex(palettePS &palette, CRGB &currentPaletteVal){
+    uint8One = random8(palette.length); //guess an index
     colorOne = paletteUtilsPS::getPaletteColor(palette, uint8One); //get the color at the guess
     if( colorOne == currentPaletteVal ){
         return paletteUtilsPS::getPaletteColor(palette, uint8One + 1);
@@ -86,20 +86,20 @@ CRGB paletteUtilsPS::getShuffleIndex(palettePS *palette, CRGB &currentPaletteVal
 }
 
 //returns the blended result of two palette colors
-CRGB paletteUtilsPS::getBlendedPaletteColor(palettePS *palette, uint8_t startIndex, uint8_t endIndex, uint8_t step, uint8_t totalSteps){
-    colorOne = getPaletteColor(palette, startIndex);
-    colorTwo = getPaletteColor(palette, endIndex);
-    return colorUtilsPS::getCrossFadeColor(colorOne, colorTwo, step, totalSteps); 
+CRGB paletteUtilsPS::getBlendedPaletteColor(palettePS &palette, uint8_t startIndex, uint8_t endIndex, uint8_t step, uint8_t totalSteps){
+    //colorOne = getPaletteColor(palette, startIndex);
+    //colorTwo = getPaletteColor(palette, endIndex);
+    return colorUtilsPS::getCrossFadeColor(*getColorPtr(palette, startIndex), *getColorPtr(palette, endIndex), step, totalSteps); 
 }
 
 //returns a gradient color between palette colors based on several inputs: (see the next function below)
 //This version of getPaletteGradColor does not require the gradLength and instead works it out for you
 //Otherwise it's the same as the other version
-CRGB paletteUtilsPS::getPaletteGradColor(palettePS *palette, uint16_t num, uint16_t offset, uint16_t totalLength) {
+CRGB paletteUtilsPS::getPaletteGradColor(palettePS &palette, uint16_t num, uint16_t offset, uint16_t totalLength) {
 
     //gradient steps per color in the palette
     //this is a uint16_t to allow for gradients > 255
-    uint16One = totalLength / palette->length; //gradLength
+    uint16One = totalLength / palette.length; //gradLength
     
     //divide by 0 protection
     if(!uint16One){
@@ -114,7 +114,7 @@ CRGB paletteUtilsPS::getPaletteGradColor(palettePS *palette, uint16_t num, uint1
 //  offset: Any offset of num (see segmentSet gradOffset)
 //  totalLength: The length the entire palette gradient is spread across (usually the length of a segmentSet or similar
 //  gradLength: The length of the gradient between the palette colors (ie totalLenth/paletteLength)
-CRGB paletteUtilsPS::getPaletteGradColor(palettePS *palette, uint16_t num, uint16_t offset, uint16_t totalLength, uint16_t gradLength){
+CRGB paletteUtilsPS::getPaletteGradColor(palettePS &palette, uint16_t num, uint16_t offset, uint16_t totalLength, uint16_t gradLength){
     //the actual gradient number we need based on the offset
     uint16One = addMod16PS( num, offset, totalLength ); //(num + offset) % totalLength;
 
@@ -130,9 +130,9 @@ CRGB paletteUtilsPS::getPaletteGradColor(palettePS *palette, uint16_t num, uint1
     //get the blend ratio
     uint8Two = ( uint16One * 255 ) / gradLength;
 
-    colorOne = getPaletteColor(palette, uint8One);
-    colorTwo = getPaletteColor(palette, uint8One + 1);
-    return colorUtilsPS::getCrossFadeColor(colorOne, colorTwo, uint8Two);
+    //colorOne = getPaletteColor(palette, uint8One);
+    //colorTwo = getPaletteColor(palette, uint8One + 1);
+    return colorUtilsPS::getCrossFadeColor(*getColorPtr(palette, uint8One), *getColorPtr(palette, uint8One + 1), uint8Two);
 }
 
 //returns a palette of length 1 containing the passed in color

@@ -1,15 +1,15 @@
 #include "DissolveSL.h"
 
 //constructor for pattern
-DissolveSL::DissolveSL(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, uint8_t RandMode, uint16_t SpawnRateInc, uint16_t Rate):
-    segmentSet(SegmentSet), pattern(Pattern), palette(Palette), randMode(RandMode), spawnRateInc(SpawnRateInc)
+DissolveSL::DissolveSL(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, uint8_t RandMode, uint16_t SpawnRateInc, uint16_t Rate):
+    segmentSet(SegmentSet), pattern(&Pattern), palette(&Palette), randMode(RandMode), spawnRateInc(SpawnRateInc)
     {    
         init(Rate);
 	}
 
 //constructor for palette as pattern
-DissolveSL::DissolveSL(SegmentSet &SegmentSet, palettePS *Palette, uint8_t RandMode, uint16_t SpawnRateInc, uint16_t Rate):
-    segmentSet(SegmentSet), palette(Palette), randMode(RandMode), spawnRateInc(SpawnRateInc)
+DissolveSL::DissolveSL(SegmentSet &SegmentSet, palettePS &Palette, uint8_t RandMode, uint16_t SpawnRateInc, uint16_t Rate):
+    segmentSet(SegmentSet), palette(&Palette), randMode(RandMode), spawnRateInc(SpawnRateInc)
     {
         setPaletteAsPattern();
         init(Rate);
@@ -46,7 +46,7 @@ void DissolveSL::init(uint16_t Rate){
 //ie for a palette length 5, the pattern would be 
 //{0, 1, 2, 3, 4}
 void DissolveSL::setPaletteAsPattern(){
-    patternTemp = generalUtilsPS::setPaletteAsPattern(palette);
+    patternTemp = generalUtilsPS::setPaletteAsPattern(*palette);
     pattern = &patternTemp;
 }
 
@@ -101,16 +101,16 @@ void DissolveSL::resetPixelArray(){
 CRGB DissolveSL::pickColor(){
     if(randMode == 0){
         //cycle through the pattern
-        currentIndex = patternUtilsPS::getPatternVal(pattern, numCycles);
-        color = paletteUtilsPS::getPaletteColor(palette, currentIndex );
+        currentIndex = patternUtilsPS::getPatternVal(*pattern, numCycles);
+        color = paletteUtilsPS::getPaletteColor(*palette, currentIndex );
     } else if(randMode == 1){
         //choose colors randomly
         color = colorUtilsPS::randColor();
         //choose colors randomly from the pattern
-        color = paletteUtilsPS::getPaletteColor(palette, patternUtilsPS::getRandVal(pattern) );
+        color = paletteUtilsPS::getPaletteColor(*palette, patternUtilsPS::getRandVal(*pattern) );
     } else if(randMode == 2){
         //choose colors randomly from the pattern
-        color = paletteUtilsPS::getPaletteColor(palette, patternUtilsPS::getRandVal(pattern) );
+        color = paletteUtilsPS::getPaletteColor(*palette, patternUtilsPS::getRandVal(*pattern) );
     } else {
         //for modes 3 and 4, the colors must only be picked once, since they are choosen randomly
         //hence the ranColorPicked flag
@@ -119,8 +119,8 @@ CRGB DissolveSL::pickColor(){
             if(randMode == 3){
                 color = colorUtilsPS::randColor();
             } else if(randMode == 4) {
-                currentIndex = patternUtilsPS::getShuffleIndex(pattern, currentIndex);
-                color = paletteUtilsPS::getPaletteColor( palette, currentIndex );
+                currentIndex = patternUtilsPS::getShuffleIndex(*pattern, currentIndex);
+                color = paletteUtilsPS::getPaletteColor( *palette, currentIndex );
             }
             randColorPicked = true;
         }

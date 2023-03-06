@@ -1,15 +1,15 @@
 #include "RollingWavesFastSL.h"
 
 //constructor with pattern
-RollingWavesFastSL::RollingWavesFastSL(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate):
-    segmentSet(SegmentSet), pattern(Pattern), palette(Palette), gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)
+RollingWavesFastSL::RollingWavesFastSL(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate):
+    segmentSet(SegmentSet), pattern(&Pattern), palette(&Palette), gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)
     {    
         init(BGColor,Rate);
 	}
 
 //constuctor with palette as pattern
-RollingWavesFastSL::RollingWavesFastSL(SegmentSet &SegmentSet, palettePS *Palette, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate):
-    segmentSet(SegmentSet), palette(Palette), gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)
+RollingWavesFastSL::RollingWavesFastSL(SegmentSet &SegmentSet, palettePS &Palette, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate):
+    segmentSet(SegmentSet), palette(&Palette), gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)
     {    
         setPaletteAsPattern();
         init(BGColor, Rate);
@@ -58,8 +58,8 @@ void RollingWavesFastSL::setSpacing(uint8_t newSpacing){
 
 //sets a new pattern for the effect
 //we need to change the totalCycleLength to match
-void RollingWavesFastSL::setPattern(patternPS *newPattern){
-    pattern = newPattern;
+void RollingWavesFastSL::setPattern(patternPS &newPattern){
+    pattern = &newPattern;
     setTotalEffectLength();
 }
 
@@ -67,7 +67,7 @@ void RollingWavesFastSL::setPattern(patternPS *newPattern){
 //ie for a palette length 5, the pattern would be 
 //{0, 1, 2, 3, 4}
 void RollingWavesFastSL::setPaletteAsPattern(){
-    patternTemp = generalUtilsPS::setPaletteAsPattern(palette);
+    patternTemp = generalUtilsPS::setPaletteAsPattern(*palette);
     pattern = &patternTemp;
     setTotalEffectLength();
 }
@@ -278,7 +278,7 @@ CRGB RollingWavesFastSL::getWaveColor(uint8_t step){
 //the maximum brightness is scaled by dimPow
 //dimPow 255 will produce a normal linear gradient, but for more shimmery waves we can dial the bightness down
 //The "head" wave pixel will still be drawn at full brightness since it's drawn seperatly 
-CRGB RollingWavesFastSL::desaturate(CRGB color, uint8_t step, uint8_t totalSteps) {
+CRGB RollingWavesFastSL::desaturate(CRGB &color, uint8_t step, uint8_t totalSteps) {
 
     dimRatio = (dimPow - (uint16_t)step * dimPow / (totalSteps + 1));
 
@@ -297,14 +297,14 @@ void RollingWavesFastSL::setNextColors(uint16_t segPixelNum){
     if(randMode == 0){
         currentColorIndex = addMod16PS( segPixelNum, cycleNum, totalCycleLength ) / blendLimit; // what color we've started from (integers always round down)
         //the color we're at based on the current index
-        currentPattern = patternUtilsPS::getPatternVal(pattern, currentColorIndex);
-        currentColor = paletteUtilsPS::getPaletteColor(palette, currentPattern);
+        currentPattern = patternUtilsPS::getPatternVal(*pattern, currentColorIndex);
+        currentColor = paletteUtilsPS::getPaletteColor(*palette, currentPattern);
     } else if(randMode == 1){
         //choose a completely random color
         currentColor = colorUtilsPS::randColor();
     } else {
         //choose a color randomly from the pattern (making sure it's not the same as the current color)
-        currentPattern = patternUtilsPS::getShuffleIndex(pattern, currentPattern);
-        currentColor = paletteUtilsPS::getPaletteColor( palette, currentPattern );
+        currentPattern = patternUtilsPS::getShuffleIndex(*pattern, currentPattern);
+        currentColor = paletteUtilsPS::getPaletteColor( *palette, currentPattern );
     }
 }

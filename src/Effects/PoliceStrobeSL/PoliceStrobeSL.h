@@ -58,7 +58,7 @@ Example calls:
     The background is blank
     There is no pause between the cycles
 
-    PoliceStrobeSL(mainSegments, &palette1, CRGB:Purple, 4, 500, 0, 50);
+    PoliceStrobeSL(mainSegments, palette1, CRGB:Purple, 4, 500, 0, 50);
     A more dynamic strobe
     Will strobe all the colors in the palette1, with 4 pulses at 50ms each
     strobe mode 0 is used, so the strobe will alternate between strobing halfs of the strip and the whole strip
@@ -67,7 +67,7 @@ Example calls:
 
     uint8_t pattern_arr = {0, 1, 4};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-    PoliceStrobeSL(mainSegments, &pattern, &palette1, CRGB:green, 6, 300, 0, 50);
+    PoliceStrobeSL(mainSegments, pattern, palette1, CRGB:green, 6, 300, 0, 50);
     Will strobe colors from the palette based on the pattern (ie colors 0, 1, and 4 in order), with 6 pulses at 50ms each
     strobe mode 0 is used, so the strobe will alternate between strobing halfs of the strip and the whole strip
     There is a 300ms pause between cycles
@@ -113,10 +113,10 @@ class PoliceStrobeSL : public EffectBasePS {
         PoliceStrobeSL(SegmentSet &SegmentSet, CRGB ColorOne, CRGB ColorTwo, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, uint8_t PulseMode, bool SegMode, uint16_t Rate);  
 
         //Constructor using both pattern and palette
-        PoliceStrobeSL(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, uint8_t PulseMode, bool SegMode, uint16_t Rate);
+        PoliceStrobeSL(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, uint8_t PulseMode, bool SegMode, uint16_t Rate);
 
         //Constructor for using palette as the pattern
-        PoliceStrobeSL(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, uint8_t PulseMode, bool SegMode, uint16_t Rate);
+        PoliceStrobeSL(SegmentSet &SegmentSet, palettePS &Palette, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, uint8_t PulseMode, bool SegMode, uint16_t Rate);
 
         ~PoliceStrobeSL();
 

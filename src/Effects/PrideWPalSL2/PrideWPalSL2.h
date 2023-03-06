@@ -75,13 +75,13 @@ Example calls:
     The brightness wave values will be randomized, see init() for the ranges
     The effect updates at 80ms
 
-    PrideWPalSL2(ringSegments, &palette1, true, true, 80);
+    PrideWPalSL2(ringSegments, palette1, true, true, 80);
     Will do an effect using colors from palette1
     Colors will shift from the center to the outer segment
     The brightness wave values will be randomized, see init() for the ranges
     The effect updates at 80ms
 
-    PrideWPalSL2(ringSegments, &palette1, true, 20, 120, 250, 350, 20, 40, 3, 7, 60);
+    PrideWPalSL2(ringSegments, palette1, true, 20, 120, 250, 350, 20, 40, 3, 7, 60);
     Will do an effect using colors from palette1
     Colors will shift from the center to the outer segment, using 20 steps to blend the colors
     The brightDepth will vary from 120 to 250
@@ -128,16 +128,16 @@ class PrideWPalSL2 : public EffectBasePS {
         PrideWPalSL2(SegmentSet &SegmentSet, bool Direct, bool RandomBriInc, uint16_t Rate);
 
         //Constructor for palette input
-        PrideWPalSL2(SegmentSet &SegmentSet, palettePS *Palette, bool Direct, bool RandomBriInc, uint16_t Rate);  
+        PrideWPalSL2(SegmentSet &SegmentSet, palettePS &Palette, bool Direct, bool RandomBriInc, uint16_t Rate);  
 
         //Constructor for making a random palette
         PrideWPalSL2(SegmentSet &SegmentSet, uint8_t numColors, bool Direct, bool RandomBriInc, uint16_t Rate);
 
         //Constructor with inputs for all main variables
-        PrideWPalSL2(SegmentSet &SegmentSet, palettePS *Palette, bool Direct, uint8_t GradLength, 
-                              uint8_t BrightDepthMin, uint8_t BrightDepthMax, uint16_t BriThetaFreq, 
-                              uint8_t BriThetaInc16Min, uint8_t BriThetaInc16Max, uint8_t HueChangeMin, 
-                              uint8_t HueChangeMax, uint16_t Rate);
+        PrideWPalSL2(SegmentSet &SegmentSet, palettePS &Palette, bool Direct, uint8_t GradLength, 
+                     uint8_t BrightDepthMin, uint8_t BrightDepthMax, uint16_t BriThetaFreq, 
+                     uint8_t BriThetaInc16Min, uint8_t BriThetaInc16Max, uint8_t HueChangeMin, 
+                     uint8_t HueChangeMax, uint16_t Rate);
 
         ~PrideWPalSL2();
 

@@ -11,15 +11,15 @@
 // if so, then we increment it by a random amount up to shiftStep.
 
 //Constructor for effect with pattern and palette
-ShiftingSeaSL::ShiftingSeaSL(SegmentSet& SegmentSet, patternPS *Pattern, palettePS* Palette, uint8_t GradLength, uint8_t Smode, uint8_t Grouping, uint16_t Rate):
-    segmentSet(SegmentSet), pattern(Pattern), palette(Palette), gradLength(GradLength), sMode(Smode), grouping(Grouping) 
+ShiftingSeaSL::ShiftingSeaSL(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, uint8_t GradLength, uint8_t Smode, uint8_t Grouping, uint16_t Rate):
+    segmentSet(SegmentSet), pattern(&Pattern), palette(&Palette), gradLength(GradLength), sMode(Smode), grouping(Grouping) 
 {
     init(Rate);
 }
 
 //Constructor for effect with palette
-ShiftingSeaSL::ShiftingSeaSL(SegmentSet& SegmentSet, palettePS* Palette, uint8_t GradLength, uint8_t Smode, uint8_t Grouping, uint16_t Rate):
-    segmentSet(SegmentSet), palette(Palette), gradLength(GradLength), sMode(Smode), grouping(Grouping) 
+ShiftingSeaSL::ShiftingSeaSL(SegmentSet &SegmentSet, palettePS &Palette, uint8_t GradLength, uint8_t Smode, uint8_t Grouping, uint16_t Rate):
+    segmentSet(SegmentSet), palette(&Palette), gradLength(GradLength), sMode(Smode), grouping(Grouping) 
 {
     setPaletteAsPattern();
     init(Rate);
@@ -27,7 +27,7 @@ ShiftingSeaSL::ShiftingSeaSL(SegmentSet& SegmentSet, palettePS* Palette, uint8_t
 }
 
 //Constructor for effect with randomly created palette
-ShiftingSeaSL::ShiftingSeaSL(SegmentSet& SegmentSet, uint8_t NumColors, uint8_t GradLength, uint8_t Smode, uint8_t Grouping, uint16_t Rate):
+ShiftingSeaSL::ShiftingSeaSL(SegmentSet &SegmentSet, uint8_t NumColors, uint8_t GradLength, uint8_t Smode, uint8_t Grouping, uint16_t Rate):
     segmentSet(SegmentSet), gradLength(GradLength), sMode(Smode), grouping(Grouping) 
 {
     paletteTemp = paletteUtilsPS::makeRandomPalette(NumColors);
@@ -54,7 +54,7 @@ void ShiftingSeaSL::init(uint16_t Rate){
 //ie for a palette length 5, the pattern would be 
 //{0, 1, 2, 3, 4}
 void ShiftingSeaSL::setPaletteAsPattern(){
-    patternTemp = generalUtilsPS::setPaletteAsPattern(palette);
+    patternTemp = generalUtilsPS::setPaletteAsPattern(*palette);
     pattern = &patternTemp;
     setTotalCycleLen();
 }
@@ -115,12 +115,12 @@ void ShiftingSeaSL::update() {
             curPatIndex = step / gradLength; // what pattern index we've started from (integers always round down)
 
             //Get the palette index from the pattern then the color from the palette
-            curColorIndex = patternUtilsPS::getPatternVal(pattern, curPatIndex);
-            currentColor = paletteUtilsPS::getPaletteColor(palette, curColorIndex);
+            curColorIndex = patternUtilsPS::getPatternVal(*pattern, curPatIndex);
+            currentColor = paletteUtilsPS::getPaletteColor(*palette, curColorIndex);
 
             //Get the next pattern index, wrapping to the start of the pattern as needed, then the color from the palette
-            nextColorIndex = patternUtilsPS::getPatternVal(pattern, curPatIndex + 1); 
-            nextColor = paletteUtilsPS::getPaletteColor(palette, nextColorIndex);
+            nextColorIndex = patternUtilsPS::getPatternVal(*pattern, curPatIndex + 1); 
+            nextColor = paletteUtilsPS::getPaletteColor(*palette, nextColorIndex);
 
             //if we're adding a blank color at the end of the cycle, we need to to catch the end
             //since the palette doesn't include the blank color
@@ -133,8 +133,8 @@ void ShiftingSeaSL::update() {
                 } else if(curPatIndex == patternLen){
                     //going from the blankColor to the start of the palette
                     currentColor = *blankColor;
-                    nextColorIndex = patternUtilsPS::getPatternVal(pattern, 0); 
-                    nextColor = paletteUtilsPS::getPaletteColor(palette, nextColorIndex);
+                    nextColorIndex = patternUtilsPS::getPatternVal(*pattern, 0); 
+                    nextColor = paletteUtilsPS::getPaletteColor(*palette, nextColorIndex);
                 }
             }
             

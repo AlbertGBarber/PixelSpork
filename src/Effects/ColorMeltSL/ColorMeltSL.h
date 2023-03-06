@@ -52,7 +52,7 @@ Example calls:
     The brighness waves will be inverted for more color
     The effect updates at 80ms
 
-    ColorMeltSL(mainSegments, &palette1, 9, 0, true, 80);
+    ColorMeltSL(mainSegments, palette1, 9, 0, true, 80);
     Will do a melt with a meltFreq of 9 and a phaseFreq of 0
     Colors from palette1 will be used
     Because the phaseFreq is 0, phaseEnable will be set false as part of the constructor
@@ -93,7 +93,7 @@ class ColorMeltSL : public EffectBasePS {
         ColorMeltSL(SegmentSet &SegmentSet, uint8_t MeltFreq, uint8_t PhaseFreq, bool BriInvert, uint16_t Rate);  
 
         //Constructor for colors from palette
-        ColorMeltSL(SegmentSet &SegmentSet, palettePS *Palette, uint8_t MeltFreq, uint8_t PhaseFreq, bool BriInvert, uint16_t Rate);
+        ColorMeltSL(SegmentSet &SegmentSet, palettePS &Palette, uint8_t MeltFreq, uint8_t PhaseFreq, bool BriInvert, uint16_t Rate);
 
         //Constructor for a randomly created palette
         ColorMeltSL(SegmentSet &SegmentSet, uint8_t numColors, uint8_t MeltFreq, uint8_t PhaseFreq, bool BriInvert, uint16_t Rate);

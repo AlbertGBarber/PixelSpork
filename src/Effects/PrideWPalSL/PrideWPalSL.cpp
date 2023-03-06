@@ -13,8 +13,8 @@ PrideWPalSL::PrideWPalSL(SegmentSet &SegmentSet, bool BriDirect, bool RandomBriI
 	}
 
 //constructor for palette input
-PrideWPalSL::PrideWPalSL(SegmentSet &SegmentSet, palettePS *Palette, bool BriDirect, bool RandomBriInc, uint16_t Rate):
-    segmentSet(SegmentSet), palette(Palette), briDirect(BriDirect)
+PrideWPalSL::PrideWPalSL(SegmentSet &SegmentSet, palettePS &Palette, bool BriDirect, bool RandomBriInc, uint16_t Rate):
+    segmentSet(SegmentSet), palette(&Palette), briDirect(BriDirect)
     {    
         prideMode = false; 
         init(RandomBriInc, Rate);
@@ -31,11 +31,11 @@ PrideWPalSL::PrideWPalSL(SegmentSet &SegmentSet, uint8_t numColors, bool BriDire
 	}
 
 //constructor with inputs for all main variables
-PrideWPalSL::PrideWPalSL(SegmentSet &SegmentSet, palettePS *Palette, bool BriDirect, uint8_t GradLength, 
+PrideWPalSL::PrideWPalSL(SegmentSet &SegmentSet, palettePS &Palette, bool BriDirect, uint8_t GradLength, 
                                             uint8_t BrightDepthMin, uint8_t BrightDepthMax, uint16_t BriThetaFreq, 
                                             uint8_t BriThetaInc16Min, uint8_t BriThetaInc16Max, uint8_t HueChangeMin, 
                                             uint8_t HueChangeMax, uint16_t Rate):
-    segmentSet(SegmentSet), palette(Palette), briDirect(BriDirect), gradLength(GradLength), brightDepthMin(BrightDepthMin), 
+    segmentSet(SegmentSet), palette(&Palette), briDirect(BriDirect), gradLength(GradLength), brightDepthMin(BrightDepthMin), 
     brightDepthMax(BrightDepthMax), briThetaFreq(BriThetaFreq), briThetaInc16Min(BriThetaInc16Min), 
     briThetaInc16Max(BriThetaInc16Max), hueChangeMin(HueChangeMin), hueChangeMax(HueChangeMax)
     {
@@ -145,7 +145,7 @@ void PrideWPalSL::update(){
                 }
                 //get the blended color from the palette mapped into numSteps based on the hue
                 index = scale16by8( numSteps, hue8 );
-                newColor = paletteUtilsPS::getPaletteGradColor(palette, index, 0, numSteps, gradLength);
+                newColor = paletteUtilsPS::getPaletteGradColor(*palette, index, 0, numSteps, gradLength);
                 nscale8x3(newColor.r, newColor.g, newColor.b, bri8);
             } else{
                 newColor = CHSV(hue8, sat8, bri8);

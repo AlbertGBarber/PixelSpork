@@ -1,8 +1,8 @@
 #include "TwinkleFastSL.h"
 
 //palette color constructor
-TwinkleFastSL::TwinkleFastSL(SegmentSet &SegmentSet, palettePS *Palette, uint16_t NumTwinkles, CRGB BgColor, bool Sparkle, uint8_t FadeOutRate, uint16_t Rate):
-    segmentSet(SegmentSet), palette(Palette), numTwinkles(NumTwinkles), sparkle(Sparkle), fadeOutRate(FadeOutRate)
+TwinkleFastSL::TwinkleFastSL(SegmentSet &SegmentSet, palettePS &Palette, uint16_t NumTwinkles, CRGB BgColor, bool Sparkle, uint8_t FadeOutRate, uint16_t Rate):
+    segmentSet(SegmentSet), palette(&Palette), numTwinkles(NumTwinkles), sparkle(Sparkle), fadeOutRate(FadeOutRate)
     {    
         init(BgColor, Rate);
     }
@@ -69,7 +69,7 @@ void TwinkleFastSL::update(){
             randLine = random16(numLines);
             switch (randMode) {
                 case 0: // we're picking from a set of colors 
-                    color = paletteUtilsPS::getPaletteColor(palette, random8(paletteLength));
+                    color = paletteUtilsPS::getPaletteColor(*palette, random8(paletteLength));
                     break;
                 default: //(mode 1) set colors at random
                     color = colorUtilsPS::randColor();

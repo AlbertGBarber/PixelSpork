@@ -54,12 +54,12 @@ Example call:
 
     uint8_t pattern_arr = {0, 2, 1};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-    ShiftingSeaSL(mainSegments, &pattern, &palette1, 20, 0, 3, 40);
+    ShiftingSeaSL(mainSegments, pattern, palette1, 20, 0, 3, 40);
     Will shift through the colors of palette1 according to the pattern (color 0, then 2, then 1),
     with 20 steps between each shift, using mode 0
     grouping pixels by 3, at a rate of 40ms
 
-    ShiftingSeaSL(mainSegments, &palette1, 20, 0, 3, 40);
+    ShiftingSeaSL(mainSegments, palette1, 20, 0, 3, 40);
     Will shift through the colors of palette1, with 20 steps between each shift, using mode 0
     grouping pixels by 3, at a rate of 40ms
 
@@ -103,13 +103,13 @@ Reference Vars:
 class ShiftingSeaSL : public EffectBasePS {
     public:
         //Constructor for effect with pattern and palette
-        ShiftingSeaSL(SegmentSet& SegmentSet, patternPS *Pattern, palettePS* Palette, uint8_t GradLength, uint8_t Smode, uint8_t Grouping, uint16_t Rate);
+        ShiftingSeaSL(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, uint8_t GradLength, uint8_t Smode, uint8_t Grouping, uint16_t Rate);
 
         //Constructor for effect with palette
-        ShiftingSeaSL(SegmentSet &SegmentSet, palettePS *Palette, uint8_t GradLength, uint8_t Smode, uint8_t Grouping, uint16_t Rate);  
+        ShiftingSeaSL(SegmentSet &SegmentSet, palettePS &Palette, uint8_t GradLength, uint8_t Smode, uint8_t Grouping, uint16_t Rate);  
 
         //Constructor for effect with randomly created palette
-        ShiftingSeaSL(SegmentSet& SegmentSet, uint8_t NumColors, uint8_t GradLength, uint8_t Smode, uint8_t Grouping, uint16_t Rate);
+        ShiftingSeaSL(SegmentSet &SegmentSet, uint8_t NumColors, uint8_t GradLength, uint8_t Smode, uint8_t Grouping, uint16_t Rate);
 
         //destructor
         ~ShiftingSeaSL();

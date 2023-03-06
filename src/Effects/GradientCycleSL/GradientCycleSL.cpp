@@ -1,15 +1,15 @@
 #include "GradientCycleSL.h"
 
 //constructor with pattern
-GradientCycleSL::GradientCycleSL(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, uint8_t GradLength, uint16_t Rate):
-    segmentSet(SegmentSet), pattern(Pattern), palette(Palette), gradLength(GradLength)
+GradientCycleSL::GradientCycleSL(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, uint8_t GradLength, uint16_t Rate):
+    segmentSet(SegmentSet), pattern(&Pattern), palette(&Palette), gradLength(GradLength)
     {    
         init(Rate);
 	}
 
 //constuctor with palette as pattern
-GradientCycleSL::GradientCycleSL(SegmentSet &SegmentSet, palettePS *Palette, uint8_t GradLength, uint16_t Rate):
-    segmentSet(SegmentSet), palette(Palette), gradLength(GradLength)
+GradientCycleSL::GradientCycleSL(SegmentSet &SegmentSet, palettePS &Palette, uint8_t GradLength, uint16_t Rate):
+    segmentSet(SegmentSet), palette(&Palette), gradLength(GradLength)
     {    
         setPaletteAsPattern();
         init(Rate);
@@ -48,8 +48,8 @@ void GradientCycleSL::setGradLength(uint8_t newGradLength){
 
 //sets a new pattern for the effect
 //we need to change the totalCycleLength to match
-void GradientCycleSL::setPattern(patternPS *newPattern){
-    pattern = newPattern;
+void GradientCycleSL::setPattern(patternPS &newPattern){
+    pattern = &newPattern;
     setTotalEffectLength();
 }
 
@@ -57,7 +57,7 @@ void GradientCycleSL::setPattern(patternPS *newPattern){
 //ie for a palette length 5, the pattern would be 
 //{0, 1, 2, 3, 4}
 void GradientCycleSL::setPaletteAsPattern(){
-    patternTemp = generalUtilsPS::setPaletteAsPattern(palette);
+    patternTemp = generalUtilsPS::setPaletteAsPattern(*palette);
     pattern = &patternTemp;
     setTotalEffectLength();
 }
@@ -113,9 +113,9 @@ void GradientCycleSL::setnextColors(uint16_t lineNum){
     step = addMod16PS(lineNum, cycleNum, totalCycleLength);// where we are in the cycle of all the colors
     currentColorIndex = step / gradLength; // what color we've started from (integers always round down)
     //the color we're at based on the current index
-    currentPattern = patternUtilsPS::getPatternVal(pattern, currentColorIndex);
-    currentColor = paletteUtilsPS::getPaletteColor(palette, currentPattern);
+    currentPattern = patternUtilsPS::getPatternVal(*pattern, currentColorIndex);
+    currentColor = paletteUtilsPS::getPaletteColor(*palette, currentPattern);
     //the next color, wrapping to the start of the pattern as needed
-    nextPattern = patternUtilsPS::getPatternVal(pattern, currentColorIndex + 1);
-    nextColor = paletteUtilsPS::getPaletteColor(palette, nextPattern);
+    nextPattern = patternUtilsPS::getPatternVal(*pattern, currentColorIndex + 1);
+    nextColor = paletteUtilsPS::getPaletteColor(*palette, nextPattern);
 }

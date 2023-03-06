@@ -11,7 +11,7 @@ SoftTwinkleSL::SoftTwinkleSL(SegmentSet& SegmentSet, uint8_t Density, uint16_t R
 
 //turns off all the leds in the segment set to reset the effect
 void SoftTwinkleSL::reset(){
-    segDrawUtils::fillSegSetColor(segmentSet, 0, 0);
+    segDrawUtils::turnSegSetOff(segmentSet);
 }
 
 void SoftTwinkleSL::update() {

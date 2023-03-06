@@ -1,10 +1,10 @@
 #include "Noise16PS.h"
 
 //constructor with palette
-Noise16PS::Noise16PS(SegmentSet &SegmentSet, palettePS *Palette, uint16_t BlendSteps, uint16_t BlendScale,
+Noise16PS::Noise16PS(SegmentSet &SegmentSet, palettePS &Palette, uint16_t BlendSteps, uint16_t BlendScale,
                     uint8_t X_mode, uint8_t Y_mode, uint8_t Z_mode, uint16_t X_val, uint16_t Y_val, uint16_t Z_val, 
                     uint16_t Rate):
-    segmentSet(SegmentSet), palette(Palette), blendSteps(BlendSteps), blendScale(BlendScale), 
+    segmentSet(SegmentSet), palette(&Palette), blendSteps(BlendSteps), blendScale(BlendScale), 
     x_mode(X_mode), y_mode(Y_mode), z_mode(Z_mode), x_val(X_val), y_val(Y_val), z_val(Z_val)
     {    
         init(Rate);
@@ -91,7 +91,7 @@ void Noise16PS::update(){
                 bri = noise; //inoise8(real_x, currentTime/5); //
                 
                 //get the blended color from the palette and set it's brightness
-                colorOut = paletteUtilsPS::getPaletteGradColor(palette, index, 0, totBlendLength, blendSteps);
+                colorOut = paletteUtilsPS::getPaletteGradColor(*palette, index, 0, totBlendLength, blendSteps);
                 nscale8x3( colorOut.r, colorOut.g, colorOut.b, bri);
                 segDrawUtils::setPixelColor(segmentSet, pixelNum, colorOut, 0, 0, 0); 
 

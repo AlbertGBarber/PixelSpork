@@ -51,7 +51,7 @@ so watch your memory usage
 Example calls: 
     uint8_t pattern_arr = {0, 255, 255, 255, 1, 1, 255, 255};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-    SegWavesFast(mainSegments, &pattern, &palette3, 0, true, 120);
+    SegWavesFast(mainSegments, pattern, palette3, 0, true, 120);
     Will do a set of waves using the first two colors in the palette
     The wave will begin with 1 segment of color 0, with three spaces after, followed by 2 pixels of color 1, followed by 2 spaces
     The bgColor is zero (off)
@@ -60,13 +60,13 @@ Example calls:
 
     uint8_t pattern_arr = {1, 2, 3};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-    SegWavesFast(mainSegments, &pattern, &palette3, 3, 4, 0, false, 120);
+    SegWavesFast(mainSegments, pattern, palette3, 3, 4, 0, false, 120);
     Will do a wave using the first three colors of the palette (taken from the pattern)
     Each wave will be length 3, followed by 4 spaces, bgColor is 0 (off)
     The waves will move from the first to last segment.
     The effect updates at a rate of 120ms
 
-    SegWavesFast(mainSegments, &palette3, 3, 4, CRGB::Red, true, 120);
+    SegWavesFast(mainSegments, palette3, 3, 4, CRGB::Red, true, 120);
     Will do a wave using all the colors in palette3, each wave will be length 3, with 4 spaces inbetween
     The bgColor is red
     The waves will move from the last segment to the first
@@ -91,10 +91,10 @@ Constructor Inputs:
 
 Functions:
     reset() -- Restarts the wave pattern
-    setPatternAsPattern(*inputPattern, colorLength, spacing) -- Takes an input pattern and creates a wave pattern from it using the current palette
+    setPatternAsPattern(&inputPattern, colorLength, spacing) -- Takes an input pattern and creates a wave pattern from it using the current palette
                                                                 Ex: uint8_t pattern_arr = {1, 2, 3};
                                                                    patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-                                                                   setPatternAsPattern(&pattern, 3, 4) 
+                                                                   setPatternAsPattern(pattern, 3, 4) 
                                                                    Will do a wave using the first three colors of the palette (taken from the pattern)
                                                                    Each wave will be length 3, followed by 4 spaces
     setPaletteAsPattern(colorLength, spacing) -- Like the previous function, but all of the current palette will be used for the pattern                                                       
@@ -130,13 +130,13 @@ Notes:
 class SegWavesFast : public EffectBasePS {
     public:
         //constructor for using the passed in pattern and palette for the wave
-        SegWavesFast(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, CRGB BgColor, bool Direct, uint16_t Rate);
+        SegWavesFast(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, bool Direct, uint16_t Rate);
 
         //constructor for building the wave pattern from the passed in pattern and the palette, using the passed in colorLength and spacing
-        SegWavesFast(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, uint8_t WaveThickness, uint8_t Spacing, CRGB BgColor, bool Direct, uint16_t Rate);
+        SegWavesFast(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, uint8_t WaveThickness, uint8_t Spacing, CRGB BgColor, bool Direct, uint16_t Rate);
         
         //constructor for building a wave using all the colors in the passed in palette, using the colorLength and spacing for each color
-        SegWavesFast(SegmentSet &SegmentSet, palettePS *Palette, uint8_t WaveThickness, uint8_t Spacing, CRGB BgColor, bool Direct, uint16_t Rate);
+        SegWavesFast(SegmentSet &SegmentSet, palettePS &Palette, uint8_t WaveThickness, uint8_t Spacing, CRGB BgColor, bool Direct, uint16_t Rate);
 
         //constructor for doing a single colored wave, using colorLength and spacing
         SegWavesFast(SegmentSet &SegmentSet, CRGB Color, uint8_t WaveThickness, uint8_t Spacing, CRGB BgColor, bool Direct, uint16_t Rate);  
@@ -169,8 +169,8 @@ class SegWavesFast : public EffectBasePS {
             *palette = nullptr;
         
         void 
-            setPatternAsPattern(patternPS *inputPattern, uint8_t colorLength, uint8_t spacing),
-            setPaletteAsPattern(uint8_t colorLength, uint8_t spacing),
+            setPatternAsPattern(patternPS &inputPattern, uint8_t waveThickness, uint8_t spacing),
+            setPaletteAsPattern(uint8_t waveThickness, uint8_t spacing),
             reset(),
             makeSingleWave(),
             update(void);

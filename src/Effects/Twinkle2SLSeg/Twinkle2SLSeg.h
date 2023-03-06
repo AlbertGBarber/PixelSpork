@@ -79,7 +79,7 @@ Example call:
     There are 3 fade in and 4 fade out steps with ranges of 2 and 5 respectively
     The effect upates at a rate of 70ms
 
-    Twinkle2SLSeg(mainSegments, &palette1, 0, 8, 100, 2, 0, 6, 0, 1, 60);
+    Twinkle2SLSeg(mainSegments, palette1, 0, 8, 100, 2, 0, 6, 0, 1, 60);
     Will choose 8 segments (segMode 1) each cycle to fade to/from colors from palette1, using a blank background, 
     There is a 100% chance an inactive segment will become active each cycle
     There are 2 fade in and 6 fade out steps with ranges of 0 and 0 respectively
@@ -137,7 +137,7 @@ Notes:
 class Twinkle2SLSeg : public EffectBasePS {
     public:
         //Constructor for a full palette effect
-        Twinkle2SLSeg(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint16_t NumTwinkles, uint8_t SpawnChance, 
+        Twinkle2SLSeg(SegmentSet &SegmentSet, palettePS &Palette, CRGB BgColor, uint16_t NumTwinkles, uint8_t SpawnChance, 
                       uint8_t FadeInSteps, uint8_t FadeInRange, uint8_t FadeOutSteps, uint8_t FadeOutRange, 
                       uint8_t SegMode, uint16_t Rate); 
 

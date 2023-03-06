@@ -1,10 +1,10 @@
 #include "NoiseGradSL.h"
 
 //Constructor with palette
-NoiseGradSL::NoiseGradSL(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint16_t BlendStepsBase, 
+NoiseGradSL::NoiseGradSL(SegmentSet &SegmentSet, palettePS &Palette, CRGB BgColor, uint16_t BlendStepsBase, 
                                        uint16_t BlendStepsRange, uint8_t PhaseScale, uint8_t FreqScale, uint8_t BriScale, 
                                        uint16_t BlendRate, uint16_t Rate):
-    segmentSet(SegmentSet), palette(Palette), blendStepsBase(BlendStepsBase), blendStepsRange(BlendStepsRange), phaseScale(PhaseScale), freqScale(FreqScale), briScale(BriScale)
+    segmentSet(SegmentSet), palette(&Palette), blendStepsBase(BlendStepsBase), blendStepsRange(BlendStepsRange), phaseScale(PhaseScale), freqScale(FreqScale), briScale(BriScale)
     {    
         init(BgColor, BlendRate, Rate);
 	}
@@ -141,7 +141,7 @@ void NoiseGradSL::update(){
             }
 
             //get the blended palette color of each line based on the line number and the offset we caluclated for this cycle
-            colorOut = paletteUtilsPS::getPaletteGradColor(palette, i, colorOffsetTot, totBlendLength, blendSteps);
+            colorOut = paletteUtilsPS::getPaletteGradColor(*palette, i, colorOffsetTot, totBlendLength, blendSteps);
 
             //color each segment pixel in the blended palette color
             for(uint16_t j = 0; j < numSegs; j++){

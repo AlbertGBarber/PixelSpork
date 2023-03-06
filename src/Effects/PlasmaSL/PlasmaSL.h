@@ -67,7 +67,7 @@ Example calls:
     and the freqs and phases being randomized 
     It will update every 80ms
 
-    PlasmaSL(mainSegments, &palette1, 80, false, 40);
+    PlasmaSL(mainSegments, palette1, 80, false, 40);
     Will do a PlasmaSL effect using colors from palette1
     with 80 blend steps between each color
     and the freqs and phases are not randomized
@@ -103,7 +103,7 @@ class PlasmaSL : public EffectBasePS {
     public:
 
         //Constructor for effect with palette
-        PlasmaSL(SegmentSet &SegmentSet, palettePS *Palette, uint16_t BlendSteps, bool Randomize, uint16_t Rate); 
+        PlasmaSL(SegmentSet &SegmentSet, palettePS &Palette, uint16_t BlendSteps, bool Randomize, uint16_t Rate); 
 
         //Constructor for effect with randomly chosen palette
         PlasmaSL(SegmentSet &SegmentSet, uint8_t numColors, uint16_t BlendSteps, bool Randomize, uint16_t Rate);

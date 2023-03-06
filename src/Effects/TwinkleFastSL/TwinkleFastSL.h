@@ -46,7 +46,7 @@ Other Settings:
 class TwinkleFastSL : public EffectBasePS {
     public:
         //Constructor for a full palette effect
-        TwinkleFastSL(SegmentSet &SegmentSet, palettePS *Palette, uint16_t NumTwinkles, CRGB BgColor, bool Sparkle, uint8_t FadeOutRate, uint16_t Rate);  
+        TwinkleFastSL(SegmentSet &SegmentSet, palettePS &Palette, uint16_t NumTwinkles, CRGB BgColor, bool Sparkle, uint8_t FadeOutRate, uint16_t Rate);  
         
         //Constructor for a using a single color
         TwinkleFastSL(SegmentSet &SegmentSet, CRGB Color, uint16_t NumTwinkles, CRGB BgColor, bool Sparkle, uint8_t FadeOutRate, uint16_t Rate);

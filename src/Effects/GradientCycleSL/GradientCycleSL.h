@@ -21,11 +21,11 @@ passing in a segmentSet with only one segment containing the whole strip.
 Example calls: 
     uint8_t pattern_arr = {0, 1, 4};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-    GradientCycleSL(mainSegments, &pattern, &palette, 10, 100);
+    GradientCycleSL(mainSegments, pattern, palette, 10, 100);
     Will do a gradient cycle from color 0, to color 1, to color 4, of the palette
     with 10 steps to each gradient, and a 100ms update rate
 
-    GradientCycleSL(mainSegments, &palette, 10, 100);
+    GradientCycleSL(mainSegments, palette, 10, 100);
     Will do a gradient cycle using the colors in the palette, with 10 steps to each gradient,and a 100ms update rate
 
     GradientCycleSL(mainSegments, 3, 15, 80);
@@ -61,10 +61,10 @@ Notes:
 class GradientCycleSL : public EffectBasePS {
     public:
         //Constructor for using pattern
-        GradientCycleSL(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, uint8_t GradLength, uint16_t Rate); 
+        GradientCycleSL(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, uint8_t GradLength, uint16_t Rate); 
 
         //Constructor for using the palette as the pattern
-        GradientCycleSL(SegmentSet &SegmentSet, palettePS *Palette, uint8_t GradLength, uint16_t Rate);
+        GradientCycleSL(SegmentSet &SegmentSet, palettePS &Palette, uint8_t GradLength, uint16_t Rate);
 
         //Constructor for using a random palette as the pattern
         GradientCycleSL(SegmentSet &SegmentSet, uint8_t NumColors, uint8_t GradLength, uint16_t Rate);
@@ -91,7 +91,7 @@ class GradientCycleSL : public EffectBasePS {
         
         void 
             setGradLength(uint8_t newGradLength),
-            setPattern(patternPS *newPattern),
+            setPattern(patternPS &newPattern),
             setPaletteAsPattern(),
             setTotalEffectLength(),
             update(void);

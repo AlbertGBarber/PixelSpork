@@ -10,19 +10,19 @@
 //!!DO NOT try to palettes without using these functions
 namespace paletteUtilsPS{
     void
-        setColor(palettePS *palette, CRGB color, uint8_t index),
-        randomize(palettePS *palette),
-        randomize(palettePS *palette, uint8_t index),
-        shuffle(palettePS *palette),
-        reverse(palettePS *palette);
+        setColor(palettePS &palette, CRGB color, uint8_t index),
+        randomize(palettePS &palette),
+        randomize(palettePS &palette, uint8_t index),
+        shuffle(palettePS &palette),
+        reverse(palettePS &palette);
     
     CRGB 
-        getBlendedPaletteColor(palettePS *palette, uint8_t startIndex, uint8_t endIndex, uint8_t step, uint8_t totalSteps),
-        getPaletteColor(palettePS *palette, uint8_t index),
-        getShuffleIndex(palettePS *palette, CRGB &currentPaletteVal),
-        *getColorPtr(palettePS *palette, uint8_t index),
-        getPaletteGradColor(palettePS *palette, uint16_t num, uint16_t offset, uint16_t totalLength),
-        getPaletteGradColor(palettePS *palette, uint16_t num, uint16_t offset, uint16_t totalLength, uint16_t gradLength);
+        getBlendedPaletteColor(palettePS &palette, uint8_t startIndex, uint8_t endIndex, uint8_t step, uint8_t totalSteps),
+        getPaletteColor(palettePS &palette, uint8_t index),
+        getShuffleIndex(palettePS &palette, CRGB &currentPaletteVal),
+        *getColorPtr(palettePS &palette, uint8_t index),
+        getPaletteGradColor(palettePS &palette, uint16_t num, uint16_t offset, uint16_t totalLength),
+        getPaletteGradColor(palettePS &palette, uint16_t num, uint16_t offset, uint16_t totalLength, uint16_t gradLength);
     
     palettePS
         makeSingleColorPalette(CRGB Color),

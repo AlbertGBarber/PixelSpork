@@ -1,15 +1,15 @@
 #include "BreathPS.h"
 
 //consturctor for using a pattern and palette
-BreathPS::BreathPS(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, CRGB BgColor, uint8_t BreathFreq, uint16_t Rate):
-    segmentSet(SegmentSet), pattern(Pattern), palette(Palette)
+BreathPS::BreathPS(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint8_t BreathFreq, uint16_t Rate):
+    segmentSet(SegmentSet), pattern(&Pattern), palette(&Palette)
     {    
         init(BgColor, BreathFreq, Rate);
 	}
 
 //constructor for using palette as pattern
-BreathPS::BreathPS(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint8_t BreathFreq, uint16_t Rate):
-    segmentSet(SegmentSet), palette(Palette)
+BreathPS::BreathPS(SegmentSet &SegmentSet, palettePS &Palette, CRGB BgColor, uint8_t BreathFreq, uint16_t Rate):
+    segmentSet(SegmentSet), palette(&Palette)
     {    
         setPaletteAsPattern();
         init(BgColor, BreathFreq, Rate);
@@ -80,7 +80,7 @@ void BreathPS::reset(){
 //ie for a palette length 5, the pattern would be 
 //{0, 1, 2, 3, 4}
 void BreathPS::setPaletteAsPattern(){
-    patternTemp = generalUtilsPS::setPaletteAsPattern(palette);
+    patternTemp = generalUtilsPS::setPaletteAsPattern(*palette);
     pattern = &patternTemp;
 }
 
@@ -97,8 +97,8 @@ void BreathPS::getNextColor(){
     switch (randMode) {
         case 0: //Colors will be choosen in order from the pattern (not random)
         default:
-            palIndex = patternUtilsPS::getPatternVal( pattern, patternIndex );
-            breathColor = paletteUtilsPS::getPaletteColor( palette, palIndex );
+            palIndex = patternUtilsPS::getPatternVal( *pattern, patternIndex );
+            breathColor = paletteUtilsPS::getPaletteColor( *palette, palIndex );
             break;
         case 1: //Colors will be choosen completely at random
             breathColor = colorUtilsPS::randColor();
@@ -106,13 +106,13 @@ void BreathPS::getNextColor(){
         case 2: //Colors will be choosen randomly from the palette (not allowing repeats)
             //Note that we use the palIndex to keep track of what palette color we're doing
             //So that we don't choose it twice
-            palIndex = patternUtilsPS::getShuffleIndex( pattern, palIndex );
-            breathColor = paletteUtilsPS::getPaletteColor( palette, palIndex );
+            palIndex = patternUtilsPS::getShuffleIndex( *pattern, palIndex );
+            breathColor = paletteUtilsPS::getPaletteColor( *palette, palIndex );
             break;
         case 3://Colors will be choosen randomly from the palette (allowing repeats)
             patternIndex = random16(pattern->length);
-            palIndex = patternUtilsPS::getPatternVal( pattern, patternIndex );
-            breathColor = paletteUtilsPS::getPaletteColor( palette, palIndex );
+            palIndex = patternUtilsPS::getPatternVal( *pattern, patternIndex );
+            breathColor = paletteUtilsPS::getPaletteColor( *palette, palIndex );
             break;
         case 4: //Colors will be from the rainbow (the hue is offset by rainbowRate each time a color is choosen)
             hue += rainbowRate;

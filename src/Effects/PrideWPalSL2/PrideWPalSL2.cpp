@@ -13,8 +13,8 @@ PrideWPalSL2::PrideWPalSL2(SegmentSet &SegmentSet, bool Direct, bool RandomBriIn
 	}
 
 //constructor for palette input
-PrideWPalSL2::PrideWPalSL2(SegmentSet &SegmentSet, palettePS *Palette, bool Direct, bool RandomBriInc, uint16_t Rate):
-    segmentSet(SegmentSet), palette(Palette), direct(Direct)
+PrideWPalSL2::PrideWPalSL2(SegmentSet &SegmentSet, palettePS &Palette, bool Direct, bool RandomBriInc, uint16_t Rate):
+    segmentSet(SegmentSet), palette(&Palette), direct(Direct)
     {    
         prideMode = false; 
         init(RandomBriInc, Rate);
@@ -31,11 +31,11 @@ PrideWPalSL2::PrideWPalSL2(SegmentSet &SegmentSet, uint8_t numColors, bool Direc
 	}
 
 //constructor with inputs for all main variables
-PrideWPalSL2::PrideWPalSL2(SegmentSet &SegmentSet, palettePS *Palette, bool Direct, uint8_t GradLength, 
-                                            uint8_t BrightDepthMin, uint8_t BrightDepthMax, uint16_t BriThetaFreq, 
-                                            uint8_t BriThetaInc16Min, uint8_t BriThetaInc16Max, uint8_t HueChangeMin, 
-                                            uint8_t HueChangeMax, uint16_t Rate):
-    segmentSet(SegmentSet), palette(Palette), direct(Direct), gradLength(GradLength), brightDepthMin(BrightDepthMin), 
+PrideWPalSL2::PrideWPalSL2(SegmentSet &SegmentSet, palettePS &Palette, bool Direct, uint8_t GradLength, 
+                           uint8_t BrightDepthMin, uint8_t BrightDepthMax, uint16_t BriThetaFreq, 
+                           uint8_t BriThetaInc16Min, uint8_t BriThetaInc16Max, uint8_t HueChangeMin, 
+                           uint8_t HueChangeMax, uint16_t Rate):
+    segmentSet(SegmentSet), palette(&Palette), direct(Direct), gradLength(GradLength), brightDepthMin(BrightDepthMin), 
     brightDepthMax(BrightDepthMax), briThetaFreq(BriThetaFreq), briThetaInc16Min(BriThetaInc16Min), 
     briThetaInc16Max(BriThetaInc16Max), hueChangeMin(HueChangeMin), hueChangeMax(HueChangeMax)
     {
@@ -141,7 +141,7 @@ void PrideWPalSL2::update(){
                 }
                 //returns the blended color from the palette mapped into numSteps
                 index = scale16by8( numSteps, hue8 );
-                newColor = paletteUtilsPS::getPaletteGradColor(palette, index, 0, numSteps, gradLength);
+                newColor = paletteUtilsPS::getPaletteGradColor(*palette, index, 0, numSteps, gradLength);
             }
 
             //for each of the lines in the segment, get a new brighness value

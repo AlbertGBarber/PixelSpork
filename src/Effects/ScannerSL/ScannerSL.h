@@ -52,7 +52,7 @@ randModes:
     3: new colors will not be choosen, the particle colors will be locked to whatever they currently are.
 
 Example calls: 
-    ScannerSL(mainSegments, &palette3, 0, 2, 3, 1, false, true, 80);
+    ScannerSL(mainSegments, palette3, 0, 2, 3, 1, false, true, 80);
     Will do a scanner in mode 3 (Kit) using colors from palette3.
     The background is blank.
     The scan particles will have a trails of length 3, a body size of 1
@@ -60,7 +60,7 @@ Example calls:
     (bounceChange is true, but this doesn't effect particles that are wrapping)
     The particles move at 80ms
 
-    ScannerSL(mainSegments, &palette3, 0, 2, 1, 5, 2, true, false, true, true, false, 80);
+    ScannerSL(mainSegments, palette3, 0, 2, 1, 5, 2, true, false, true, true, false, 80);
     Will do a scanner, automatically creating a set of evenly spaced scanner particles
     There will be two particles spaced evenly on the segment set
     The particles will take their colors from palette3, with a blank background.
@@ -123,20 +123,20 @@ Other Settings:
 class ScannerSL : public EffectBasePS {
     public:
         //Constructor for using a pattern with one of the default scan types
-        ScannerSL(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, CRGB BGColor, uint8_t ScanType,
+        ScannerSL(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, CRGB BGColor, uint8_t ScanType,
                   uint16_t TrailSize, uint16_t Size, bool Bounce, bool BounceChange, uint16_t Rate);
 
         //Constructor for using the palette as the pattern with one of the default scan types
-        ScannerSL(SegmentSet &SegmentSet, palettePS *Palette, CRGB BGColor, uint8_t ScanType, uint16_t TrailSize, 
+        ScannerSL(SegmentSet &SegmentSet, palettePS &Palette, CRGB BGColor, uint8_t ScanType, uint16_t TrailSize, 
                   uint16_t Size, bool Bounce, bool BounceChange, uint16_t Rate);
 
         //Constructor for using a pattern with a custom set of repeating waves
-        ScannerSL(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, CRGB BGColor, uint16_t numWaves,
+        ScannerSL(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, CRGB BGColor, uint16_t numWaves,
                   uint8_t TrailType, uint16_t TrailSize, uint16_t Size, bool direction, bool alternate, bool Bounce, 
                   bool BounceChange, bool Blend, uint16_t Rate);
 
         //Constructor for using the palette as the pattern with a custom set of repeating waves
-        ScannerSL(SegmentSet &SegmentSet, palettePS *Palette, CRGB BGColor, uint16_t numWaves, uint8_t TrailType,   
+        ScannerSL(SegmentSet &SegmentSet, palettePS &Palette, CRGB BGColor, uint16_t numWaves, uint8_t TrailType,   
                   uint16_t TrailSize, uint16_t Size,  bool direction, bool alternate, bool Bounce, bool BounceChange, 
                   bool Blend, uint16_t Rate);
         
@@ -233,7 +233,7 @@ class ScannerSL : public EffectBasePS {
             init(CRGB BgColor, uint16_t Rate),
             moveParticle(particlePS *particlePtr),
             setPartColor(particlePS *particlePtr),
-            setTrailColor(CRGB trailColor, uint16_t trailLineNum, uint8_t segNum, uint8_t trailPixelNum);
+            setTrailColor(const CRGB &trailColor, uint16_t trailLineNum, uint8_t segNum, uint8_t trailPixelNum);
 };
 
 #endif

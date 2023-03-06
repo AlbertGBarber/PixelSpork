@@ -83,13 +83,13 @@ Example calls:
     The brightness wave values will be randomized, see init() for the ranges
     The effect updates at 80ms
 
-    PrideWPalSL(ringSegments, &palette1, true, true, 80);
+    PrideWPalSL(ringSegments, palette1, true, true, 80);
     Will do an effect using colors from palette1
     The brightness waves will move with the colors
     The brightness wave values will be randomized, see init() for the ranges
     The effect updates at 80ms
 
-    PrideWPalSL(ringSegments, &palette1, true, 20, 120, 250, 350, 20, 40, 3, 7, 60);
+    PrideWPalSL(ringSegments, palette1, true, 20, 120, 250, 350, 20, 40, 3, 7, 60);
     Will do an effect using colors from palette1
     The brightness waves will move with the colors
     Colors will shift using 20 steps to blend the colors
@@ -137,13 +137,13 @@ class PrideWPalSL : public EffectBasePS {
         PrideWPalSL(SegmentSet &SegmentSet, bool BriDirect, bool RandomBriInc, uint16_t Rate);
 
         //constructor for palette input
-        PrideWPalSL(SegmentSet &SegmentSet, palettePS *Palette, bool BriDirect, bool RandomBriInc, uint16_t Rate);  
+        PrideWPalSL(SegmentSet &SegmentSet, palettePS &Palette, bool BriDirect, bool RandomBriInc, uint16_t Rate);  
 
         //constructor for making a random palette
         PrideWPalSL(SegmentSet &SegmentSet, uint8_t numColors, bool BriDirect, bool RandomBriInc, uint16_t Rate);
 
         //constructor with inputs for all main variables
-        PrideWPalSL(SegmentSet &SegmentSet, palettePS *Palette, bool BriDirect, uint8_t GradLength, 
+        PrideWPalSL(SegmentSet &SegmentSet, palettePS &Palette, bool BriDirect, uint8_t GradLength, 
                               uint8_t BrightDepthMin, uint8_t BrightDepthMax, uint16_t BriThetaFreq, 
                               uint8_t BriThetaInc16Min, uint8_t BriThetaInc16Max, uint8_t HueChangeMin, 
                               uint8_t HueChangeMax, uint16_t Rate);

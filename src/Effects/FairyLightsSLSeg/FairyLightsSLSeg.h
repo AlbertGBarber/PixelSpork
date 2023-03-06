@@ -86,7 +86,7 @@ Reference Vars:
 class FairyLightsSLSeg : public EffectBasePS {
     public:
         //Palette based constructor
-        FairyLightsSLSeg(SegmentSet &SegmentSet, palettePS *Palette, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode, uint8_t SegMode, uint16_t Rate);
+        FairyLightsSLSeg(SegmentSet &SegmentSet, palettePS &Palette, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode, uint8_t SegMode, uint16_t Rate);
         
         //Single color constructor
         FairyLightsSLSeg(SegmentSet &SegmentSet, CRGB Color, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode, uint8_t SegMode, uint16_t Rate);
@@ -159,7 +159,7 @@ class FairyLightsSLSeg : public EffectBasePS {
             modeOneSet(),
             modeTwoSet(),
             init(CRGB BgColor, uint16_t Rate),
-            drawTwinkle(uint8_t twinkleNum, CRGB tColor, uint8_t cMode);
+            drawTwinkle(uint8_t twinkleNum, CRGB &tColor, uint8_t cMode);
 };
 
 #endif

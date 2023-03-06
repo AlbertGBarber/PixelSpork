@@ -1,10 +1,10 @@
 #include "ParticlesSL.h"
 
 //constructor for automatically making a particle set according to the passed in options
-ParticlesSL::ParticlesSL(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint8_t numParticles, uint8_t direction, uint16_t baseSpeed, 
+ParticlesSL::ParticlesSL(SegmentSet &SegmentSet, palettePS &Palette, CRGB BgColor, uint8_t numParticles, uint8_t direction, uint16_t baseSpeed, 
                         uint16_t speedRange, uint16_t size, uint16_t sizeRange, uint8_t trailType, uint8_t trailSize, 
                         uint8_t trailRange, uint8_t bounce, uint8_t colorIndex, bool randColor):
-    segmentSet(SegmentSet), palette(Palette)
+    segmentSet(SegmentSet), palette(&Palette)
     {    
         init(BgColor);
         numLines = segmentSet.maxSegLength;
@@ -16,8 +16,8 @@ ParticlesSL::ParticlesSL(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColo
     }
 
 //constructor for using a particle set you've already made
-ParticlesSL::ParticlesSL(SegmentSet &SegmentSet, particleSetPS *ParticleSet, palettePS *Palette, CRGB BgColor):
-    segmentSet(SegmentSet), particleSet(ParticleSet), palette(Palette)
+ParticlesSL::ParticlesSL(SegmentSet &SegmentSet, particleSetPS &ParticleSet, palettePS &Palette, CRGB BgColor):
+    segmentSet(SegmentSet), particleSet(&ParticleSet), palette(&Palette)
     {    
         init(BgColor);
         trailEndColors = (CRGB*) malloc( (particleSet->length) * sizeof(CRGB) );
@@ -30,7 +30,7 @@ ParticlesSL::ParticlesSL(SegmentSet &SegmentSet, particleSetPS *ParticleSet, pal
 //by default, the particleArr pointer is NULL, so we can check for that to confirm if particleSetTemp has been used or not
 ParticlesSL::~ParticlesSL(){
     //clear the memory of the existing particles (to prevent a memory leak)
-    particleUtilsPS::freeParticleSet(&particleSetTemp);
+    particleUtilsPS::freeParticleSet(particleSetTemp);
     free(trailEndColors);
 }
 
@@ -50,8 +50,8 @@ void ParticlesSL::init(CRGB BgColor){
 //sets the effect to use a new particle set
 //we need to remake the trail end color array for the new particles
 //to avoid having left over trails, we'll redraw the background
-void ParticlesSL::setParticleSet(particleSetPS *newParticleSet){
-    particleSet = newParticleSet;
+void ParticlesSL::setParticleSet(particleSetPS &newParticleSet){
+    particleSet = &newParticleSet;
     free(trailEndColors);
     trailEndColors = (CRGB*) malloc( (particleSet->length) * sizeof(CRGB) );
     segDrawUtils::fillSegSetColor(segmentSet, *bgColor, bgColorMode);
@@ -59,7 +59,7 @@ void ParticlesSL::setParticleSet(particleSetPS *newParticleSet){
 
 //resets all the particles to their start locations
 void ParticlesSL::reset(){
-    particleUtilsPS::resetParticleset(particleSet);
+    particleUtilsPS::resetParticleset(*particleSet);
 }
 
 //Updates all the particles
@@ -140,7 +140,7 @@ void ParticlesSL::update(){
                 updateRate = speed;
             }
             
-            partColor = paletteUtilsPS::getPaletteColor(palette, particlePtr->colorIndex);
+            partColor = paletteUtilsPS::getPaletteColor(*palette, particlePtr->colorIndex);
 
             //partciles run from 0 to the maximum segment line number (numLines), either bouncing or wrapping depending on mode
             //if we're bouncing, we don't want anything to wrap past the end/start of the segment lines

@@ -27,20 +27,20 @@ CRGB colorUtilsPS::wheel( uint16_t wheelPos, uint16_t rainbowOffset) {
 
 //returns a color that is dimmed by the ratio
 //the ratio is between 0 and 255, 255 being the total black
-CRGB colorUtilsPS::dimColor(CRGB &startColor, uint8_t ratio){
+CRGB colorUtilsPS::dimColor(const CRGB &startColor, uint8_t ratio){
     return getCrossFadeColor(startColor, black, ratio);
 }
 
 //returns a color that is blended/cross-faded between a start and end color according to the ratio of step/totalSteps
 //maximum value of totalSteps is 255 (since the color components are 0-255 uint8_t's)
-CRGB colorUtilsPS::getCrossFadeColor(CRGB &startColor, CRGB &endColor, uint8_t blendStep, uint8_t totalSteps){
+CRGB colorUtilsPS::getCrossFadeColor(const CRGB &startColor, const CRGB &endColor, uint8_t blendStep, uint8_t totalSteps){
     ratio = (uint16_t)blendStep * 255 / totalSteps;
     return getCrossFadeColor(startColor, endColor, ratio);
 }
 
 //returns a color that is blended/cross-faded between a start and end color according to the ratio
 //the ratio is between 0 and 255, 255 being the total conversion to the end color
-CRGB colorUtilsPS::getCrossFadeColor(CRGB &startColor, CRGB &endColor, uint8_t ratio){
+CRGB colorUtilsPS::getCrossFadeColor(const CRGB &startColor, const CRGB &endColor, uint8_t ratio){
     //am using the built in fastLed function for blending
     //the commented code after is an alternative way to do it, but yeilds the same result in most cases
     return blend( startColor, endColor, ratio );

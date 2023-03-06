@@ -37,7 +37,7 @@ Example calls:
     and a blendScale of 20 (see inputs for info below)
     at an update rate of 10ms
 
-    LavaPS(mainSegments, &palette1, 40, 80, 10);
+    LavaPS(mainSegments, palette1, 40, 80, 10);
     Will do a lava effect using palette1 for colors, 
     with 40 blendSteps
     and a blendScale of 80
@@ -86,7 +86,7 @@ class LavaPS : public EffectBasePS {
         LavaPS(SegmentSet &SegmentSet, uint16_t BlendSteps, uint16_t BlendScale, uint16_t Rate);  
 
         //Constructor for effect using colors from palette
-        LavaPS(SegmentSet &SegmentSet, palettePS *Palette, uint16_t BlendSteps, uint16_t BlendScale, uint16_t Rate);
+        LavaPS(SegmentSet &SegmentSet, palettePS &Palette, uint16_t BlendSteps, uint16_t BlendScale, uint16_t Rate);
         
         //constructor for a randomly created palette
         LavaPS(SegmentSet &SegmentSet, uint8_t numColors, uint16_t BlendSteps, uint16_t BlendScale, uint16_t Rate);

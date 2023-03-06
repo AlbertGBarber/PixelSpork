@@ -61,7 +61,7 @@ The bgColor is a pointer, so you can bind it to an external color variable.
 Example calls: 
     uint8_t pattern_arr = {0, 255, 255, 255, 1, 1, 255, 255};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-    SegWaves(mainSegments, &pattern, &palette3, 0, 30, true, 20);
+    SegWaves(mainSegments, pattern, palette3, 0, 30, true, 20);
     Will do a set of waves using the first two colors in the palette
     The wave will begin with 1 pixel of color 0, with three spaces after, followed by 2 pixels of color 1, followed by 2 spaces
     The bgColor is zero (off)
@@ -70,14 +70,14 @@ Example calls:
 
     uint8_t pattern_arr = {1, 2, 3};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-    SegWaves(mainSegments, &pattern, &palette3, 3, 4, 0, 0, false, 120);
+    SegWaves(mainSegments, pattern, palette3, 3, 4, 0, 0, false, 120);
     Will do a wave using the first three colors of the palette (taken from the pattern)
     Each wave will be length 3, followed by 4 spaces, bgColor is 0 (off)
     The fade steps are set to zero, so there is no blending.
     The waves will move from the first to last segment.
     The effect updates at a rate of 120ms
 
-    SegWaves(mainSegments, &palette3, 0, 0, CRGB::Red, 10, true, 40);
+    SegWaves(mainSegments, palette3, 0, 0, CRGB::Red, 10, true, 40);
     Will do a wave using all the colors in palette3,
     because the passed in waveThickness is 0, the effect will be configured as to create a pattern of single waves
     (wave thickness of 1, with spacing such that there's only one wave on the segment sets at one time)
@@ -115,10 +115,10 @@ Functions:
     reset() -- Restarts the wave pattern (also calls resetSegColors())
     resetSegColors() -- Only neeeded for random modes when changing the number of segments in your set. 
                         Re-creates the segColors array, as used by random modes
-    setPatternAsPattern(*inputPattern, colorLength, spacing) -- Takes an input pattern and creates a wave pattern from it using the current palette
+    setPatternAsPattern(&inputPattern, colorLength, spacing) -- Takes an input pattern and creates a wave pattern from it using the current palette
                                                                 Ex: uint8_t pattern_arr = {1, 2, 3};
                                                                    patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-                                                                   setPatternAsPattern(&pattern, 3, 4) 
+                                                                   setPatternAsPattern(pattern, 3, 4) 
                                                                    Will do a wave using the first three colors of the palette (taken from the pattern)
                                                                    Each wave will be length 3, followed by 4 spaces
     setPaletteAsPattern(colorLength, spacing) -- Like the previous function, but all of the current palette will be used for the pattern                                                       
@@ -160,13 +160,13 @@ Notes:
 class SegWaves : public EffectBasePS {
     public:
         //constructor for using the passed in pattern and palette for the wave
-        SegWaves(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, CRGB BgColor, uint8_t FadeSteps, bool Direct, uint16_t Rate);  
+        SegWaves(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint8_t FadeSteps, bool Direct, uint16_t Rate);  
 
         //constructor for building the wave pattern from the passed in pattern and the palette, using the passed in waveThickness and spacing
-        SegWaves(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, uint8_t WaveThickness, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, bool Direct, uint16_t Rate);
+        SegWaves(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, uint8_t WaveThickness, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, bool Direct, uint16_t Rate);
 
         //constructor for building a wave using all the colors in the passed in palette, using the waveThickness and spacing for each color
-        SegWaves(SegmentSet &SegmentSet, palettePS *Palette, uint8_t WaveThickness, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, bool Direct, uint16_t Rate);
+        SegWaves(SegmentSet &SegmentSet, palettePS &Palette, uint8_t WaveThickness, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, bool Direct, uint16_t Rate);
     
         //constructor for doing a single colored wave, using waveThickness and spacing
         SegWaves(SegmentSet &SegmentSet, CRGB Color, uint8_t WaveThickness, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, bool Direct, uint16_t Rate);
@@ -206,7 +206,7 @@ class SegWaves : public EffectBasePS {
         
         void 
             makeSingleWave(),
-            setPatternAsPattern(patternPS *inputPattern, uint8_t waveThickness, uint8_t spacing),
+            setPatternAsPattern(patternPS &inputPattern, uint8_t waveThickness, uint8_t spacing),
             setPaletteAsPattern(uint8_t waveThickness, uint8_t spacing),
             reset(),
             resetSegColors(),

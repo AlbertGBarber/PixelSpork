@@ -44,7 +44,7 @@ Example calls:
     There is a similar constructor for using a single color, just replace the palette with a color in th
     constructor
 
-    RainSL(mainSegments, &palette3, CRGB::Red, true, 10, 4, 1, 1, 5, 80, true);
+    RainSL(mainSegments, palette3, CRGB::Red, true, 10, 4, 1, 1, 5, 80, true);
     Will spawn drops on the mainSegment set, picking colors from palette3
     The background is red, and it will be pre-filled before the drops spawn
     The drops have a spawn chance of 10/100 (10% chance of spawing each update cycle)
@@ -151,11 +151,11 @@ Notes:
 class RainSL : public EffectBasePS {
     public:
         //constructor for palette colors, no range options
-        RainSL(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, bool BgPrefill, uint8_t SpawnChance, 
+        RainSL(SegmentSet &SegmentSet, palettePS &Palette, CRGB BgColor, bool BgPrefill, uint8_t SpawnChance, 
                     uint8_t MaxNumDrops, uint16_t Size, uint8_t TrailMode, uint8_t TrailSize, uint16_t Rate, bool Direct);
         
         //constructor for palette colors with range and trail options
-        RainSL(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, bool BgPrefill, uint8_t SpawnChance, 
+        RainSL(SegmentSet &SegmentSet, palettePS &Palette, CRGB BgColor, bool BgPrefill, uint8_t SpawnChance, 
                     uint8_t MaxNumDrops, uint16_t Size, uint16_t SizeRange, uint8_t TrailSize,
                     uint8_t TrailRange, bool NoTrails, bool OneTrail, bool TwoTrail, bool RevTrail, 
                     bool InfTrail, uint16_t Rate, uint16_t SpeedRange, bool Direct);

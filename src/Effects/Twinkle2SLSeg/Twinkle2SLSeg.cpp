@@ -1,10 +1,10 @@
 #include "Twinkle2SLSeg.h"
 
 //palette based constructor
-Twinkle2SLSeg::Twinkle2SLSeg(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint16_t NumTwinkles, uint8_t SpawnChance,
+Twinkle2SLSeg::Twinkle2SLSeg(SegmentSet &SegmentSet, palettePS &Palette, CRGB BgColor, uint16_t NumTwinkles, uint8_t SpawnChance,
                             uint8_t FadeInSteps, uint8_t FadeInRange, uint8_t FadeOutSteps, uint8_t FadeOutRange,
                             uint8_t SegMode, uint16_t Rate):
-    segmentSet(SegmentSet), palette(Palette), numTwinkles(NumTwinkles), spawnChance(SpawnChance), fadeInRange(FadeInRange), fadeOutRange(FadeOutRange), segMode(SegMode)
+    segmentSet(SegmentSet), palette(&Palette), numTwinkles(NumTwinkles), spawnChance(SpawnChance), fadeInRange(FadeInRange), fadeOutRange(FadeOutRange), segMode(SegMode)
     {    
         init(FadeInSteps, FadeOutSteps, BgColor, Rate);
 	}
@@ -315,7 +315,7 @@ void Twinkle2SLSeg::spawnTwinkle(uint8_t twinkleNum){
     //pick the color either from the palette, or at random
     switch (randMode) {
         case 0: // we're picking from a set of colors 
-            twinkleColor = paletteUtilsPS::getPaletteColor(palette, random8(palette->length));
+            twinkleColor = paletteUtilsPS::getPaletteColor(*palette, random8(palette->length));
             break;
         default: //(mode 1) set colors at random
             twinkleColor = colorUtilsPS::randColor();

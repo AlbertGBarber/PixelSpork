@@ -21,8 +21,8 @@ ShimmerSL::ShimmerSL(SegmentSet &SegmentSet, CRGB ShimmerColor, uint8_t ShimmerM
 	}
 
 //Constuctor for colors randomly choosen from palette
-ShimmerSL::ShimmerSL(SegmentSet &SegmentSet, palettePS *Palette, uint8_t ShimmerMin, uint8_t ShimmerMax, uint16_t Rate):
-    segmentSet(SegmentSet), palette(Palette), shimmerMin(ShimmerMin), shimmerMax(ShimmerMax)
+ShimmerSL::ShimmerSL(SegmentSet &SegmentSet, palettePS &Palette, uint8_t ShimmerMin, uint8_t ShimmerMax, uint16_t Rate):
+    segmentSet(SegmentSet), palette(&Palette), shimmerMin(ShimmerMin), shimmerMax(ShimmerMax)
     {    
        init(Rate);
 	}
@@ -49,7 +49,7 @@ CRGB ShimmerSL::pickColor(){
     switch (randMode) {
         case 0: // we're picking from a set of colors 
         default:
-            color = paletteUtilsPS::getPaletteColor(palette, random8(paletteLength));
+            color = paletteUtilsPS::getPaletteColor(*palette, random8(paletteLength));
             break;
         case 1:
             color = colorUtilsPS::randColor();

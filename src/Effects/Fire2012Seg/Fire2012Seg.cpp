@@ -1,7 +1,7 @@
 #include "Fire2012Seg.h"
 
-Fire2012Seg::Fire2012Seg(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint8_t Cooling, uint8_t Sparking, bool Blend, uint16_t Rate):
-    segmentSet(SegmentSet), palette(Palette), cooling(Cooling), sparking(Sparking), blend(Blend)
+Fire2012Seg::Fire2012Seg(SegmentSet &SegmentSet, palettePS &Palette, CRGB BgColor, uint8_t Cooling, uint8_t Sparking, bool Blend, uint16_t Rate):
+    segmentSet(SegmentSet), palette(&Palette), cooling(Cooling), sparking(Sparking), blend(Blend)
     {    
         //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
         bindSegPtrPS();
@@ -119,7 +119,7 @@ void Fire2012Seg::update(){
             for (uint16_t i = 0; i < segLength; i++) {
                 ledLoc = segDrawUtils::getSegmentPixel(segmentSet, j, i); //the physical location of the led
                 colorOut = Fire2012SegUtilsPS::getPixelHeatColorPalette(palette, paletteLength, paletteSecLen, 
-                                                                       bgColor, heat[i + heatSecStart], blend);
+                                                                        bgColor, heat[i + heatSecStart], blend);
                                                                        
                 segDrawUtils::setPixelColor(segmentSet, ledLoc, colorOut, 0, 0, 0);      
             }

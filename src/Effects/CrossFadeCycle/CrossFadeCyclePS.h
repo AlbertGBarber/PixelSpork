@@ -24,7 +24,7 @@ randModes are: (default 0)
 Example calls: 
     uint8_t pattern_arr = {0, 1, 4};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-    CrossFadeCyclePS(mainSegments, &pattern, palette, 40, 30);
+    CrossFadeCyclePS(mainSegments, pattern, palette, 40, 30);
     Will fade from color 0, to color 1, to color 4 of the palette
     taking 40 steps for each fade, with 30ms between steps
 
@@ -63,10 +63,10 @@ Flags:
 class CrossFadeCyclePS : public EffectBasePS {
     public:
         //Constructor for pattern and palette
-        CrossFadeCyclePS(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, uint8_t Steps, uint16_t Rate);
+        CrossFadeCyclePS(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, uint8_t Steps, uint16_t Rate);
         
         //Constructor for palette as the pattern
-        CrossFadeCyclePS(SegmentSet &SegmentSet, palettePS *Palette, uint8_t Steps, uint16_t Rate);  
+        CrossFadeCyclePS(SegmentSet &SegmentSet, palettePS &Palette, uint8_t Steps, uint16_t Rate);  
         
         //Constructor for random colors
         CrossFadeCyclePS(SegmentSet &SegmentSet, uint8_t Steps, uint16_t Rate);

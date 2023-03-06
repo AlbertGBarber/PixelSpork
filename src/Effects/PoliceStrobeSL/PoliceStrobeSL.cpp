@@ -19,17 +19,17 @@ PoliceStrobeSL::PoliceStrobeSL(SegmentSet &SegmentSet, CRGB ColorOne, CRGB Color
 	}
 
 //Constructor using both pattern and palette
-PoliceStrobeSL::PoliceStrobeSL(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, CRGB BgColor, 
+PoliceStrobeSL::PoliceStrobeSL(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, 
                                uint8_t NumPulses, uint16_t PauseTime, uint8_t PulseMode, bool SegMode, uint16_t Rate):
-    segmentSet(SegmentSet), pattern(Pattern), palette(Palette), numPulses(NumPulses), pauseTime(PauseTime), pulseMode(PulseMode), segMode(SegMode)
+    segmentSet(SegmentSet), pattern(&Pattern), palette(&Palette), numPulses(NumPulses), pauseTime(PauseTime), pulseMode(PulseMode), segMode(SegMode)
     {    
         init(BgColor, Rate); 
 	}
 
 //constructor for using any palette for the colors
-PoliceStrobeSL::PoliceStrobeSL(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint8_t NumPulses, 
+PoliceStrobeSL::PoliceStrobeSL(SegmentSet &SegmentSet, palettePS &Palette, CRGB BgColor, uint8_t NumPulses, 
                                uint16_t PauseTime, uint8_t PulseMode, bool SegMode, uint16_t Rate):
-    segmentSet(SegmentSet), palette(Palette), numPulses(NumPulses), pauseTime(PauseTime), pulseMode(PulseMode), segMode(SegMode)
+    segmentSet(SegmentSet), palette(&Palette), numPulses(NumPulses), pauseTime(PauseTime), pulseMode(PulseMode), segMode(SegMode)
     {    
         setPaletteAsPattern();
         init(BgColor, Rate); 
@@ -66,7 +66,7 @@ void PoliceStrobeSL::init(CRGB BgColor, uint16_t Rate){
 //ie for a palette length 5, the pattern would be 
 //{0, 1, 2, 3, 4}
 void PoliceStrobeSL::setPaletteAsPattern(){
-    patternTemp = generalUtilsPS::setPaletteAsPattern(palette);
+    patternTemp = generalUtilsPS::setPaletteAsPattern(*palette);
     pattern = &patternTemp;
 }
 
@@ -220,8 +220,8 @@ void PoliceStrobeSL::startPause(){
 //at the start of a set of pulses
 void PoliceStrobeSL::pickColor(){
     if(randMode == 0){
-        palIndex = patternUtilsPS::getPatternVal(pattern, colorNum);
-        colorTemp = paletteUtilsPS::getPaletteColor( palette, palIndex );
+        palIndex = patternUtilsPS::getPatternVal(*pattern, colorNum);
+        colorTemp = paletteUtilsPS::getPaletteColor( *palette, palIndex );
     } else if(randMode == 1 && pulseCount <= 1) {
         //choose a completely random color
         colorTemp = colorUtilsPS::randColor();
@@ -231,8 +231,8 @@ void PoliceStrobeSL::pickColor(){
             //Use the current palIndex value to get a shuffled value
             //This may look confusing, but the pattern shuffle function a pattern value and spits out a different one
             //palIndex is only set in pickColor(), so it's safe to store it in itself for the next pickColor() is called
-            palIndex = patternUtilsPS::getShuffleIndex(pattern, palIndex);
+            palIndex = patternUtilsPS::getShuffleIndex(*pattern, palIndex);
         }
-        colorTemp = paletteUtilsPS::getPaletteColor( palette, palIndex );
+        colorTemp = paletteUtilsPS::getPaletteColor( *palette, palIndex );
     }
 }

@@ -1,17 +1,17 @@
 #include "StrobeSLSeg.h"
 
 //constructor for pattern and palette ver
-StrobeSLSeg::StrobeSLSeg(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, CRGB BgColor, uint8_t NumPulses, 
+StrobeSLSeg::StrobeSLSeg(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint8_t NumPulses, 
                         uint16_t PauseTime, bool SegEach, bool SegDual, bool SegLine, bool SegLineDual, bool SegAll, uint16_t Rate):
-    segmentSet(SegmentSet), pattern(Pattern), palette(Palette), numPulses(NumPulses), pauseTime(PauseTime), segEach(SegEach), segDual(SegDual), segLineDual(SegLineDual), segLine(SegLine), segAll(SegAll)
+    segmentSet(SegmentSet), pattern(&Pattern), palette(&Palette), numPulses(NumPulses), pauseTime(PauseTime), segEach(SegEach), segDual(SegDual), segLineDual(SegLineDual), segLine(SegLine), segAll(SegAll)
     {    
         init(BgColor, Rate);
 	}
 
 //constructor for palette ver
-StrobeSLSeg::StrobeSLSeg(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, 
+StrobeSLSeg::StrobeSLSeg(SegmentSet &SegmentSet, palettePS &Palette, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, 
                         bool SegEach, bool SegDual, bool SegLine, bool SegLineDual, bool SegAll, uint16_t Rate):
-    segmentSet(SegmentSet), palette(Palette), numPulses(NumPulses), pauseTime(PauseTime), segEach(SegEach), segDual(SegDual), segLineDual(SegLineDual), segLine(SegLine), segAll(SegAll)
+    segmentSet(SegmentSet), palette(&Palette), numPulses(NumPulses), pauseTime(PauseTime), segEach(SegEach), segDual(SegDual), segLineDual(SegLineDual), segLine(SegLine), segAll(SegAll)
     {    
         setPaletteAsPattern();
         init(BgColor, Rate);
@@ -58,7 +58,7 @@ StrobeSLSeg::~StrobeSLSeg(){
 //ie for a palette length 5, the pattern would be 
 //{0, 1, 2, 3, 4}
 void StrobeSLSeg::setPaletteAsPattern(){
-    patternTemp = generalUtilsPS::setPaletteAsPattern(palette);
+    patternTemp = generalUtilsPS::setPaletteAsPattern(*palette);
     pattern = &patternTemp;
 }
 
@@ -71,8 +71,8 @@ void StrobeSLSeg::setNewColorBool(bool newColorBool){
 }
 
 //Sets a new pattern, also re-caculates how long the strobe cycle should be
-void StrobeSLSeg::setPattern(patternPS *newPattern){
-    pattern = newPattern;
+void StrobeSLSeg::setPattern(patternPS &newPattern){
+    pattern = &newPattern;
     setCycleCountMax();
 }
 
@@ -352,8 +352,8 @@ void StrobeSLSeg::startPause(){
 //at the start of a set of pulses
 void StrobeSLSeg::pickColor(){
     if(randMode == 0){
-        palIndex = patternUtilsPS::getPatternVal(pattern, colorNum);
-        colorTemp = paletteUtilsPS::getPaletteColor( palette, palIndex );
+        palIndex = patternUtilsPS::getPatternVal(*pattern, colorNum);
+        colorTemp = paletteUtilsPS::getPaletteColor( *palette, palIndex );
     } else if(randMode == 1 && pulseCount <= 1) {
         //choose a completely random color
         colorTemp = colorUtilsPS::randColor();
@@ -363,8 +363,8 @@ void StrobeSLSeg::pickColor(){
             //Use the current palIndex value to get a shuffled value
             //This may look confusing, but the pattern shuffle function a pattern value and spits out a different one
             //palIndex is only set in pickColor(), so it's safe to store it in itself for the next pickColor() is called
-            palIndex = patternUtilsPS::getShuffleIndex(pattern, palIndex);
+            palIndex = patternUtilsPS::getShuffleIndex(*pattern, palIndex);
         }
-        colorTemp = paletteUtilsPS::getPaletteColor( palette, palIndex );
+        colorTemp = paletteUtilsPS::getPaletteColor( *palette, palIndex );
     }
 }

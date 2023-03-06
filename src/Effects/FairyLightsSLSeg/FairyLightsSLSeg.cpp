@@ -3,8 +3,8 @@
 //see update() for how the effect works
 
 //palette based constructor
-FairyLightsSLSeg::FairyLightsSLSeg(SegmentSet &SegmentSet, palettePS *Palette, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode, uint8_t SegMode, uint16_t Rate):
-    segmentSet(SegmentSet), palette(Palette), numTwinkles(NumTwinkles), tMode(Tmode), segMode(SegMode)
+FairyLightsSLSeg::FairyLightsSLSeg(SegmentSet &SegmentSet, palettePS &Palette, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode, uint8_t SegMode, uint16_t Rate):
+    segmentSet(SegmentSet), palette(&Palette), numTwinkles(NumTwinkles), tMode(Tmode), segMode(SegMode)
     {    
         init(BGColor, Rate);
 	}
@@ -152,7 +152,7 @@ void FairyLightsSLSeg::update(){
 CRGB FairyLightsSLSeg::pickColor(){
     switch (randMode) {
         case 0: // we're picking from a set of colors 
-            color = paletteUtilsPS::getPaletteColor(palette, random8(paletteLength));
+            color = paletteUtilsPS::getPaletteColor(*palette, random8(paletteLength));
             break;
         case 1:
         default: //(mode 1) set colors at random
@@ -164,7 +164,7 @@ CRGB FairyLightsSLSeg::pickColor(){
 
 //Draws the twinkle, either along the whole segment, segment line, or an individual pixel depending on segMode
 //Inputs are the index of the twinkle array of the twinkle, the twinkle color, and the color mode
-void FairyLightsSLSeg::drawTwinkle(uint8_t twinkleNum, CRGB tColor, uint8_t cMode){
+void FairyLightsSLSeg::drawTwinkle(uint8_t twinkleNum, CRGB &tColor, uint8_t cMode){
     //if in segMode we draw the twinkles along segments, otherwise we draw the along segment lines
     switch(segMode){
         case 0:

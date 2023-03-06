@@ -1,16 +1,16 @@
 #include "SegWaves.h"
 
 //constructor for using the passed in pattern and palette for the wave
-SegWaves::SegWaves(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, CRGB BgColor, uint8_t FadeSteps, bool Direct, uint16_t Rate):
-    segmentSet(SegmentSet), pattern(Pattern), palette(Palette), fadeSteps(FadeSteps), direct(Direct)
+SegWaves::SegWaves(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint8_t FadeSteps, bool Direct, uint16_t Rate):
+    segmentSet(SegmentSet), pattern(&Pattern), palette(&Palette), fadeSteps(FadeSteps), direct(Direct)
     {    
         init(BgColor, Rate);
 	}
 
 //constructor for building the wave pattern from the passed in pattern and the palette, using the passed in waveThickness and spacing
 //Passing a color length of 0 will set the wave thickness to 1 and the spacing such that there's only one wave on the segment set at once
-SegWaves::SegWaves(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, uint8_t WaveThickness, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, bool Direct, uint16_t Rate):
-    segmentSet(SegmentSet), palette(Palette), fadeSteps(FadeSteps), direct(Direct)
+SegWaves::SegWaves(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, uint8_t WaveThickness, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, bool Direct, uint16_t Rate):
+    segmentSet(SegmentSet), palette(&Palette), fadeSteps(FadeSteps), direct(Direct)
     {    
         //short cut for creating a single segment wave
         if(WaveThickness == 0){ 
@@ -23,8 +23,8 @@ SegWaves::SegWaves(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palett
 
 //constructor for building a wave using all the colors in the passed in palette, using the waveThickness and spacing for each color
 //Passing a color length of 0 will set the wave thickness to 1 and the spacing such that there's only one wave on the segment set at once
-SegWaves::SegWaves(SegmentSet &SegmentSet, palettePS *Palette, uint8_t WaveThickness, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, bool Direct, uint16_t Rate):
-    segmentSet(SegmentSet), palette(Palette), fadeSteps(FadeSteps), direct(Direct)
+SegWaves::SegWaves(SegmentSet &SegmentSet, palettePS &Palette, uint8_t WaveThickness, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, bool Direct, uint16_t Rate):
+    segmentSet(SegmentSet), palette(&Palette), fadeSteps(FadeSteps), direct(Direct)
     {    
         //short cut for creating a single segment wave
         if(WaveThickness == 0){
@@ -123,69 +123,22 @@ void SegWaves::makeSingleWave(){
 }
 
 //takes the passed in pattern and creates a pattern for the wave
-//using the passed in color length and spacing
+//using the passed in wave thicknessand spacing
 //then sets this pattern to be the wave pattern
 //ex : inputPattern is {1, 2, 4} with color length 2, and 1 spacing
 //the wave pattern would be: {1, 1, 255, 2, 2, 255, 4, 4, 255}
-void SegWaves::setPatternAsPattern(patternPS *inputPattern, uint8_t waveThickness, uint8_t spacing){
-    uint8_t patternIndex;
-    uint8_t repeatLength = (waveThickness + spacing); //the total length taken up by a single color and spacing
-    uint16_t patternLength = inputPattern->length;
-    uint16_t totalPatternLength = patternLength * repeatLength; 
-    //create new storage for the pattern array
-    free(patternTemp.patternArr);
-    uint8_t *pattern_arr = (uint8_t*) malloc(totalPatternLength * sizeof(uint8_t));
-
-    //for each color in the inputPattern, we fill in the color and spacing for the output pattern
-    for(uint16_t i = 0; i < patternLength; i++){
-        patternIndex = patternUtilsPS::getPatternVal(inputPattern, i);
-        //for each color in the pattern we run over the length of the color and spacing
-        //for the indexes up to color length, we set them as the current patternIndex
-        //after that we set them as spacing (255)
-        for(uint8_t j = 0; j < repeatLength; j++){
-            if(j < waveThickness){
-                //we do i*repeatLength to account for how many color sections we've 
-                //filled in already
-                pattern_arr[i * repeatLength + j] = patternIndex;
-            } else {
-                pattern_arr[i * repeatLength + j] = 255;
-            }
-        }
-    }
-
-    patternTemp = {pattern_arr, totalPatternLength};
+//(255 will be set to the background color)
+void SegWaves::setPatternAsPattern(patternPS &inputPattern, uint8_t waveThickness, uint8_t spacing){
+    patternTemp = generalUtilsPS::setPatternAsPattern(inputPattern, waveThickness, spacing);
     pattern = &patternTemp;
 }
 
 //sets the current palette to be the wave pattern (using all colors in the palette)
-//using the passed in waveThickness and spacing
+//using the passed in wave thickness and spacing
 //ex: for palette of lenth 3, and a waveThickness of 2, and spacing of 1
 //the final wave pattern would be : {0, 0, 255, 1, 1, 255, 2, 2, 255}
 void SegWaves::setPaletteAsPattern(uint8_t waveThickness, uint8_t spacing){
-    uint8_t repeatLength = (waveThickness + spacing);
-    uint8_t palettelength = palette->length;
-    uint16_t totalPatternLength = palettelength * repeatLength; //the total length taken up by a single color and spacing
-    //create new storage for the pattern array
-    free(patternTemp.patternArr);
-    uint8_t *pattern_arr = (uint8_t*) malloc(totalPatternLength * sizeof(uint8_t));
-
-    //for each color in the palette, we fill in the color and spacing for the output pattern
-    for(uint16_t i = 0; i < palettelength; i++){
-        //for each color in the palette we run over the length of the color and spacing
-        //for the indexes up to color length, we set them as the current palette index
-        //after that we set them as spacing (255)
-        for(uint8_t j = 0; j < repeatLength; j++){
-            if(j < waveThickness){
-                //we do i*repeatLength to account for how many color sections we've 
-                //filled in already
-                pattern_arr[i * repeatLength + j] = i;
-            } else {
-                pattern_arr[i * repeatLength + j] = 255;
-            }
-        }
-    }
-
-    patternTemp = {pattern_arr, totalPatternLength};
+    patternTemp = generalUtilsPS::setPaletteAsPattern(*palette, waveThickness, spacing);
     pattern = &patternTemp;
 }
 
@@ -270,7 +223,7 @@ void SegWaves::initFill(){
 //For random modes, the colors are pulled from the segColors array
 CRGB SegWaves::getNextColor(uint16_t segNum, uint16_t segNumRaw){
     //nextPatternIndex is set before the call
-    nextPattern = patternUtilsPS::getPatternVal(pattern, nextPatternIndex);
+    nextPattern = patternUtilsPS::getPatternVal(*pattern, nextPatternIndex);
     pixelNum = segDrawUtils::getSegmentPixel(segmentSet, segNum, 0);
     //lineNum = segDrawUtils::getLineNumFromPixelNum(segmentSet, 0, segNum);
 
@@ -289,7 +242,7 @@ CRGB SegWaves::getNextColor(uint16_t segNum, uint16_t segNumRaw){
         if(nextPattern == 255){ //255 in the pattern marks a background color
             return segDrawUtils::getPixelColor(segmentSet, pixelNum, *bgColor, bgColorMode, segNum, 0);
         } else {
-            colorOut = paletteUtilsPS::getPaletteColor(palette, nextPattern);
+            colorOut = paletteUtilsPS::getPaletteColor(*palette, nextPattern);
             return segDrawUtils::getPixelColor(segmentSet, pixelNum, colorOut, colorMode, segNum, 0);
         }
     }
@@ -322,7 +275,7 @@ void SegWaves::handleRandColors(){
     //To do this we first get some info about the final segment (where the color will enter)
     //and the next pattern value
     segNum = numSegsLim;
-    nextPattern = patternUtilsPS::getPatternVal(pattern, cycleNum);
+    nextPattern = patternUtilsPS::getPatternVal(*pattern, cycleNum);
     pixelNum = segDrawUtils::getSegmentPixel(segmentSet, segNum, 0);
 
     //Pick the new color
@@ -341,17 +294,17 @@ void SegWaves::handleRandColors(){
         if(randMode == 0){
             //Choose from the palette, this is mainly to keep the transition from random to fixed colors
             //smooth
-            colorOut = paletteUtilsPS::getPaletteColor(palette, nextPattern);
+            colorOut = paletteUtilsPS::getPaletteColor(*palette, nextPattern);
         } else if(randMode == 1) {
             //choose a completely random color
             colorOut = colorUtilsPS::randColor();
         } else if(randMode == 2) {
             //choose a color randomly from the palette (making sure it's not the same as the current random color)
             //(Can't shuffle the pattern directly, because it contains repeats of the same index)
-            colorOut = paletteUtilsPS::getShuffleIndex(palette, randColor);
+            colorOut = paletteUtilsPS::getShuffleIndex(*palette, randColor);
         } else {
             //choose a color randomly from the palette (can repeat)
-            colorOut = paletteUtilsPS::getPaletteColor( palette, random8(palette->length) );
+            colorOut = paletteUtilsPS::getPaletteColor( *palette, random8(palette->length) );
         }
 
         //set the new random color into the segColors array

@@ -92,10 +92,10 @@ This is not visually noticable, and makes coding easier. But it does mean there'
 
 Example calls: 
     using the particleSet defined above:
-    ParticlesSL(mainSegments, particleSet, &palette, CRGB::Red);
+    ParticlesSL(mainSegments, particleSet, palette, CRGB::Red);
     Will animate the single particle as described above, placing it on a red background
 
-    ParticlesSL(mainSegments, &palette3, 0, 3, 2, 60, 50, 1, 3, 2, 3, 0, 2, palette3.length, true);
+    ParticlesSL(mainSegments, palette3, 0, 3, 2, 60, 50, 1, 3, 2, 3, 0, 2, palette3.length, true);
     Creates a set of three particles that will run on a blank background with the following properties:
     The particle directions will be choosen at random
     They will have a maximum speed of 60ms, up to 110ms (60 + 50)
@@ -171,12 +171,12 @@ Notes:
 class ParticlesSL : public EffectBasePS {
     public:
         //Constructor for having the effect generate a set of particles
-        ParticlesSL(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint8_t numParticles, uint8_t direction, 
+        ParticlesSL(SegmentSet &SegmentSet, palettePS &Palette, CRGB BgColor, uint8_t numParticles, uint8_t direction, 
                     uint16_t baseSpeed, uint16_t speedRange, uint16_t size, uint16_t sizeRange, uint8_t trailType, 
                     uint8_t trailSize, uint8_t trailRange, uint8_t bounce, uint8_t colorIndex, bool randColor);  
 
         //Constructor for using a passed in set of particles
-        ParticlesSL(SegmentSet &SegmentSet, particleSetPS *ParticleSet, palettePS *Palette, CRGB BgColor);
+        ParticlesSL(SegmentSet &SegmentSet, particleSetPS &ParticleSet, palettePS &Palette, CRGB BgColor);
 
         ~ParticlesSL();
 
@@ -207,7 +207,7 @@ class ParticlesSL : public EffectBasePS {
 
         void 
             reset(),
-            setParticleSet(particleSetPS *newParticleSet),
+            setParticleSet(particleSetPS &newParticleSet),
             update(void);
     
     private:

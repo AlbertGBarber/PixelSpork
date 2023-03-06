@@ -1,15 +1,15 @@
 #include "GradientCycleFastSL.h"
 
 //constructor with pattern
-GradientCycleFastSL::GradientCycleFastSL(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, uint8_t GradLength, uint16_t Rate):
-    segmentSet(SegmentSet), pattern(Pattern), palette(Palette), gradLength(GradLength)
+GradientCycleFastSL::GradientCycleFastSL(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, uint8_t GradLength, uint16_t Rate):
+    segmentSet(SegmentSet), pattern(&Pattern), palette(&Palette), gradLength(GradLength)
     {    
         init(Rate);
 	}
 
 //constuctor with palette as pattern
-GradientCycleFastSL::GradientCycleFastSL(SegmentSet &SegmentSet, palettePS *Palette, uint8_t GradLength, uint16_t Rate):
-    segmentSet(SegmentSet), palette(Palette), gradLength(GradLength)
+GradientCycleFastSL::GradientCycleFastSL(SegmentSet &SegmentSet, palettePS &Palette, uint8_t GradLength, uint16_t Rate):
+    segmentSet(SegmentSet), palette(&Palette), gradLength(GradLength)
     {    
         setPaletteAsPattern();
         init(Rate);
@@ -47,7 +47,7 @@ void GradientCycleFastSL::reset(){
 //ie for a palette length 5, the pattern would be 
 //{0, 1, 2, 3, 4}
 void GradientCycleFastSL::setPaletteAsPattern(){
-    patternTemp = generalUtilsPS::setPaletteAsPattern(palette);
+    patternTemp = generalUtilsPS::setPaletteAsPattern(*palette);
     pattern = &patternTemp;
 }
 
@@ -56,8 +56,8 @@ void GradientCycleFastSL::setPaletteAsPattern(){
 void GradientCycleFastSL::initalFill(){
     cycleNum = 0;
     patternCount = 0;
-    nextPattern = patternUtilsPS::getPatternVal(pattern, 0);
-    nextColor = paletteUtilsPS::getPaletteColor(palette, nextPattern);
+    nextPattern = patternUtilsPS::getPatternVal(*pattern, 0);
+    nextColor = paletteUtilsPS::getPaletteColor(*palette, nextPattern);
 
     //fetch some core vars
     numLines = segmentSet.maxSegLength;
@@ -162,15 +162,15 @@ void GradientCycleFastSL::pickNextColor(){
     patternCount = addMod16PS(patternCount, 1, pattern->length);  
     if(randMode == 0){
         //if we're not choosing a random color, we need to pick the next color in the pattern
-        nextPattern = patternUtilsPS::getPatternVal(pattern, patternCount);
+        nextPattern = patternUtilsPS::getPatternVal(*pattern, patternCount);
         //the next color, wrapping to the start of the pattern as needed
-        nextColor = paletteUtilsPS::getPaletteColor(palette, nextPattern );
+        nextColor = paletteUtilsPS::getPaletteColor(*palette, nextPattern );
     } else if(randMode == 1){
         //choose a completely random color
         nextColor = colorUtilsPS::randColor();
     } else {
         //choose a color randomly from the pattern (making sure it's not the same as the current color)
-        nextPattern = patternUtilsPS::getShuffleIndex(pattern, currentPattern);
-        nextColor = paletteUtilsPS::getPaletteColor( palette, nextPattern );  
+        nextPattern = patternUtilsPS::getShuffleIndex(*pattern, currentPattern);
+        nextColor = paletteUtilsPS::getPaletteColor( *palette, nextPattern );  
     }
 }

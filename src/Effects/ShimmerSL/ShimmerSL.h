@@ -65,7 +65,7 @@ class ShimmerSL : public EffectBasePS {
         ShimmerSL(SegmentSet &SegmentSet, CRGB ShimmerColor, uint8_t ShimmerMin, uint8_t ShimmerMax, uint16_t Rate);  
 
         //Constuctor for colors randomly choosen from palette
-        ShimmerSL(SegmentSet &SegmentSet, palettePS *Palette, uint8_t ShimmerMin, uint8_t ShimmerMax, uint16_t Rate);
+        ShimmerSL(SegmentSet &SegmentSet, palettePS &Palette, uint8_t ShimmerMin, uint8_t ShimmerMax, uint16_t Rate);
 
         ~ShimmerSL();
 

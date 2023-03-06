@@ -1,7 +1,7 @@
 #include "Fire2012SL.h"
 
-Fire2012SL::Fire2012SL(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint8_t Cooling, uint8_t Sparking, bool Blend, bool Direct, uint16_t Rate):
-    segmentSet(SegmentSet), palette(Palette), cooling(Cooling), sparking(Sparking), blend(Blend), direct(Direct)
+Fire2012SL::Fire2012SL(SegmentSet &SegmentSet, palettePS &Palette, CRGB BgColor, uint8_t Cooling, uint8_t Sparking, bool Blend, bool Direct, uint16_t Rate):
+    segmentSet(SegmentSet), palette(&Palette), cooling(Cooling), sparking(Sparking), blend(Blend), direct(Direct)
     {    
         //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
         bindSegPtrPS();

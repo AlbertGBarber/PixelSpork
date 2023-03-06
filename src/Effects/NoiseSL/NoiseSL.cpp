@@ -10,8 +10,8 @@ NoiseSL::NoiseSL(SegmentSet &SegmentSet, uint8_t numColors, uint16_t BlendSteps,
 	}
 
 //Constructor using palette
-NoiseSL::NoiseSL(SegmentSet &SegmentSet, palettePS *Palette, uint16_t BlendSteps, uint16_t ScaleBase, uint16_t ScaleRange, uint16_t Speed, uint8_t CMode, uint16_t Rate):
-    segmentSet(SegmentSet), palette(Palette), blendSteps(BlendSteps), scaleBase(ScaleBase), scaleRange(ScaleRange), speed(Speed), cMode(CMode)
+NoiseSL::NoiseSL(SegmentSet &SegmentSet, palettePS &Palette, uint16_t BlendSteps, uint16_t ScaleBase, uint16_t ScaleRange, uint16_t Speed, uint8_t CMode, uint16_t Rate):
+    segmentSet(SegmentSet), palette(&Palette), blendSteps(BlendSteps), scaleBase(ScaleBase), scaleRange(ScaleRange), speed(Speed), cMode(CMode)
     {
         init(Rate);
     }
@@ -169,7 +169,7 @@ void NoiseSL::mapNoiseSegsWithPalette(){
                     //Scale color index to be somewhere between 0 and totBlendLength to put it somewhere in the blended palette
                     colorIndex = scale16by8( totBlendLength, colorIndex + ihue ); //colorIndex * totBlendLength /255;   
                     //get the resulting blended color and dim it by bri
-                    colorOut = paletteUtilsPS::getPaletteGradColor(palette, colorIndex, 0, totBlendLength, blendSteps);
+                    colorOut = paletteUtilsPS::getPaletteGradColor(*palette, colorIndex, 0, totBlendLength, blendSteps);
                     //get background color info for the current pixel
                     colorTarget = segDrawUtils::getPixelColor(segmentSet, pixelNum, *bgColor, bgColorMode, j, i);
                     //get the color blended towards the background and output it
@@ -181,7 +181,7 @@ void NoiseSL::mapNoiseSegsWithPalette(){
                     //so we map the colorIndex in the blendSteps, then use ihue to offset what color we're on
                     colorIndex = scale16by8( blendSteps, colorIndex ); //colorIndex * blendSteps /255;   
                     //get the resulting blended color and dim it by bri
-                    colorOut = paletteUtilsPS::getPaletteGradColor(palette, colorIndex, ihue, totBlendLength, blendSteps);
+                    colorOut = paletteUtilsPS::getPaletteGradColor(*palette, colorIndex, ihue, totBlendLength, blendSteps);
                     //get background color info for the current pixel
                     colorTarget = segDrawUtils::getPixelColor(segmentSet, pixelNum, *bgColor, bgColorMode, j, i);
                     //get the color blended towards the background and output it

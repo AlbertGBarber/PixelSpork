@@ -1,15 +1,15 @@
 #include "CrossFadeCyclePS.h"
 
 //consturctor for using a pattern and palette
-CrossFadeCyclePS::CrossFadeCyclePS(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, uint8_t Steps, uint16_t Rate):
-    segmentSet(SegmentSet), pattern(Pattern), palette(Palette), steps(Steps)
+CrossFadeCyclePS::CrossFadeCyclePS(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, uint8_t Steps, uint16_t Rate):
+    segmentSet(SegmentSet), pattern(&Pattern), palette(&Palette), steps(Steps)
     {    
         init(Rate);
 	}
 
 //constructor for using palette as pattern
-CrossFadeCyclePS::CrossFadeCyclePS(SegmentSet &SegmentSet, palettePS *Palette, uint8_t Steps, uint16_t Rate):
-    segmentSet(SegmentSet), palette(Palette), steps(Steps)
+CrossFadeCyclePS::CrossFadeCyclePS(SegmentSet &SegmentSet, palettePS &Palette, uint8_t Steps, uint16_t Rate):
+    segmentSet(SegmentSet), palette(&Palette), steps(Steps)
     {    
         setPaletteAsPattern();
         init(Rate);
@@ -54,7 +54,8 @@ void CrossFadeCyclePS::reset(){
     //the only result is a single solid color
     //once that is drawn set done to true, as there is nothing else to draw
     if(pattern->length <= 1){
-        segDrawUtils::fillSegSetColor(segmentSet, paletteUtilsPS::getPaletteColor( palette, pattern->patternArr[0]), 0);
+        colorOut = paletteUtilsPS::getPaletteColor( *palette, pattern->patternArr[0]);
+        segDrawUtils::fillSegSetColor(segmentSet, colorOut, 0);
     }
 
     //Get the inital color and the first end color
@@ -67,7 +68,7 @@ void CrossFadeCyclePS::reset(){
 //ie for a palette length 5, the pattern would be 
 //{0, 1, 2, 3, 4}
 void CrossFadeCyclePS::setPaletteAsPattern(){
-    patternTemp = generalUtilsPS::setPaletteAsPattern(palette);
+    patternTemp = generalUtilsPS::setPaletteAsPattern(*palette);
     pattern = &patternTemp;
 }
 
@@ -81,15 +82,15 @@ void CrossFadeCyclePS::getNextColor(){
     switch (randMode) {
         case 0: //Colors will be choosen in order from the pattern (not random)
         default:
-            palIndex = patternUtilsPS::getPatternVal( pattern, patternIndex );
-            nextColor = paletteUtilsPS::getPaletteColor( palette, palIndex );
+            palIndex = patternUtilsPS::getPatternVal( *pattern, patternIndex );
+            nextColor = paletteUtilsPS::getPaletteColor( *palette, palIndex );
             break;
         case 1: //Colors will be choosen completely at random
             nextColor = colorUtilsPS::randColor();
             break;
         case 2: //Colors will be choosen randomly from the palette (not allowing repeats)
-            palIndex = patternUtilsPS::getShuffleIndex( pattern, palIndex );
-            nextColor = paletteUtilsPS::getPaletteColor( palette, palIndex );
+            palIndex = patternUtilsPS::getShuffleIndex( *pattern, palIndex );
+            nextColor = paletteUtilsPS::getPaletteColor( *palette, palIndex );
             break;
     }
 

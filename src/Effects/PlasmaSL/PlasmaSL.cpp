@@ -1,8 +1,8 @@
 #include "PlasmaSL.h"
 
 //Constructor for effect with palette
-PlasmaSL::PlasmaSL(SegmentSet &SegmentSet, palettePS *Palette, uint16_t BlendSteps, bool Randomize, uint16_t Rate):
-    segmentSet(SegmentSet), palette(Palette), blendSteps(BlendSteps), randomize(Randomize)
+PlasmaSL::PlasmaSL(SegmentSet &SegmentSet, palettePS &Palette, uint16_t BlendSteps, bool Randomize, uint16_t Rate):
+    segmentSet(SegmentSet), palette(&Palette), blendSteps(BlendSteps), randomize(Randomize)
     {    
         init(Rate);
 	}
@@ -87,7 +87,7 @@ void PlasmaSL::update(){
             colorIndex = scale16by8( totBlendLength, colorIndex ); //colorIndex * totBlendLength /255;                        
 
             //get the blended color from the palette and set it's brightness
-            colorOut = paletteUtilsPS::getPaletteGradColor(palette, colorIndex, 0, totBlendLength, blendSteps);
+            colorOut = paletteUtilsPS::getPaletteGradColor(*palette, colorIndex, 0, totBlendLength, blendSteps);
             //colorOut = colorUtilsPS::getCrossFadeColor(colorOut, 0, 255 - brightness);
             nscale8x3(colorOut.r, colorOut.g, colorOut.b, brightness);
 

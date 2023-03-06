@@ -44,12 +44,12 @@ randModes:
 Example calls: 
     uint8_t pattern_arr = {0, 1, 4};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-    BreathPS(mainSegments, &pattern, &palette3, 0, 10, 50);
+    BreathPS(mainSegments, pattern, palette3, 0, 10, 50);
     Does a breathing cycle using the colors from palette3, following the pattern above
     The background is blank
     The breathFreq is 10, the effect updates at 50ms
 
-    BreathPS(mainSegments, &palette3, 0, 5, 50);
+    BreathPS(mainSegments, palette3, 0, 5, 50);
     Does a breathing cycle using the colors from palette3 in order
     The background is blank
     The breathFreq is 5, the effect updates at 50ms
@@ -110,10 +110,10 @@ class BreathPS : public EffectBasePS {
     public:
 
         //Consturctor for using a pattern and palette
-        BreathPS(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, CRGB BgColor, uint8_t BreathFreq, uint16_t Rate);
+        BreathPS(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint8_t BreathFreq, uint16_t Rate);
 
         //Constructor for using palette as pattern
-        BreathPS(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint8_t BreathFreq, uint16_t Rate);
+        BreathPS(SegmentSet &SegmentSet, palettePS &Palette, CRGB BgColor, uint8_t BreathFreq, uint16_t Rate);
 
         //Constructor for a single color breath (pass in 0 as the color to trigger randMode 2, fully random)
         BreathPS(SegmentSet &SegmentSet, CRGB color, CRGB BgColor, uint8_t MaxBreath, uint8_t BreathFreq, uint16_t Rate); 

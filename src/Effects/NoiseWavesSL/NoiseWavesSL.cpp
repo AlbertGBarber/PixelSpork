@@ -1,8 +1,8 @@
 #include "NoiseWavesSL.h"
 
 //Constructor with palette
-NoiseWavesSL::NoiseWavesSL(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint16_t BlendScale, uint8_t PhaseScale, uint8_t FreqScale, uint16_t Rate):
-    segmentSet(SegmentSet), palette(Palette), blendScale(BlendScale), phaseScale(PhaseScale), freqScale(FreqScale)
+NoiseWavesSL::NoiseWavesSL(SegmentSet &SegmentSet, palettePS &Palette, CRGB BgColor, uint16_t BlendScale, uint8_t PhaseScale, uint8_t FreqScale, uint16_t Rate):
+    segmentSet(SegmentSet), palette(&Palette), blendScale(BlendScale), phaseScale(PhaseScale), freqScale(FreqScale)
     {    
         init(BgColor, Rate);
     }
@@ -93,7 +93,7 @@ void NoiseWavesSL::update(){
             //get the blended color from the palette
             //scale the index to the length of all the color blends combined
             colorIndex = scale16by8( totBlendLength, index );
-            colorOut = paletteUtilsPS::getPaletteGradColor(palette, colorIndex, 0, totBlendLength, blendSteps);
+            colorOut = paletteUtilsPS::getPaletteGradColor(*palette, colorIndex, 0, totBlendLength, blendSteps);
 
             //take the line color and brightness and apply it to all the seg pixels on the line
             for(uint16_t j = 0; j < numSegs; j++){

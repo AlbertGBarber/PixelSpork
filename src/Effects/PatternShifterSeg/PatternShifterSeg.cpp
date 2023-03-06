@@ -1,8 +1,8 @@
 #include "PatternShifterSeg.h"
 
-PatternShifterSeg::PatternShifterSeg(SegmentSet &SegmentSet, shiftPatternPS *ShiftPattern, palettePS *Palette, CRGB BgColor, 
+PatternShifterSeg::PatternShifterSeg(SegmentSet &SegmentSet, shiftPatternPS &ShiftPattern, palettePS &Palette, CRGB BgColor, 
                                      bool RepeatLine, bool RepeatSeg, bool Direct, uint16_t Rate):
-    segmentSet(SegmentSet), palette(Palette), repeatLine(RepeatLine), repeatSeg(RepeatSeg), direct(Direct)
+    segmentSet(SegmentSet), palette(&Palette), repeatLine(RepeatLine), repeatSeg(RepeatSeg), direct(Direct)
     {    
         //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
         bindSegPtrPS();
@@ -21,9 +21,9 @@ void PatternShifterSeg::reset(){
 
 //Sets the pattern to be the passed in pattern, also sets up various effect variables
 //If you change the pattern you must do it via this function
-void PatternShifterSeg::setShiftPattern(shiftPatternPS *newShiftPattern){
+void PatternShifterSeg::setShiftPattern(shiftPatternPS &newShiftPattern){
 
-    shiftPattern = newShiftPattern;
+    shiftPattern = &newShiftPattern;
     //number of "rows" in the pattern
     numPatRows = shiftPattern->numRows;
 
@@ -173,7 +173,7 @@ void PatternShifterSeg::update(){
                         colorOut = *bgColor;
                         modeOut = bgColorMode;
                     } else {
-                        colorOut = paletteUtilsPS::getPaletteColor(palette, colorIndex);
+                        colorOut = paletteUtilsPS::getPaletteColor(*palette, colorIndex);
                         modeOut = colorMode;
                     }
                     //get the physical pixel location and output the color and colorMode

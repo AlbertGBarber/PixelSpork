@@ -96,7 +96,7 @@ Example calls:
     The spark's speed decays at 10 percent per update
     The fastest particles will update at 40ms, while the slowest will be 40 + 300ms
 
-    FireworksPS(mainSegments, &palette1, 3, 20, 10, 4000, 5, 40, 500);
+    FireworksPS(mainSegments, palette1, 3, 20, 10, 4000, 5, 40, 500);
     Will do a set of fireworks using colors from a palette1
     There is a maximum of 3 fireworks active at one time.
     Each firework has 20 sparks
@@ -161,7 +161,7 @@ Other Settings:
 class FireworksPS : public EffectBasePS {
     public:
         //Constructor for fireworks using a palette
-        FireworksPS(SegmentSet &SegmentSet, palettePS *Palette, uint8_t MaxNumFireworks, uint8_t MaxNumSparks, 
+        FireworksPS(SegmentSet &SegmentSet, palettePS &Palette, uint8_t MaxNumFireworks, uint8_t MaxNumSparks, 
                     uint8_t SpawnChance, uint16_t LifeBase, uint8_t SpeedDecay, uint16_t Rate, uint16_t SpeedRange); 
 
         //Constructor for fireworks using a palette of random colors

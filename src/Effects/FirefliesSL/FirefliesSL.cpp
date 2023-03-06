@@ -1,9 +1,9 @@
 #include "FirefliesSL.h"
 
 //Constructor for effect with palette
-FirefliesSL::FirefliesSL(SegmentSet &SegmentSet, palettePS *Palette, uint8_t MaxNumFireflies, uint8_t SpawnChance, 
+FirefliesSL::FirefliesSL(SegmentSet &SegmentSet, palettePS &Palette, uint8_t MaxNumFireflies, uint8_t SpawnChance, 
                          uint16_t LifeBase, uint16_t LifeRange, uint16_t SpeedBase, uint16_t SpeedRange, uint16_t Rate):
-    segmentSet(SegmentSet), palette(Palette), spawnChance(SpawnChance), lifeBase(LifeBase), 
+    segmentSet(SegmentSet), palette(&Palette), spawnChance(SpawnChance), lifeBase(LifeBase), 
     lifeRange(LifeRange), speedBase(SpeedBase), speedRange(SpeedRange)
     {    
         init(MaxNumFireflies, Rate);
@@ -34,7 +34,7 @@ FirefliesSL::FirefliesSL(SegmentSet &SegmentSet, CRGB Color, uint8_t MaxNumFiref
 
 
 FirefliesSL::~FirefliesSL(){
-    particleUtilsPS::freeParticleSet(&particleSetTemp);
+    particleUtilsPS::freeParticleSet(particleSetTemp);
     free(trailEndColors);
     free(particlePrevPos);
     free(paletteTemp.paletteArr);
@@ -92,7 +92,7 @@ void FirefliesSL::setupFireflies(uint8_t newMaxNumFireflies){
         particlePrevPos = (uint16_t*) malloc(maxNumFireflies * sizeof(uint16_t));
         
         //free the existing particles, and the particle array pointer
-        particleUtilsPS::freeParticleSet(&particleSetTemp);
+        particleUtilsPS::freeParticleSet(particleSetTemp);
 
         //to allow the effect to work along segment lines, we use the maximum number of lines
         //as the range of the particle's motion
@@ -143,7 +143,7 @@ void FirefliesSL::update(){
             if(partLife > 0){
                         
                 //get the particle's color from the palette
-                colorOut = paletteUtilsPS::getPaletteColor(palette, particlePtr->colorIndex);
+                colorOut = paletteUtilsPS::getPaletteColor(*palette, particlePtr->colorIndex);
 
                 //update the particle's location
                 moveParticle(particlePtr, i);
@@ -331,7 +331,7 @@ void FirefliesSL::drawParticlePixel(particlePS *particlePtr, uint16_t partNum){
 void FirefliesSL::spawnFirefly(uint8_t partNum){
 
     //randomize the particle properties (position is only up to numLines)
-    particleUtilsPS::randomizeParticle(particleSet, partNum, numLines, true, speedBase, speedRange, 
+    particleUtilsPS::randomizeParticle(*particleSet, partNum, numLines, true, speedBase, speedRange, 
                                        1, 0, 0, 0, 0, false, palette->length, true);    
            
     //reset the particle and set its new spawn location

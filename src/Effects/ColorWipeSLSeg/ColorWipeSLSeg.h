@@ -185,15 +185,15 @@ class ColorWipeSLSeg : public EffectBasePS {
     public:
         //Constructor using pattern and palette
         ColorWipeSLSeg(SegmentSet &SegmentSet, palettePS &Palette, patternPS &Pattern, uint16_t WipeLength, uint8_t Style,
-                    bool Simult, bool Alternate, bool WipeDirect, bool SegMode, uint16_t Rate);  
+                       bool Simult, bool Alternate, bool WipeDirect, bool SegMode, uint16_t Rate);  
         
         //Constructor using palette alone 
         ColorWipeSLSeg(SegmentSet &SegmentSet, palettePS &Palette, uint16_t WipeLength, uint8_t Style,
-                    bool Simult, bool Alternate, bool WipeDirect, bool SegMode, uint16_t Rate); 
+                       bool Simult, bool Alternate, bool WipeDirect, bool SegMode, uint16_t Rate); 
 
         //Constructor for a single color wipe
         ColorWipeSLSeg(SegmentSet &SegmentSet, CRGB WipeColor, uint16_t WipeLength, uint8_t Style,
-                    bool Simult, bool Alternate, bool WipeDirect, bool SegMode, uint16_t Rate); 
+                       bool Simult, bool Alternate, bool WipeDirect, bool SegMode, uint16_t Rate); 
                 
         ~ColorWipeSLSeg();
 

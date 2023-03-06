@@ -30,13 +30,13 @@ passing in a segmentSet with only one segment containing the whole strip.
 Example calls: 
     uint8_t pattern_arr = {0, 1, 4};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-    RollingWavesSL(mainSegments, &pattern, &palette, 0, 7, 1, 0, 100);
+    RollingWavesSL(mainSegments, pattern, palette, 0, 7, 1, 0, 100);
     Will do a set of waves according to the pattern, with a blank background
     each wave will be 7 pixels long, using both types of trails
     there will be zero spacing between the waves
     The effect will update at a 100ms update rate
 
-    RollingWavesSL(mainSegments, &palette, 0, 9, 0, 2, 80);
+    RollingWavesSL(mainSegments, palette, 0, 9, 0, 2, 80);
     Will do a set of waves matching the input palette with an blank background
     Each wave will be 9 pixels long, the wave will consist of the trailing portion only
     There will be two spaces inbetween each wave,
@@ -103,10 +103,10 @@ Notes:
 class RollingWavesSL : public EffectBasePS {
     public:
         //Constructor with pattern
-        RollingWavesSL(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate); 
+        RollingWavesSL(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate); 
 
         //Constuctor with palette as pattern
-        RollingWavesSL(SegmentSet &SegmentSet, palettePS *Palette, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate);
+        RollingWavesSL(SegmentSet &SegmentSet, palettePS &Palette, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate);
 
         //Constructor with random colors
         RollingWavesSL(SegmentSet &SegmentSet, uint8_t NumColors, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate);
@@ -143,7 +143,7 @@ class RollingWavesSL : public EffectBasePS {
         void 
             setGradLength(uint8_t newGradLength),
             setSpacing(uint8_t newSpacing),
-            setPattern(patternPS *newPattern),
+            setPattern(patternPS &newPattern),
             setTrailMode(uint8_t newTrailMode),
             setPaletteAsPattern(),
             setTotalEffectLength(),
@@ -176,7 +176,7 @@ class RollingWavesSL : public EffectBasePS {
             setBg = false;
 
         CRGB 
-            desaturate(CRGB color, uint8_t step, uint8_t totalSteps),
+            desaturate(CRGB &color, uint8_t step, uint8_t totalSteps),
             currentColor,
             colorOut;
         

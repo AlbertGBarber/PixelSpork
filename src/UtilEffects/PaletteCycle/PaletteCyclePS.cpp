@@ -1,7 +1,7 @@
 #include "PaletteCyclePS.h"
 
-PaletteCyclePS::PaletteCyclePS(paletteSetPS *PaletteSet, bool Looped, bool RandomizePal, bool Shuffle, uint8_t TotalSteps, uint16_t Rate):
-    paletteSet(PaletteSet), looped(Looped), randomizePal(RandomizePal), shuffle(Shuffle)
+PaletteCyclePS::PaletteCyclePS(paletteSetPS &PaletteSet, bool Looped, bool RandomizePal, bool Shuffle, uint8_t TotalSteps, uint16_t Rate):
+    paletteSet(&PaletteSet), looped(Looped), randomizePal(RandomizePal), shuffle(Shuffle)
     {    
         bindClassRatesPS();
         //create an instance of PaletteBlenderPS to do the blends
@@ -9,11 +9,11 @@ PaletteCyclePS::PaletteCyclePS(paletteSetPS *PaletteSet, bool Looped, bool Rando
         //we'll change the initial start and end palettes officially below
         currentIndex = 0;
         nextIndex = addmod8( currentIndex, 1, paletteSet->length );
-        PB = new PaletteBlenderPS(paletteSet->getPalette(currentIndex), paletteSet->getPalette(nextIndex), false, TotalSteps, Rate);
+        PB = new PaletteBlenderPS(*paletteSet->getPalette(currentIndex), *paletteSet->getPalette(nextIndex), false, TotalSteps, Rate);
         //point the PB update rate to the same rate as the PaletteCyclePS instance, so they stay in sync
         PB->rate = rate;
         //setup the initial palette blend
-        reset(paletteSet);
+        reset(*paletteSet);
         //bind the output palette of PB to the output of the PaletteCycle 
         cyclePalette = &PB->blendPalette;
 	}
@@ -39,8 +39,8 @@ void PaletteCyclePS::reset(){
 //(the length usually would change depending on the lengths of the start and end palettes. which might change each cycle)
 //This should be ok because palettes wrap. So the blendPalette might have some repeated colors, but will still
 //be the correct blend overall. (see Notes for more on this)
-void PaletteCyclePS::reset(paletteSetPS *newPaletteSet){
-    paletteSet = newPaletteSet;
+void PaletteCyclePS::reset(paletteSetPS &newPaletteSet){
+    paletteSet = &newPaletteSet;
     //choose a new maximum palette length based on the palettes in the palette set
     maxPaletteLength = 0;
     for(uint8_t i = 0; i < paletteSet->length; i++){
@@ -109,7 +109,7 @@ void PaletteCyclePS::update(){
 
                 //If we're randomizing 
                 if(randomizePal){
-                    paletteUtilsPS::randomize( paletteSet->getPalette(nextIndex) );
+                    paletteUtilsPS::randomize( *paletteSet->getPalette(nextIndex) );
                 }
                 //set the palettes in the PaletteBlendPS instance manually
                 //(we're keeping close control of the length of the blendPalette (see note))

@@ -59,7 +59,7 @@ Notes:
 */
 class PaletteBlenderPS : public EffectBasePS {
     public:
-        PaletteBlenderPS(palettePS *StartPalette, palettePS *EndPalette, bool looped, uint8_t TotalSteps, uint16_t Rate);
+        PaletteBlenderPS(palettePS &StartPalette, palettePS &EndPalette, bool looped, uint8_t TotalSteps, uint16_t Rate);
         
         ~PaletteBlenderPS();
 
@@ -84,8 +84,8 @@ class PaletteBlenderPS : public EffectBasePS {
             *endPalette = nullptr;
         
         void
-            reset(palettePS *StartPalette, palettePS *EndPalette), //resets just the colors (also starts the blend again)
-            reset(palettePS *StartPalette, palettePS *EndPalette, uint8_t TotalSteps, uint16_t Rate), //resets all vars
+            reset(palettePS &StartPalette, palettePS &EndPalette), //resets just the colors (also starts the blend again)
+            reset(palettePS &StartPalette, palettePS &EndPalette, uint8_t TotalSteps, uint16_t Rate), //resets all vars
             reset(), //resets the loop vars, restarting the blend from the beginning
             setupBlendPalette(uint8_t blendPaletteLength), //used only by PaletteCycle, not for general use!
             update();

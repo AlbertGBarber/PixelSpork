@@ -94,7 +94,7 @@ Example calls:
     cMode is 0
     The effect updates at 80ms
     
-    NoiseSL(mainSegments, &palette1, 40, 5, 95, 20, 0, 80);
+    NoiseSL(mainSegments, palette1, 40, 5, 95, 20, 0, 80);
     Will produce a noise effect with using colors from palette1
     There are 40 blend steps between each color
     A base scaling value of 5 will be applied with a range of 95 (max scale is 100)
@@ -139,7 +139,7 @@ class NoiseSL : public EffectBasePS {
         NoiseSL(SegmentSet &SegmentSet, uint8_t numColors, uint16_t BlendSteps, uint16_t ScaleBase, uint16_t ScaleRange, uint16_t Speed, uint8_t CMode, uint16_t Rate);
 
         //Constructor using palette
-        NoiseSL(SegmentSet &SegmentSet, palettePS *Palette, uint16_t BlendSteps, uint16_t ScaleBase, uint16_t ScaleRange, uint16_t Speed, uint8_t CMode, uint16_t Rate); 
+        NoiseSL(SegmentSet &SegmentSet, palettePS &Palette, uint16_t BlendSteps, uint16_t ScaleBase, uint16_t ScaleRange, uint16_t Speed, uint8_t CMode, uint16_t Rate); 
 
         ~NoiseSL();
 

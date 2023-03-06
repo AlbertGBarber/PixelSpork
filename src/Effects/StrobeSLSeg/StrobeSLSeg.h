@@ -80,21 +80,21 @@ There are quite a lot of extra configuration options to help make more dynamic s
 Example calls: 
     uint8_t pattern_arr = {0, 1, 4};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-    StrobeSLSeg(ringSegments, &pattern, &palette1, 0, 4, 0, true, true, false, false, false, 50);
+    StrobeSLSeg(ringSegments, pattern, palette1, 0, 4, 0, true, true, false, false, false, 50);
     setNewColorBool(true); (sets newColor flag)
     Will do a set of strobes using palette1 and strobe modes 0 and 1.
     The background is blank, there are 4 pulses per strobe with 50ms between each
     The pause time is 0
     The effect has been set to do a new color for each set of pulses
 
-    StrobeSLSeg(ringSegments, &palette1, 0, 4, 0, true, true, false, false, false, 50);
+    StrobeSLSeg(ringSegments, palette1, 0, 4, 0, true, true, false, false, false, 50);
     setNewColorBool(true); (sets newColor flag)
     Will do a set of strobes using palette1 and strobe modes 0 and 1.
     The background is blank, there are 4 pulses per strobe with 50ms between each
     The pause time is 0
     The effect has been set to do a new color for each set of pulses
 
-    StrobeSLSeg(ringSegments, &palette1, CRGB::Red, 2, 500, true, false, false, false, true, 100);
+    StrobeSLSeg(ringSegments, palette1, CRGB::Red, 2, 500, true, false, false, false, true, 100);
     alternate = true;
     fillBG = false;
     fillBGOnPause = false;
@@ -141,7 +141,7 @@ Functions:
     setNewColorBool(newColorBool) -- Changes the newColor flag
                                      The newColor flag determines if a new color is choosen every set of pulses
                                      or after every strobe cycle
-    setPattern(*newPattern) -- Changes the pattern, also re-caculates the number of strobe cycles to do
+    setPattern(&newPattern) -- Changes the pattern, also re-caculates the number of strobe cycles to do
     setPulseMode() -- Advances the pulse mode to the next mode (only call this if you manually want to change the mode)
     setCycleCountMax() -- Re-caculates how many strobe cycles to do based on the palette length (only need to call manually if you're doing something funky)                                                     
     update() -- updates the effect
@@ -174,11 +174,11 @@ class StrobeSLSeg : public EffectBasePS {
     public:
 
         //constructor for pattern and palette ver
-        StrobeSLSeg(SegmentSet &SegmentSet, patternPS *pattern, palettePS *Palette, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, 
+        StrobeSLSeg(SegmentSet &SegmentSet, patternPS &pattern, palettePS &Palette, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, 
                     bool SegEach, bool SegDual, bool SegLine, bool SegLineDual, bool SegAll, uint16_t Rate);
 
         //constructor for palette ver
-        StrobeSLSeg(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, 
+        StrobeSLSeg(SegmentSet &SegmentSet, palettePS &Palette, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, 
                     bool SegEach, bool SegDual, bool SegLine, bool SegLineDual, bool SegAll, uint16_t Rate);
 
         //constructor for single color ver
@@ -240,7 +240,7 @@ class StrobeSLSeg : public EffectBasePS {
             setPulseMode(),
             setCycleCountMax(),
             setPaletteAsPattern(),
-            setPattern(patternPS *newPattern),
+            setPattern(patternPS &newPattern),
             setNewColorBool(bool newColorBool),
             update(void);
     

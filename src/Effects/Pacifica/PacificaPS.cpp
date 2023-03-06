@@ -69,7 +69,7 @@ void PacificaPS::doOneLayer(palettePS *palette, uint16_t cistart, uint16_t waves
             index = scale16( sindex16, totBlendLength );
 
             //returns the blended color from the palette mapped into numSteps
-            colorOut = paletteUtilsPS::getPaletteGradColor(palette, index, 0, totBlendLength, numSteps);
+            colorOut = paletteUtilsPS::getPaletteGradColor(*palette, index, 0, totBlendLength, numSteps);
             nscale8x3(colorOut.r, colorOut.g, colorOut.b, bri);
             pixelNum = segDrawUtils::getSegmentPixel(segmentSet, i, j);
 

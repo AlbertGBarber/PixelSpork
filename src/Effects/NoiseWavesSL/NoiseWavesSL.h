@@ -56,7 +56,7 @@ Example calls:
     (even at the slowest the waves still move pretty quick)
     The effect updates at 80ms
     
-    NoiseWavesSL(ringSegments, &palette1, 0, 10, 2, 10, 80);
+    NoiseWavesSL(ringSegments, palette1, 0, 10, 2, 10, 80);
     Will produce an effect using colors from palette1
     The background is blank
     The blend scale is 30, while the phaseScale is 5 and the freqScale is 7
@@ -84,7 +84,7 @@ Functions:
 class NoiseWavesSL : public EffectBasePS {
     public:
         //Constructor with palette
-        NoiseWavesSL(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint16_t BlendScale, uint8_t PhaseScale, uint8_t FreqScale, uint16_t Rate);  
+        NoiseWavesSL(SegmentSet &SegmentSet, palettePS &Palette, CRGB BgColor, uint16_t BlendScale, uint8_t PhaseScale, uint8_t FreqScale, uint16_t Rate);  
         
         //Constructor with randomly generated palette
         NoiseWavesSL(SegmentSet &SegmentSet, uint8_t numColors, CRGB BgColor, uint16_t BlendScale, uint8_t PhaseScale, uint8_t FreqScale, uint16_t Rate);

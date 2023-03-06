@@ -51,12 +51,12 @@ Example calls:
     palettePS *paletteArr[] = { &palette1, &palette2, etc};
     paletteSetPS paletteSet = {paletteArr, SIZE(paletteArr)};
 
-    PaletteCyclePS(&paletteSet, true, false, false, 50, 80);
+    PaletteCyclePS(paletteSet, true, false, false, 50, 80);
     Blends between each palette in the array in order, looping back to the first palette at the end
     The palettes are not randomized or shuffled
     each blend takes 50 steps, with 80ms between each step
 
-    PaletteCyclePS(&paletteSet, true, true, false, 50, 80);
+    PaletteCyclePS(paletteSet, true, true, false, 50, 80);
     Blends between each palette in the array in order, looping back to the first palette at the end
     The palettes are randomized, but not shuffled
     each blend takes 50 steps, with 80ms between each step
@@ -74,7 +74,7 @@ Constructor Inputs:
     rate -- The update rate of the blend (ms)
 
 Functions:
-    reset(*newPaletteSet) -- Restarts the blend with a new palette set, with the same steps and update rate
+    reset(&newPaletteSet) -- Restarts the blend with a new palette set, with the same steps and update rate
     reset() -- Restarts the blend (all settings and palettes stay the same)
     setTotalSteps(newTotalSteps) -- changes the total number of steps used in the blends (set in the PB instance, see PaletteBlenderPS)
     getTotalSteps() -- Returns the number of steps being used for the blend (set in the PB instance, see PaletteBlenderPS)
@@ -89,7 +89,7 @@ Flags:
 */
 class PaletteCyclePS : public EffectBasePS {
     public:
-        PaletteCyclePS(paletteSetPS *PaletteSet, bool Looped, bool RandomizePal, bool Shuffle, uint8_t TotalSteps, uint16_t Rate);  
+        PaletteCyclePS(paletteSetPS &PaletteSet, bool Looped, bool RandomizePal, bool Shuffle, uint8_t TotalSteps, uint16_t Rate);  
 
         ~PaletteCyclePS();
         
@@ -114,7 +114,7 @@ class PaletteCyclePS : public EffectBasePS {
 
         void 
             reset(),
-            reset(paletteSetPS *newPaletteSet),
+            reset(paletteSetPS &newPaletteSet),
             setTotalSteps(uint8_t newTotalSteps),
             setPauseTime(uint16_t newPauseTime),
             update(void);

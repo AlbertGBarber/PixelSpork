@@ -65,13 +65,13 @@ randModes:
 Example calls: 
     uint8_t pattern_arr = {0, 1, 4};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-    BreathPS(mainSegments, &pattern, &palette3, 0, 10, true, true, 10, 50);
+    BreathPS(mainSegments, pattern, palette3, 0, 10, true, true, 10, 50);
     Does a breathing cycle using the colors from palette3, following the pattern above
     The background is blank
     The eyeHalfSize is 10, the eye wraps, and the eye position will be set randomly for each cycle.
     The breathFreq is 10, the effect updates at 50ms
 
-    BreathPS(mainSegments, &palette3, 0, 8, true, false, 5, 50);
+    BreathPS(mainSegments, palette3, 0, 8, true, false, 5, 50);
     Does a breathing cycle using the colors from palette3 in order
     The background is blank
     The eyeHalfSize is 8, the eye wraps,
@@ -145,10 +145,10 @@ Reference vars:
 class BreathEyeSL : public EffectBasePS {
     public:
         //Consturctor for using a pattern and palette
-        BreathEyeSL(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, CRGB BgColor, uint16_t EyeHalfSize, bool Wrap, bool RandEyePos, uint8_t BreathFreq, uint16_t Rate);
+        BreathEyeSL(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint16_t EyeHalfSize, bool Wrap, bool RandEyePos, uint8_t BreathFreq, uint16_t Rate);
 
         //Constructor for using palette as pattern
-        BreathEyeSL(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint16_t EyeHalfSize, bool Wrap, bool RandEyePos, uint8_t BreathFreq, uint16_t Rate);
+        BreathEyeSL(SegmentSet &SegmentSet, palettePS &Palette, CRGB BgColor, uint16_t EyeHalfSize, bool Wrap, bool RandEyePos, uint8_t BreathFreq, uint16_t Rate);
 
         //Constructor for a single color breath (pass in 0 as the color to trigger randMode 2, fully random)
         BreathEyeSL(SegmentSet &SegmentSet, CRGB color, CRGB BgColor, uint8_t MaxBreath, uint16_t EyeHalfSize, bool Wrap, bool RandEyePos, uint8_t BreathFreq, uint16_t Rate); 

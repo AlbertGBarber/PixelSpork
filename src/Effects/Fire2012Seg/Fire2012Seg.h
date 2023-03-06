@@ -44,7 +44,7 @@ Example calls:
     CRGB firePalette_arr[] = { CRGB::Red, CRGB{255, 143, 0}, CRGB{255, 255, 100} };
     palettePS firePalette = {firePalette_arr, SIZE(firePalette_arr)};
 
-    Fire2012Seg(mainSegments, &firePalette, 0, 50, 90, true, 70);
+    Fire2012Seg(mainSegments, firePalette, 0, 50, 90, true, 70);
     Does a blended fire using the firePalette with a blank background
     cooling is set to 50 and sparking is set to 90
     The fire updates at 70ms
@@ -66,7 +66,7 @@ Functions:
 */
 class Fire2012Seg : public EffectBasePS {
     public:
-        Fire2012Seg(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint8_t Cooling, uint8_t Sparking, bool Blend, uint16_t Rate);  
+        Fire2012Seg(SegmentSet &SegmentSet, palettePS &Palette, CRGB BgColor, uint8_t Cooling, uint8_t Sparking, bool Blend, uint16_t Rate);  
         
         ~Fire2012Seg();
 

@@ -14,8 +14,8 @@ ColorMeltSL::ColorMeltSL(SegmentSet &SegmentSet, uint8_t MeltFreq, uint8_t Phase
 	}
 
 //Constructor for colors from palette
-ColorMeltSL::ColorMeltSL(SegmentSet &SegmentSet, palettePS *Palette, uint8_t MeltFreq, uint8_t PhaseFreq, bool BriInvert, uint16_t Rate):
-    segmentSet(SegmentSet), palette(Palette), meltFreq(MeltFreq), phaseFreq(PhaseFreq), briInvert(BriInvert)
+ColorMeltSL::ColorMeltSL(SegmentSet &SegmentSet, palettePS &Palette, uint8_t MeltFreq, uint8_t PhaseFreq, bool BriInvert, uint16_t Rate):
+    segmentSet(SegmentSet), palette(&Palette), meltFreq(MeltFreq), phaseFreq(PhaseFreq), briInvert(BriInvert)
     {    
         init(Rate);
 	}
@@ -112,7 +112,7 @@ void ColorMeltSL::update(){
             if(rainbowMode){
                 colorOut = CHSV(c1 + t2, 255, v);
             } else {
-                colorOut = paletteUtilsPS::getPaletteGradColor(palette, c1 + t2, 0, 255, blendLength);
+                colorOut = paletteUtilsPS::getPaletteGradColor(*palette, c1 + t2, 0, 255, blendLength);
                 nscale8x3(colorOut.r, colorOut.g, colorOut.b, v);
             }
 

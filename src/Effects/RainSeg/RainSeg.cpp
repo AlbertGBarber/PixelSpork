@@ -1,10 +1,9 @@
 #include "RainSeg.h"
 
 //constructor for palette colors, no range options
-RainSeg::RainSeg(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, bool BgPrefill, uint8_t SpawnChance, 
+RainSeg::RainSeg(SegmentSet &SegmentSet, palettePS &Palette, CRGB BgColor, bool BgPrefill, uint8_t SpawnChance, 
                     uint8_t MaxNumDrops, uint16_t Size, uint8_t TrailType, uint8_t TrailSize, uint16_t Rate):
-
-    segmentSet(SegmentSet), palette(Palette), bgPrefill(BgPrefill), spawnChance(SpawnChance), 
+    segmentSet(SegmentSet), palette(&Palette), bgPrefill(BgPrefill), spawnChance(SpawnChance), 
     size(Size), trailType(TrailType), trailSize(TrailSize)
     {    
         speedRange = 0;
@@ -14,12 +13,11 @@ RainSeg::RainSeg(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, bool 
 	}
 
 //constructor for palette colors with range and trail options
-RainSeg::RainSeg(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, bool BgPrefill, uint8_t SpawnChance, 
+RainSeg::RainSeg(SegmentSet &SegmentSet, palettePS &Palette, CRGB BgColor, bool BgPrefill, uint8_t SpawnChance, 
                     uint8_t MaxNumDrops, uint16_t Size, uint16_t SizeRange, uint8_t TrailSize,
                     uint8_t TrailRange, bool NoTrails, bool OneTrail, bool TwoTrail, bool RevTrail, 
                     bool InfTrail, uint16_t Rate, uint16_t SpeedRange):
-
-    segmentSet(SegmentSet), palette(Palette), bgPrefill(BgPrefill), spawnChance(SpawnChance), size(Size), 
+    segmentSet(SegmentSet), palette(&Palette), bgPrefill(BgPrefill), spawnChance(SpawnChance), size(Size), 
     sizeRange(SizeRange), trailSize(TrailSize), trailRange(TrailRange), noTrails(NoTrails), oneTrail(OneTrail),
     twoTrail(TwoTrail), revTrail(RevTrail), infTrail(InfTrail), speedRange(SpeedRange) 
     {   
@@ -30,7 +28,6 @@ RainSeg::RainSeg(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, bool 
 //constructor for single color, no range options
 RainSeg::RainSeg(SegmentSet &SegmentSet, CRGB Color, CRGB BgColor, bool BgPrefill, uint8_t SpawnChance, 
                     uint8_t MaxNumDrops, uint16_t Size, uint8_t TrailType, uint8_t TrailSize, uint16_t Rate):
-
     segmentSet(SegmentSet), bgPrefill(BgPrefill), spawnChance(SpawnChance), size(Size), trailType(TrailType), trailSize(TrailSize)
     {    
         speedRange = 0;
@@ -47,7 +44,6 @@ RainSeg::RainSeg(SegmentSet &SegmentSet, CRGB Color, CRGB BgColor, bool BgPrefil
                     uint8_t MaxNumDrops, uint16_t Size, uint16_t SizeRange, uint8_t TrailSize,
                     uint8_t TrailRange, bool NoTrails, bool OneTrail, bool TwoTrail, bool RevTrail, 
                     bool InfTrail, uint16_t Rate, uint16_t SpeedRange):
-
     segmentSet(SegmentSet), bgPrefill(BgPrefill), spawnChance(SpawnChance), size(Size), sizeRange(SizeRange), 
     trailSize(TrailSize), trailRange(TrailRange), noTrails(NoTrails), oneTrail(OneTrail),
     twoTrail(TwoTrail), revTrail(RevTrail), infTrail(InfTrail), speedRange(SpeedRange) 
@@ -61,7 +57,7 @@ RainSeg::RainSeg(SegmentSet &SegmentSet, CRGB Color, CRGB BgColor, bool BgPrefil
 
 RainSeg::~RainSeg(){
     //Free all particles and the particle array pointer
-    particleUtilsPS::freeParticleSet(&particleSetTemp);
+    particleUtilsPS::freeParticleSet(particleSetTemp);
     free(partActive);
     free(trailEndColors);
     free(paletteTemp.paletteArr);
@@ -118,7 +114,7 @@ void RainSeg::setupDrops(uint8_t newMaxNumDrops){
         partActive = (bool*) malloc(numParticles * sizeof(bool) );
 
         //Free all particles and the particle array pointer
-        particleUtilsPS::freeParticleSet(&particleSetTemp);
+        particleUtilsPS::freeParticleSet(particleSetTemp);
 
         //create a new particle set
         particleSetTemp = particleUtilsPS::buildParticleSet(numParticles, 0, true, *rate, speedRange, size, sizeRange, 
@@ -126,7 +122,7 @@ void RainSeg::setupDrops(uint8_t newMaxNumDrops){
         particleSet = &particleSetTemp;
         //for trailType 6, we'll set the particle trails randomly based on the trail flags
         if(trailType == 6){
-            particleUtilsPS::setAllTrailRand(particleSet, noTrails, oneTrail, twoTrail, revTrail, infTrail);
+            particleUtilsPS::setAllTrailRand(*particleSet, noTrails, oneTrail, twoTrail, revTrail, infTrail);
         }
     }
 
@@ -255,7 +251,7 @@ void RainSeg::update(){
                     partTrailType = particlePtr->trailType; //the type of trail for the particle (see above for types)
                     partTrailSize = particlePtr->trailSize; //the length of the trail(s) of the particle (only applies if the pixel has a trail)
                     
-                    colorOut = paletteUtilsPS::getPaletteColor(palette, particlePtr->colorIndex);
+                    colorOut = paletteUtilsPS::getPaletteColor(*palette, particlePtr->colorIndex);
                     //calculate the maximum position the particle can have before all of it is off the segment
                     totPartSize = partTrailSize + partSize;
 
@@ -460,10 +456,10 @@ void RainSeg::spawnParticle(uint8_t particleIndex, uint8_t segNum){
     //set the particle to active
     partActive[particleIndex] = true;
     //randomize the particle properties
-    particleUtilsPS::randomizeParticle(particleSet, particleIndex, 0, true, *rate, speedRange, size, sizeRange, 
+    particleUtilsPS::randomizeParticle(*particleSet, particleIndex, 0, true, *rate, speedRange, size, sizeRange, 
                                        trailType, trailSize, trailRange, false, palette->length, true);
     if(trailType == 6){
-        particleUtilsPS::setTrailRand(particleSet, particleIndex, noTrails, oneTrail, twoTrail, revTrail, infTrail);
+        particleUtilsPS::setTrailRand(*particleSet, particleIndex, noTrails, oneTrail, twoTrail, revTrail, infTrail);
     }
 
     //reset the particle and set its new spawn location
@@ -473,7 +469,7 @@ void RainSeg::spawnParticle(uint8_t particleIndex, uint8_t segNum){
 
     //draw the first step of the particle
     //for particles with leading trails, the first step is the end of the trail
-    colorOut = paletteUtilsPS::getPaletteColor(palette, particlePtr->colorIndex);
+    colorOut = paletteUtilsPS::getPaletteColor(*palette, particlePtr->colorIndex);
     partTrailType = particlePtr->trailType;
     if(partTrailType == 2 || partTrailType == 3){
         drawParticlePixel(0, particlePtr->trailSize, particlePtr->trailSize, segNum, true);

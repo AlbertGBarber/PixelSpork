@@ -139,7 +139,7 @@ void PacificaHueSL::doOneLayer(palettePS *palette, uint16_t cistart, uint16_t wa
         sindex16 = sin16( ci ) + 32768;
         index = scale16( sindex16, totBlendLength );
         //returns the blended color from the palette mapped into numSteps
-        colorOut = paletteUtilsPS::getPaletteGradColor(palette, index, 0, totBlendLength, numSteps);
+        colorOut = paletteUtilsPS::getPaletteGradColor(*palette, index, 0, totBlendLength, numSteps);
         nscale8x3(colorOut.r, colorOut.g, colorOut.b, bri);
 
         //output the color to all the line segment pixels

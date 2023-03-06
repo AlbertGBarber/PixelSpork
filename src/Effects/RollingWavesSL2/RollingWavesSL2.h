@@ -48,13 +48,13 @@ This is controlled by the randMode setting
 Example calls: 
     uint8_t pattern_arr = {0, 1, 4};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-    RollingWavesSL2(mainSegments, &pattern, &palette, 0, 7, 1, 0, 100);
+    RollingWavesSL2(mainSegments, pattern, palette, 0, 7, 1, 0, 100);
     Will do a set of waves according to the pattern, with a blank background
     each wave will be 7 pixels long, using both types of trails
     there will be zero spacing between the waves
     The effect will update at a 100ms
 
-    RollingWavesSL2(mainSegments, &palette, 0, 9, 0, 2, 80);
+    RollingWavesSL2(mainSegments, palette, 0, 9, 0, 2, 80);
     Will do a set of waves matching the input palette with an blank background
     Each wave will be 9 pixels long, the wave will consist of the trailing portion only
     There will be two spaces inbetween each wave,
@@ -129,10 +129,10 @@ Notes:
 class RollingWavesSL2 : public EffectBasePS {
     public:
         //Constructor with pattern
-        RollingWavesSL2(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate); 
+        RollingWavesSL2(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate); 
 
         //Constuctor with palette as pattern
-        RollingWavesSL2(SegmentSet &SegmentSet, palettePS *Palette, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate);
+        RollingWavesSL2(SegmentSet &SegmentSet, palettePS &Palette, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate);
 
         //Constructor with random colors
         RollingWavesSL2(SegmentSet &SegmentSet, uint8_t NumColors, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate);
@@ -207,7 +207,7 @@ class RollingWavesSL2 : public EffectBasePS {
 
         CRGB 
             getWaveColor(uint8_t step),
-            desaturate(CRGB color, uint8_t step, uint8_t totalSteps),
+            desaturate(CRGB &color, uint8_t step, uint8_t totalSteps),
             currentColor,
             colorOut;
         

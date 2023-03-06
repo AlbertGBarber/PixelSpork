@@ -69,7 +69,7 @@ Example calls:
     };
     shiftPatternPS basicPattern(basicPattern_arr, SIZE(basicPattern_arr), patternSegs);
 
-    PatternShifterSeg(mainSegments, &basicPattern, &palette1, 0, false, false, true, 100);
+    PatternShifterSeg(mainSegments, basicPattern, palette1, 0, false, false, true, 100);
     Will shift the "basicPattern" across the segment set using colors from palette1
     The background is blank
     The pattern is not repeated across segment lines or segments
@@ -106,7 +106,7 @@ Reference Vars:
 */
 class PatternShifterSeg : public EffectBasePS {
     public:
-        PatternShifterSeg(SegmentSet &SegmentSet, shiftPatternPS *ShiftPattern, palettePS *Palette, CRGB BgColor, 
+        PatternShifterSeg(SegmentSet &SegmentSet, shiftPatternPS &ShiftPattern, palettePS &Palette, CRGB BgColor, 
                           bool RepeatLine, bool RepeatSeg, bool Direct, uint16_t Rate);  
 
         SegmentSet 
@@ -135,7 +135,7 @@ class PatternShifterSeg : public EffectBasePS {
             *palette = nullptr;
 
         void 
-            setShiftPattern(shiftPatternPS *newShiftPattern),
+            setShiftPattern(shiftPatternPS &newShiftPattern),
             setRepeat(bool newRepeatSeg, bool newRepeatLine),
             reset(),
             update(void);

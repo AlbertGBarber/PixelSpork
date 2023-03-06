@@ -1,8 +1,8 @@
 #include "TwinkleSL.h"
 
 //palette based constructor
-TwinkleSL::TwinkleSL(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint16_t NumTwinkles, uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate):
-    segmentSet(SegmentSet), palette(Palette), numTwinkles(NumTwinkles)
+TwinkleSL::TwinkleSL(SegmentSet &SegmentSet, palettePS &Palette, CRGB BgColor, uint16_t NumTwinkles, uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate):
+    segmentSet(SegmentSet), palette(&Palette), numTwinkles(NumTwinkles)
     {    
         init(FadeInSteps, FadeOutSteps, BgColor, Rate);
 	}
@@ -221,7 +221,7 @@ void TwinkleSL::update(){
 CRGB TwinkleSL::pickColor(){
     switch (randMode) {
         case 0: // we're picking from a set of colors 
-            twinkleColor = paletteUtilsPS::getPaletteColor(palette, random8(paletteLength));
+            twinkleColor = paletteUtilsPS::getPaletteColor(*palette, random8(paletteLength));
             break;
         default: //(mode 1) set colors at random
             twinkleColor = colorUtilsPS::randColor();

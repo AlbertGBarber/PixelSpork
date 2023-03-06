@@ -24,7 +24,7 @@ Example call:
     Will choose 2 lines each cycle to fade to/from red each cycle, using a blue background, 
     with 4 fade in and out steps, at a rate of 70ms
 
-    TwinkleSL(mainSegments, &palette1, 0, 3, 1, 6, 60);
+    TwinkleSL(mainSegments, palette1, 0, 3, 1, 6, 60);
     Will choose 3 lines each cycle to fade to/from colors choosen from the palette, using a blank background,
     with 1 fade in and 6 fade out steps, at a rate of 60ms
 
@@ -80,7 +80,7 @@ Notes:
 class TwinkleSL : public EffectBasePS {
     public:
         //Constructor for a full palette effect
-        TwinkleSL(SegmentSet &SegmentSet, palettePS *Palette, CRGB BgColor, uint16_t numTwinkles, uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate);  
+        TwinkleSL(SegmentSet &SegmentSet, palettePS &Palette, CRGB BgColor, uint16_t numTwinkles, uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate);  
         
         //Constructor for a using a single color
         TwinkleSL(SegmentSet &SegmentSet, CRGB Color, CRGB BgColor, uint16_t numTwinkles, uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate);

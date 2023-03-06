@@ -14,8 +14,8 @@ EdgeBurstSL::EdgeBurstSL(SegmentSet &SegmentSet, uint8_t BurstFreq, uint16_t Rat
 	}
 
 //Constructor for colors from palette
-EdgeBurstSL::EdgeBurstSL(SegmentSet &SegmentSet, palettePS *Palette, uint8_t BurstFreq, uint16_t Rate):
-    segmentSet(SegmentSet), burstFreq(BurstFreq), palette(Palette)
+EdgeBurstSL::EdgeBurstSL(SegmentSet &SegmentSet, palettePS &Palette, uint8_t BurstFreq, uint16_t Rate):
+    segmentSet(SegmentSet), burstFreq(BurstFreq), palette(&Palette)
     {    
         init(Rate);
 	}
@@ -112,7 +112,7 @@ void EdgeBurstSL::update(){
             if(rainbowMode){
                 colorOut = CHSV(h, 255, v);
             } else {
-                colorOut = paletteUtilsPS::getPaletteGradColor(palette, h, 0, 255, blendLength);
+                colorOut = paletteUtilsPS::getPaletteGradColor(*palette, h, 0, 255, blendLength);
                 nscale8x3(colorOut.r, colorOut.g, colorOut.b, v);
             }
 
@@ -138,6 +138,6 @@ void EdgeBurstSL::pickRandStart(){
     burstCount++;
     offset = random16(numLines);
     if(randomizePal){
-        paletteUtilsPS::randomize(&paletteTemp);
+        paletteUtilsPS::randomize(paletteTemp);
     }
 }

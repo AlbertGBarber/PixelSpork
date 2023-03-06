@@ -38,11 +38,11 @@ This is controlled by the randMode setting
 Example calls: 
     uint8_t pattern_arr = {0, 1, 4};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-    GradientCycleFastSL(mainSegments, &pattern, &palette, 10, 100);
+    GradientCycleFastSL(mainSegments, pattern, palette, 10, 100);
     Will do a gradient cycle from color 0, to color 1, to color 4, of the palette
     with 10 steps to each gradient, and a 100ms update rate
 
-    GradientCycleFastSL(mainSegments, &palette, 10, 100);
+    GradientCycleFastSL(mainSegments, palette, 10, 100);
     Will do a gradient cycle using the colors in the palette, with 10 steps to each gradient,and a 100ms update rate
 
     GradientCycleFastSL(mainSegments, 3, 15, 80);
@@ -81,10 +81,10 @@ Flags:
 class GradientCycleFastSL : public EffectBasePS {
     public:
         //Constructor for using pattern
-        GradientCycleFastSL(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, uint8_t GradLength, uint16_t Rate); 
+        GradientCycleFastSL(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, uint8_t GradLength, uint16_t Rate); 
 
         //Constructor for using the palette as the pattern
-        GradientCycleFastSL(SegmentSet &SegmentSet, palettePS *Palette, uint8_t GradLength, uint16_t Rate);
+        GradientCycleFastSL(SegmentSet &SegmentSet, palettePS &Palette, uint8_t GradLength, uint16_t Rate);
 
         //Constructor for using a random palette as the pattern
         GradientCycleFastSL(SegmentSet &SegmentSet, uint8_t NumColors, uint8_t GradLength, uint16_t Rate);

@@ -50,7 +50,7 @@ Notes:
 Example calls: 
     uint8_t pattern_arr = {0, 255, 255, 255, 1, 1, 255, 255};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-    StreamerSL(mainSegments, &pattern, &palette3, 0, 30, 20);
+    StreamerSL(mainSegments, pattern, palette3, 0, 30, 20);
     Will do a set of streamers using the first two colors in the palette
     The streamer will begin with 1 pixel of color 0, with three spaces after, followed by 2 pixels of color 1, followed by 2 spaces
     The bgColor is zero (off)
@@ -58,7 +58,7 @@ Example calls:
 
     uint8_t pattern_arr = {1, 2, 3};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-    StreamerSL(mainSegments, &pattern, &palette3, 3, 4, 0, 0, 120);
+    StreamerSL(mainSegments, pattern, palette3, 3, 4, 0, 0, 120);
     Will do a streamer using the first three colors of the palette (taken from the pattern)
     Each streamer will be length 3, followed by 4 spaces, bgColor is 0 (off)
     The fade steps are set to zero, so there is no blending, 
@@ -87,10 +87,10 @@ Constructor Inputs:
 
 Functions:
     reset() -- Restarts the streamer pattern, you should call this if you change segment sets as well.
-    setPatternAsPattern(*inputPattern, colorLength, spacing) -- Takes an input pattern and creates a streamer pattern from it using the current palette
+    setPatternAsPattern(&inputPattern, colorLength, spacing) -- Takes an input pattern and creates a streamer pattern from it using the current palette
                                                                 Ex: uint8_t pattern_arr = {1, 2, 3};
                                                                     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-                                                                    setPatternAsPattern(&pattern, 3, 4) 
+                                                                    setPatternAsPattern(pattern, 3, 4) 
                                                                     Will do a streamer using the first three colors of the palette (taken from the pattern)
                                                                     Each streamer will be length 3, followed by 4 spaces
     setPaletteAsPattern(uint8_t colorLength, uint8_t spacing) -- Like the previous function, but all of the current palette will be used for the pattern                                                       
@@ -110,13 +110,13 @@ Reference Vars:
 class StreamerSL : public EffectBasePS {
     public:
         //Constructor for using the passed in pattern and palette for the streamer
-        StreamerSL(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate);  
+        StreamerSL(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate);  
 
         //Constructor for building the streamer pattern from the passed in pattern and the palette, using the passed in colorLength and spacing
-        StreamerSL(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate);
+        StreamerSL(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate);
         
         //Constructor for building a streamer using all the colors in the passed in palette, using the colorLength and spacing for each color
-        StreamerSL(SegmentSet &SegmentSet, palettePS *Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate);
+        StreamerSL(SegmentSet &SegmentSet, palettePS &Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate);
 
         //Constructor for doing a single colored streamer, using colorLength and spacing
         StreamerSL(SegmentSet &SegmentSet, CRGB Color, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate);
@@ -151,7 +151,7 @@ class StreamerSL : public EffectBasePS {
         
         void 
             init(CRGB BgColor, uint16_t Rate),
-            setPatternAsPattern(patternPS *inputPattern, uint8_t colorLength, uint8_t spacing),
+            setPatternAsPattern(patternPS &inputPattern, uint8_t colorLength, uint8_t spacing),
             setPaletteAsPattern(uint8_t colorLength, uint8_t spacing),
             reset(),
             update(void);
@@ -162,7 +162,6 @@ class StreamerSL : public EffectBasePS {
             prevTime = 0;
         
         uint8_t
-            *pattern_arr = nullptr,
             nextPattern,
             blendStep = 0;
         

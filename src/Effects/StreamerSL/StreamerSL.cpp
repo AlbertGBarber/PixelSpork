@@ -1,23 +1,23 @@
  #include "StreamerSL.h"
 
 //constructor for using the passed in pattern and palette for the streamer
-StreamerSL::StreamerSL(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate):
-    segmentSet(SegmentSet), pattern(Pattern), palette(Palette), fadeSteps(FadeSteps)
+StreamerSL::StreamerSL(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate):
+    segmentSet(SegmentSet), pattern(&Pattern), palette(&Palette), fadeSteps(FadeSteps)
     {    
         init(BgColor, Rate);
 	}
 
 //constructor for building the streamer pattern from the passed in pattern and the palette, using the passed in colorLength and spacing
-StreamerSL::StreamerSL(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate):
-    segmentSet(SegmentSet), palette(Palette), fadeSteps(FadeSteps)
+StreamerSL::StreamerSL(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate):
+    segmentSet(SegmentSet), palette(&Palette), fadeSteps(FadeSteps)
     {    
         setPatternAsPattern(Pattern, ColorLength, Spacing);
         init(BgColor, Rate);
 	}
 
 //constructor for building a streamer using all the colors in the passed in palette, using the colorLength and spacing for each color
-StreamerSL::StreamerSL(SegmentSet &SegmentSet, palettePS *Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate):
-    segmentSet(SegmentSet), palette(Palette), fadeSteps(FadeSteps)
+StreamerSL::StreamerSL(SegmentSet &SegmentSet, palettePS &Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate):
+    segmentSet(SegmentSet), palette(&Palette), fadeSteps(FadeSteps)
     {    
         setPaletteAsPattern(ColorLength, Spacing);
         init(BgColor, Rate);
@@ -36,7 +36,7 @@ StreamerSL::StreamerSL(SegmentSet &SegmentSet, CRGB Color, uint8_t ColorLength, 
 //destructor
 StreamerSL::~StreamerSL(){
     free(paletteTemp.paletteArr);
-    free(pattern_arr);
+    free(patternTemp.patternArr);
     free(prevLineColors);
 }
 
@@ -60,33 +60,9 @@ void StreamerSL::init(CRGB BgColor, uint16_t Rate){
 //then sets this pattern to be the streamer pattern
 //ex : inputPattern is {1, 2, 4} with color length 2, and 1 spacing
 //the streamer pattern would be: {1, 1, 255, 2, 2, 255, 4, 4, 255}
-void StreamerSL::setPatternAsPattern(patternPS *inputPattern, uint8_t colorLength, uint8_t spacing){
-    uint8_t patternIndex;
-    uint8_t repeatLength = (colorLength + spacing); //the total length taken up by a single color and spacing
-    uint16_t patternLength = inputPattern->length;
-    uint16_t totalPatternLength = patternLength * repeatLength; 
-    //create new storage for the pattern array
-    free(pattern_arr);
-    pattern_arr = (uint8_t*) malloc(totalPatternLength*sizeof(uint8_t));
-
-    //for each color in the inputPattern, we fill in the color and spacing for the output pattern
-    for(uint16_t i = 0; i < patternLength; i++){
-        patternIndex = patternUtilsPS::getPatternVal(inputPattern, i);
-        //for each color in the pattern we run over the length of the color and spacing
-        //for the indexes up to color length, we set them as the current patternIndex
-        //after that we set them as spacing (255)
-        for(uint8_t j = 0; j < repeatLength; j++){
-            if(j < colorLength){
-                //we do i*repeatLength to account for how many color sections we've 
-                //filled in already
-                pattern_arr[i * repeatLength + j] = patternIndex;
-            } else {
-                pattern_arr[i * repeatLength + j] = 255;
-            }
-        }
-    }
-
-    patternTemp = {pattern_arr, totalPatternLength};
+//(255 will be set to the background color)
+void StreamerSL::setPatternAsPattern(patternPS &inputPattern, uint8_t colorLength, uint8_t spacing){
+    patternTemp = generalUtilsPS::setPatternAsPattern(inputPattern, colorLength, spacing);
     pattern = &patternTemp;
 }
 
@@ -95,30 +71,7 @@ void StreamerSL::setPatternAsPattern(patternPS *inputPattern, uint8_t colorLengt
 //ex: for palette of lenth 3, and a colorLength of 2, and spacing of 1
 //the final streamer pattern would be : {0, 0, 255, 1, 1, 255, 2, 2, 255}
 void StreamerSL::setPaletteAsPattern(uint8_t colorLength, uint8_t spacing){
-    uint8_t repeatLength = (colorLength + spacing);
-    uint8_t palettelength = palette->length;
-    uint16_t totalPatternLength = palettelength * repeatLength; //the total length taken up by a single color and spacing
-    //create new storage for the pattern array
-    free(pattern_arr);
-    pattern_arr = (uint8_t*) malloc(totalPatternLength*sizeof(uint8_t));
-
-    //for each color in the palette, we fill in the color and spacing for the output pattern
-    for(uint16_t i = 0; i < palettelength; i++){
-        //for each color in the palette we run over the length of the color and spacing
-        //for the indexes up to color length, we set them as the current palette index
-        //after that we set them as spacing (255)
-        for(uint8_t j = 0; j < repeatLength; j++){
-            if(j < colorLength){
-                //we do i*repeatLength to account for how many color sections we've 
-                //filled in already
-                pattern_arr[i * repeatLength + j] = i;
-            } else {
-                pattern_arr[i * repeatLength + j] = 255;
-            }
-        }
-    }
-
-    patternTemp = {pattern_arr, totalPatternLength};
+    patternTemp = generalUtilsPS::setPaletteAsPattern(*palette, colorLength, spacing);
     pattern = &patternTemp;
 }
 
@@ -169,7 +122,7 @@ CRGB StreamerSL::getNextColor(uint16_t lineNum, uint16_t segNum){
     if(nextPattern == 255){
         return segDrawUtils::getPixelColor(segmentSet, pixelNum, *bgColor, bgColorMode, segNum, lineNum);
     } else {
-        nextColor = paletteUtilsPS::getPaletteColor(palette, nextPattern);
+        nextColor = paletteUtilsPS::getPaletteColor(*palette, nextPattern);
         return segDrawUtils::getPixelColor(segmentSet, pixelNum, nextColor, colorMode, segNum, lineNum);
     }
 }
@@ -207,7 +160,7 @@ void StreamerSL::updateFade(){
     //But prevLineColors[] only set at the end of each loop, so we need to pre-fill it for the first loop iteration
     //(note that we use numLinesLim as the 0th line, this is because to get the effect moving in the same
     //direction as the segments, we actually need to draw the lines in reverse, hence we start at the last line)
-    nextPattern = patternUtilsPS::getPatternVal(pattern, cycleNum); //cycleNum is the next index of the pattern
+    nextPattern = patternUtilsPS::getPatternVal(*pattern, cycleNum); //cycleNum is the next index of the pattern
     for(uint16_t j = 0; j < numSegs; j++){
         prevLineColors[j] = getNextColor(numLinesLim, j);
     }
@@ -217,7 +170,7 @@ void StreamerSL::updateFade(){
 
         //the next color is the color of the next line
         nextPatternIndex = (i + cycleNum + 1);
-        nextPattern = patternUtilsPS::getPatternVal(pattern, nextPatternIndex);
+        nextPattern = patternUtilsPS::getPatternVal(*pattern, nextPatternIndex);
 
         //Based on the colorMode, lines will either be a solid color or not
         //For color modes where each line pixel is a different color, we walk over the line, blending each pixel in order
@@ -268,7 +221,7 @@ void StreamerSL::updateNoFade(){
 
         //the next color is the color of the next line
         nextPatternIndex = i + cycleNum;
-        nextPattern = patternUtilsPS::getPatternVal(pattern, nextPatternIndex);
+        nextPattern = patternUtilsPS::getPatternVal(*pattern, nextPatternIndex);
 
         //For each segment pixel in the line, get its color (accouting for colorModes)
         //and write it out
