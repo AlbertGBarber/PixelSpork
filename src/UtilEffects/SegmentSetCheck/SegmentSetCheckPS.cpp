@@ -67,7 +67,7 @@ void SegmentSetCheckPS::update(){
             //check the segment lines
             //The first and last segment line are colored red and blue respectivly
             //while each other segment line is lit up in green one at a time
-            numLines = segmentSet.maxSegLength;
+            numLines = segmentSet.numLines;
             //turn off the previous segment line
             segDrawUtils::drawSegLineSimple(segmentSet, pixelCount - 1, 0, 0);
             //draw the segment line in green

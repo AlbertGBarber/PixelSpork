@@ -116,7 +116,7 @@ void PrideWPalSL::update(){
         //fetch some core vars
         //we re-fetch these in case the segment set or palette has changed
         numSegs = segmentSet.numSegs;
-        numLines = segmentSet.maxSegLength;
+        numLines = segmentSet.numLines;
         numSteps = gradLength * palette->length;
 
         //For each segment line do the following:

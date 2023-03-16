@@ -175,9 +175,9 @@ An explaination of segment structure:
 					SegmentSet is a class constructed using the number of segements, and a pointer to the segment array.
 					It gives access to three data points:
 						numSegs; A uint8_t equal to the segment array length passed to the constructor.
-						maxSegLength; A uint16_t equaling the maxium segment length of the segments in the segment array.
-						segNumMaxSegLength; A uint8_t equaling the number of the segment that has the maximum length
-						ie, if the segment array has one segment of length 8, and one of length 12, 12 will be the maxSegLength.
+						numLines; A uint16_t equaling the maxium segment length of the segments in the segment array.
+						segNumMaxNumLines; A uint8_t equaling the number of the segment that has the maximum length
+						ie, if the segment array has one segment of length 8, and one of length 12, 12 will be the numLines.
 						segArr; a double pointer of type Segment, used to access the segment array.
 					It also gives access to a number of functions:
 						getTotalSegLength(uint16_t segNum): returns the totalLength of the segment specified by the array index (segNum is the section's position in the segment array)
@@ -347,8 +347,8 @@ class SegmentSet {
 		//segment set vars
 		uint16_t
 			numSegs,	 		//Total number of segments in the segment set
-			maxSegLength, 		//the length of the longest segment in the set
-			segNumMaxSegLength, //The number of the seg with the maximum length
+			numLines, 		//the length of the longest segment in the set
+			segNumMaxNumLines, //The number of the seg with the maximum length
 			ledArrSize, 		//The size of the FastLED array (total number of pixels, including any extras for dummy or duplicate pixels)
 			numLeds, 			//the total number of pixels in the segment set (treating isSingle segments as one pixel)
 			getTotalSegLength(uint16_t segNum),
@@ -405,7 +405,7 @@ class SegmentSet {
 		//These are called when the segment set is created, but if you change and of the segments
 		//You should re-call them
 		void 
-			setMaxSegLength(void),
+			setNumLines(void),
 			setNumLeds(void);
 
 		//Functions for setting general segment set and individual segment properties

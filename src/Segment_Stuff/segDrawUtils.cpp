@@ -240,16 +240,16 @@ void segDrawUtils::drawSegLineSimple(SegmentSet &segmentSet, uint16_t lineNum, c
 // does not need a palette or pattern,
 void segDrawUtils::drawSegLineSimpleSection(SegmentSet &segmentSet, uint16_t startSeg, uint16_t endSeg, uint16_t lineNum, const CRGB &color, uint8_t colorMode) {
     for (uint16_t i = startSeg; i <= endSeg; i++) { // for each segment, set the color, if we're in rainbow mode, set the rainbow color
-        pixelNum = getPixelNumFromLineNum(segmentSet, segmentSet.maxSegLength, i, lineNum);
+        pixelNum = getPixelNumFromLineNum(segmentSet, segmentSet.numLines, i, lineNum);
         setPixelColor(segmentSet, pixelNum, color, colorMode, i, lineNum);
     }
 } 
 
 // retuns the pixel number located on segment segNum located along line lineNum where the total number of lines matches the pixels in the longest segment
 // in other words, will return a pixel such that you can draw a straight line accross all segments, using the longest segment as the basis
-uint16_t segDrawUtils::getPixelNumFromLineNum(SegmentSet &segmentSet, uint16_t maxSegLength, uint16_t segNum, uint16_t lineNum) { 
+uint16_t segDrawUtils::getPixelNumFromLineNum(SegmentSet &segmentSet, uint16_t numLines, uint16_t segNum, uint16_t lineNum) { 
     //This formula dedicated to my father, who saved me from many hours of head-scratching in an instant
-    return getSegmentPixel(segmentSet, segNum, ( (lineNum * segmentSet.getTotalSegLength(segNum)) / maxSegLength) ); 
+    return getSegmentPixel(segmentSet, segNum, ( (lineNum * segmentSet.getTotalSegLength(segNum)) / numLines) ); 
 }
 
 //returns the line number (based on the max segment length) of a pixel in a segment set
@@ -265,7 +265,7 @@ uint16_t segDrawUtils::getLineNumFromPixelNum(SegmentSet &segmentSet, uint16_t s
 uint16_t segDrawUtils::getLineNumFromPixelNum(SegmentSet &segmentSet, uint16_t segPixelNum, uint16_t segNum){
     //the formula below is the same as the one in getPixelNumFromLineNum
     //but solving for lineNum instead of pixelNum
-    return (uint16_t)(segPixelNum * segmentSet.maxSegLength) / segmentSet.getTotalSegLength(segNum);
+    return (uint16_t)(segPixelNum * segmentSet.numLines) / segmentSet.getTotalSegLength(segNum);
 }
 
 //sets pixel colors (same as other setPixelColor funct)

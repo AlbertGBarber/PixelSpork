@@ -29,7 +29,7 @@ void RainbowCycleSLSeg::setLength(uint16_t newLength){
     if(segMode){
         segLength = segmentSet.numSegs;
     } else {
-        segLength = segmentSet.maxSegLength;
+        segLength = segmentSet.numLines;
     }
     //set the maximum cycle length 
     //ie the total amount of cycles before the effect is back at the start
@@ -76,7 +76,7 @@ void RainbowCycleSLSeg::update(){
             }
         } else {
             //we grab some segment info in case it's changed (It shouldn't have, but this is a safe guard)
-            numLines = segmentSet.maxSegLength;
+            numLines = segmentSet.numLines;
             //for each segment line, set each pixel in the line to the appropriate rainbow color
             for (uint16_t i = 0; i < numLines; i++) {
                 color = getRainbowColor(i);

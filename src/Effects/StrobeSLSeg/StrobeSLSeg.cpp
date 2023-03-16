@@ -194,15 +194,15 @@ void StrobeSLSeg::update(){
                     break;
                 case 2:
                     //similar to case 0, but we're filling seg lines instead of segments
-                    nextSeg = mod16PS( cycleNum, maxSegLength );//cycleNum % maxSegLength;
+                    nextSeg = mod16PS( cycleNum, numLines );//cycleNum % numLines;
                     if(!direct){
-                        nextSeg = maxSegLength - 1 - nextSeg;
+                        nextSeg = numLines - 1 - nextSeg;
                     }
                     segDrawUtils::drawSegLineSimple(segmentSet, nextSeg, colorOut, modeOut);
                     break;
                 case 3:
                     //similar to case 1, but we're filling seg lines instead of segments
-                    for(uint8_t i = firstHalf; i < maxSegLength; i += 2){
+                    for(uint8_t i = firstHalf; i < numLines; i += 2){
                         segDrawUtils::drawSegLineSimple(segmentSet, i, colorOut, modeOut);
                     }
                     break;
@@ -308,7 +308,7 @@ void StrobeSLSeg::setPulseMode(){
 //This is rounded up to a whole number of strobe cycles
 void StrobeSLSeg::setCycleCountMax(){
     numSegs = segmentSet.numSegs;
-    maxSegLength = segmentSet.maxSegLength;
+    numLines = segmentSet.numLines;
     if(pulseMode == 0){
         //we need to pulse each seg once, so a full strobe cycle is numSegs
         cycleLoopLimit = numSegs;
@@ -317,7 +317,7 @@ void StrobeSLSeg::setCycleCountMax(){
         cycleLoopLimit = 2;
     } else if(pulseMode == 2){
         //we need to pulse every line
-        cycleLoopLimit = maxSegLength;
+        cycleLoopLimit = numLines;
     } else if(pulseMode == 4){
         //all the segments are pulsed at once, so the strobe cycle is 1
         cycleLoopLimit = 1;

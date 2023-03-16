@@ -22,7 +22,7 @@ void Fire2012SL::reset(){
 
     //fetch some core vars
     numSegs = segmentSet.numSegs;
-    numLines = segmentSet.maxSegLength;
+    numLines = segmentSet.numLines;
     uint16_t numPoints = numLines * numSegs;
     
     //create the heat array to store temperatures of each line point

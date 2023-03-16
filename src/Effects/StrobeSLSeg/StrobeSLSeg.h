@@ -259,7 +259,7 @@ class StrobeSLSeg : public EffectBasePS {
             nextSeg,
             numSegs,    
             cycleLoopLimit,
-            maxSegLength,
+            numLines,
             cycleNum = 0,
             cycleCountMax;
         

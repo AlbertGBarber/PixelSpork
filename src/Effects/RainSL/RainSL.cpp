@@ -108,7 +108,7 @@ void RainSL::setupDrops(uint8_t newMaxNumDrops){
     //delete and re-create all the arrays and the particle set (if needed)
     if(maxNumDrops != newMaxNumDrops){
         maxNumDrops = newMaxNumDrops;
-        numLines = segmentSet.maxSegLength;
+        numLines = segmentSet.numLines;
         numParticles = numLines * maxNumDrops;
         numSegs = segmentSet.numSegs;
 

@@ -7,7 +7,7 @@ ParticlesSL::ParticlesSL(SegmentSet &SegmentSet, palettePS &Palette, CRGB BgColo
     segmentSet(SegmentSet), palette(&Palette)
     {    
         init(BgColor);
-        numLines = segmentSet.maxSegLength;
+        numLines = segmentSet.numLines;
         particleSetTemp = particleUtilsPS::buildParticleSet(numParticles, numLines, direction, baseSpeed, 
                                                             speedRange, size, sizeRange, trailType, trailSize, 
                                                             trailRange, bounce, colorIndex, randColor);
@@ -101,9 +101,9 @@ void ParticlesSL::update(){
 
         //re-fetch the segment vars in-case they've been modified
         numParticles = particleSet->length;
-        numLines = segmentSet.maxSegLength;
+        numLines = segmentSet.numLines;
         numSegs = segmentSet.numSegs;
-        longestSeg = segmentSet.segNumMaxSegLength;
+        longestSeg = segmentSet.segNumMaxNumLines;
 
         //for each particle, in order:
         //move it to it's next position (ie line number) (if needed)

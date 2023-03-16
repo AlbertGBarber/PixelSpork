@@ -69,6 +69,7 @@ Other Settings:
 Functions:
     setupFader(newFadeRunTime) -- Changes the run time of the fader, also restarts the fader
     reset() -- Restarts the EffectSetFader, and also resets the EffectFader if it exists
+    reset(&newEffectSet, newFadeRunTime) -- Resets the fader to use a new effect set and fade run time.
     resetFader() -- Resets the EffectFader, restarting it (see EffectFadePS reset())
     resetBrightness() -- Resets the segment set(s) to their original brightness setting(s) (as recorded during the first update()) 
                          (see EffectFadePS resetBrightness())
@@ -107,6 +108,7 @@ class EffectSetFaderPS : public EffectBasePS {
 
         void 
             setupFader(uint16_t newFadeRunTime),
+            reset(EffectSetPS &newEffectSet, uint16_t newFadeRunTime),
             reset(),
             resetFader(),
             resetBrightness(),

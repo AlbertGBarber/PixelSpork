@@ -71,7 +71,7 @@ void PlasmaSL::update(){
         phaseWave1 = beatsin8(6 + pAdj1, -64, 64);
         phaseWave2 = beatsin8(7 + pAdj2, -64, 64);
 
-        numLines = segmentSet.maxSegLength;
+        numLines = segmentSet.numLines;
         totBlendLength = blendSteps * palette->length;
 
         //run over each of the lines in the segement set and set a color value

@@ -46,7 +46,7 @@ void TheaterChaseSL::update(){
     if( ( currentTime - prevTime ) >= *rate ) {
         prevTime = currentTime;
 
-        numLines = segmentSet.maxSegLength;
+        numLines = segmentSet.numLines;
         //recalculate the draw length so you can change spacing or litLength on the fly
         totalDrawLength = spacing + litLength;
 

@@ -20,8 +20,8 @@ void SoftTwinkleSL::update() {
     if ((currentTime - prevTime) >= *rate) {
         prevTime = currentTime;
 
-        numLines = segmentSet.maxSegLength;
-        longestSeg = segmentSet.segNumMaxSegLength;
+        numLines = segmentSet.numLines;
+        longestSeg = segmentSet.segNumMaxNumLines;
 
         for (uint16_t i = 0; i < numLines; i++) {
             //pixelNum = segDrawUtils::getSegmentPixel(segmentSet, i);

@@ -93,7 +93,7 @@ void RollingWavesSL2::buildLineArr(){
     nextLine = (uint16_t*) malloc(numSegs * sizeof(uint16_t));
 
     //fetch some core vars
-    numLines = segmentSet.maxSegLength;
+    numLines = segmentSet.numLines;
     numLinesLim = numLines - 1;
 }
 

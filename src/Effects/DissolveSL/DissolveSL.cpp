@@ -65,7 +65,7 @@ void DissolveSL::resetPixelArray(){
     //otherwise we'll be setting each pixel individually, so we need to set the numLines to match
     //(we use numLines, even though it's more like numPixels for the individual case to keep the code clean)
     if(lineMode){
-        numLines = segmentSet.maxSegLength;
+        numLines = segmentSet.numLines;
     } else {
         numLines = segmentSet.numLeds;
     }

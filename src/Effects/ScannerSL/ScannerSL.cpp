@@ -81,7 +81,7 @@ void ScannerSL::setPaletteAsPattern(){
 //NOTE that we use each particle's "bounce" var to store its initial direction
 //(all particles use the same bounce value, so we don't need to store it)
 void ScannerSL::setScanType(uint8_t newScanType){
-    numLines = segmentSet.maxSegLength;
+    numLines = segmentSet.numLines;
     uint8_t scanType = newScanType;
 
     //clear the memory of the existing particles (to prevent a memory leak)
@@ -116,7 +116,7 @@ void ScannerSL::setScanType(uint8_t newScanType){
 //NOTE that we use each particle's "bounce" var to store its initial direction
 //(all particles use the same bounce value, so we don't need to store it)
 void ScannerSL::makeWaveSet(uint16_t numWaves, bool direction, bool alternate){
-    numLines = segmentSet.maxSegLength;
+    numLines = segmentSet.numLines;
     particleSet = particleUtilsPS::buildParticleSet(numWaves, numLines, direction, *rate, 0, size, 0, trailType, trailSize, 0, bounce, 0, false);
 
     uint16_t spacing;
@@ -238,9 +238,9 @@ void ScannerSL::update(){
 
         //re-fetch the segment vars in-case they've been modified
         numParticles = particleSet.length;
-        numLines = segmentSet.maxSegLength;
+        numLines = segmentSet.numLines;
         numSegs = segmentSet.numSegs;
-        longestSeg = segmentSet.segNumMaxSegLength;
+        longestSeg = segmentSet.segNumMaxNumLines;
 
         //for each particle, in order:
         //move it to it's next position (ie line number)

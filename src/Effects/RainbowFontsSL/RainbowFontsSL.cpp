@@ -25,7 +25,7 @@ void RainbowFontsSL::update(){
         //fetch some core vars
         //we re-fetch these in case the segment set or palette has changed
         numSegs = segmentSet.numSegs;
-        numLines = segmentSet.maxSegLength;
+        numLines = segmentSet.numLines;
         
         hl = numLines/2;
 

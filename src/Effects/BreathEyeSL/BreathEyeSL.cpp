@@ -86,7 +86,7 @@ void BreathEyeSL::reset(){
     //Set the eye center position
     //If it's not being choosen randonmly we default to the center of the segment set
     //Because it makes the most sense, and is probably what most people are looking for
-    numLines = segmentSet.maxSegLength;
+    numLines = segmentSet.numLines;
     if(randEyePos){
         eyePos = random16(numLines);
     } else {
@@ -158,7 +158,7 @@ void BreathEyeSL::update(){
     if( (currentTime - prevTime) >= *rate ) {
         prevTime = currentTime;
 
-        numLines = segmentSet.maxSegLength;
+        numLines = segmentSet.numLines;
 
         bWave = triwave8(currentTime / *breathFreq); 
         breath = ease8InOutCubic(bWave); 

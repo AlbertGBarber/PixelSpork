@@ -81,7 +81,7 @@ void GradientCycleSL::update(){
         prevTime = currentTime;
 
         //we set the segment vars here since the pixel locations depend on them
-        numLines = segmentSet.maxSegLength;
+        numLines = segmentSet.numLines;
 
         //In the loop below, we only pick new colors once blendStep is 0
         //due to cycleNum, blendStep is not always 0 for the first pixel

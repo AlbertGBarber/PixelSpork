@@ -67,7 +67,7 @@ void ShimmerSL::update(){
     if( ( currentTime - prevTime ) >= *rate ) {
         prevTime = currentTime;
 
-        numLines = segmentSet.maxSegLength;
+        numLines = segmentSet.numLines;
         numSegs = segmentSet.numSegs;
         paletteLength = palette->length;
 

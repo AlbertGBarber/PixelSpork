@@ -142,7 +142,7 @@ void Twinkle2SLSeg::update(){
         prevTime = currentTime;
 
         numSegs = segmentSet.numSegs;
-        numLines = segmentSet.maxSegLength;
+        numLines = segmentSet.numLines;
         numLeds = segmentSet.numLeds;
 
         //we start spawnOk out as true

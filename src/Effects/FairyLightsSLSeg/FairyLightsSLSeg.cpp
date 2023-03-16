@@ -71,7 +71,7 @@ void FairyLightsSLSeg::genPixelSet(){
     switch(segMode){
         case 0:
         default:
-            twinkleRange = segmentSet.maxSegLength;
+            twinkleRange = segmentSet.numLines;
             break;
         case 1:
             twinkleRange = segmentSet.numSegs;

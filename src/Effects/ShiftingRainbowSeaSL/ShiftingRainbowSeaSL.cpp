@@ -60,7 +60,7 @@ void ShiftingRainbowSeaSL::setGrouping(uint16_t newGrouping) {
 
 //re-builds the offset array with new values
 void ShiftingRainbowSeaSL::resetOffsets() {
-    numLines = segmentSet.maxSegLength;
+    numLines = segmentSet.numLines;
     free(offsets);
     offsets = (uint16_t*) malloc(numLines * sizeof(uint16_t));
     //255 is the maxiumum length of the rainbow

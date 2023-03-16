@@ -54,7 +54,7 @@ void NoiseSL::init(uint16_t Rate){
 void NoiseSL::setupNoiseArray(){
     //fetch some core vars
     numSegs = segmentSet.numSegs;
-    numLines = segmentSet.maxSegLength;
+    numLines = segmentSet.numLines;
     uint16_t numPoints = numLines * numSegs;
     
     free(noise);

@@ -184,9 +184,9 @@ void RollingWavesFastSL::update(){
         prevTime = currentTime;
 
         //fetch some core vars
-        numLines = segmentSet.maxSegLength;
+        numLines = segmentSet.numLines;
         numLinesLim = numLines - 1;
-        longestSeg = segmentSet.segNumMaxSegLength;
+        longestSeg = segmentSet.segNumMaxNumLines;
 
         //We need to pre-fill the strip with a full cycle the first time the update is called
         //so that the colors are copied down the strip correctly on subsequent cycles

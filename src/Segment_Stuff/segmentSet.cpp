@@ -4,7 +4,7 @@ SegmentSet::SegmentSet(struct CRGB *Leds, uint16_t LedArrSize, Segment **SegArr,
     numSegs(NumSegs), segArr(SegArr), leds(Leds), ledArrSize(LedArrSize)	
 	{
 		//Set some key segment set vars
-		setMaxSegLength();	
+		setNumLines();	
 		setNumLeds();
 
 		//Reset the gradient values to use the keey segment vars set above
@@ -23,23 +23,23 @@ SegmentSet::SegmentSet(struct CRGB *Leds, uint16_t LedArrSize, Segment **SegArr,
 //resets the gradient vars to their defaults
 void SegmentSet::resetGradVals(){
 	gradLenVal = numLeds;
-	gradLineVal = maxSegLength;
+	gradLineVal = numLines;
 	gradSegVal = numSegs;
 }
 
 //Gets and sets the maxium length across all segments
-//Also records the segment with the maximum segment length as segNumMaxSegLength
-void SegmentSet::setMaxSegLength(void){
-  	maxSegLength = 0;
+//Also records the segment with the maximum segment length as segNumMaxNumLines
+void SegmentSet::setNumLines(void){
+  	numLines = 0;
   	uint16_t totalLength;
   	//walk across all the segments
-  	//if the segment length is greater than the current maxSegLength, store it as the maxSegLength
+  	//if the segment length is greater than the current numLines, store it as the numLines
   	for(uint16_t i = 0; i < numSegs; i++ ){
 		totalLength = getTotalSegLength(i);
-		if( totalLength > maxSegLength ){
-			maxSegLength = totalLength;
+		if( totalLength > numLines ){
+			numLines = totalLength;
 			//record the segment with the maximum segment length
-			segNumMaxSegLength = i;
+			segNumMaxNumLines = i;
 		}
   	}
 }

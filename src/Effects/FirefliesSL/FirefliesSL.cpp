@@ -96,7 +96,7 @@ void FirefliesSL::setupFireflies(uint8_t newMaxNumFireflies){
 
         //to allow the effect to work along segment lines, we use the maximum number of lines
         //as the range of the particle's motion
-        numLines = segmentSet.maxSegLength;
+        numLines = segmentSet.numLines;
         particleSetTemp = particleUtilsPS::buildParticleSet(maxNumFireflies, numLines, true, speedBase, speedRange, 1, 0, 
                                                             0, 0, 0, false, palette->length, true);
         particleSet = &particleSetTemp;
@@ -122,9 +122,9 @@ void FirefliesSL::update(){
         prevTime = currentTime;
 
         //re-fetch the segment vars in-case they've been modified
-        numLines = segmentSet.maxSegLength;
+        numLines = segmentSet.numLines;
         numSegs = segmentSet.numSegs;
-        longestSeg = segmentSet.segNumMaxSegLength;
+        longestSeg = segmentSet.segNumMaxNumLines;
 
         //If the bg is to be filled before the particles start, fill it in
         //(such as if you have a background that's changing with time (alla bgColorMode 6))

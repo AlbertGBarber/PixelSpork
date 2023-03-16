@@ -53,7 +53,7 @@ void LarsonScannerSL::setBounce(bool newBounce){
 //     That move back and forth, intersecting in the center of the strip
 //     (note that this mode uses blend, see ParticlesPS.h for details)
 void LarsonScannerSL::setScanType(uint8_t newScanType){
-    numLines = segmentSet.maxSegLength;
+    numLines = segmentSet.numLines;
     scanType = newScanType;
 
     //Free all particles and the particle array pointer

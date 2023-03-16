@@ -1,21 +1,26 @@
 #include "EffectSetFaderPS.h"
 
 //Constructor
-EffectSetFaderPS::EffectSetFaderPS(EffectSetPS &EffectSet, uint16_t FadeRunTime):
-    effectSet(&EffectSet)
+EffectSetFaderPS::EffectSetFaderPS(EffectSetPS &EffectSet, uint16_t FadeRunTime)
     {    
-        //Get various timing vars from the EffectSet
-        infinite = &effectSet->infinite;
-        runTime = &effectSet->runTime;
-        setTimeElap = &effectSet->timeElapsed;
-
-        //Setup an EffectFader, and tie it's update rate to the EffectFaderSet's
-        setupFader(FadeRunTime);
+        reset(EffectSet, FadeRunTime);
         effectFader->rate = rate;
 	}
 
 EffectSetFaderPS::~EffectSetFaderPS(){
     effectFader->~EffectFaderPS();
+}
+
+//Resets the fader to use a new effect set and fade time
+void EffectSetFaderPS::reset(EffectSetPS &newEffectSet, uint16_t newFadeRunTime){
+    effectSet = &newEffectSet;
+    //Get various timing vars from the EffectSet
+    infinite = &effectSet->infinite;
+    runTime = &effectSet->runTime;
+    setTimeElap = &effectSet->timeElapsed;
+
+    //Setup an EffectFader, and tie it's update rate to the EffectFaderSet's
+    setupFader(newFadeRunTime);
 }
 
 //Creates and sets the run time for the EffectFader

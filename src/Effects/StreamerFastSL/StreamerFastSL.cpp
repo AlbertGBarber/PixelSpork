@@ -127,7 +127,7 @@ void StreamerFastSL::initalFill(){
     cycleNum = 0;
 
     //fetch some core vars
-    numLines = segmentSet.maxSegLength;
+    numLines = segmentSet.numLines;
     numLinesLim = numLines - 1;
 
     uint16_t patternLength = pattern->length;
@@ -166,9 +166,9 @@ void StreamerFastSL::update(){
         }
 
         //fetch some core vars
-        numLines = segmentSet.maxSegLength;
+        numLines = segmentSet.numLines;
         numLinesLim = numLines - 1;
-        longestSeg = segmentSet.segNumMaxSegLength;
+        longestSeg = segmentSet.segNumMaxNumLines;
 
         for (int32_t i = numLinesLim; i >= 0; i--) {
 

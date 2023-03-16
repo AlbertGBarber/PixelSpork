@@ -58,7 +58,7 @@ namespace segDrawUtils{
     uint16_t
         getSegmentPixel(SegmentSet &segmentSet, uint16_t segPixelNum),
         getSegmentPixel(SegmentSet &segmentSet, uint16_t segNum, uint16_t num),
-        getPixelNumFromLineNum(SegmentSet &segmentSet, uint16_t maxSegLength, uint16_t segNum, uint16_t lineNum);
+        getPixelNumFromLineNum(SegmentSet &segmentSet, uint16_t numLines, uint16_t segNum, uint16_t lineNum);
         
     CRGB
         getPixelColor(SegmentSet &segmentSet, uint16_t pixelNum, const CRGB &color, uint8_t colorMode, uint16_t segNum, uint16_t lineNum);

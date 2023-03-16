@@ -74,7 +74,7 @@ void EdgeBurstSL::update(){
         //fetch some core vars
         //we re-fetch these in case the segment set or palette has changed
         numSegs = segmentSet.numSegs;
-        numLines = segmentSet.maxSegLength;
+        numLines = segmentSet.numLines;
 
         //Get the blend length for each color in the palette
         //(using 255 steps across the whole palette)

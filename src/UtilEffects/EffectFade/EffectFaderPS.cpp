@@ -1,10 +1,9 @@
 #include "EffectFaderPS.h"
 
 EffectFaderPS::EffectFaderPS(EffectSetPS &EffectSet, bool Direct, uint16_t RunTime) :
-    effectSet(&EffectSet), direct(Direct), runTime(RunTime) 
+    runTime(RunTime) 
     {
-        numEffects = &effectSet->numEffects;
-        reset();
+        reset(EffectSet, Direct);
     }
 
 EffectFaderPS::~EffectFaderPS(){
@@ -15,6 +14,7 @@ EffectFaderPS::~EffectFaderPS(){
 void EffectFaderPS::reset(EffectSetPS &EffectSet, bool newDirect) {
     effectSet = &EffectSet;
     direct = newDirect;
+    numEffects = &effectSet->numEffects;
     reset();
 }
 

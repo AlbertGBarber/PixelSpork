@@ -95,7 +95,7 @@ void NoiseGradSL::update(){
         }
         //re-fetch some core variables
         numSegs = segmentSet.numSegs;
-        numLines = segmentSet.maxSegLength;
+        numLines = segmentSet.numLines;
         totBlendLength = blendSteps * palette->length;
 
         //Get a phase value for our waves using noise

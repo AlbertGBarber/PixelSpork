@@ -97,9 +97,9 @@ void StreamerSL::update(){
 
         //both updateFade() and updateNoFade() need the current segment and pattern lengths,
         //so we'll do them here to reduce repetition
-        numLines = segmentSet.maxSegLength;
+        numLines = segmentSet.numLines;
         numLinesLim = numLines - 1; //used for setting the line colors
-        longestSeg = segmentSet.segNumMaxSegLength;
+        longestSeg = segmentSet.segNumMaxNumLines;
         patternLength = pattern->length;
 
         if(fadeOn){

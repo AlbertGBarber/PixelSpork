@@ -79,7 +79,7 @@ void ColorWipeSLSeg::setPaletteAsPattern(){
 void ColorWipeSLSeg::setWipeLength(uint16_t newLength){
     wipeLength = newLength;
 
-    numLines = segmentSet.maxSegLength;
+    numLines = segmentSet.numLines;
     numSegs = segmentSet.numSegs;
 
     //Record the wipe length into either segWipeLen or lineWipeLen
@@ -249,7 +249,7 @@ void ColorWipeSLSeg::update(){
         }
         
         numSegs = segmentSet.numSegs;
-        numLines = segmentSet.maxSegLength;
+        numLines = segmentSet.numLines;
 
         //Set the maximium wipe value, we use this later to skip any parts of wipes that are off the segment set
         if(segMode){

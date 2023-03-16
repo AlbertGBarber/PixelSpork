@@ -109,7 +109,7 @@ void PoliceStrobeSL::update(){
             numLines = segmentSet.numSegs;
         } else {
             //get the current number of segment lines
-            numLines = segmentSet.maxSegLength;
+            numLines = segmentSet.numLines;
         }
 
         //we add (numLines % 2) to account for odd length strips ((numLines % 2) is either 1 or 0)

@@ -21,7 +21,7 @@ void PatternShifterSL::reset(){
 //Sets the pattern to be the passed in pattern, also sets up various effect variables
 //If you change the pattern you must do it via this function
 void PatternShifterSL::setShiftPattern(shiftPatternPS &newShiftPattern){
-    numLines = segmentSet.maxSegLength;
+    numLines = segmentSet.numLines;
     
     shiftPattern = &newShiftPattern;
     //number of "rows" in the pattern
@@ -56,7 +56,7 @@ void PatternShifterSL::setShiftPattern(shiftPatternPS &newShiftPattern){
 //Sets the repeat value of the effect and calculates how many repeats will fit on the segment set (rounded up)
 void PatternShifterSL::setRepeat(bool newRepeat){
     repeat = newRepeat;
-    numLines = segmentSet.maxSegLength;
+    numLines = segmentSet.numLines;
 
     //how many segment lines the pattern takes up
     patLineLength = shiftPattern->patLineLength;

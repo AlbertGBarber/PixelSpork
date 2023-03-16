@@ -152,7 +152,7 @@ void TwinkleSL::update(){
         prevTime = currentTime;
      
         numSegs = segmentSet.numSegs;
-        numLines = segmentSet.maxSegLength;
+        numLines = segmentSet.numLines;
         paletteLength = palette->length;
 
         //startup settings to limit how much of the array is written out

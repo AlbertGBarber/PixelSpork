@@ -75,7 +75,7 @@ void ShiftingSeaSL::setGrouping(uint16_t newGrouping) {
 
 // re-builds the offset array with new values
 void ShiftingSeaSL::resetOffsets() {
-    numLines = segmentSet.maxSegLength;
+    numLines = segmentSet.numLines;
     free(offsets);
     offsets = (uint16_t*) malloc(numLines * sizeof(uint16_t));
     setTotalCycleLen();

@@ -61,7 +61,7 @@ void NoiseWavesSL::update(){
         freqCounter = 0;
         //re-fetch some core variables incase the palette has changed
         numSegs = segmentSet.numSegs;
-        numLines = segmentSet.maxSegLength;
+        numLines = segmentSet.numLines;
         totBlendLength = blendSteps * palette->length;
 
         //Get a phase value for our waves using noise

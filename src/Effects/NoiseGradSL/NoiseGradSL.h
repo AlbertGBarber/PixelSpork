@@ -57,7 +57,7 @@ Inputs guide:
 Example calls: 
     uint8_t numColors = 3;
     uint8_t minBase = 3;
-    uint8_t maxBase = ringSegments.maxSegLength / numColors - minBase;
+    uint8_t maxBase = ringSegments.numLines / numColors - minBase;
     NoiseGradSL(ringSegments, numColors, 0, minBase, maxBase, 10, 20, 30, 5000, 80);
     For this example, I'm showing you how to set the blendStepsRange so that you have one complete palette gradient 
     fit into the segment set. This tends to look good because you always have all the colors showing, and they'll

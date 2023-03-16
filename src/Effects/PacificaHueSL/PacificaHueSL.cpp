@@ -90,7 +90,7 @@ void PacificaHueSL::update(){
         //fetch some core vars
         //we re-fetch these in case the segment set has changed
         numSegs = segmentSet.numSegs;
-        numLines = segmentSet.maxSegLength;
+        numLines = segmentSet.numLines;
 
         //Increment the four "color index start" counters, one for each wave layer.
         //Each is incremented at a different speed, and the speeds vary over time.

@@ -81,7 +81,7 @@ void GlimmerSL::fillPixelArray(){
     //if we're in line mode, then we're drawing full lines,
     //otherwise we're drawing individual pixels
     if(lineMode){
-        numLines = segmentSet.maxSegLength;
+        numLines = segmentSet.numLines;
     } else {
         numLines = segmentSet.numLeds;
     }

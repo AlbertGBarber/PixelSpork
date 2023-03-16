@@ -43,7 +43,7 @@ recommended update rate for the effect is 30-80ms
 This effect is not compatible with color modes, but the bgColor is a pointer, so you can bind it
 
 Note that the effect stores a uint8_t value for heat for each heat point
-The number of heat points is maxSegLength * numberOfSegments (see segment.h for more info)
+The number of heat points is numLines * numberOfSegments (see segment.h for more info)
 so watch your memory usage
 
 Example calls: 

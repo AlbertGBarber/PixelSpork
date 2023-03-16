@@ -27,7 +27,7 @@ void PatternShifterSeg::setShiftPattern(shiftPatternPS &newShiftPattern){
     //number of "rows" in the pattern
     numPatRows = shiftPattern->numRows;
 
-    numLines = segmentSet.maxSegLength;
+    numLines = segmentSet.numLines;
     numSegs = segmentSet.numSegs;
     //how many segment lines the pattern takes up
     patLineLength = shiftPattern->patLineLength;
@@ -57,7 +57,7 @@ void PatternShifterSeg::setRepeat(bool newRepeatSeg, bool newRepeatLine){
     repeatSeg = newRepeatSeg;
     repeatLine = newRepeatLine;
 
-    numLines = segmentSet.maxSegLength;
+    numLines = segmentSet.numLines;
     numSegs = segmentSet.numSegs;
 
     //how many segment lines the pattern takes up

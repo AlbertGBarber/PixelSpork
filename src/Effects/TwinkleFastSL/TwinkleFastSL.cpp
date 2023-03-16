@@ -53,7 +53,7 @@ void TwinkleFastSL::update(){
     if( ( currentTime - prevTime ) >= *rate ) {
         prevTime = currentTime;
 
-        numLines = segmentSet.maxSegLength;
+        numLines = segmentSet.numLines;
         paletteLength = palette->length;
 
         //controls the background setting, when sparkleOn is true, the strip will dim with each cycle
