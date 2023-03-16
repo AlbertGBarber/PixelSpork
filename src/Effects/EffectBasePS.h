@@ -3,6 +3,8 @@
 
 #include "SegmentFiles.h"
 
+//TODO: Add virtual reset() function (also add it to EffectSet), not all effects have reset()'s
+
 //macros
 
 //bind the segmentSet pointer since it is inherited from BaseEffectPS

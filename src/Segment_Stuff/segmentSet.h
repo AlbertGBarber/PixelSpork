@@ -382,17 +382,17 @@ class SegmentSet {
 			getSegHasSingle(uint16_t segNum),
 			getSecIsSingle(uint16_t segNum, uint8_t secNum);
 	
-	  	segmentSecCont* 
-			getSecArrPtr(uint16_t segNum);
+	  	segmentSecCont 
+			*getSecArrPtr(uint16_t segNum);
 		
-		segmentSecMix*  
-			getSecMixArrPtr(uint16_t segNum);
+		segmentSecMix 
+			*getSecMixArrPtr(uint16_t segNum);
 		
 	  	Segment
 			**segArr = nullptr;
 
-	  	Segment*
-	  		getSegPtr(uint16_t segNum);
+	  	Segment
+	  		*getSegPtr(uint16_t segNum);
 	  
 	    CRGB
 	  	 	*leds = nullptr; //pointer to the FastLed leds array
