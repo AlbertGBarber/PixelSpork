@@ -102,6 +102,9 @@ class PaletteBlenderPS : public EffectBasePS {
            endColor,
            newColor;
         
+        palettePS
+            *palTempPtr;
+        
         uint8_t 
             blendPaletteLength = 0;
 };

@@ -11,7 +11,7 @@
 #include "UtilEffects/RateRandomizer/RateRandomizerPS.h"
 #include "UtilEffects/RandRateCtrl/RandRateCtrlPS.h"
 #include "UtilEffects/PaletteCycle/PaletteCyclePS.h"
-#include "UtilEffects/SinglePaletteCycle/SinglePaletteCyclePS.h"
+#include "UtilEffects/PaletteSingleCycle/PaletteSingleCyclePS.h"
 #include "UtilEffects/SegmentSetCheck/SegmentSetCheckPS.h"
 #include "UtilEffects/AddGlitter/addGlitterPS.h"
 #include "UtilEffects/PaletteSlider/PaletteSliderPS.h"

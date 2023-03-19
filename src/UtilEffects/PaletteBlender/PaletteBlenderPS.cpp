@@ -14,7 +14,6 @@ PaletteBlenderPS::~PaletteBlenderPS(){
 
 //resets the core class variables, allowing you to reuse class instances
 void PaletteBlenderPS::reset(palettePS &StartPalette, palettePS &EndPalette, uint8_t TotalSteps, uint16_t Rate){
-    reset();
     reset(StartPalette, EndPalette);
     totalSteps = TotalSteps;
     bindClassRatesPS();
@@ -31,11 +30,6 @@ void PaletteBlenderPS::reset(palettePS &StartPalette, palettePS &EndPalette){
     endPalette = &EndPalette;
     startPalette = &StartPalette;
     uint8_t blendPaletteLengthTemp = max(startPalette->length, endPalette->length);
-    
-    //if we are randomizing, choose a randomized end palette
-    if(randomize){
-        paletteUtilsPS::randomize(*endPalette);
-    }
 
     //create the blend palette
     setupBlendPalette(blendPaletteLengthTemp);
@@ -47,6 +41,11 @@ void PaletteBlenderPS::reset(){
     prevTime = 0;
     blendEnd = false;
     paused = false;
+
+    //if we are randomizing, choose a randomized end palette
+    if(randomize){
+        paletteUtilsPS::randomize(*endPalette);
+    }
 }
 
 //creates the blend palette and the color storage arrays
@@ -97,7 +96,10 @@ void PaletteBlenderPS::update(){
         } else if( ( currentTime - pauseStartTime ) >= pauseTime) {
             paused = false;
             if(looped){
-                reset(*endPalette, *startPalette);
+                palTempPtr = startPalette;
+                startPalette = endPalette;
+                endPalette = palTempPtr;
+                reset();
             }
         }
     }
