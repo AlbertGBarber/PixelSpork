@@ -154,7 +154,7 @@ void RollingWavesFastSL::initalFill(){
         }
         colorOut = getWaveColor(cycleNum);
         //Draw the colored line
-        segDrawUtils::drawSegLineSimple(segmentSet, i, colorOut, 0);
+        segDrawUtils::drawSegLine(segmentSet, i, colorOut, 0);
 
         cycleNum = addmod8(cycleNum, 1, blendLimit);//track what step we're on in the wave
     }
@@ -212,7 +212,7 @@ void RollingWavesFastSL::update(){
                 colorOut = getWaveColor(blendStep);
 
                 //Draw the line
-                segDrawUtils::drawSegLineSimple(segmentSet, i, colorOut, 0);
+                segDrawUtils::drawSegLine(segmentSet, i, colorOut, 0);
             } else {
                 //Copy the pixel color from the previous line
                 //To copy the color we always copy from the pixel on the longest segment,
@@ -222,7 +222,7 @@ void RollingWavesFastSL::update(){
                 colorOut = segmentSet.leds[pixelNum];
 
                 //write out the copied color to the whole line
-                segDrawUtils::drawSegLineSimple(segmentSet, i, colorOut, 0);
+                segDrawUtils::drawSegLine(segmentSet, i, colorOut, 0);
             }
         }
         cycleNum = addMod16PS( cycleNum, 1, totalCycleLength );

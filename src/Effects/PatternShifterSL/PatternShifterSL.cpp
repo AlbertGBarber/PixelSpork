@@ -92,7 +92,7 @@ void PatternShifterSL::update(){
         //that the pattern was on for the previous cycle (as long as it's in the segment set)
         if(!repeat && prevLine < numLines){
             //fill in background if not repeating
-            segDrawUtils::drawSegLineSimple(segmentSet, prevLine, *bgColor, bgColorMode);
+            segDrawUtils::drawSegLine(segmentSet, prevLine, *bgColor, bgColorMode);
         }
 
         //To draw the pattern, we run over each pattern "row", getting the start and end lines, 

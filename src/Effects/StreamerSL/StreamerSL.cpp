@@ -182,7 +182,7 @@ void StreamerSL::updateFade(){
                 colorOut = getBlendedColor(nextColor, longestSeg);
                 //write the color out to all the leds in the segment line
                 //(we used numLinesLim - i in place of just i to make the default line motion positive)
-                segDrawUtils::drawSegLineSimple(segmentSet, numLinesLim - i, colorOut, 0);
+                segDrawUtils::drawSegLine(segmentSet, numLinesLim - i, colorOut, 0);
                 break;
             case 1: case 2: case 6: case 7:
                 //For these modes each pixel may be different, so we need to blend each of them individually

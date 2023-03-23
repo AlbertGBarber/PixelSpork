@@ -60,7 +60,7 @@ void ColorWipeSLSeg::reset(){
     wipeDirect = startingDirect;
     bgWipe = false;
     patOffset = 0;
-    wipeCount = 0;
+    loopCount = 0;
 }
 
 //sets the pattern to match the current palette
@@ -132,7 +132,7 @@ void ColorWipeSLSeg::setSegMode(bool newSegMode){
 //               ie colored wipe->(wipe direction flips)->background wipe->(wipe direction flips)->colored wipe->etc
 //  altSegDirLoop -- If true, then the segment set direction will be flipped every <<loopFreq>> loop
 //                   This is different than flipping the wipe direction, since it makes the first wipe 
-//                   start at the opposite end of the segment set, rather than having the wipe just move in the oppsite direction    
+//                   start at the opposite end of the segment set, rather than having the wipe just move in the opposite direction    
 //  altSegModeLoop -- If true, will switch segMode setting the effect from wiping segment lines to whole segments, or visa versa.
 //                    When swapping, the wipeLength will be set to segWipeLen or lineWipeLen depending on the segMode.
 //                    see setWipeLength() for info on how thes are set. 
@@ -171,6 +171,8 @@ void ColorWipeSLSeg::resetLoop(){
     wipeNumSeq = 0;
     wipeStep = 0;
 
+    loopCount++;
+
     //Flip the segMode
     //This switches the effect from drawing on segment lines to whole segments or visa versa
     //When we switch we also want to swap what wipeLength we're doing, either to segWipeLen or lineWipeLen
@@ -179,8 +181,8 @@ void ColorWipeSLSeg::resetLoop(){
     }
 
     //Set the effect to do a background color wipe every bgLoopFreq number off loops
-    //(we add 1 to the wipeCount because we want the bg to trigger after the first wipe, with the freq default being 2)
-    if(bgLoop && (mod16PS(wipeCount + 1, bgLoopFreq ) == 0) ){
+    //(we add 1 to the loopCount because we want the bg to trigger after the first wipe, with the freq default being 2)
+    if(bgLoop && (mod16PS(loopCount + 1, bgLoopFreq ) == 0) ){
         bgWipe = true;
     } else{
         bgWipe = false;
@@ -188,7 +190,7 @@ void ColorWipeSLSeg::resetLoop(){
     
     //Change the other looping vars every loopFreq number of loops
     //This allows you to create a wide range of wiping loop effects
-    if( mod16PS(wipeCount, loopFreq ) == 0 ){
+    if( mod16PS(loopCount, loopFreq ) == 0 ){
         //Flip the segment direction
         //This is different than flipping the wipe direction, since it makes the first wipe start at the opposite end of the segment set
         //Rather than having the wipe just move in the oppsite direction
@@ -233,14 +235,11 @@ void ColorWipeSLSeg::resetLoop(){
 void ColorWipeSLSeg::update(){
     currentTime = millis();
     
+    //Check for update time, or skip if the wipes are "done"
     //We adjust the update rate by segRateAdj when in segMode to slow it by a fixed amount
     //(this assumes that the segment set has more segment lines than whole segments, so you may want a slower update rate for the segments)
-    if( ( currentTime - prevTime ) >= (*rate + segRateAdj * segMode) ) {
+    if( !done && ( currentTime - prevTime ) >= (*rate + segRateAdj * segMode) ) {
         prevTime = currentTime;
-        //if the wipe is finished, we can just jump out of the update() to end it
-        if(done){
-            return;
-        }
 
         //If we're wiping all the wipe lengths at once, 
         //we need to make sure out first wipe always has the correct direction
@@ -346,10 +345,9 @@ void ColorWipeSLSeg::update(){
             wipeStep++;
         } else {
             //All the wipes are finished, so we flag done, and possibly reset if looping
-            //We also advance the wipeCount, to track how many total wipe cycles we've finished
+            //We also advance the loopCount, to track how many total wipe cycles we've finished
             if(simult || ( !simult && wipeNumSeq >= numWipes - 1 ) ){
                 done = true;
-                wipeCount++;
                 if(looped){
                     resetLoop();
                 }

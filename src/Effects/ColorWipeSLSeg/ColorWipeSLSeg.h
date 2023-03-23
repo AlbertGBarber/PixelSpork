@@ -55,11 +55,11 @@ SegMode, Wipe Lengths, and Update Rates:
 
 Looping:
     To keep wiping continuously, you can set the wipes to loop, which will automatically reset the effect repeatedly.
-    The number of full wipes completed is stored in wipeCount. (ie if you have 4 wipes, wipe count will increment every time those 4 wipes are finished)
+    The number of full wipes completed is stored in loopCount. (ie if you have 4 wipes, loopCount will increment every time those 4 wipes are finished)
 
     There are a various of options for configuring how the wipe loops, allowing you to change the wipe direction, 
     wipe a background color, etc when looping. You can configure these options all at once using setUpLoop().
-    Or you can set them indiviually.
+    Or you can set them individually.
 
     The loop options give you alot of flexibility in creating different effects, I encourage you to play with them!
     If you can't setup exactly what you want, you can always create multiple ColorWipes, and envoke them manually, 
@@ -90,7 +90,7 @@ The Loop Options:
                  ie colored wipe->(wipe direction flips)->background wipe->(wipe direction flips)->colored wipe->etc
     altSegDirLoop -- If true, then the segment set direction will be flipped every <<loopFreq>> loop
                      This is different than flipping the wipe direction, since it makes the first wipe 
-                     start at the opposite end of the segment set, rather than having the wipe just move in the oppsite direction    
+                     start at the opposite end of the segment set, rather than having the wipe just move in the opposite direction    
     altSegModeLoop -- If true, will switch segMode setting the effect from wiping segment lines to whole segments, or visa versa.
                       When swapping, the wipeLength will be set to segWipeLen or lineWipeLen depending on the segMode.
                       see setWipeLength() for info on how thes are set. 
@@ -172,7 +172,7 @@ Looping Settings:
     bgAltLoop (default false) -- (see intro looping notes)
 
 Reference Vars:
-    wipeCount -- How many full wipe cycles we've done, useful for tracking wipes when looping
+    loopCount -- How many full wipe cycles we've done, useful for tracking wipes when looping
     wipeLength -- The length of each wipe (set using setWipeLength())
     segMode -- (see segMode notes above) ( set using setSegMode() )
     patOffset -- The current offset of the pattern. Used to shift the pattern colors. Only used when looping.
@@ -211,7 +211,7 @@ class ColorWipeSLSeg : public EffectBasePS {
         
         uint16_t
             wipeLength, //for reference
-            wipeCount = 0, //for reference
+            loopCount = 0, //for reference
             patOffset = 0, //for reference
             lineWipeLen = 0,
             segWipeLen = 0;

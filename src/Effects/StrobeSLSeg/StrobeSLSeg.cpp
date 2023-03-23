@@ -198,12 +198,12 @@ void StrobeSLSeg::update(){
                     if(!direct){
                         nextSeg = numLines - 1 - nextSeg;
                     }
-                    segDrawUtils::drawSegLineSimple(segmentSet, nextSeg, colorOut, modeOut);
+                    segDrawUtils::drawSegLine(segmentSet, nextSeg, colorOut, modeOut);
                     break;
                 case 3:
                     //similar to case 1, but we're filling seg lines instead of segments
                     for(uint8_t i = firstHalf; i < numLines; i += 2){
-                        segDrawUtils::drawSegLineSimple(segmentSet, i, colorOut, modeOut);
+                        segDrawUtils::drawSegLine(segmentSet, i, colorOut, modeOut);
                     }
                     break;
                 default: //(mode 4)

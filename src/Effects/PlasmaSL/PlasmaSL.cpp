@@ -95,7 +95,7 @@ void PlasmaSL::update(){
             lineNum = numLines - i - 1;
 
             //write the color out to all the leds in the segment line
-            segDrawUtils::drawSegLineSimple(segmentSet, lineNum, colorOut, 0);
+            segDrawUtils::drawSegLine(segmentSet, lineNum, colorOut, 0);
         }
         showCheckPS();
     }

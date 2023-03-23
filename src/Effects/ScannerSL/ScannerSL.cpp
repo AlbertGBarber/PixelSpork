@@ -315,7 +315,7 @@ void ScannerSL::update(){
                 //so we know that if the trail pixel has not been over-written, it should not have been over-written on other segments
                 if(segmentSet.leds[pixelNum] == trailEndColors[i]){
                     //segmentSet.leds[pixelInfo.pixelLoc] = pixelInfo.color;
-                    segDrawUtils::drawSegLineSimple(segmentSet, trailLineNum, *bgColor, bgColorMode);
+                    segDrawUtils::drawSegLine(segmentSet, trailLineNum, *bgColor, bgColorMode);
                 }
             }
 

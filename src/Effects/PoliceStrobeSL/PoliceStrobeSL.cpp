@@ -153,7 +153,7 @@ void PoliceStrobeSL::update(){
                     segDrawUtils::fillSegColor(segmentSet, i, colorOut, modeOut);
                 } else {
                     //Not in segMod: we draw the pulses along segment lines
-                    segDrawUtils::drawSegLineSimple(segmentSet, i, colorOut, modeOut);
+                    segDrawUtils::drawSegLine(segmentSet, i, colorOut, modeOut);
                 }
             }
             

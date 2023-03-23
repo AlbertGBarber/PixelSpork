@@ -61,7 +61,7 @@ void TheaterChaseSL::update(){
                 //if the spot size is greater than 1 (litLength), then we will run into the next 
                 //spot region. To prevent this, loop the spot round by modding by totalDrawLength
                 lineNum = i + addMod16PS( j, cycleNum, totalDrawLength ); //i + (j + cycleNum) % totalDrawLength;
-                segDrawUtils::drawSegLineSimple(segmentSet, lineNum, *color, colorMode);
+                segDrawUtils::drawSegLine(segmentSet, lineNum, *color, colorMode);
                 //segDrawUtils::setPixelColor(segmentSet, pixelLoc, *color, colorMode);
             }
         }

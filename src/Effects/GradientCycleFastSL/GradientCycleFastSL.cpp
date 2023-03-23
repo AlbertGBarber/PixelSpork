@@ -81,7 +81,7 @@ void GradientCycleFastSL::initalFill(){
         // get the crossfade between the current and next color, where the transition is gradsteps long
         colorOut = colorUtilsPS::getCrossFadeColor(currentColor, nextColor, cycleNum, gradLength);
         //Draw the colored line
-        segDrawUtils::drawSegLineSimple(segmentSet, i, colorOut, 0);
+        segDrawUtils::drawSegLine(segmentSet, i, colorOut, 0);
 
         cycleNum = addmod8(cycleNum, 1, gradLength);//track what step we're on in the gradient
     }
@@ -129,7 +129,7 @@ void GradientCycleFastSL::update(){
                     pickNextColor();
                 }
                 colorOut = colorUtilsPS::getCrossFadeColor(currentColor, nextColor, cycleNum, gradLength);
-                segDrawUtils::drawSegLineSimple(segmentSet, i, colorOut, 0);
+                segDrawUtils::drawSegLine(segmentSet, i, colorOut, 0);
             } else {
                 //Copy the pixel color from the previous line
                 //To copy the color we always copy from the pixel on the longest segment,
@@ -139,7 +139,7 @@ void GradientCycleFastSL::update(){
                 colorOut = segmentSet.leds[pixelNum];
                 
                 //write out the copied color to the whole line
-                segDrawUtils::drawSegLineSimple(segmentSet, i, colorOut, 0);
+                segDrawUtils::drawSegLine(segmentSet, i, colorOut, 0);
             }
         }
 

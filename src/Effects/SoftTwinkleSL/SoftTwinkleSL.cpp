@@ -39,7 +39,7 @@ void SoftTwinkleSL::update() {
                 color += lightcolor; // brighten if red is even
             }
             //color the segment line
-            segDrawUtils::drawSegLineSimple(segmentSet, i, color, 0);
+            segDrawUtils::drawSegLine(segmentSet, i, color, 0);
         }
 
         // Randomly choose a segment line, and if it's black, 'bump' it up a little.
@@ -52,7 +52,7 @@ void SoftTwinkleSL::update() {
             pixelNum = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, longestSeg, lineNum);
             color = segmentSet.leds[pixelNum];
             if (!color) {
-                segDrawUtils::drawSegLineSimple(segmentSet, lineNum, lightcolor, 0);
+                segDrawUtils::drawSegLine(segmentSet, lineNum, lightcolor, 0);
             }
         }
         showCheckPS();

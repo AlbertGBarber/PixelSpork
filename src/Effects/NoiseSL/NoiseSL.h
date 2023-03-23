@@ -1,6 +1,9 @@
 #ifndef NoiseSL_h
 #define NoiseSL_h
 
+//TODO: inoise8() has it's real range limited to 0-128, 
+//      use inoise16() instead, but shift out the extra bits: uint8_t n = inoise16(x << 8, y << 8) >> 8;?
+
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
 #include "MathUtils/mathUtilsPS.h"

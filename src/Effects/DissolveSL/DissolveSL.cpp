@@ -221,7 +221,7 @@ void DissolveSL::spawnLed(uint16_t lineNum){
 
     if(lineMode){
         //write the color out to all the leds in the segment line
-        segDrawUtils::drawSegLineSimple(segmentSet, lineNum, color, colorMode);
+        segDrawUtils::drawSegLine(segmentSet, lineNum, color, colorMode);
     } else {
         segDrawUtils::setPixelColor(segmentSet, lineNum, color, colorMode);
     }

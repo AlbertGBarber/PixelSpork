@@ -170,7 +170,7 @@ void RollingWavesSL2::initalFill(){
         colorOut = getWaveColor(cycleNum);
 
         //Draw the colored line
-        segDrawUtils::drawSegLineSimple(segmentSet, i, colorOut, 0);
+        segDrawUtils::drawSegLine(segmentSet, i, colorOut, 0);
 
         cycleNum = addmod8(cycleNum, 1, blendLimit);//track what step we're on in the wave
     }

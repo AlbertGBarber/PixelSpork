@@ -99,7 +99,7 @@ void GradientCycleSL::update(){
             colorOut = colorUtilsPS::getCrossFadeColor(currentColor, nextColor, blendStep, gradLength);
             //write the color out to all the leds in the segment line
             //(we used numLines - 1 - i in place of just i to make the default line motion positive)
-            segDrawUtils::drawSegLineSimple(segmentSet, numLines - 1 - i, colorOut, 0);
+            segDrawUtils::drawSegLine(segmentSet, numLines - 1 - i, colorOut, 0);
         }
 
         cycleNum = addMod16PS(cycleNum, 1, totalCycleLength);

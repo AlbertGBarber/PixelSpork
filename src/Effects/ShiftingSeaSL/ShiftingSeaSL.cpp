@@ -140,7 +140,7 @@ void ShiftingSeaSL::update() {
             
             //get the cross faded color and write it out
             color = colorUtilsPS::getCrossFadeColor(currentColor, nextColor, gradStep, gradLength);
-            segDrawUtils::drawSegLineSimple(segmentSet, i, color, 0);
+            segDrawUtils::drawSegLine(segmentSet, i, color, 0);
 
             // randomly increment the offset (keeps the effect varied)
             if (randomShift) {

@@ -170,7 +170,7 @@ void FirefliesSL::update(){
                     //This helps avoid issues with un-equal segments, where multiple lines can converge on a single pixel
                     //but you still only want to draw the last particle in the set for consistency
                     if(segmentSet.leds[pixelNum] == trailEndColors[i]){
-                        segDrawUtils::drawSegLineSimple(segmentSet, particlePrevPos[i], *bgColor, bgColorMode);
+                        segDrawUtils::drawSegLine(segmentSet, particlePrevPos[i], *bgColor, bgColorMode);
                         //segmentSet.leds[pixelInfo.pixelLoc] = pixelInfo.color;
                     }
                 }

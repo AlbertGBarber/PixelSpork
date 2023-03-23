@@ -76,7 +76,7 @@ void TwinkleFastSL::update(){
                     break;
             }
             //fill the segment line at the twinkle location with color
-            segDrawUtils::drawSegLineSimple(segmentSet, randLine, color, colorMode);
+            segDrawUtils::drawSegLine(segmentSet, randLine, color, colorMode);
         }
         showCheckPS();
     }

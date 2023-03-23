@@ -69,13 +69,13 @@ void SegmentSetCheckPS::update(){
             //while each other segment line is lit up in green one at a time
             numLines = segmentSet.numLines;
             //turn off the previous segment line
-            segDrawUtils::drawSegLineSimple(segmentSet, pixelCount - 1, 0, 0);
+            segDrawUtils::drawSegLine(segmentSet, pixelCount - 1, 0, 0);
             //draw the segment line in green
-            segDrawUtils::drawSegLineSimple(segmentSet, pixelCount, CRGB::Green, 0);
+            segDrawUtils::drawSegLine(segmentSet, pixelCount, CRGB::Green, 0);
 
             //set the first and last lines to red and green
-            segDrawUtils::drawSegLineSimple(segmentSet, 0, CRGB::Red, 0);
-            segDrawUtils::drawSegLineSimple(segmentSet, numLines - 1, CRGB::Blue, 0);
+            segDrawUtils::drawSegLine(segmentSet, 0, CRGB::Red, 0);
+            segDrawUtils::drawSegLine(segmentSet, numLines - 1, CRGB::Blue, 0);
 
             pixelCount++;
             //if we've drawn all the lines we need to advance to the next testing mode

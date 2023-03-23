@@ -170,7 +170,7 @@ void FairyLightsSLSeg::drawTwinkle(uint8_t twinkleNum, CRGB &tColor, uint8_t cMo
         case 0:
         default:
             //fill the segment line at the twinkle location with color
-            segDrawUtils::drawSegLineSimple(segmentSet, twinkleSet[twinkleNum], tColor, cMode);
+            segDrawUtils::drawSegLine(segmentSet, twinkleSet[twinkleNum], tColor, cMode);
             break;
         case 1:
             //fill twinkleSet[i]'th segment with color

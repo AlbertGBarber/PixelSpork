@@ -85,7 +85,7 @@ void ShiftingRainbowSeaSL::update() {
             step = addMod16PS( cycleNum, offsets[i], 255); // where we are in the cycle of all the colors
             color = colorUtilsPS::wheel(step, 0, sat, val); //wheel since it's a rainbow
             
-            segDrawUtils::drawSegLineSimple(segmentSet, i, color, 0);
+            segDrawUtils::drawSegLine(segmentSet, i, color, 0);
             //segDrawUtils::setPixelColor(segmentSet, i, color, 0);
 
             //randomly increment the offset

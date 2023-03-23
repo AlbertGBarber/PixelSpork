@@ -249,7 +249,7 @@ Segment segment3 = { SIZE(segmentSec3), &segmentSec3, true };
 
 //define the segment array and the segmentSet (must include the * and the &'s)
 Segment *segment_array[] = { &segment0 , &segment1, &segment2, &segment3 };
-SegmentSet segmentset0 = {leds, numLeds, SIZE(segment_array), segment_array};
+SegmentSet segmentset0 = {leds, numLeds, segment_array, SIZE(segment_array)};
 
 //Note: leds is your FastLED array of leds, numLeds is it's length
 

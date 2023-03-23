@@ -195,11 +195,11 @@ void BreathEyeSL::update(){
             //So if we're not wrapping we ignore any lines that are greater than eyePos
             //The opposite is true for the forward line number
             if( wrap || (lineNumRev < eyePos) ){
-                segDrawUtils::drawSegLineSimple(segmentSet, lineNumRev, dimColor, 0);
+                segDrawUtils::drawSegLine(segmentSet, lineNumRev, dimColor, 0);
             }
 
             if( wrap || (lineNumFor > eyePos) ){
-                segDrawUtils::drawSegLineSimple(segmentSet, lineNumFor, dimColor, 0);
+                segDrawUtils::drawSegLine(segmentSet, lineNumFor, dimColor, 0);
             }
 
         }

@@ -186,7 +186,7 @@ void segDrawUtils::fillSegSecColor(SegmentSet &segmentSet, uint16_t segNum, uint
     }
 }
 
-//fills in a length of a segment with a color, using a start and end pixel
+//Fills in a length of a segment with a color, using a start and end pixel
 //pixel numbers are local to the segment, not global. ie 1-8th pixel in the segment
 void segDrawUtils::fillSegLengthColor(SegmentSet &segmentSet, const CRGB &color, uint8_t colorMode, uint16_t segNum, uint16_t startSegPixel, uint16_t endPixel){
     //below is the fastest way to do this
@@ -197,7 +197,7 @@ void segDrawUtils::fillSegLengthColor(SegmentSet &segmentSet, const CRGB &color,
     }
 }
 
-//fills in a length of a segement set in a color, using a start and end pixel
+//Fills in a length of a segement set in a color, using a start and end pixel
 //pixel numbers are local to the segment set, not the global pixel numbers. Ie 5th through 8th pixel in the segment set
 //(starting from 0)
 void segDrawUtils::fillSegSetlengthColor(SegmentSet &segmentSet, const CRGB &color, uint8_t colorMode, uint16_t startSegPixel, uint16_t endPixel){
@@ -231,22 +231,21 @@ void segDrawUtils::fillSegSetlengthColor(SegmentSet &segmentSet, const CRGB &col
     }
 }
 
-// draws a segment line of one color, does not need a palette or pattern, passing -1 as the color will do a rainbow based on the Wheel() function
-void segDrawUtils::drawSegLineSimple(SegmentSet &segmentSet, uint16_t lineNum, const CRGB &color, uint8_t colorMode) {
-    drawSegLineSimpleSection(segmentSet, 0, segmentSet.numSegs - 1, lineNum, color, colorMode);
+//Draws a segment line of one color
+void segDrawUtils::drawSegLine(SegmentSet &segmentSet, uint16_t lineNum, const CRGB &color, uint8_t colorMode) {
+    drawSegLineSection(segmentSet, 0, segmentSet.numSegs - 1, lineNum, color, colorMode);
 }
 
-// draws a segment line of one color between startSeg and endSeg (including endSeg)
-// does not need a palette or pattern,
-void segDrawUtils::drawSegLineSimpleSection(SegmentSet &segmentSet, uint16_t startSeg, uint16_t endSeg, uint16_t lineNum, const CRGB &color, uint8_t colorMode) {
+//Draws a segment line of one color between startSeg and endSeg (including endSeg)
+void segDrawUtils::drawSegLineSection(SegmentSet &segmentSet, uint16_t startSeg, uint16_t endSeg, uint16_t lineNum, const CRGB &color, uint8_t colorMode) {
     for (uint16_t i = startSeg; i <= endSeg; i++) { // for each segment, set the color, if we're in rainbow mode, set the rainbow color
         pixelNum = getPixelNumFromLineNum(segmentSet, segmentSet.numLines, i, lineNum);
         setPixelColor(segmentSet, pixelNum, color, colorMode, i, lineNum);
     }
 } 
 
-// retuns the pixel number located on segment segNum located along line lineNum where the total number of lines matches the pixels in the longest segment
-// in other words, will return a pixel such that you can draw a straight line accross all segments, using the longest segment as the basis
+//Retuns the pixel number located on segment segNum located along line lineNum where the total number of lines matches the pixels in the longest segment
+//in other words, will return a pixel such that you can draw a straight line accross all segments, using the longest segment as the basis
 uint16_t segDrawUtils::getPixelNumFromLineNum(SegmentSet &segmentSet, uint16_t numLines, uint16_t segNum, uint16_t lineNum) { 
     //This formula dedicated to my father, who saved me from many hours of head-scratching in an instant
     return getSegmentPixel(segmentSet, segNum, ( (lineNum * segmentSet.getTotalSegLength(segNum)) / numLines) ); 

@@ -138,7 +138,7 @@ void StreamerFastSL::initalFill(){
         nextColor = pickStreamerColor(nextPattern);
 
         //write out the copied color to the whole line
-        segDrawUtils::drawSegLineSimple(segmentSet, i, nextColor, 0);
+        segDrawUtils::drawSegLine(segmentSet, i, nextColor, 0);
         //every time we draw a pixel, we're basically doing one whole update()
         //so we need to increment the cycleNum, so that once the preFill is done, the 
         //next update() call will sync properly
@@ -186,7 +186,7 @@ void StreamerFastSL::update(){
                 nextColor = segmentSet.leds[pixelNum];
             }
             //write out the copied color to the whole line
-            segDrawUtils::drawSegLineSimple(segmentSet, i, nextColor, 0);
+            segDrawUtils::drawSegLine(segmentSet, i, nextColor, 0);
 
         }
         cycleNum = addMod16PS( cycleNum, 1, pattern->length ); //one update = one cycle

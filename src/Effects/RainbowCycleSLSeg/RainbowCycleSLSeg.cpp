@@ -83,7 +83,7 @@ void RainbowCycleSLSeg::update(){
                 //fill the segment line at the line location with color
                 //by default the rainbows would move counter-clockwise across the segmentSet, so we use numLines - i - 1
                 //to reverse it
-                segDrawUtils::drawSegLineSimple(segmentSet, numLines - i - 1, color, 0);
+                segDrawUtils::drawSegLine(segmentSet, numLines - i - 1, color, 0);
             }
         }
         showCheckPS();
