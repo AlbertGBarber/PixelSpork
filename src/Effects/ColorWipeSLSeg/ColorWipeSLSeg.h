@@ -28,21 +28,21 @@ Once all the wipes are finished, the "done" flag will be set, and the effect is 
 
 SegMode, Wipe Lengths, and Update Rates:
     segMode configures the effect to wipe whole segments, or segment lines one by one.
-    Each segMode has it's own wipelength (segWipeLen or lineWipeLen).
+    Each segMode has it's own wipeLength (segWipeLen or lineWipeLen).
     When you first create the effect, depending on the segMode you pass in,
-    either segWipeLen or lineWipeLen will be set to wipelength you pass in.
+    either segWipeLen or lineWipeLen will be set to wipeLength you pass in.
     The other length will be set to 0 (so that a whole wipe is done).
     When switching segModes, the wipeLength will be set to segWipeLen or lineWipeLen.
     This ensures that when looping (see below), we have a specific wipe length for segment or line wipes.
     You can change the segWipeLen and lineWipeLen manually at any time. 
 
     You can change the segMode by calling setSegMode(newSegMode), 
-    which also changes the wipelength to either segWipeLen or lineWipeLen (recalculating numWipes)
+    which also changes the wipeLength to either segWipeLen or lineWipeLen (recalculating numWipes)
 
     Because the number of segments and segment lines will probably not be equal, I've included
     a time offset for when segMode is true: segRateAdj. This is added to the effect's update rate
     allowing you to slow down the updates by a fixed amount, while still being able to vary the effect's rate like other effects.
-    The is mostly usefull when looping:
+    The is mostly useful when looping:
     For example, say I have a segment set with 5 segments, and 20 segment lines. 
     I have the ColorWipe set to loop, switch segModes when it does. 
     I have my update rate set to 80ms, which looks good with my segment lines, but is too fast for the whole segments.
@@ -61,15 +61,15 @@ Looping:
     wipe a background color, etc when looping. You can configure these options all at once using setUpLoop().
     Or you can set them individually.
 
-    The loop options give you alot of flexibility in creating different effects, I encourage you to play with them!
-    If you can't setup exactly what you want, you can always create multiple ColorWipes, and envoke them manually, 
-    swaping/reseting them out as they are "done".
+    The loop options give you a lot of flexibility in creating different effects, I encourage you to play with them!
+    If you can't setup exactly what you want, you can always create multiple ColorWipes, and invoke them manually, 
+    swapping/reseting them out as they are "done".
 
 The Loop Options: 
-    looped -- Sets if the wipes loop or not. Looping wipes automatically restart everytime a wipe is finished.
+    looped -- Sets if the wipes loop or not. Looping wipes automatically restart every time a wipe is finished.
               The other variables are only relevant if the wipe is looping, because they modify subsequent loops.
     bgLoopFreq (min 2) -- Sets how often a bgWipe is done. ie 2 will be every other loop, 3, every 3 loops, etc
-                          The minimum is 2, because wiping the background every loop (1) isn't usefull.
+                          The minimum is 2, because wiping the background every loop (1) isn't useful.
                           Note that if bgLoop is false, no background wipes will be done!
                           I suggest starting with this at 2.
     bgLoop -- If true, then the background color (default 0) will be used as the color wipe every <<bgLoopFreq>> loop
@@ -93,8 +93,8 @@ The Loop Options:
                      start at the opposite end of the segment set, rather than having the wipe just move in the opposite direction    
     altSegModeLoop -- If true, will switch segMode setting the effect from wiping segment lines to whole segments, or visa versa.
                       When swapping, the wipeLength will be set to segWipeLen or lineWipeLen depending on the segMode.
-                      see setWipeLength() for info on how thes are set. 
-                      Note that altSegModeLoop tiggers every loop. 
+                      see setWipeLength() for info on how these are set. 
+                      Note that altSegModeLoop triggers every loop. 
                       For me, this seemed like the best option rather than tying it to a freq. 
                       It seemed weird to want to switch segModes for multiple loops, you might as well just create two different ColorWipes.   
                     
@@ -132,7 +132,7 @@ Constructor Inputs:
     palette(optional, see constructors) -- The set of colors that color wipes will use
     pattern(optional, see constructors) -- A pattern is struct made from a 1-d array of palette indexes ie {0, 1, 3, 6, 7} 
                                           and the length of the array (see patternPS.h)   
-    color (optional, see contructors) -- A single color for all the wipes
+    color (optional, see constructors) -- A single color for all the wipes
     wipeLength -- Set how long each wipe is. The effect will always do enough wipes to fill the segment set
                   (passing 0 in as the wipe length automatically sets the wipe length to the number of lines in the segment set)
     style -- How the colors are displayed for the wipe(s) (see notes in intro above)
@@ -146,7 +146,7 @@ Functions:
     reset() -- Resets the effect vars, restarting the wipes
     setPaletteAsPattern() -- Sets the effect pattern to match the current palette
     setWipeLength(newWipeLength) -- Sets the wipe length, does NOT restart the effect
-    setSegMode(newSegMode) -- Changes the segMode and changes the wipelength to either segWipeLen or lineWipeLen (recalculating numWipes) (see segMode notes above)
+    setSegMode(newSegMode) -- Changes the segMode and changes the wipeLength to either segWipeLen or lineWipeLen (recalculating numWipes) (see segMode notes above)
     resetLoop() -- Resets the current loop, will switch to the next loop, only relevant when looping (you shouldn't need to call this)
     setUpLoop(nLooped, nShiftPatLoop, nBgLoop, nAltWipeDirLoop, nBgAltLoop, nAltSegDirLoop) 
              -- A quick way of setting all the loop variables (see intro for notes on loops)
@@ -184,21 +184,21 @@ Flags:
 class ColorWipeSLSeg : public EffectBasePS {
     public:
         //Constructor using pattern and palette
-        ColorWipeSLSeg(SegmentSet &SegmentSet, palettePS &Palette, patternPS &Pattern, uint16_t WipeLength, uint8_t Style,
+        ColorWipeSLSeg(SegmentSet &SegSet, palettePS &Palette, patternPS &Pattern, uint16_t WipeLength, uint8_t Style,
                        bool Simult, bool Alternate, bool WipeDirect, bool SegMode, uint16_t Rate);  
         
         //Constructor using palette alone 
-        ColorWipeSLSeg(SegmentSet &SegmentSet, palettePS &Palette, uint16_t WipeLength, uint8_t Style,
+        ColorWipeSLSeg(SegmentSet &SegSet, palettePS &Palette, uint16_t WipeLength, uint8_t Style,
                        bool Simult, bool Alternate, bool WipeDirect, bool SegMode, uint16_t Rate); 
 
         //Constructor for a single color wipe
-        ColorWipeSLSeg(SegmentSet &SegmentSet, CRGB WipeColor, uint16_t WipeLength, uint8_t Style,
+        ColorWipeSLSeg(SegmentSet &SegSet, CRGB WipeColor, uint16_t WipeLength, uint8_t Style,
                        bool Simult, bool Alternate, bool WipeDirect, bool SegMode, uint16_t Rate); 
                 
         ~ColorWipeSLSeg();
 
         SegmentSet 
-            &segmentSet;
+            &SegSet;
 
         CRGB 
             bgColorOrig = 0, //default background color (blank)
@@ -247,11 +247,11 @@ class ColorWipeSLSeg : public EffectBasePS {
         
         palettePS
             *palette = nullptr,
-            paletteTemp;
+            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
         
         patternPS
             *pattern = nullptr,
-            patternTemp;
+            patternTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
         
         void 
             reset(),

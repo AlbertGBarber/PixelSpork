@@ -43,10 +43,10 @@ Functions:
 */
 class PacificaPS : public EffectBasePS {
     public:
-        PacificaPS(SegmentSet &SegmentSet, uint16_t Rate);  
+        PacificaPS(SegmentSet &SegSet, uint16_t Rate);  
 
         SegmentSet 
-            &segmentSet; 
+            &SegSet; 
         
         uint8_t 
             //Produces a total blend length of 240 for the whole palette, matches the original code
@@ -63,13 +63,13 @@ class PacificaPS : public EffectBasePS {
         unsigned long
             currentTime,
             prevTime = 0,
-            deltams,
-            deltams1,
-            deltams2,
-            deltams21;
+            deltaTime,
+            deltaTime1,
+            deltaTime2,
+            deltaTime21;
         
         uint8_t
-            basethreshold,
+            baseThreshold,
             wave,
             threshold,
             lightLvl,
@@ -85,21 +85,21 @@ class PacificaPS : public EffectBasePS {
             sCIStart2,
             sCIStart3, 
             sCIStart4,
-            speedfactor1,
-            speedfactor2,
+            speedFactor1,
+            speedFactor2,
             ci,
-            waveangle,
-            wavescale_half,
+            waveAngle,
+            waveScaleHalf,
             s16,
             cs,
             index,
-            sindex16;
+            sIndex16;
         
         CRGB
             colorOut;
         
         void 
-            doOneLayer( palettePS *palette, uint16_t cistart, uint16_t wavescale, uint8_t bri, uint16_t ioff),
+            doOneLayer( palettePS *palette, uint16_t ciStart, uint16_t waveScale, uint8_t bri, uint16_t iOff),
             addWhitecaps(),
             deepenColors();
 };

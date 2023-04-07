@@ -1,8 +1,8 @@
 #include "ShimmerSL.h"
 
 //Constructor using a random shimmer color
-ShimmerSL::ShimmerSL(SegmentSet &SegmentSet, uint8_t ShimmerMin, uint8_t ShimmerMax, uint16_t Rate):
-    segmentSet(SegmentSet), shimmerMin(ShimmerMin), shimmerMax(ShimmerMax)
+ShimmerSL::ShimmerSL(SegmentSet &SegSet, uint8_t ShimmerMin, uint8_t ShimmerMax, uint16_t Rate):
+    SegSet(SegSet), shimmerMin(ShimmerMin), shimmerMax(ShimmerMax)
     {    
         //we make a random palette of one color so that 
         //if we switch to randMode 0 then we have a palette to use
@@ -13,16 +13,16 @@ ShimmerSL::ShimmerSL(SegmentSet &SegmentSet, uint8_t ShimmerMin, uint8_t Shimmer
 	}
 
 //Constructor using a set shimmer color
-ShimmerSL::ShimmerSL(SegmentSet &SegmentSet, CRGB ShimmerColor, uint8_t ShimmerMin, uint8_t ShimmerMax, uint16_t Rate):
-    segmentSet(SegmentSet), shimmerMin(ShimmerMin), shimmerMax(ShimmerMax)
+ShimmerSL::ShimmerSL(SegmentSet &SegSet, CRGB ShimmerColor, uint8_t ShimmerMin, uint8_t ShimmerMax, uint16_t Rate):
+    SegSet(SegSet), shimmerMin(ShimmerMin), shimmerMax(ShimmerMax)
     {    
         setSingleColor(ShimmerColor);
         init(Rate);
 	}
 
-//Constuctor for colors randomly choosen from palette
-ShimmerSL::ShimmerSL(SegmentSet &SegmentSet, palettePS &Palette, uint8_t ShimmerMin, uint8_t ShimmerMax, uint16_t Rate):
-    segmentSet(SegmentSet), palette(&Palette), shimmerMin(ShimmerMin), shimmerMax(ShimmerMax)
+//Constructor for colors randomly choosen from palette
+ShimmerSL::ShimmerSL(SegmentSet &SegSet, palettePS &Palette, uint8_t ShimmerMin, uint8_t ShimmerMax, uint16_t Rate):
+    SegSet(SegSet), palette(&Palette), shimmerMin(ShimmerMin), shimmerMax(ShimmerMax)
     {    
        init(Rate);
 	}
@@ -32,7 +32,7 @@ ShimmerSL::~ShimmerSL(){
 }
 
 void ShimmerSL::init(uint16_t Rate){
-    //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
+    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
     bindSegPtrPS();
     bindClassRatesPS();
 }
@@ -67,8 +67,8 @@ void ShimmerSL::update(){
     if( ( currentTime - prevTime ) >= *rate ) {
         prevTime = currentTime;
 
-        numLines = segmentSet.numLines;
-        numSegs = segmentSet.numSegs;
+        numLines = SegSet.numLines;
+        numSegs = SegSet.numSegs;
         paletteLength = palette->length;
 
         for (uint16_t i = 0; i < numLines; i++) {
@@ -76,16 +76,16 @@ void ShimmerSL::update(){
             color = pickColor();
 
             for(uint16_t j = 0; j < numSegs; j++){
-                pixelNum = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, j, i);
+                pixelNum = segDrawUtils::getPixelNumFromLineNum(SegSet, numLines, j, i);
 
                 //If we're not in line mode, then each individual pixel is to have it's own shimmer brightness
                 if(!lineMode){
                     shimmerVal = 255 - random8(shimmerMin, shimmerMax);
                 }
 
-                colorOut = segDrawUtils::getPixelColor(segmentSet, pixelNum, color, colorMode, j, i);
+                colorOut = segDrawUtils::getPixelColor(SegSet, pixelNum, color, colorMode, j, i);
                 nscale8x3(colorOut.r, colorOut.g, colorOut.b, shimmerVal);
-                segDrawUtils::setPixelColor(segmentSet, pixelNum, colorOut, 0, 0, 0);
+                segDrawUtils::setPixelColor(SegSet, pixelNum, colorOut, 0, 0, 0);
             }
         }
 

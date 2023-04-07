@@ -1,14 +1,14 @@
 #ifndef ColorModeFillPS_h
 #define ColorModeFillPS_h
 
-#include "SegmentFiles.h"
-#include "paletteFiles.h"
+#include "Include_Lists/SegmentFiles.h"
+#include "Include_Lists/PaletteFiles.h"
 
 #include "Effects/EffectBasePS.h"
 
 /* 
 Not a full effect, but could be used as one
-Fills in the segmentSet using the specified colorMode (see segDrawUtils::getPixelColor()) at the specified rate
+Fills in the SegmentSet using the specified colorMode (see segDrawUtils::getPixelColor()) at the specified rate
 Useful for filling in a background before drawing an effect 
 or can be combined with a RainbowOffsetCycle to do simple rainbow shifting effects
 
@@ -29,10 +29,10 @@ Other Settings:
 */
 class ColorModeFillPS : public EffectBasePS {
     public:
-        ColorModeFillPS(SegmentSet &SegmentSet, uint8_t ColorMode, uint16_t Rate);  
+        ColorModeFillPS(SegmentSet &SegSet, uint8_t ColorMode, uint16_t Rate);  
 
         SegmentSet 
-            &segmentSet;
+            &SegSet;
         
         uint8_t 
             colorMode;

@@ -1,8 +1,8 @@
 #include "EdgeBurstSL.h"
 
 //Constructor for rainbow mode
-EdgeBurstSL::EdgeBurstSL(SegmentSet &SegmentSet, uint8_t BurstFreq, uint16_t Rate):
-    segmentSet(SegmentSet), burstFreq(BurstFreq)
+EdgeBurstSL::EdgeBurstSL(SegmentSet &SegSet, uint8_t BurstFreq, uint16_t Rate):
+    SegSet(SegSet), burstFreq(BurstFreq)
     {    
         init(Rate);
         rainbowMode = true;
@@ -14,16 +14,16 @@ EdgeBurstSL::EdgeBurstSL(SegmentSet &SegmentSet, uint8_t BurstFreq, uint16_t Rat
 	}
 
 //Constructor for colors from palette
-EdgeBurstSL::EdgeBurstSL(SegmentSet &SegmentSet, palettePS &Palette, uint8_t BurstFreq, uint16_t Rate):
-    segmentSet(SegmentSet), burstFreq(BurstFreq), palette(&Palette)
+EdgeBurstSL::EdgeBurstSL(SegmentSet &SegSet, palettePS &Palette, uint8_t BurstFreq, uint16_t Rate):
+    SegSet(SegSet), burstFreq(BurstFreq), palette(&Palette)
     {    
         init(Rate);
 	}
 
 //Constructor for a randomly created palette
 //RandomizePal = true will randomize the palette for each wave
-EdgeBurstSL::EdgeBurstSL(SegmentSet &SegmentSet, uint8_t numColors, bool RandomizePal, uint8_t BurstFreq, uint16_t Rate):
-    segmentSet(SegmentSet), burstFreq(BurstFreq), randomizePal(RandomizePal)
+EdgeBurstSL::EdgeBurstSL(SegmentSet &SegSet, uint8_t numColors, bool RandomizePal, uint8_t BurstFreq, uint16_t Rate):
+    SegSet(SegSet), burstFreq(BurstFreq), randomizePal(RandomizePal)
     {    
         init(Rate);
 
@@ -37,7 +37,7 @@ EdgeBurstSL::~EdgeBurstSL(){
 
 //initialize core vars
 void EdgeBurstSL::init(uint16_t Rate){
-    //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
+    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
     bindSegPtrPS();
     bindClassRatesPS();
         
@@ -73,8 +73,8 @@ void EdgeBurstSL::update(){
 
         //fetch some core vars
         //we re-fetch these in case the segment set or palette has changed
-        numSegs = segmentSet.numSegs;
-        numLines = segmentSet.numLines;
+        numSegs = SegSet.numSegs;
+        numLines = SegSet.numLines;
 
         //Get the blend length for each color in the palette
         //(using 255 steps across the whole palette)
@@ -87,7 +87,7 @@ void EdgeBurstSL::update(){
         //We want to change the wave spawn point after a wave has finished
         //A wave ends/starts every half cycle of the triwave8 above
         //So we want to set the offset every time the wave passes through the mid-point (128)
-        //Unfortunatly, the wave doesn't usually hit 128 exactly due to the frequency
+        //Unfortunately, the wave doesn't usually hit 128 exactly due to the frequency
         //So we need to catch it after is passes through, but then only set the offset once
         //hence the flipFlop boolean, which stops us from setting the offset more than once each half cycle
         if(beatVal > 128 && !offsetFlipFlop){
@@ -120,8 +120,8 @@ void EdgeBurstSL::update(){
                 //get the physical pixel location based on the line and seg numbers
                 //and then write out the color
                 //Note that the actual line written to is offset and wraps
-                pixelNum = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, j, addMod16PS(i, offset, numLines) );
-                segDrawUtils::setPixelColor(segmentSet, pixelNum, colorOut, 0, 0, 0);
+                pixelNum = segDrawUtils::getPixelNumFromLineNum(SegSet, numLines, j, addMod16PS(i, offset, numLines) );
+                segDrawUtils::setPixelColor(SegSet, pixelNum, colorOut, 0, 0, 0);
             }
 
         }

@@ -1,5 +1,5 @@
-#ifndef RainSLPS_h
-#define RainSLPS_h
+#ifndef RainSL_h
+#define RainSL_h
 
 //TODO: -- Try to make core common functions for this and RainSeg?
 //      -- Add alternating direction mode?
@@ -10,9 +10,9 @@
 
 /* 
 Like RainSeg, but the drops spawn and move along the segment set lines (perpendicular to the segments)
-An effect for prodcing a random set of falling particles, like rain, or the classic "Matrix" code animation
+An effect for producing a random set of falling particles, like rain, or the classic "Matrix" code animation
 You can set the drops to spawn at either the first or last segment
-They will then "fall" towards the last or first segment respecitvely
+They will then "fall" towards the last or first segment respectively
 This effect uses particles as the drops. See particlePS.h and particleUtilsPS.h for more details
 There are numerous options for the drops: trail type, speed, size, etc
 There are also more general settings for how often drops spawn, how the background is drawn,
@@ -34,7 +34,7 @@ However this does have two draw backs:
     2: For colored backgrounds, the particles colors are added to the background colors.
        This will in most cases significantly change the particle colors 
        For example, blue particles running on a red background will appear purple (blue +  red = purple)
-       This can be used to create some nice effects, (like oceanish of lavaish looking things),
+       This can be used to create some nice effects, (like ocean-ish of lava-ish looking things),
        But overall I do not recommend using blend for colored backgrounds
 
 Example calls: 
@@ -47,7 +47,7 @@ Example calls:
     RainSL(mainSegments, palette3, CRGB::Red, true, 10, 4, 1, 1, 5, 80, true);
     Will spawn drops on the mainSegment set, picking colors from palette3
     The background is red, and it will be pre-filled before the drops spawn
-    The drops have a spawn chance of 10/100 (10% chance of spawing each update cycle)
+    The drops have a spawn chance of 10/100 (10% chance of spawning each update cycle)
     There is a maximum of 4 drops running concurrently on each segment
     The drops have a single trailing trail of length 5
     The drops move with a base speed of 80ms
@@ -60,7 +60,7 @@ Example calls:
     RainSL(mainSegments, CRGB::Green, 0, false, 10, 4, 1, 3, 2, 4, true, true, false, false, false, 60, 40, false);
     Will spawn green drops on the mainSegment set
     The background is off, and it will not be pre-filled before the drops spawn
-    The drops have a spawn chance of 10/100 (10% chance of spawing each update cycle)
+    The drops have a spawn chance of 10/100 (10% chance of spawning each update cycle)
     There is a maximum of 4 drops running concurrently on each segment
     The drops have a minimum size of 1, with a range of 3
     The drops have minimum trail size of 2 with a range of 4 (if they have them)
@@ -96,7 +96,7 @@ Constructor inputs for creating a particle set:
 Trail Modes:
     Taken from particlePS.h:
     Trails blend cleanly into the background color over the trail length
-    (like waving a flame around, or a metor trail)
+    (like waving a flame around, or a meteor trail)
     Trail options:
     0: no trails
     1: one trail facing away from the direction of motion (like a comet)
@@ -119,7 +119,7 @@ Trail flags:
 
 DimPow:
     The rate of dimming for the trails can be adjusted using dimPow. This allows you to produce a brighter head
-    making the comet effect more noticable
+    making the comet effect more noticeable
     The range of dimPow is -127 to 127, it's defaulted to 80
     Positive values quicken the dimming, while negative ones slow it down
     setting the negative value below 80, seems to bug it out tho
@@ -129,7 +129,7 @@ Functions:
     setupDrops(newMaxNumDrops) -- Changes the maximum number of drops, but will also clear any active drops
                                   If you want to increase the number of drops without clearing, set the
                                   maxNumDrops to your maximum in the constructor. Then lower it before running the
-                                  effect. You can safely raise it again without reseting (set maxNumDrops manualy)
+                                  effect. You can safely raise it again without reseting (set maxNumDrops manually)
                                   !!If you lower the maximum number of drops, some active drops may be left on the segments
     update() -- updates the effect 
 
@@ -151,21 +151,21 @@ Notes:
 class RainSL : public EffectBasePS {
     public:
         //constructor for palette colors, no range options
-        RainSL(SegmentSet &SegmentSet, palettePS &Palette, CRGB BgColor, bool BgPrefill, uint8_t SpawnChance, 
+        RainSL(SegmentSet &SegSet, palettePS &Palette, CRGB BgColor, bool BgPrefill, uint8_t SpawnChance, 
                     uint8_t MaxNumDrops, uint16_t Size, uint8_t TrailMode, uint8_t TrailSize, uint16_t Rate, bool Direct);
         
         //constructor for palette colors with range and trail options
-        RainSL(SegmentSet &SegmentSet, palettePS &Palette, CRGB BgColor, bool BgPrefill, uint8_t SpawnChance, 
+        RainSL(SegmentSet &SegSet, palettePS &Palette, CRGB BgColor, bool BgPrefill, uint8_t SpawnChance, 
                     uint8_t MaxNumDrops, uint16_t Size, uint16_t SizeRange, uint8_t TrailSize,
                     uint8_t TrailRange, bool NoTrails, bool OneTrail, bool TwoTrail, bool RevTrail, 
                     bool InfTrail, uint16_t Rate, uint16_t SpeedRange, bool Direct);
         
         //constructor for single color, no range options
-        RainSL(SegmentSet &SegmentSet, CRGB Color, CRGB BgColor, bool BgPrefill, uint8_t SpawnChance, 
+        RainSL(SegmentSet &SegSet, CRGB Color, CRGB BgColor, bool BgPrefill, uint8_t SpawnChance, 
                     uint8_t MaxNumDrops, uint16_t Size, uint8_t TrailType, uint8_t TrailSize, uint16_t Rate, bool Direct);
 
         //constructor for single colors with range and trail options        
-        RainSL(SegmentSet &SegmentSet, CRGB Color, CRGB BgColor, bool BgPrefill, uint8_t SpawnChance, 
+        RainSL(SegmentSet &SegSet, CRGB Color, CRGB BgColor, bool BgPrefill, uint8_t SpawnChance, 
                     uint8_t MaxNumDrops, uint16_t Size, uint16_t SizeRange, uint8_t TrailSize,
                     uint8_t TrailRange, bool NoTrails, bool OneTrail, bool TwoTrail, bool RevTrail, 
                     bool InfTrail, uint16_t Rate, uint16_t SpeedRange, bool Direct);
@@ -173,7 +173,7 @@ class RainSL : public EffectBasePS {
         ~RainSL();
 
         SegmentSet 
-            &segmentSet; 
+            &SegSet; 
 
         int8_t
             dimPow = 80; //80 range -127 -> 127 -80 good for colored bg's
@@ -209,22 +209,25 @@ class RainSL : public EffectBasePS {
 
         CRGB 
             bgColorOrig,
-           *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
         
         palettePS
-            paletteTemp,
-            *palette = nullptr;
+            *palette = nullptr,
+            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
 
         particleSetPS 
             *particleSet = nullptr, //the particle set used in the effect
-            particleSetTemp; //storage for self created particle sets
+            particleSetTemp = {nullptr, 0}; //storage for self created particle sets, init to empty for safety
 
         void 
             setupDrops(uint8_t newMaxNumDrops),
             update(void);
     
     private:
-        
+        unsigned long
+            currentTime,
+            prevTime = 0;
+                    
         int8_t
             trailDirectionAdj;
 
@@ -250,15 +253,11 @@ class RainSL : public EffectBasePS {
             trailLedLocation,
             getParticlePixelLoc(uint16_t trailLedLocation, uint8_t lineNum),
             getTrailLedLoc(bool trailDirect, uint8_t trailPixelNum, uint16_t maxPosition);
-
-        unsigned long
-            currentTime,
-            prevTime = 0;
         
         bool
             bgFilled = false,  //flag for if the background has been filled in already
             spawnOkTest = true, //flag for if a particle is able to spawn
-            movePart; //flag for if a particle should move thise cycle
+            movePart; //flag for if a particle should move this cycle
         
         particlePS
             *particlePtr = nullptr;

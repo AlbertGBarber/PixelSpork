@@ -1,12 +1,12 @@
-#include "ShiftingSeaUtilsPS.h"
+#include "shiftingSeaUtilsPS.h"
 
-using namespace ShiftingSeaUtilsPS;
+using namespace shiftingSeaUtilsPS;
 //fills in the passed in array with a set of offsets, consecutive array indexes can share the same offset based on the grouping value (is random)
 //Modes:
     //0: The offsets are choosen from 0 to totalCycleLength
     //1: The offsets are choosen from 0 to gradLength
 //Min value fro grouping is 1
-void ShiftingSeaUtilsPS::genOffsetArray(uint16_t *offsets, uint16_t numPixels, uint8_t gradLength, uint16_t grouping, uint16_t totalCycleLength, uint8_t mode ){
+void shiftingSeaUtilsPS::genOffsetArray(uint16_t *offsets, uint16_t numPixels, uint8_t gradLength, uint16_t grouping, uint16_t totalCycleLength, uint8_t mode ){
 
     uint16_t groupSize;
 

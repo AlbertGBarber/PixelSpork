@@ -3,7 +3,7 @@
 
 #include "Effects/EffectBasePS.h"
 #include "UtilEffects/PaletteBlender/PaletteBlenderPS.h"
-#include "paletteSetPS.h"
+#include "Palette_Stuff/palettePS.h"
 
 /* 
 Takes an array of palettes and blends from one palette to the next
@@ -11,7 +11,9 @@ the palettes are blended at the passed in rate (ms) in the passed in totalSteps 
 the resulting palette can be accessed as "cyclePalette", it will be the length of the longest of the palettes in the array
 The blend can be looped (so it repeats), or just set to happen once. 
 A pause time can be set, that will pause the the cycle once a blend has finished before starting the next.
-While looping, the palettes can be set to be randomized, which will blend to a random palette each time
+While looping, the palettes can be set to be randomized, which will blend to a random palette each time.
+
+Create your array of palettes using a paletteSet (see palettePS.h)
 
 Pass cyclePalette to your effects to use the blended palette 
 
@@ -32,22 +34,22 @@ Notes:
 
     This produces a palette with a consistent length, that should play nice will all effects.
 
-    One downside of this is that with some effects, your colors may not be reperesented equally.
+    One downside of this is that with some effects, your colors may not be represented equally.
     For example, with 2 palettes one length 2 and one length 3, the blended palette will be length 3.
     But when blending to the palette with 2 colors, the blend palette will be <<Color 1, Color 2, Color 1>>
-    In some effects this will lead to color 1 being twice as prevelant as color 2. 
+    In some effects this will lead to color 1 being twice as prevalent as color 2. 
 
     The other downside is that you're always doing the maximum number of blend calculations even if your palettes are much smaller than the max
     For example, we have a 5, 2, and 3 length palettes in the set
     The maximum length is 5, so our cycle/blendPalette will be length 5, even when we're blending between the 2 and 3 length palettes
-    The caculations for the 3 and 2 blends will be done 5 times, instead of the 3 if we setup the blend normally.
+    The calculations for the 3 and 2 blends will be done 5 times, instead of the 3 if we setup the blend normally.
 
     Most palettes aren't very long, so it shouldn't be a huge issue, but something to be aware of!
 
     The PaletteBlendPS instance (PB) is public, but don't mess with it unless you know what you're doing 
 
 Example calls: 
-    To declare palette set, use the paletteSet struct (see paletteSetPS.h):
+    To declare palette set, use the paletteSet struct (see palettePS.h):
     palettePS *paletteArr[] = { &palette1, &palette2, etc};
     paletteSetPS paletteSet = {paletteArr, SIZE(paletteArr)};
 

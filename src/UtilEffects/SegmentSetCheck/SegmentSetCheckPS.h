@@ -9,9 +9,9 @@
 An effect used to test and verify the configuration of the segments in a segment set
 For a given segment set, two tests can be performed (0 and 1):
     0: Goes through each segment in the segment set
-        Sets the first and last pixels to red and blue respectivly for each segment
+        Sets the first and last pixels to red and blue respectively for each segment
         While the rest of the segment is lit up in green, one pixel at a time, in order of the segment direction
-    1: Colors the first and last segment line in red and blue respectivly
+    1: Colors the first and last segment line in red and blue respectively
         While the other lines are flashed in green, one by one
 What modes are run is based on the testMode value:
     0: Only testing mode 0, repeating
@@ -38,12 +38,12 @@ Functions:
 */
 class SegmentSetCheckPS : public EffectBasePS {
     public:
-        SegmentSetCheckPS(SegmentSet &SegmentSet, uint8_t TestMode);  
+        SegmentSetCheckPS(SegmentSet &SegSet, uint8_t TestMode);  
 
-        SegmentSetCheckPS(SegmentSet &SegmentSet, uint8_t TestMode, uint16_t Rate);  
+        SegmentSetCheckPS(SegmentSet &SegSet, uint8_t TestMode, uint16_t Rate);  
 
         SegmentSet 
-            &segmentSet; 
+            &SegSet; 
         
         uint8_t
             testMode;

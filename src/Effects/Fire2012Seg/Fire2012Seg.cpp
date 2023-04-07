@@ -1,9 +1,9 @@
 #include "Fire2012Seg.h"
 
-Fire2012Seg::Fire2012Seg(SegmentSet &SegmentSet, palettePS &Palette, CRGB BgColor, uint8_t Cooling, uint8_t Sparking, bool Blend, uint16_t Rate):
-    segmentSet(SegmentSet), palette(&Palette), cooling(Cooling), sparking(Sparking), blend(Blend)
+Fire2012Seg::Fire2012Seg(SegmentSet &SegSet, palettePS &Palette, CRGB BgColor, uint8_t Cooling, uint8_t Sparking, bool Blend, uint16_t Rate):
+    SegSet(SegSet), palette(&Palette), cooling(Cooling), sparking(Sparking), blend(Blend)
     {    
-        //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
+        //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
         bindSegPtrPS();
         bindClassRatesPS();
         //bind background color pointer (if needed)
@@ -22,8 +22,8 @@ void Fire2012Seg::reset(){
     free(heat);
     free(heatSegStarts);
 
-    numSegs = segmentSet.numSegs;
-    numLeds = segmentSet.numLeds;
+    numSegs = SegSet.numSegs;
+    numLeds = SegSet.numLeds;
     
     //create the heat array to store temperatures
     heat = (uint8_t*) malloc(numLeds * sizeof(uint8_t));
@@ -32,16 +32,16 @@ void Fire2012Seg::reset(){
     }
 
     //The heat array works by storing heat values at points on the strip
-    //For speed, the heat values for the whole segmentSet
+    //For speed, the heat values for the whole SegSet
     //are stored in one array, using offsets to ensure we only work on the section that
-    //corrosponds to the current segment
+    //corresponds to the current segment
     //the offsets are stored in the heatSegStarts in order of the segments
     uint16_t segmentSetLength = 0;
     heatSegStarts = (uint16_t*) malloc(numSegs * sizeof(uint16_t));
-    // get the total segmentSet length, and set the starting offsets
+    // get the total SegSet length, and set the starting offsets
     for (uint16_t i = 0; i < numSegs; i++) {
         heatSegStarts[i] = segmentSetLength; // the start offsets are just the lengths of each segment
-        segmentSetLength += segmentSet.getTotalSegLength(i);
+        segmentSetLength += SegSet.getTotalSegLength(i);
     }
 }
 
@@ -51,7 +51,7 @@ void Fire2012Seg::reset(){
 //Overall the effect manages a heat array of uint8_t's, with each pixel in the segment set being having it's own 
 //heat (temperature) value
 //These heat values are heated and cooled with each update cycle, producing the flame effect
-//Each segment has it's own seperate fire simulation
+//Each segment has it's own separate fire simulation
 //We use a single array heat to manage multiple segments by splitting it into sections of lengths equal to the segment lengths
 //We store the start indexes of the segments in the heatSegStarts array (created in reset())
 //Within a fire colors taken from a palette and blended together to create a smooth flame (see setPixelHeatColorPalette() for info)
@@ -60,7 +60,7 @@ void Fire2012Seg::update(){
 
     //Before We loop
     //work out some palette vars to be used in getPixelHeatColorPalette
-    //setting them here is more efficent since they only need to be set once per update cycle
+    //setting them here is more efficient since they only need to be set once per update cycle
     //(we check them each update incase the palette has changed)
     paletteLength = palette->length;
     //paletteLimit = paletteLength - 1;
@@ -73,8 +73,8 @@ void Fire2012Seg::update(){
 
         //For each segment do the following:
         for (uint16_t j = 0; j < numSegs; j++) {
-            //get the length of the segment we're workging on
-            segLength = segmentSet.getTotalSegLength(j);
+            //get the length of the segment we're working on
+            segLength = SegSet.getTotalSegLength(j);
 
             heatSecStart = heatSegStarts[j]; // current segment's start index in the heat array
 
@@ -117,11 +117,11 @@ void Fire2012Seg::update(){
 
             //Step 4. For each flame, convert heat to palette colors colors and output
             for (uint16_t i = 0; i < segLength; i++) {
-                ledLoc = segDrawUtils::getSegmentPixel(segmentSet, j, i); //the physical location of the led
-                colorOut = Fire2012SegUtilsPS::getPixelHeatColorPalette(palette, paletteLength, paletteSecLen, 
+                ledLoc = segDrawUtils::getSegmentPixel(SegSet, j, i); //the physical location of the led
+                colorOut = fire2012SegUtilsPS::getPixelHeatColorPalette(palette, paletteLength, paletteSecLen, 
                                                                         bgColor, heat[i + heatSecStart], blend);
                                                                        
-                segDrawUtils::setPixelColor(segmentSet, ledLoc, colorOut, 0, 0, 0);      
+                segDrawUtils::setPixelColor(SegSet, ledLoc, colorOut, 0, 0, 0);      
             }
         }
         showCheckPS();

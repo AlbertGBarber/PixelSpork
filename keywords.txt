@@ -1,43 +1,141 @@
 #######################################
 # Syntax Coloring Map For PixelSpork
+# MUST edit this with Notepad, not Visual Studio!
+# You have to use tabs for the keywords,
+# using spaces prevents the Arduino IDE from recognizing them.
+# One tab does bold orange, 2+ -> light orange.
+# Currently I'm using bold for classes and light for everything else
 #######################################
-# Class and Structs
+# Segment Classes and Structs
 #######################################
 
-segmentSecCont  		KEYWORD1
-segmentSecMix			KEYWORD1
-Segment				KEYWORD1
-SegmentSet			KEYWORD1
-PixelInfoPS			KEYWORD1
-PaletteBlenderPS 		KEYWORD1
-palettePS			KEYWORD1
-EffectFaderPS 			KEYWORD1
-EffectGroupPS			KEYWORD1
-RateCtrl			KEYWORD1
-EffectBasePS			KEYWORD1
-EmptyEffectPS			KEYWORD1
-CrossFadeCyclePS		KEYWORD1
-CrossFadeCycleRandPS		KEYWORD1
+SegmentSet	KEYWORD1
+Segment	KEYWORD1
+segmentSecCont		KEYWORD3
+segmentSecMix		KEYWORD3
+pixelInfoPS		KEYWORD3
+
+#######################################
+# Util Classes
+#######################################
+
+AddGlitterPS	KEYWORD1
+ColorModeFillPS	KEYWORD1
+EffectFaderPS	KEYWORD1
+EffectSetPS	KEYWORD1
+EffectSetFaderPS	KEYWORD1
+PaletteBlenderPS	KEYWORD1
+PaletteCyclePS	KEYWORD1
+PaletteSingleCyclePS	KEYWORD1
+PaletteSliderPS	KEYWORD1
+RandRateCtrlPS	KEYWORD1
+RateCtrlPS	KEYWORD1
+RateRandomizerPS	KEYWORD1
+SegmentSetCheckPS	KEYWORD1
+SegOffsetCyclerPS	KEYWORD1
+PacificaHuePalPS	KEYWORD1
+
+#######################################
+# Effect Classes 
+#######################################
+
+BreathPS	KEYWORD1
+BreathEyeSL	KEYWORD1
+ColorMeltSL	KEYWORD1
+ColorWipeSec	KEYWORD1
+ColorWipeSLSeg	KEYWORD1
+CrossFadeCyclePS	KEYWORD1
+DissolveSL	KEYWORD1
+EdgeBurstSL	KEYWORD1
+FairyLightsSLSeg	KEYWORD1
+Fire2012Seg	KEYWORD1
+Fire2012SL	KEYWORD1
+FirefliesSL	KEYWORD1
+FireworksPS	KEYWORD1
+GlimmerSL	KEYWORD1
+GradientCycleFastSL	KEYWORD1
+GradientCycleSL	KEYWORD1
+LarsonScannerSL	KEYWORD1
+LavaPS	KEYWORD1
+Noise16PS	KEYWORD1  
+NoiseGradSL	KEYWORD1
+NoiseWavesSL	KEYWORD1
+PacificaPS	KEYWORD1 
+PacificaHueSL	KEYWORD1 
+ParticlesSL	KEYWORD1
+PatternShifterSeg	KEYWORD1
+PatternShifterSL	KEYWORD1
+PlasmaSL	KEYWORD1
+PoliceStrobeSL	KEYWORD1
+PrideWPalSL	KEYWORD1
+PrideWPalSL2	KEYWORD1
+RainbowCycle	KEYWORD1
+RainbowCycleSLSeg	KEYWORD1
+RainbowFontsSL	KEYWORD1
+RainSeg	KEYWORD1
+RainSL	KEYWORD1
+RollingWavesFastSL	KEYWORD1
+RollingWavesSL	KEYWORD1
+RollingWavesSL2	KEYWORD1
+ScannerSL	KEYWORD1
+SegWaves	KEYWORD1
+SegWavesFast	KEYWORD1
+ShiftingRainbowSeaSL	KEYWORD1
+ShiftingSeaSL	KEYWORD1
+ShimmerSL	KEYWORD1
+SoftTwinkleSL	KEYWORD1
+StreamerFastSL	KEYWORD1
+StreamerSL	KEYWORD1
+StrobeSLSeg	KEYWORD1
+TheaterChaseSL	KEYWORD1
+Twinkle2SLSeg	KEYWORD1
+TwinkleFastSL	KEYWORD1
+TwinkleSL	KEYWORD1
+EffectBasePS	KEYWORD1
+EmptyEffectPS	KEYWORD1
 
 #######################################
 # Namespace
 #######################################
 
-segDrawUtils 			KEYWORD1
-paletteUtilsPS			KEYWORD1
-colorUtilsPS			KEYWORD1
-mathUtilsPS			KEYWORD1
+segDrawUtils		KEYWORD1
+paletteUtilsPS		KEYWORD1
+patternUtilsPS		KEYWORD1
+colorUtilsPS		KEYWORD1
+mathUtilsPS		KEYWORD1
+generalUtilsPS		KEYWORD1
+fire2012SegUtilsPS		KEYWORD1
+particleUtilsPS		KEYWORD1
+shiftingSeaUtilsPS		KEYWORD1
+
+#######################################
+# Structs
+#######################################
+
+palettePS		KEYWORD3
+paletteSetPS		KEYWORD3
+patternPS		KEYWORD3
+particlePS		KEYWORD3
+particleSetPS		KEYWORD3
+shiftPatternPS		KEYWORD3
+twinkleStarPS		KEYWORD3
+twinkleSetPS		KEYWORD3
+pacificaPalettePS		KEYWORD3
 
 #######################################
 # Methods and Functions
 #######################################	
 
-addMod16PS 		        KEYWORD1
-mod16PS 		        KEYWORD1
+addMod16PS		KEYWORD2
+mod16PS			KEYWORD2
+max			KEYWORD2
+min			KEYWORD2
+SIZE			KEYWORD2
+qsubd			KEYWORD2
+qsuba			KEYWORD2
 
 #######################################
 # Constants
 #######################################
 
-NO_EFADE_PS			LITERAL1
-dLed				LITERAL1
+D_LED			LITERAL1

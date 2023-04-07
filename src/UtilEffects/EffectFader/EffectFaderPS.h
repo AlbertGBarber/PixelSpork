@@ -39,7 +39,7 @@ Notes:
     The fader works by changing the brightness of the effect(s) segment set(s)
     It's fine to have multiple effects that share segment sets; the fader only sets the brightness for a segment set once per cycle
 
-    Effects will either be brightened up from the fader's minimum brightness (see below) or darkeded towards it.
+    Effects will either be brightened up from the fader's minimum brightness (see below) or darkened towards it.
 
     The fader assumes that the supplied segments are already set to their regular brightness.
     You do not need to pre-adjust them to the fade starting point, the fader handles all the busy work.
@@ -59,13 +59,13 @@ Example Calls:
     taking 2000ms for the fades.
 
 Constructor Inputs:
-    effectSet -- The effect set that the fader will opertate on (see EffectSetPS.h)
+    effectSet -- The effect set that the fader will operate on (see EffectSetPS.h)
     direct -- The direction of the fade (true is fading in, false out) Change this only once a fade is "done" or not started
     runTime -- The time in ms that the fader take to fade in/out. Changing this will only be reflected when you reset().
 
 Other Settings:
     rateOrig (default 60 ms) -- The default update rate for the fader
-    *rate (default bound to rateOrig) -- The update rate for the fader. You only need to change this if the bightness changes look "choppy".
+    *rate (default bound to rateOrig) -- The update rate for the fader. You only need to change this if the brightness changes look "choppy".
                                          It is a pointer, so it can be tied to and external var if needed.
     minBrightness (default 5, max 255) -- The minimum brightness the fade will reach or start from.
 
@@ -119,7 +119,7 @@ class EffectFaderPS {
             *numEffects,
             maxBrightness,
             totalBriChng = 0,
-            *origBrightness_arr = nullptr;;
+            *origBrightness_arr = nullptr;
 
         int16_t 
             briChng;
@@ -129,7 +129,7 @@ class EffectFaderPS {
         
         SegmentSet
             *getSegPtr(uint8_t effectNum),
-            *segmentSet = nullptr;
+            *SegSet = nullptr;
         
         void
             resetSegVars();

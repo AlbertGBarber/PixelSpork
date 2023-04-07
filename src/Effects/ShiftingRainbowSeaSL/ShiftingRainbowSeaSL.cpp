@@ -1,9 +1,9 @@
 #include "ShiftingRainbowSeaSL.h"
 
 //Overview:
-    //We start by initilizing the offset array using ShiftingSeaUtilsPS::genOffsetArray(); (in seperate file b/c it's shared with ShiftingSea)
-    //Each index of the offset array holds the offset for its corrosponding pixel (max value of 255, since it's a rainbow)
-    //Then, with each offset cycle, the pixel's color is caculated using the current cycle number and it's offset
+    //We start by initializing the offset array using shiftingSeaUtilsPS::genOffsetArray(); (in separate file b/c it's shared with ShiftingSea)
+    //Each index of the offset array holds the offset for its corresponding pixel (max value of 255, since it's a rainbow)
+    //Then, with each offset cycle, the pixel's color is calculated using the current cycle number and it's offset
     //So all pixels are following the same rainbow pattern, but their individual positions in the pattern are all different
     //creating the effect
     //If the randomShift is on, then with each cycle we do a random check to see if we should change the pixel's offset
@@ -11,9 +11,9 @@
 
 //Constructor for the effect. Note that by passing a gradLength of 0, you will set the effect to sMode 0
 //In sMode 0 the gradLength isn't used, but to make sure that if you set it back to sMode 0,
-//the gradlength will be set to random value between 20 - 40
-ShiftingRainbowSeaSL::ShiftingRainbowSeaSL(SegmentSet& SegmentSet, uint8_t GradLength, uint8_t Grouping, uint16_t Rate): 
-    segmentSet(SegmentSet), grouping(Grouping), gradLength(GradLength)
+//the gradLength will be set to random value between 20 - 40
+ShiftingRainbowSeaSL::ShiftingRainbowSeaSL(SegmentSet &SegSet, uint8_t GradLength, uint8_t Grouping, uint16_t Rate): 
+    SegSet(SegSet), grouping(Grouping), gradLength(GradLength)
     {
         if(GradLength == 0){
             sMode = 0;
@@ -28,9 +28,9 @@ ShiftingRainbowSeaSL::~ShiftingRainbowSeaSL(){
     free(offsets);
 }
 
-//initlizes core variables for effect
+//initializes core variables for effect
 void ShiftingRainbowSeaSL::init(uint16_t Rate){
-    //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
+    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
     bindSegPtrPS();
     bindClassRatesPS();
     resetOffsets();
@@ -60,20 +60,20 @@ void ShiftingRainbowSeaSL::setGrouping(uint16_t newGrouping) {
 
 //re-builds the offset array with new values
 void ShiftingRainbowSeaSL::resetOffsets() {
-    numLines = segmentSet.numLines;
+    numLines = SegSet.numLines;
     free(offsets);
     offsets = (uint16_t*) malloc(numLines * sizeof(uint16_t));
-    //255 is the maxiumum length of the rainbow
+    //255 is the maximum length of the rainbow
     uint8_t gradLengthTemp = gradLength;
     if(sMode == 0){
         gradLengthTemp = 255;
     }
-    ShiftingSeaUtilsPS::genOffsetArray(offsets, numLines, gradLengthTemp, grouping, 255, sMode);
+    shiftingSeaUtilsPS::genOffsetArray(offsets, numLines, gradLengthTemp, grouping, 255, sMode);
 }
 
 //updates the effect
 //Runs through each pixel, calculates it's color based on the cycle number and the offset
-//incrments the offset based on the randomShift values
+//increments the offset based on the randomShift values
 //the writes it out
 void ShiftingRainbowSeaSL::update() {
     currentTime = millis();
@@ -85,8 +85,8 @@ void ShiftingRainbowSeaSL::update() {
             step = addMod16PS( cycleNum, offsets[i], 255); // where we are in the cycle of all the colors
             color = colorUtilsPS::wheel(step, 0, sat, val); //wheel since it's a rainbow
             
-            segDrawUtils::drawSegLine(segmentSet, i, color, 0);
-            //segDrawUtils::setPixelColor(segmentSet, i, color, 0);
+            segDrawUtils::drawSegLine(SegSet, i, color, 0);
+            //segDrawUtils::setPixelColor(SegSet, i, color, 0);
 
             //randomly increment the offset
             if (randomShift) {
@@ -95,7 +95,7 @@ void ShiftingRainbowSeaSL::update() {
                 }
             }
         }
-        //incrment the cycle, clamping it's max value to prevent any overflow
+        //increment the cycle, clamping it's max value to prevent any overflow
         cycleNum = addMod16PS(cycleNum, 1, 255); //(cycleNum + 1) % 255;
         showCheckPS();
     }

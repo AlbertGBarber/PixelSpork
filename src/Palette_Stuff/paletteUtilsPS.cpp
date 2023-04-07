@@ -75,7 +75,7 @@ void paletteUtilsPS::shuffle(palettePS &palette){
 //the code checks to see if the random index matches the current color (passed in)
 //if it does we'll just advance the index by one and return its color
 //this stops the same color from being chosen again (assuming the palette doesn't repeat)
-CRGB paletteUtilsPS::getShuffleIndex(palettePS &palette, CRGB &currentPaletteVal){
+CRGB paletteUtilsPS::getShuffleColor(palettePS &palette, CRGB &currentPaletteVal){
     uint8One = random8(palette.length); //guess an index
     colorOne = paletteUtilsPS::getPaletteColor(palette, uint8One); //get the color at the guess
     if( colorOne == currentPaletteVal ){
@@ -111,17 +111,17 @@ CRGB paletteUtilsPS::getPaletteGradColor(palettePS &palette, uint16_t num, uint1
 
 //returns a gradient color between palette colors based on several inputs:
 //  num: The value of what you want to apply the gradient to (generally a pixel or segment number)
-//  offset: Any offset of num (see segmentSet gradOffset)
-//  totalLength: The length the entire palette gradient is spread across (usually the length of a segmentSet or similar
-//  gradLength: The length of the gradient between the palette colors (ie totalLenth/paletteLength)
+//  offset: Any offset of num (see SegmentSet gradOffset)
+//  totalLength: The length the entire palette gradient is spread across (usually the length of a SegmentSet or similar
+//  gradLength: The length of the gradient between the palette colors (ie totalLength/paletteLength)
 CRGB paletteUtilsPS::getPaletteGradColor(palettePS &palette, uint16_t num, uint16_t offset, uint16_t totalLength, uint16_t gradLength){
     //the actual gradient number we need based on the offset
     uint16One = addMod16PS( num, offset, totalLength ); //(num + offset) % totalLength;
 
-    //the index of the palette color we're starting from (interger division always rounds down)
+    //the index of the palette color we're starting from (integer division always rounds down)
     uint8One = uint16One / gradLength; // (num + offset)/gradLength
 
-    // get the crossfade step
+    // get the cross-fade step
     //uint8_t gradStep = locWOffset - (colorIndex * steps);
 
     //get the gradient step we're on between the two colors

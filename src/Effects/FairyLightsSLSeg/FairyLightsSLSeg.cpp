@@ -3,23 +3,23 @@
 //see update() for how the effect works
 
 //palette based constructor
-FairyLightsSLSeg::FairyLightsSLSeg(SegmentSet &SegmentSet, palettePS &Palette, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode, uint8_t SegMode, uint16_t Rate):
-    segmentSet(SegmentSet), palette(&Palette), numTwinkles(NumTwinkles), tMode(Tmode), segMode(SegMode)
+FairyLightsSLSeg::FairyLightsSLSeg(SegmentSet &SegSet, palettePS &Palette, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode, uint8_t SegMode, uint16_t Rate):
+    SegSet(SegSet), palette(&Palette), numTwinkles(NumTwinkles), tMode(Tmode), segMode(SegMode)
     {    
         init(BGColor, Rate);
 	}
 
 //single color constructor
-FairyLightsSLSeg::FairyLightsSLSeg(SegmentSet &SegmentSet, CRGB Color, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode, uint8_t SegMode, uint16_t Rate):
-    segmentSet(SegmentSet), numTwinkles(NumTwinkles), tMode(Tmode), segMode(SegMode)
+FairyLightsSLSeg::FairyLightsSLSeg(SegmentSet &SegSet, CRGB Color, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode, uint8_t SegMode, uint16_t Rate):
+    SegSet(SegSet), numTwinkles(NumTwinkles), tMode(Tmode), segMode(SegMode)
     {    
         init(BGColor, Rate);
         setSingleColor(Color);
 	}
 
 //random colors constructor
-FairyLightsSLSeg::FairyLightsSLSeg(SegmentSet &SegmentSet, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode, uint8_t SegMode, uint16_t Rate):
-    segmentSet(SegmentSet), numTwinkles(NumTwinkles), tMode(Tmode), segMode(SegMode)
+FairyLightsSLSeg::FairyLightsSLSeg(SegmentSet &SegSet, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode, uint8_t SegMode, uint16_t Rate):
+    SegSet(SegSet), numTwinkles(NumTwinkles), tMode(Tmode), segMode(SegMode)
     {    
         init(BGColor, Rate);
         //we make a random palette of one color so that 
@@ -37,7 +37,7 @@ FairyLightsSLSeg::~FairyLightsSLSeg(){
 }
 
 void FairyLightsSLSeg::init(CRGB BgColor, uint16_t Rate){
-    //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
+    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
     bindSegPtrPS();
     bindClassRatesPS();
     bindBGColorPS();
@@ -71,13 +71,13 @@ void FairyLightsSLSeg::genPixelSet(){
     switch(segMode){
         case 0:
         default:
-            twinkleRange = segmentSet.numLines;
+            twinkleRange = SegSet.numLines;
             break;
         case 1:
-            twinkleRange = segmentSet.numSegs;
+            twinkleRange = SegSet.numSegs;
             break;
         case 2:
-            twinkleRange = segmentSet.numLeds;
+            twinkleRange = SegSet.numLeds;
             break;
     }
 
@@ -112,7 +112,7 @@ void FairyLightsSLSeg::setSegMode(uint8_t newSegMode){
 //Updates the effect
 //The twinkle locations (local to segment set) and colors are stored in the twinkleSet and colorSet arrays (the colorSet is only used if we're re-drawing)
 //Each time we update, we advance the cycleNum counter
-//This corrosponds to the twinkle we're working with (ie it's the index of the twinkle and color arrays)
+//This corresponds to the twinkle we're working with (ie it's the index of the twinkle and color arrays)
 //cycleNum wraps at numTwinkles, so we know when we've touched all the twinkles
 //Other than that, we call whatever mode function to draw the twinkles each cycle
 //see the individual functions for how they work
@@ -129,7 +129,7 @@ void FairyLightsSLSeg::update(){
         //you want to redraw the whole thing
         if(fillBG){
             reDrawAll = true;
-            segDrawUtils::fillSegSetColor(segmentSet, *bgColor, bgColorMode);
+            segDrawUtils::fillSegSetColor(SegSet, *bgColor, bgColorMode);
         }
         switch (tMode) {
             case 0: 
@@ -170,22 +170,22 @@ void FairyLightsSLSeg::drawTwinkle(uint8_t twinkleNum, CRGB &tColor, uint8_t cMo
         case 0:
         default:
             //fill the segment line at the twinkle location with color
-            segDrawUtils::drawSegLine(segmentSet, twinkleSet[twinkleNum], tColor, cMode);
+            segDrawUtils::drawSegLine(SegSet, twinkleSet[twinkleNum], tColor, cMode);
             break;
         case 1:
             //fill twinkleSet[i]'th segment with color
-            segDrawUtils::fillSegColor(segmentSet, twinkleSet[twinkleNum], tColor, cMode);
+            segDrawUtils::fillSegColor(SegSet, twinkleSet[twinkleNum], tColor, cMode);
             break;
         case 2:
             //set the single pixel at twinkleSet[twinkleNum] to the tColor
-            segDrawUtils::setPixelColor(segmentSet, twinkleSet[twinkleNum], tColor, cMode);
+            segDrawUtils::setPixelColor(SegSet, twinkleSet[twinkleNum], tColor, cMode);
             break;
     }
 }
 
 //Mode 0: turns one twinkle on after another and then resets all at once
 //Overview:
-    //The function basically has two seperate modes, one where we're turning the twinkles on, and one where they're turing off
+    //The function basically has two separate modes, one where we're turning the twinkles on, and one where they're turing off
     //While turning on, we switch one twinkle on each cycle, using the twinkleSet and choosing a color each time, storing it in the colorSet
     //If we are re-drawing the background each time, we have to re-draw all the twinkle's we've turned on so far
     //We do this by looping from the first twinkle to the one at the most current cycle
@@ -235,7 +235,7 @@ void FairyLightsSLSeg::modeZeroSet(){
 
 //Mode 1: Turns on each twinkle one at a time, then off one at a time
 //Overview:
-    //The function basically has two seperate modes, one where we're turning the twinkles on, and one where they're turing off
+    //The function basically has two separate modes, one where we're turning the twinkles on, and one where they're turing off
     //While turning on, we switch one twinkle on each cycle, using the twinkleSet and choosing a color each time, storing it in the colorSet
     //If we are re-drawing the background each time, we have to re-draw all the twinkle's we've turned on so far
     //We do this by looping from the first twinkle to the one at the most current cycle

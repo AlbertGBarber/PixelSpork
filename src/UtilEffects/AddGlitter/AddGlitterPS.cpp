@@ -1,9 +1,9 @@
 #include "AddGlitterPS.h"
 
-AddGlitterPS::AddGlitterPS(SegmentSet &SegmentSet, CRGB GlitterColor, uint16_t GlitterNum, uint8_t GlitterMode, uint16_t GlitterRate, uint16_t Rate):
-    segmentSet(SegmentSet), glitterNum(GlitterNum), glitterMode(GlitterMode)
+AddGlitterPS::AddGlitterPS(SegmentSet &SegSet, CRGB GlitterColor, uint16_t GlitterNum, uint8_t GlitterMode, uint16_t GlitterRate, uint16_t Rate):
+    SegSet(SegSet), glitterNum(GlitterNum), glitterMode(GlitterMode)
     {    
-        //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
+        //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
         bindSegPtrPS();
         bindClassRatesPS();
         //Point the glitterColor to the passed in color
@@ -33,10 +33,10 @@ void AddGlitterPS::setGlitterNum(uint16_t newNum){
 //Fills in the glitter array with random pixel locations from the strip
 //the array stores the physical pixel locations to make re-drawing the glitter pixels easier
 void AddGlitterPS::fillGlitterArr(){
-    numLeds = segmentSet.numLeds;
+    numLeds = SegSet.numLeds;
     for(uint16_t i  = 0; i < glitterNum; i++){
         pixelNum = random16(numLeds);
-        pixelNum = segDrawUtils::getSegmentPixel(segmentSet, pixelNum);
+        pixelNum = segDrawUtils::getSegmentPixel(SegSet, pixelNum);
         glitterLocs[i] = pixelNum;
     }
 }
@@ -46,11 +46,11 @@ void AddGlitterPS::fillGlitterArr(){
 //(removing the final location in the array)
 //So glitter particles will turn on and off one at a time
 void AddGlitterPS::advanceGlitterArr(){
-    numLeds = segmentSet.numLeds;
+    numLeds = SegSet.numLeds;
     for(int32_t i = glitterNum - 1; i >= 0; i--){
         if(i == 0){
             pixelNum = random16(numLeds);
-            pixelNum = segDrawUtils::getSegmentPixel(segmentSet, pixelNum);
+            pixelNum = segDrawUtils::getSegmentPixel(SegSet, pixelNum);
             glitterLocs[i] = pixelNum;
         } else {
             glitterLocs[i] = glitterLocs[i - 1];
@@ -86,7 +86,7 @@ void AddGlitterPS::update(){
         
         //Drawn the glitter on the strip
         for(uint16_t i  = 0; i < glitterNum; i++){
-            segDrawUtils::setPixelColor(segmentSet, glitterLocs[i], *glitterColor, 0, 0, 0);
+            segDrawUtils::setPixelColor(SegSet, glitterLocs[i], *glitterColor, 0, 0, 0);
         }
 
         showCheckPS();

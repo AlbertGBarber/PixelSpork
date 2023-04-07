@@ -1,11 +1,11 @@
 #ifndef PacificaHuePalPS_h
 #define PacificaHuePalPS_h
 
-#include "PaletteFiles.h"
+#include "Include_Lists/PaletteFiles.h"
 
 //A small class for storing a pacifica palette with an adjustable hue
 //To keep the "pacifica" look, the palette colors are offset from the base pfHue value
-//Whenever the hue is changed, the palette colors need to be re-caculated.
+//Whenever the hue is changed, the palette colors need to be re-calculated.
 
 //Code based on code by u/christian_suryanto at 
 //https://old.reddit.com/r/FastLED/comments/wo7n9u/pacifica_with_hue_settings_codes_in_comments/
@@ -31,7 +31,7 @@ class PacificaHuePalPS{
 
         //I've translated the original Pacifica palettes into my palettes
         //These produce a very slightly different blend of colors, but it still looks good
-        //The orignal palettes can be found in Pacifica->pacificaPalette.h
+        //The original palettes can be found in Pacifica->pacificaPalette.h
         CRGB 
             bgColor, //background color for the pacifica effect
             paPal1_arr[5],
@@ -79,7 +79,7 @@ class PacificaHuePalPS{
             };
         
         void
-            //Increments the current hue value by 1 and caculates new palette colors
+            //Increments the current hue value by 1 and calculates new palette colors
             incHue(){
                 pfHue++; //wraps automatically at 255 b/c it's uint8_t
                 setHue(pfHue);

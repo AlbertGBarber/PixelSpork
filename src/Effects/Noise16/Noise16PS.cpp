@@ -1,20 +1,20 @@
 #include "Noise16PS.h"
 
 //constructor with palette
-Noise16PS::Noise16PS(SegmentSet &SegmentSet, palettePS &Palette, uint16_t BlendSteps, uint16_t BlendScale,
+Noise16PS::Noise16PS(SegmentSet &SegSet, palettePS &Palette, uint16_t BlendSteps, uint16_t BlendScale,
                     uint8_t X_mode, uint8_t Y_mode, uint8_t Z_mode, uint16_t X_val, uint16_t Y_val, uint16_t Z_val, 
                     uint16_t Rate):
-    segmentSet(SegmentSet), palette(&Palette), blendSteps(BlendSteps), blendScale(BlendScale), 
+    SegSet(SegSet), palette(&Palette), blendSteps(BlendSteps), blendScale(BlendScale), 
     x_mode(X_mode), y_mode(Y_mode), z_mode(Z_mode), x_val(X_val), y_val(Y_val), z_val(Z_val)
     {    
         init(Rate);
 	}
 
 //constructor with randomly generated palette
-Noise16PS::Noise16PS(SegmentSet &SegmentSet, uint8_t numColors, uint16_t BlendSteps, uint16_t BlendScale,
+Noise16PS::Noise16PS(SegmentSet &SegSet, uint8_t numColors, uint16_t BlendSteps, uint16_t BlendScale,
                     uint8_t X_mode, uint8_t Y_mode, uint8_t Z_mode, uint16_t X_val, uint16_t Y_val, uint16_t Z_val, 
                     uint16_t Rate):
-    segmentSet(SegmentSet), blendSteps(BlendSteps), blendScale(BlendScale), 
+    SegSet(SegSet), blendSteps(BlendSteps), blendScale(BlendScale), 
     x_mode(X_mode), y_mode(Y_mode), z_mode(Z_mode), x_val(X_val), y_val(Y_val), z_val(Z_val)
     { 
         paletteTemp = paletteUtilsPS::makeRandomPalette(numColors);
@@ -27,7 +27,7 @@ Noise16PS::~Noise16PS(){
 }
 
 void Noise16PS::init(uint16_t Rate){
-    //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
+    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
     bindSegPtrPS();
     bindClassRatesPS();
 }
@@ -57,7 +57,7 @@ uint32_t Noise16PS::getShiftVal( uint8_t shiftMode, uint16_t constVal ){
     }
 }
 
-//updates the effect by recaculating the noise for each pixel
+//updates the effect by re-calculating the noise for each pixel
 void Noise16PS::update(){
     currentTime = millis();
 
@@ -70,14 +70,14 @@ void Noise16PS::update(){
         shift_y = getShiftVal( y_mode, y_val );
         real_z = getShiftVal( z_mode, z_val );
     
-        numSegs = segmentSet.numSegs;
+        numSegs = SegSet.numSegs;
         totBlendLength = blendSteps * palette->length;
         //run over each of the leds in the segment set and set a noise/color value
         for (uint16_t i = 0; i < numSegs; i++) {
-            totSegLen = segmentSet.getTotalSegLength(i);
+            totSegLen = SegSet.getTotalSegLength(i);
             for(uint16_t j = 0; j < totSegLen; j++){
                 //get the current pixel's location in the segment set
-                pixelNum = segDrawUtils::getSegmentPixel(segmentSet, i, j);
+                pixelNum = segDrawUtils::getSegmentPixel(SegSet, i, j);
                 
                 //scale x and y noise inputs for the current pixel
                 real_x = (pixelCount + shift_x) * blendScale;
@@ -93,7 +93,7 @@ void Noise16PS::update(){
                 //get the blended color from the palette and set it's brightness
                 colorOut = paletteUtilsPS::getPaletteGradColor(*palette, index, 0, totBlendLength, blendSteps);
                 nscale8x3( colorOut.r, colorOut.g, colorOut.b, bri);
-                segDrawUtils::setPixelColor(segmentSet, pixelNum, colorOut, 0, 0, 0); 
+                segDrawUtils::setPixelColor(SegSet, pixelNum, colorOut, 0, 0, 0); 
 
                 pixelCount++;
             }

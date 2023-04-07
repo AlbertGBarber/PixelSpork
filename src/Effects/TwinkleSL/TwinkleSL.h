@@ -1,5 +1,5 @@
-#ifndef TwinkleSLPS_h
-#define TwinkleSLPS_h
+#ifndef TwinkleSL_h
+#define TwinkleSL_h
 
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
@@ -12,7 +12,7 @@ Please note that the total number of lines colored at one time will be numTwinkl
 Just run an example and you'll see what I mean
 
 The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
-passing in a segmentSet with only one segment containing the whole strip.
+passing in a SegmentSet with only one segment containing the whole strip.
 
 This effect is fully compatible with color modes, and the bgColor is a pointer, so you can bind it
 to an external color variable
@@ -29,7 +29,7 @@ Example call:
     with 1 fade in and 6 fade out steps, at a rate of 60ms
 
     TwinkleSL(mainSegments, 0, 4, 2, 2, 80);
-    Will choose 4 lines each cycle to fade to/from random colors, using a blank backgound, 
+    Will choose 4 lines each cycle to fade to/from random colors, using a blank background, 
     (note this sets randMode = 1)
     with 2 fade in and 2 fade out steps, at a rate of 80ms
 
@@ -42,7 +42,7 @@ Constructor Inputs:
     rate -- The update rate (ms)
 
 Functions:
-    setSteps(newfadeInSteps, newfadeOutSteps) -- Sets the number of fade in and out steps
+    setSteps(newFadeInSteps, newFadeOutSteps) -- Sets the number of fade in and out steps
                                                 (Will reset the effect if the either of the number of steps 
                                                  is different than the current number)
     setSingleColor(Color) -- Sets the effect to use a single color for the pixels, will restart the effect
@@ -80,19 +80,32 @@ Notes:
 class TwinkleSL : public EffectBasePS {
     public:
         //Constructor for a full palette effect
-        TwinkleSL(SegmentSet &SegmentSet, palettePS &Palette, CRGB BgColor, uint16_t numTwinkles, uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate);  
+        TwinkleSL(SegmentSet &SegSet, palettePS &Palette, CRGB BgColor, uint16_t numTwinkles, uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate);  
         
         //Constructor for a using a single color
-        TwinkleSL(SegmentSet &SegmentSet, CRGB Color, CRGB BgColor, uint16_t numTwinkles, uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate);
+        TwinkleSL(SegmentSet &SegSet, CRGB Color, CRGB BgColor, uint16_t numTwinkles, uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate);
         
         //Constructor for choosing all colors at random
-        TwinkleSL(SegmentSet &SegmentSet, CRGB BgColor, uint16_t numTwinkles, uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate);
+        TwinkleSL(SegmentSet &SegSet, CRGB BgColor, uint16_t numTwinkles, uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate);
 
         //destructor
         ~TwinkleSL();
 
+        SegmentSet 
+            &SegSet; 
+        
+        uint8_t 
+            randMode = 0,
+            colorMode = 0,
+            bgColorMode = 0;
+        
+        //step vars
+        uint8_t 
+            fadeInSteps = 0, //Set using setSteps(), for reference only!!
+            fadeOutSteps = 0; //Set using setSteps(), for reference only!!
+
         uint16_t
-            numTwinkles; //for refrence, set with setNumTwinkles()
+            numTwinkles; //for reference, set with setNumTwinkles()
 
         CRGB 
             bgColorOrig,
@@ -101,24 +114,12 @@ class TwinkleSL : public EffectBasePS {
         bool 
             fillBG = false;
         
-        uint8_t 
-            randMode = 0,
-            colorMode = 0,
-            bgColorMode = 0;
-
-        uint8_t 
-            fadeInSteps = 0, //Set using setSteps(), for reference only!!
-            fadeOutSteps = 0; //Set using setSteps(), for reference only!!
-
-        SegmentSet 
-            &segmentSet; 
-        
         palettePS
-            paletteTemp,
-            *palette = nullptr;
+            *palette = nullptr,
+            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
         
         void 
-            setSteps(uint8_t newfadeInSteps, uint8_t newfadeOutSteps),
+            setSteps(uint8_t newFadeInSteps, uint8_t newFadeOutSteps),
             setSingleColor(CRGB Color),
             reset(),
             setNumTwinkles(uint16_t newNumTwinkles),

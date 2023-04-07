@@ -24,7 +24,7 @@ The effect also works well on a strip with a only a single segment (ie just one 
 The noise colors will be blended towards a background color.
 The bgColor is a pointer, so you can bind it to an external color variable.
 By default it is bound to bgColorOrig, which is set to 0 (blank color).
-Changing the bckground color will "tint" the overall output, since all the colors are blended towards the background color as part of the noise.
+Changing the background color will "tint" the overall output, since all the colors are blended towards the background color as part of the noise.
 You can also set the effect to use one of the background color modes (see segDrawUtils::setPixelColor).
 
 For an alternate noise effect, see LavaPS or Noise16.
@@ -52,7 +52,7 @@ Inputs guide:
             This avoids color "jumps" by keeping the transition gradual. 
             Once the target is reached, a new target value is picked and the process begins again.
             If you don't want any shifting, simply set scaleRange = 0.
-            The values for scaleBase and scaleRange will vary based on the size of your segmentSet
+            The values for scaleBase and scaleRange will vary based on the size of your SegmentSet
             But I recommend starting with a scaleBase of 10 - 20, and a scaleRange of 80.
 
         Effect speed:
@@ -80,7 +80,7 @@ Inputs guide:
 
         rotateHue and iHue:
             The noise that FastLED produces tends to be grouped in the middle of the range 
-            While the effect does try to strech this out, it still doesn't usually hit colors at either end of the palette
+            While the effect does try to stretch this out, it still doesn't usually hit colors at either end of the palette
             So, for example using cMode 1, you'll get more yellow, green, and blue than red and purple 
             because they're in the middle of the rainbow.
             To mitigate this we can slowly offset the color center over time,
@@ -121,14 +121,14 @@ Constructor inputs:
 Other settings:
     bgColorMode (default 0) -- Sets the color mode for blend color target (background) (see segDrawUtils::setPixelColor)
     rotateHue (default true) -- sets if the noise center will be offset over time (see inputs guide above)
-    ihue (default 0) -- The position of the noise center, is automatically adjusted if rotateHue is on
+    iHue (default 0) -- The position of the noise center, is automatically adjusted if rotateHue is on
                         But you can also set if yourself to a specific value if needed (see inputs guide above)
     bgColorOrig (default 0) -- The default color of the background (bound to the bgColor pointer by default)
     *bgColor (default bound to bgColorOrig) -- The color of the background, is a pointer so it can be bound to an external variable
 
 Functions:
     setupNoiseArray() -- Creates the array for storing the noise (will be matrix of uint8_t's, numLines x numSegs)
-                         Only call this if you change what segmentSet the effect is on
+                         Only call this if you change what SegmentSet the effect is on
     update() -- updates the effect 
 
 Notes:
@@ -138,16 +138,16 @@ Notes:
 class NoiseSL : public EffectBasePS {
     public:
 
-        //Constuctor for randomly generated palette
-        NoiseSL(SegmentSet &SegmentSet, uint8_t numColors, uint16_t BlendSteps, uint16_t ScaleBase, uint16_t ScaleRange, uint16_t Speed, uint8_t CMode, uint16_t Rate);
+        //Constructor for randomly generated palette
+        NoiseSL(SegmentSet &SegSet, uint8_t numColors, uint16_t BlendSteps, uint16_t ScaleBase, uint16_t ScaleRange, uint16_t Speed, uint8_t CMode, uint16_t Rate);
 
         //Constructor using palette
-        NoiseSL(SegmentSet &SegmentSet, palettePS &Palette, uint16_t BlendSteps, uint16_t ScaleBase, uint16_t ScaleRange, uint16_t Speed, uint8_t CMode, uint16_t Rate); 
+        NoiseSL(SegmentSet &SegSet, palettePS &Palette, uint16_t BlendSteps, uint16_t ScaleBase, uint16_t ScaleRange, uint16_t Speed, uint8_t CMode, uint16_t Rate); 
 
         ~NoiseSL();
 
         SegmentSet 
-            &segmentSet; 
+            &SegSet; 
         
         uint8_t 
             cMode = 0,
@@ -155,7 +155,7 @@ class NoiseSL : public EffectBasePS {
         
         uint16_t
             blendSteps,
-            ihue = 0,
+            iHue = 0,
             speed, 
             scaleBase,
             scaleRange;
@@ -168,8 +168,8 @@ class NoiseSL : public EffectBasePS {
             *bgColor = &bgColorOrig; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
         
         palettePS 
-            paletteTemp,
-            *palette = nullptr;
+            *palette = nullptr,
+            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
 
         void 
             setupNoiseArray(),
@@ -204,8 +204,8 @@ class NoiseSL : public EffectBasePS {
             z,
             noiseStart,
             noiseIndex,
-            joffset,
-            ioffset;
+            j_offset,
+            i_offset;
         
         CRGB 
             colorTarget,
@@ -213,7 +213,7 @@ class NoiseSL : public EffectBasePS {
         
         void
             init(uint16_t Rate),
-            fillnoise8(),
+            fillNoise8(),
             mapNoiseSegsWithPalette(),
             setShiftScale();
 };

@@ -10,11 +10,11 @@ An effect to strobe segment sets in various patterns, while switching between pa
 A strobe is a rapid blinking of light.
 
 The strobe colors will be taken from a passed in pattern or palette.
-There are constuctor options for single or randomly choosen colored strobes
+There are constructor options for single or randomly choosen colored strobes
 The are a few options for randomly choosing the strobe colors from the palette or pattern.
 
 Not matter the configuration, the strobe follows a color pattern, taking colors from a palette.
-You have the option of suppling a specific pattern, or having the effect generate one for you to match a palette.
+You have the option of supplying a specific pattern, or having the effect generate one for you to match a palette.
 
 The effect is adapted for 2D use with multiple segments. 
 Using a single segment will keep the effect 1D. (although strobe modes 0, 1, and 4 will do the same thing)
@@ -67,10 +67,10 @@ Pausing:
     We pause for a set time (ms) after each full strobe cycle (or after every set of pulses of pauseEvery is set)
 
 Backgrounds:
-    By default the background is filled in after the end of every pulse set and duing a pause
+    By default the background is filled in after the end of every pulse set and during a pause
     Both these can be disabled with the fillBG and fillBGOnPause flags respectively
     This causes the last pulse color to persist after the pulse set is done
-    which can be used for some neat effects, like a scifi charging cycle "filling up" segments one at a time
+    which can be used for some neat effects, like a sci-fi charging cycle "filling up" segments one at a time
 
 This effect is fully compatible with color modes, and the bgColor is a pointer, so you can bind it
 to an external color variable (see segDrawUtils::setPixelColor)
@@ -124,7 +124,7 @@ Constructor Inputs:
     pattern(optional, see constructors) -- Used to strobe a specific pattern of colors from a palette
     palette(optional, see constructors) -- Used for making a strobe from a specific palette (using the palette as the pattern)
     color(optional, see constructors) -- Used for making a single color strobe
-    numColors (optional, see constructors) -- Used for making a strobe from a randomply generated palette of length numColors
+    numColors (optional, see constructors) -- Used for making a strobe from a randomly generated palette of length numColors
     bgColor -- The color between strobe pulses. It is a pointer, so it can be tied to an external variable
     numPulses -- The number of pulses per strobe
     pauseTime -- The pause time between strobe cycles
@@ -141,9 +141,9 @@ Functions:
     setNewColorBool(newColorBool) -- Changes the newColor flag
                                      The newColor flag determines if a new color is choosen every set of pulses
                                      or after every strobe cycle
-    setPattern(&newPattern) -- Changes the pattern, also re-caculates the number of strobe cycles to do
+    setPattern(&newPattern) -- Changes the pattern, also re-calculates the number of strobe cycles to do
     setPulseMode() -- Advances the pulse mode to the next mode (only call this if you manually want to change the mode)
-    setCycleCountMax() -- Re-caculates how many strobe cycles to do based on the palette length (only need to call manually if you're doing something funky)                                                     
+    setCycleCountMax() -- Re-calculates how many strobe cycles to do based on the palette length (only need to call manually if you're doing something funky)                                                     
     update() -- updates the effect
 
 Other Settings:
@@ -156,7 +156,7 @@ Other Settings:
     alternate (default false) -- Set this to alternate the direction of pulses after each strobe cycle for modes 0 and 2
     randMode (default 0) -- Sets how colors are choosen from the palette
                         -- 0: Colors will be choosen from the palette in order (not random)
-                        -- 1: Colors will be choosen completly at random (not using the palette)
+                        -- 1: Colors will be choosen completely at random (not using the palette)
                         -- 2: Colors will be choosen randomly from the palette, same color will not be choosen in a row
 
 Reference Vars:
@@ -174,26 +174,26 @@ class StrobeSLSeg : public EffectBasePS {
     public:
 
         //constructor for pattern and palette ver
-        StrobeSLSeg(SegmentSet &SegmentSet, patternPS &pattern, palettePS &Palette, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, 
+        StrobeSLSeg(SegmentSet &SegSet, patternPS &pattern, palettePS &Palette, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, 
                     bool SegEach, bool SegDual, bool SegLine, bool SegLineDual, bool SegAll, uint16_t Rate);
 
         //constructor for palette ver
-        StrobeSLSeg(SegmentSet &SegmentSet, palettePS &Palette, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, 
+        StrobeSLSeg(SegmentSet &SegSet, palettePS &Palette, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, 
                     bool SegEach, bool SegDual, bool SegLine, bool SegLineDual, bool SegAll, uint16_t Rate);
 
         //constructor for single color ver
         //!!If using pre-build FastLED colors you need to pass them as CRGB( *color code* )
-        StrobeSLSeg(SegmentSet &SegmentSet, CRGB Color, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, 
+        StrobeSLSeg(SegmentSet &SegSet, CRGB Color, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, 
                     bool SegEach, bool SegDual, bool SegLine, bool SegLineDual, bool SegAll, uint16_t Rate);
         
         //constructor for randomly generate palette ver
-        StrobeSLSeg(SegmentSet &SegmentSet, uint8_t numColors, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, 
+        StrobeSLSeg(SegmentSet &SegSet, uint8_t numColors, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, 
                     bool SegEach, bool SegDual, bool SegLine, bool SegLineDual, bool SegAll, uint16_t Rate);
 
         ~StrobeSLSeg();  
 
         SegmentSet 
-            &segmentSet; 
+            &SegSet; 
         
         bool
             fillBG = true, //flag to fill the background after each set of pulses
@@ -224,12 +224,12 @@ class StrobeSLSeg : public EffectBasePS {
             totalCycles = 0;
         
         palettePS
-            paletteTemp, //palette used for auto generate palettes
-            *palette = nullptr; //the palette used for the strobe colors
+            *palette = nullptr, //the palette used for the strobe colors
+            paletteTemp = {nullptr, 0}; //palette used for auto generate palettes, init to null for safety
         
         patternPS
-            patternTemp,
-            *pattern = nullptr;
+            *pattern = nullptr, //the strobe color pattern (using colors from the palette)
+            patternTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
 
         CRGB 
             bgColorOrig,

@@ -9,10 +9,10 @@ CRGB colorUtilsPS::randColor(){
     //return CRGB( random8(), random8(), random8() );
 }
 
-//Input a value 0 to 255 to get a color value.
+//Input a value 0 to 255 to get a rainbow color value.
 //The colours are a transition r - g - b - back to r.
 //satur and value set saturation and value of the FastLed CHSV function
-//Note that the input is a uint16_t for flexbility, but values over 255 will be modded back into range
+//Note that the input is a uint16_t for flexibility, but values over 255 will be modded back into range
 CRGB colorUtilsPS::wheel( uint16_t wheelPos, uint16_t offset, uint8_t satur, uint8_t value ){
     wheelPos = 255 - addMod16PS(wheelPos, offset, 255);
     //wheelPos = (uint16_t)(255 - wheelPos + offset) % 255;
@@ -42,7 +42,7 @@ CRGB colorUtilsPS::getCrossFadeColor(const CRGB &startColor, const CRGB &endColo
 //the ratio is between 0 and 255, 255 being the total conversion to the end color
 CRGB colorUtilsPS::getCrossFadeColor(const CRGB &startColor, const CRGB &endColor, uint8_t ratio){
     //am using the built in fastLed function for blending
-    //the commented code after is an alternative way to do it, but yeilds the same result in most cases
+    //the commented code after is an alternative way to do it, but yields the same result in most cases
     return blend( startColor, endColor, ratio );
 
     /*

@@ -3,7 +3,7 @@
 
 //TODO
 //  --Change bool array to uint8_t's where the bools are stored as the bits of the uint8_t's
-//    Will have to caculate the length of the array and write function for getting/setting
+//    Will have to calculate the length of the array and write function for getting/setting
 
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
@@ -14,16 +14,16 @@ Includes various options for color selection (see modes)
 Colors can be choosen using a palette and pattern, or selected randomly
 The effect can be accelerated to set more lines at once by adjusting spawnRateInc
 By default we start by spawning one segment line at a time, increasing the number every spawnRateInc ms
-so the spawing steadily accelerates. This helps keep the spawing consistent, since we're picking at random
+so the spawning steadily accelerates. This helps keep the spawning consistent, since we're picking at random
 Once a certain threshold has been met (default of 1/10 of the number of lines in the segment set remaining)
 All the remaining lines are set. This prevents us from getting stuck looking for the last line.
 Once a morph is finished, the effect can be set to pause for a period using the pauseTime variable.
 
 You can increase the starting number of lines set at once (maxNumSpawnBase), which will
-acclerate the morphing, and may be good on longer segment sets.
+accelerate the morphing, and may be good on longer segment sets.
 
 The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
-passing in a segmentSet with only one segment containing the whole strip.
+passing in a SegmentSet with only one segment containing the whole strip.
 
 Each segment line will be filled in, rather than each pixel.
 
@@ -53,7 +53,7 @@ randModes:
 You should be able switch freely between randModes on the fly (the random modes will set up a random palette/pattern as a fallback)
 
 You can freely use colorModes from segDrawUtils::setPixelColor(), but they don't make much sense
-unless you are running an offset in the segmentSet or using colorModes 5 or 6.
+unless you are running an offset in the SegmentSet or using colorModes 5 or 6.
 
 Constructor Inputs
     pattern(optional, see constructors) -- A pattern is struct made from a 1-d array of palette indexes ie {0, 1, 3, 6, 7} 
@@ -62,14 +62,14 @@ Constructor Inputs
     palette(optional, see constructors) -- The repository of colors used in the pattern, or can be used as the pattern itself
     randMode -- The randMode that will be used for the dissolves (see above)
     spawnRateInc -- The rate increase at which the total number of lines that are set each cycle (ms)
-                    Setting this closeish (up to double?) to the update rate looks the best
+                    Setting this close-ish (up to double?) to the update rate looks the best
     rate -- update rate (ms)
 
 Functions:
     setPaletteAsPattern() -- Sets the effect pattern to match the current palette
     resetPixelArray() -- effectively restarts the current dissolve
     setLineMode(newLineMode) -- Sets the line mode (see Other Settings below), 
-                                     also restarts the dissolve, and sets the setAllTheshold to 1/10 the numLines
+                                     also restarts the dissolve, and sets the setAllThreshold to 1/10 the numLines
     update() -- updates the effect
 
 Other Settings:
@@ -82,7 +82,7 @@ Other Settings:
     colorMode (default 0) -- sets the color mode for the random pixels (see segDrawUtils::setPixelColor)
     maxNumSpawnBase (default 1) -- The starting value of the number of pixels set in one cycle
                                    Higher numbers may work better for longer pixel lengths
-    lineMode (default true) -- If false, pixels will be dissolved individualy (rather than in segment lines)
+    lineMode (default true) -- If false, pixels will be dissolved individually (rather than in segment lines)
                                Only really useful if you want multi-segment color modes, but want individual dissolves
                                !!FOR reference only, set using setLineMode();
 
@@ -100,15 +100,18 @@ Notes:
 class DissolveSL : public EffectBasePS {
     public:
         //constructor for pattern
-        DissolveSL(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, uint8_t RandMode, uint16_t SpawnRateInc, uint16_t Rate); 
+        DissolveSL(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t RandMode, uint16_t SpawnRateInc, uint16_t Rate); 
 
         //constructor for palette as pattern
-        DissolveSL(SegmentSet &SegmentSet, palettePS &Palette, uint8_t RandMode, uint16_t SpawnRateInc, uint16_t Rate); 
+        DissolveSL(SegmentSet &SegSet, palettePS &Palette, uint8_t RandMode, uint16_t SpawnRateInc, uint16_t Rate); 
         
         //constructor for randomly choosen colors (should only use randMode 2 or 3 with this constructor)
-        DissolveSL(SegmentSet &SegmentSet, uint8_t RandMode, uint16_t SpawnRateInc, uint16_t Rate);
+        DissolveSL(SegmentSet &SegSet, uint8_t RandMode, uint16_t SpawnRateInc, uint16_t Rate);
     
         ~DissolveSL();
+
+        SegmentSet 
+            &SegSet; 
 
         uint8_t
             randMode,
@@ -125,17 +128,14 @@ class DissolveSL : public EffectBasePS {
         bool
             lineMode = true, //for reference, set using setLineMode()
             paused = false; 
-
-        SegmentSet 
-            &segmentSet; 
         
         patternPS
-            patternTemp,
-            *pattern = nullptr;
+            *pattern = nullptr,
+            patternTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety 
 
         palettePS
-            paletteTemp,
-            *palette = nullptr;
+            *palette = nullptr,
+            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
         
         void
             setPaletteAsPattern(),

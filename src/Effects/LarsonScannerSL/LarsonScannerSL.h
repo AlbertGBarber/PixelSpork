@@ -6,7 +6,7 @@
 #include "Effects/ParticlesSL/ParticlesSL.h"
 
 /* 
-This effect is intended to be a short-hand for re-creating some classic scanner effects (cylon, Kit)
+This effect is intended to be a short-hand for re-creating some classic scanner effects (Cylon, Kit)
 Overall, it's a wrapper for a ParticlesPS instance that actually controls the effect
 So you should read ParticlesPS.h if you want to adjust any major settings
 
@@ -33,7 +33,7 @@ Three scanner types are built in:
 by default all the scanner particles will bounce back at either strip end
 You can change this by calling setBounce( newBounceVal );
 
-Note that because partcilesSLPS works along segment lines, the larsonScanner does too, but be aware that 
+Note that because particlesSL works along segment lines, the larsonScanner does too, but be aware that 
 for scan mode 2, the colors are added together when particles meet, which may lead to some weird colors 
 for segment sets with un-equal length segments
 
@@ -48,7 +48,7 @@ Constructor inputs for creating a particle set:
     scanColor -- The color of the scan particles
     scanType -- The type of scan type (see above)
     eyeSize -- The size of the particles (min value 1)
-    traillength -- The length of the trails. Using 0 will turn off the trails for the scanner.
+    trailLength -- The length of the trails. Using 0 will turn off the trails for the scanner.
     bgColor -- The background color used for the effect.
     rate -- The update rate (ms) note that this is synced with all the particles.
 
@@ -60,7 +60,7 @@ Functions:
     setTrailLength(newTrailLength) -- Changes the particle trail lengths. 
                                       Trials will be turned off if you set the length to 0
     setEyeSize(newEyeSize) -- Sets the eye size of the scanner (the non-trail portion)
-    setBounce(newBounce) -- Sets the bounce property of the scanner particles, ie sets if the partciles reverse
+    setBounce(newBounce) -- Sets the bounce property of the scanner particles, ie sets if the particles reverse
                             when they reach the end of the segments
     update() -- updates the effect 
 
@@ -69,7 +69,7 @@ Other Settings:
     *scannerInst -- The local ParticlePS instance
     particleSet -- The particleSet used to store the scan particles (and passed to the ParticlePS instance)
 
-Referenc Vars:
+Reference Vars:
     trailLength -- The The length of the trails. Set using the setTrailLength() function.
     bounce (default true) -- The bounce property of the scan particles. Set using the setBounce() function.
     scanType -- The current scan mode. Set using the setScanType() function.
@@ -77,12 +77,12 @@ Referenc Vars:
 */
 class LarsonScannerSL : public EffectBasePS {
     public:
-        LarsonScannerSL(SegmentSet &SegmentSet, uint8_t ScanType, CRGB ScanColor, CRGB BgColor, uint8_t EyeSize, uint8_t TrailLength, uint16_t Rate);  
+        LarsonScannerSL(SegmentSet &SegSet, uint8_t ScanType, CRGB ScanColor, CRGB BgColor, uint8_t EyeSize, uint8_t TrailLength, uint16_t Rate);  
 
         ~LarsonScannerSL();
 
         SegmentSet 
-            &segmentSet;
+            &SegSet;
         
         uint8_t
             scanType,
@@ -99,13 +99,13 @@ class LarsonScannerSL : public EffectBasePS {
             *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
         
         palettePS
-            palette; //palette used for ParticlePS instance
+            palette = {nullptr, 0}; //palette used for ParticlePS instance. Init to empty for safety
         
         ParticlesSL
             *scannerInst = nullptr; //pointer to the ParticlePS instance
             
         particleSetPS
-            particleSet; //the particle set used in the ParticlePS instance
+            particleSet = {nullptr, 0}; //the particle set used in the ParticlePS instance. Init to empty for safety
 
         void 
             setColorMode(uint8_t colorMode, bool bgColorMode),
@@ -117,13 +117,13 @@ class LarsonScannerSL : public EffectBasePS {
             update(void);
     
     private:
-        uint16_t
-            numLines;
-
         unsigned long
             prevRate = 0,
             currentTime,
             prevTime = 0;
+        
+        uint16_t
+            numLines;
 };
 
 #endif

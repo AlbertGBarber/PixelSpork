@@ -4,7 +4,7 @@
 //TODO -- Make an effect that moves the pattern both along segment and segment lines at the same time
 //        Shouldn't be too much work, you'll need two cycleNums, one for lines and segments, and then to take the 
 //        line shifting code from PatternShifterSL.
-//        Will also need to turn off the last segment and line, and have seperate update rates for segments and lines
+//        Will also need to turn off the last segment and line, and have separate update rates for segments and lines
 //        (maybe make it so the rates are additions to the base rate ie lineRate = rate + x)
 
 #include "Effects/EffectBasePS.h"
@@ -25,7 +25,7 @@ it would be shifted from one segment to the next as the effect runs.
 
 You can set the direction of the motion (first to last segment) or visa versa
 
-This effect is really only usefull for segment set with multiple segments
+This effect is really only useful for segment set with multiple segments
 Ie 2D shapes
 
 The shiftPattern can be set to repeat both along segment lines and segments,
@@ -106,11 +106,11 @@ Reference Vars:
 */
 class PatternShifterSeg : public EffectBasePS {
     public:
-        PatternShifterSeg(SegmentSet &SegmentSet, shiftPatternPS &ShiftPattern, palettePS &Palette, CRGB BgColor, 
+        PatternShifterSeg(SegmentSet &SegSet, shiftPatternPS &ShiftPattern, palettePS &Palette, CRGB BgColor, 
                           bool RepeatLine, bool RepeatSeg, bool Direct, uint16_t Rate);  
 
         SegmentSet 
-            &segmentSet; 
+            &SegSet; 
         
         uint8_t
             colorMode = 0,

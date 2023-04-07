@@ -22,9 +22,9 @@ The array has a very specific structure.
 This is most easily shown with an example:
 
 Lets say I have an 8x8 matrix and I want to draw an arrow shifting horizontally across it
-I've already defined a segmentSet with 8 segments, each representing a horizontal line on the matrix.
+I've already defined a SegmentSet with 8 segments, each representing a horizontal line on the matrix.
 This means that the segment lines will be the vertical lines on the matrix:
-(see segmentSet.h for more info on segments)
+(see SegmentSet.h for more info on segments)
     0  *  *  *  *  *  *  * <- Seg 0
     *  0  *  *  *  *  *  * <- Seg 1
     *  *  0  *  *  *  *  * <- Seg 2
@@ -36,7 +36,7 @@ This means that the segment lines will be the vertical lines on the matrix:
     |  |  |  |  |  |  |  |
     0  1  2  3  4  5  6  7 <- Segment Lines
 
-I have called the segmentSet horzLines.
+I have called the SegmentSet horzLines.
 
 The 0's in the above diagram represent the arrow we want to draw (with all of the pixels being part of the background)
 To create the arrow as a shiftPattern I would represent it as:
@@ -66,7 +66,7 @@ To create the arrow as a shiftPattern I would represent it as:
 //******************************************************************************
 
 The array above may look strange at first, but it is actually quite simple.
-While shiftPattern arrays are one continuious array, they actually have distinct sections,
+While shiftPattern arrays are one continuous array, they actually have distinct sections,
 which each represent a pattern for a segment line (or lines).
 To help show this (and make it much easier to see what a pattern is), I've split the array across multiple text lines.
 Each line represents a segment line in the matrix and consists of parts 1 and 2.
@@ -83,7 +83,7 @@ Lets take the first the first line in the array:
 // Part 1   ------ Part 2 --------
 //Seg Lines --Line Color Pattern--   
 
-Part 1 is the start and end segment lines for the line color pattern reresented by part 2.
+Part 1 is the start and end segment lines for the line color pattern represented by part 2.
 So the first pattern line starts at segment line 0, and ends at line 1,
 meaning that the pattern will be draw on one segment line: line 0.
 (!!!!Note that the pattern is draw up to the last line, but does not include it)
@@ -93,7 +93,7 @@ we'd simply change the end line to 2, so the pattern would be draw on lines 0 an
 Part 2 is the line color pattern. 
 It 8 has entries (the same as the number of segments in the segment set, ie rows in the matrix)
 With each entry representing a palette color index or background for each the 0'th line pixel in each segment
-(since the pattern ony spans 1 line, each index corrosponds directly to an individual pixel in the matrix)
+(since the pattern ony spans 1 line, each index corresponds directly to an individual pixel in the matrix)
 The background pixels are indicated by 255, but in order to make the pattern easier to read I've set 
 a variable "I" = 255 and then used it in the pattern instead.
 So the line 0, I, I, I, I, I, I, 0, will be output as: 
@@ -109,20 +109,20 @@ This should be similar for most other patterns:
 *4 is the number of "rows" in the pattern
 
 To summarize:
-shiftPatterns are usually specific to a segmentSet
+shiftPatterns are usually specific to a SegmentSet
 For the pattern array:
     Part 1 is how many segment lines the pattern line spans (up to, but not including the final line).
     Part 2 is the color pattern on the segments. 
     255 is used to indicate a background color.
 The length of the array is usually (<numSegs> + 2) * number of "rows" in the pattern
 
-Final gotachas:
+Final gotchas:
 *The segment lines (part 1) don't have to be in sequential order, ie you can have a a pattern line from 3 to 4, then a line from 0 to 3
  (this can be useful when working with odd shaped segment sets, where lines overlap)
 *Gaps between segment lines may cause weird effects (ie you have a pattern line from 0 to 2 and from 5 to 6, but nothing in between)
  Gaps won't be filed with anything, so the lines patterns will just repeat as the pattern moves
 *Make sure you use the correct array length
-*When setting up an effect, make sure you are using the correct segmentSet
+*When setting up an effect, make sure you are using the correct SegmentSet
 */
 
 //See above for explanation of shiftPatterns
@@ -172,12 +172,12 @@ struct shiftPatternPS {
     //-----------------------------------------------------------
     //Helper functions
 
-    //Returns the first index of the specificed "row" in the patternArr
+    //Returns the first index of the specified "row" in the patternArr
     uint16_t getPatRowStartIndex(uint16_t patternRow){
         return patternRow * (2 + numSegs);
     };
 
-    //Returns either the start or end segment line for the specificed "row" in the patternArr
+    //Returns either the start or end segment line for the specified "row" in the patternArr
     //isLineEnd = true will return the end line for the row
     uint16_t getLineStartOrEnd(uint16_t patternRow, bool isLineEnd){
         uint16_t patRowStartIndex = getPatRowStartIndex(patternRow);
@@ -188,7 +188,7 @@ struct shiftPatternPS {
         return patternArr[ patRowStartIndex + (uint8_t)isLineEnd ];
     };
 
-    //returns the color index for the specificed "row" in the patternArr at the specified segNum
+    //returns the color index for the specified "row" in the patternArr at the specified segNum
     uint16_t getLineColorIndex(uint16_t patternRow, uint16_t segNum){
         uint16_t patRowStartIndex = getPatRowStartIndex(patternRow);
         return patternArr[ patRowStartIndex + 2 + segNum ];

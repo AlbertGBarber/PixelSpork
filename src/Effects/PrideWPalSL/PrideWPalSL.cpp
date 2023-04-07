@@ -1,8 +1,8 @@
 #include "PrideWPalSL.h"
 
 //constructor for rainbow mode
-PrideWPalSL::PrideWPalSL(SegmentSet &SegmentSet, bool BriDirect, bool RandomBriInc, uint16_t Rate):
-    segmentSet(SegmentSet), briDirect(BriDirect)
+PrideWPalSL::PrideWPalSL(SegmentSet &SegSet, bool BriDirect, bool RandomBriInc, uint16_t Rate):
+    SegSet(SegSet), briDirect(BriDirect)
     {   
         prideMode = true; 
         //we make a random palette so we get gradSteps correctly (needed for program, but not used for rainbow)
@@ -13,16 +13,16 @@ PrideWPalSL::PrideWPalSL(SegmentSet &SegmentSet, bool BriDirect, bool RandomBriI
 	}
 
 //constructor for palette input
-PrideWPalSL::PrideWPalSL(SegmentSet &SegmentSet, palettePS &Palette, bool BriDirect, bool RandomBriInc, uint16_t Rate):
-    segmentSet(SegmentSet), palette(&Palette), briDirect(BriDirect)
+PrideWPalSL::PrideWPalSL(SegmentSet &SegSet, palettePS &Palette, bool BriDirect, bool RandomBriInc, uint16_t Rate):
+    SegSet(SegSet), palette(&Palette), briDirect(BriDirect)
     {    
         prideMode = false; 
         init(RandomBriInc, Rate);
 	}
 
 //constructor for making a random palette
-PrideWPalSL::PrideWPalSL(SegmentSet &SegmentSet, uint8_t numColors, bool BriDirect, bool RandomBriInc, uint16_t Rate):
-    segmentSet(SegmentSet), briDirect(BriDirect)
+PrideWPalSL::PrideWPalSL(SegmentSet &SegSet, uint8_t numColors, bool BriDirect, bool RandomBriInc, uint16_t Rate):
+    SegSet(SegSet), briDirect(BriDirect)
     {    
         prideMode = false; 
         paletteTemp = paletteUtilsPS::makeRandomPalette(numColors);
@@ -31,11 +31,11 @@ PrideWPalSL::PrideWPalSL(SegmentSet &SegmentSet, uint8_t numColors, bool BriDire
 	}
 
 //constructor with inputs for all main variables
-PrideWPalSL::PrideWPalSL(SegmentSet &SegmentSet, palettePS &Palette, bool BriDirect, uint8_t GradLength, 
+PrideWPalSL::PrideWPalSL(SegmentSet &SegSet, palettePS &Palette, bool BriDirect, uint8_t GradLength, 
                                             uint8_t BrightDepthMin, uint8_t BrightDepthMax, uint16_t BriThetaFreq, 
                                             uint8_t BriThetaInc16Min, uint8_t BriThetaInc16Max, uint8_t HueChangeMin, 
                                             uint8_t HueChangeMax, uint16_t Rate):
-    segmentSet(SegmentSet), palette(&Palette), briDirect(BriDirect), gradLength(GradLength), brightDepthMin(BrightDepthMin), 
+    SegSet(SegSet), palette(&Palette), briDirect(BriDirect), gradLength(GradLength), brightDepthMin(BrightDepthMin), 
     brightDepthMax(BrightDepthMax), briThetaFreq(BriThetaFreq), briThetaInc16Min(BriThetaInc16Min), 
     briThetaInc16Max(BriThetaInc16Max), hueChangeMin(HueChangeMin), hueChangeMax(HueChangeMax)
     {
@@ -51,7 +51,7 @@ PrideWPalSL::~PrideWPalSL(){
 //The random values are picked from ranges hand picked by me to offer a good variation in the effect
 //while not being too extreme
 void PrideWPalSL::init(bool RandomBriInc, uint16_t Rate){
-    //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
+    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
     bindSegPtrPS();
     bindClassRatesPS();
     if(RandomBriInc){
@@ -82,56 +82,56 @@ void PrideWPalSL::randomizeBriFreq( uint16_t briFreqMin, uint16_t briFreqMax ){
 //In this effect I've done the same, but expanded the waves to be along whole segment lines
 //So the segment set has a set of shifting color waves that run across it
 //I've also made it so you can reverse the direction of the brightness waves
-//I've also combined the code from Mark's colorwaves and pride2015 into one function
+//I've also combined the code from Mark's colorWaves and pride2015 into one function
 //since they are so similar.
 //I don't know exactly how all the waves work in the effect, but overall:
 //Each Update cycle we:
-    //Update various brightnes and hue values from their waves
+    //Update various brightness and hue values from their waves
     //Then, for each line, we fetch a color using the brightness and hue
     //(while also incrementing brightness and color as we go)
     //We then color all the pixels on the line
 void PrideWPalSL::update(){
     currentTime = millis();
-    deltams = currentTime - prevTime;
-    if( ( deltams ) >= *rate ) {
+    deltaTime = currentTime - prevTime;
+    if( ( deltaTime ) >= *rate ) {
         prevTime = currentTime;
 
         //update various wave values
         //for those with input variables, their purpose is described in the Inputs Guide in the .h file
         sat8 = beatsin88(87, 220, 250);    
-        brightdepth = beatsin88(341, brightDepthMin, brightDepthMax); 
-        brightnessthetainc16 = beatsin88(briThetaFreq, (briThetaInc16Min * 256), (briThetaInc16Max * 256));
-        msmultiplier = beatsin88(147, 23, 60);
+        brightDepth = beatsin88(341, brightDepthMin, brightDepthMax); 
+        brightnessThetaInc16 = beatsin88(briThetaFreq, (briThetaInc16Min * 256), (briThetaInc16Max * 256));
+        msMultiplier = beatsin88(147, 23, 60);
 
         hue16 = sHue16;
-        hueinc16 = beatsin88(113, 1, 3000);
+        hueInc16 = beatsin88(113, 1, 3000);
             
-        sPseudotime += deltams * msmultiplier;
-        sHue16 += deltams * beatsin88(400, hueChangeMin, hueChangeMax);
-        brightnesstheta16 = sPseudotime;
+        sPseudoTime += deltaTime * msMultiplier;
+        sHue16 += deltaTime * beatsin88(400, hueChangeMin, hueChangeMax);
+        brightnessTheta16 = sPseudoTime;
 
         //sets the brightness waves to either move forward or backward across the segments
         briDirectMult = briDirect - !briDirect; //1 or -1
         
         //fetch some core vars
         //we re-fetch these in case the segment set or palette has changed
-        numSegs = segmentSet.numSegs;
-        numLines = segmentSet.numLines;
+        numSegs = SegSet.numSegs;
+        numLines = SegSet.numLines;
         numSteps = gradLength * palette->length;
 
         //For each segment line do the following:
         for (uint16_t i = 0; i < numLines; i++) {
             
             //update the brightness wave for each line
-            brightnesstheta16 += briDirectMult * brightnessthetainc16;
-            b16 = sin16(brightnesstheta16) + 32768;
+            brightnessTheta16 += briDirectMult * brightnessThetaInc16;
+            b16 = sin16(brightnessTheta16) + 32768;
 
             bri16 = (uint32_t)((uint32_t)b16 * (uint32_t)b16) / 65536;
-            bri8 = (uint32_t)(((uint32_t)bri16) * brightdepth) / 65536;
-            bri8 += (255 - brightdepth);
+            bri8 = (uint32_t)(((uint32_t)bri16) * brightDepth) / 65536;
+            bri8 += (255 - brightDepth);
 
             //get the next color hue
-            hue16 += hueinc16;
+            hue16 += hueInc16;
             hue8 = hue16 / 256;
 
             //If we're not drawing rainbows we need to get a color from the palette
@@ -151,39 +151,39 @@ void PrideWPalSL::update(){
                 newColor = CHSV(hue8, sat8, bri8);
             }
             
-            //reverse the line number so that the effect moves positivly along the strip
+            //reverse the line number so that the effect moves positively along the strip
             lineNum = numLines - i - 1;
 
             for (uint16_t j = 0; j < numSegs; j++) {
                 //get the physical pixel location based on the line and seg numbers
-                pixelNum = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, j, lineNum);
-                nblend(segmentSet.leds[pixelNum], newColor, 128);
+                pixelNum = segDrawUtils::getPixelNumFromLineNum(SegSet, numLines, j, lineNum);
+                nblend(SegSet.leds[pixelNum], newColor, 128);
                 
                 //Need to check to dim the pixel color manually
                 //b/c we're not calling setPixelColor directly
-                segDrawUtils::handleBri(segmentSet, pixelNum);
+                segDrawUtils::handleBri(SegSet, pixelNum);
             }
         }          
         showCheckPS();
     } 
 }
 
-//Oringinal code for non-seg line version
+//Original code for non-seg line version
 /*
 //Updates the effect
 //Basically we shift the colors and brightness based on some wave values
 //adjusting the values for each pixel
-//I am not totall clear on how everything works
+//I am not totally clear on how everything works
 //If you really need to know you'll have to track down Mark Kriegsman
 void PrideWPalPS::update() {
     currentTime = millis();
-    deltams = currentTime - prevTime;
+    deltaTime = currentTime - prevTime;
 
-    if( ( deltams ) >= *rate ) {
+    if( ( deltaTime ) >= *rate ) {
         prevTime = currentTime;
 
         //Adjust the blend ratio 
-        //(based on Marks original code values from Pride2015 and colorwaves + my own testing)
+        //(based on Marks original code values from Pride2015 and colorWaves + my own testing)
         //64 looks better with rainbows, but 128 looks better with most palettes
         if(prideMode) {
             blendRatio = 64;
@@ -193,16 +193,16 @@ void PrideWPalPS::update() {
 
         //update various wave values
         sat8 = beatsin88(87, 220, 250);
-        brightdepth = beatsin88(341, 96, 224);
-        brightnessthetainc16 = beatsin88(203, (25 * 256), (40 * 256));
-        msmultiplier = beatsin88(147, 23, 60);
+        brightDepth = beatsin88(341, 96, 224);
+        brightnessThetaInc16 = beatsin88(203, (25 * 256), (40 * 256));
+        msMultiplier = beatsin88(147, 23, 60);
 
         hue16 = sHue16;
-        hueinc16 = beatsin88(113, 1, 3000);
+        hueInc16 = beatsin88(113, 1, 3000);
 
-        sPseudotime += deltams * msmultiplier;
-        sHue16 += deltams * beatsin88(400, 5, 9);
-        brightnesstheta16 = sPseudotime;
+        sPseudoTime += deltaTime * msMultiplier;
+        sHue16 += deltaTime * beatsin88(400, 5, 9);
+        brightnessTheta16 = sPseudoTime;
 
         //sets the brightness waves to either move forward or backward across the segments
         briDirectMult = briDirect - !briDirect; //1 or -1
@@ -210,22 +210,22 @@ void PrideWPalPS::update() {
         //do the subtraction here so we don't need to do it each loop
         //@getSegmentPixel
         //The loop limit is adjusted up by one
-        numActiveLeds = segmentSet.numActiveSegLeds - 1;
-        //re-caculate the gradLength incase the palette changed
+        numActiveLeds = SegSet.numActiveSegLeds - 1;
+        //re-calculate the gradLength incase the palette changed
         numSteps = gradLength * palette->length;
 
         for (uint16_t i = 0; i <= numActiveLeds; i++) {
             
             //update the brightness wave for each pixel
-            brightnesstheta16 += briDirectMult * brightnessthetainc16;
-            b16 = sin16(brightnesstheta16) + 32768;
+            brightnessTheta16 += briDirectMult * brightnessThetaInc16;
+            b16 = sin16(brightnessTheta16) + 32768;
 
             bri16 = (uint32_t)((uint32_t)b16 * (uint32_t)b16) / 65536;
-            bri8 = (uint32_t)(((uint32_t)bri16) * brightdepth) / 65536;
-            bri8 += (255 - brightdepth);
+            bri8 = (uint32_t)(((uint32_t)bri16) * brightDepth) / 65536;
+            bri8 += (255 - brightDepth);
 
             //get the next color hue
-            hue16 += hueinc16;
+            hue16 += hueInc16;
             hue8 = hue16 / 256;
 
             //If we're not drawing rainbows we need to get a color from the palette
@@ -246,9 +246,9 @@ void PrideWPalPS::update() {
             }
 
             //get the physical pixel location based on the line and seg numbers
-            pixelnumber = segDrawUtils::getSegmentPixel(segmentSet, numActiveLeds - i);
+            pixelNum = segDrawUtils::getSegmentPixel(SegSet, numActiveLeds - i);
 
-            nblend(segmentSet.leds[pixelnumber], newColor, blendRatio);
+            nblend(SegSet.leds[pixelNum], newColor, blendRatio);
         }
         showCheckPS();
     }

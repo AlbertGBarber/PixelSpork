@@ -9,17 +9,18 @@
 //use these to change patterns
 //!!DO NOT try to patterns without using these functions
 namespace patternUtilsPS{
-    void
+    void //Functions for changing aspects of patterns
         setVal(patternPS &pattern, uint8_t val, uint16_t index),
         shuffle(patternPS &pattern),
         reverse(patternPS &pattern);
     
-    uint8_t 
+    uint8_t //Functions for getting pattern values
         getPatternVal(patternPS &pattern, uint16_t index),
         getRandVal(patternPS &pattern),
         *getValPtr(patternPS &pattern, uint16_t index),
-        getShuffleIndex(patternPS &pattern, uint8_t currentPatternVal);
+        getShuffleVal(patternPS &pattern, uint8_t currentPatternVal);
     
+    //Pre-allocated variables
     static uint8_t
         uint8One,
         uint8Two;

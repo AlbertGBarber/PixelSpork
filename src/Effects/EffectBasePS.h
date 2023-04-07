@@ -1,15 +1,15 @@
 #ifndef EffectBasePS_h
 #define EffectBasePS_h
 
-#include "SegmentFiles.h"
+#include "Include_Lists/SegmentFiles.h"
 
 //TODO: Add virtual reset() function (also add it to EffectSet), not all effects have reset()'s
 
 //macros
 
-//bind the segmentSet pointer since it is inherited from BaseEffectPS
+//bind the SegmentSet pointer since it is inherited from BaseEffectPS
 #define bindSegPtrPS() ({        \
-    segmentSetPtr = &segmentSet; \
+    segmentSetPtr = &SegSet; \
 })                               \
 
 //bind the rate vars since they are inherited from BaseEffectPS
@@ -38,13 +38,13 @@
 
 //checks the effect is set to show, if so, do so
 #define showCheckPS() ({                      \
-    (segDrawUtils::show(segmentSet, showNow));\
+    (segDrawUtils::show(SegSet, showNow));\
 })                                            \
 
 //This is the base effect class from which effects are derived (and some other helper functions)
 //contains:
     //update() interface method (all effects must have an update method)
-    //a segmentSet pointer to access the effect's segmentSet from outside the effect
+    //a SegmentSet pointer to access the effect's SegmentSet from outside the effect
     //a few macros for common effect code pieces (see above)
 class EffectBasePS {
     public:
@@ -55,8 +55,8 @@ class EffectBasePS {
         bool
             showNow = true;
 
-        //pointer to the segmentSet the effect is using, used for fading
-        //defaults to null, since a couple of other classes use the effectBase but don't use a segmentSet
+        //pointer to the SegmentSet the effect is using, used for fading
+        //defaults to null, since a couple of other classes use the effectBase but don't use a SegmentSet
         //this sounds bad, but it lets you use them in an an EffectGroup, which is very useful
         SegmentSet 
             *segmentSetPtr = nullptr;

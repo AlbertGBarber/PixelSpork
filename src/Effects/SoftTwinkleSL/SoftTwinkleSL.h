@@ -10,7 +10,7 @@
 /* 
 Note:
 The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
-passing in a segmentSet with only one segment containing the whole strip.
+passing in a SegmentSet with only one segment containing the whole strip.
 
 For this animation to work, the Red component of lightColor
 MUST be nonzero, AND must be an EVEN number!!!!
@@ -44,7 +44,7 @@ pixel.red is EVEN), it means that this pixel should be BRIGHTENING.
 If the lowest bit of the red component is ONE (i.e. pixel.red is ODD),
 it means that this pixel should be DIMMING.
 
-In this way, the low bit of the red componetn IS the direction indicator:
+In this way, the low bit of the red component IS the direction indicator:
 If red is EVEN, it's going up.  If red is ODD, it's coming down.
 
 Now as if that weren't complicated enough, we use the 'saturating'
@@ -84,7 +84,7 @@ Constructor Inputs:
     density -- max 255, the threshold for turning on an led, higher will turn on more leds at once
 
 Other Settings:
-    lightcolor default( CRGB{8,5,1} ) -- The color used to increment the pixel colors
+    lightColor default( CRGB{8,5,1} ) -- The color used to increment the pixel colors
                                         as noted above the red value should always be an even number
 
 Notes:
@@ -93,16 +93,16 @@ Notes:
 */
 class SoftTwinkleSL : public EffectBasePS {
     public:
-        SoftTwinkleSL(SegmentSet &SegmentSet, uint8_t Density, uint16_t Rate);  
+        SoftTwinkleSL(SegmentSet &SegSet, uint8_t Density, uint16_t Rate);  
 
         uint8_t
             density;
 
         SegmentSet 
-            &segmentSet; 
+            &SegSet; 
         
         CRGB 
-            lightcolor = CRGB{8,5,1};
+            lightColor = CRGB{8,5,1};
         
         void
             reset(),

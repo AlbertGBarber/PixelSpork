@@ -96,11 +96,11 @@ Constructor inputs for using the automated evenly spaced waves:
     alternate -- Sets if every other particle will have its starting direction swapped
     bounce -- Sets if the particles will bounce or wrap at each segment set end
     bounceChange -- Sets if the particles change colors every time they bounce (or every other time)
-    blend -- Sets if the particles will be blended togther as they pass over one another
+    blend -- Sets if the particles will be blended together as they pass over one another
     rate -- The update rate (ms) note that this is synced with all the particles.
 
 Functions:
-    setPaletteAsPattern() -- Sets the palette to be the pattern (each color in the palette, inorder)
+    setPaletteAsPattern() -- Sets the palette to be the pattern (each color in the palette, in order)
     setScanType(newType) -- sets the scan mode (note this re-creates all the particles from scratch)
     makeWaveSet(numWaves, direction, alternate) -- Creates a set of evenly space repeating particles
                                                    (note this re-creates all the particles from scratch)
@@ -114,7 +114,7 @@ Other Settings:
     trailType -- The type of trails for the particles (see particlePS.h)
     size -- The length of the scan particle's body (not trail) (min value of 1)
     bounce -- The bounce property of the particles.
-    blend -- Sets if the particles will be blended togther as they pass over one another
+    blend -- Sets if the particles will be blended together as they pass over one another
     bounceChange -- Sets if the particles change colors every time they bounce (or every other time)
     fillBG (default false) -- If true, the segment set will be filled with the background every update cycle
     particleSet -- The particleSet used to store the scan particles (and passed to the ParticlePS instance)
@@ -123,27 +123,27 @@ Other Settings:
 class ScannerSL : public EffectBasePS {
     public:
         //Constructor for using a pattern with one of the default scan types
-        ScannerSL(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, CRGB BGColor, uint8_t ScanType,
+        ScannerSL(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BGColor, uint8_t ScanType,
                   uint16_t TrailSize, uint16_t Size, bool Bounce, bool BounceChange, uint16_t Rate);
 
         //Constructor for using the palette as the pattern with one of the default scan types
-        ScannerSL(SegmentSet &SegmentSet, palettePS &Palette, CRGB BGColor, uint8_t ScanType, uint16_t TrailSize, 
+        ScannerSL(SegmentSet &SegSet, palettePS &Palette, CRGB BGColor, uint8_t ScanType, uint16_t TrailSize, 
                   uint16_t Size, bool Bounce, bool BounceChange, uint16_t Rate);
 
         //Constructor for using a pattern with a custom set of repeating waves
-        ScannerSL(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, CRGB BGColor, uint16_t numWaves,
+        ScannerSL(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BGColor, uint16_t numWaves,
                   uint8_t TrailType, uint16_t TrailSize, uint16_t Size, bool direction, bool alternate, bool Bounce, 
                   bool BounceChange, bool Blend, uint16_t Rate);
 
         //Constructor for using the palette as the pattern with a custom set of repeating waves
-        ScannerSL(SegmentSet &SegmentSet, palettePS &Palette, CRGB BGColor, uint16_t numWaves, uint8_t TrailType,   
+        ScannerSL(SegmentSet &SegSet, palettePS &Palette, CRGB BGColor, uint16_t numWaves, uint8_t TrailType,   
                   uint16_t TrailSize, uint16_t Size,  bool direction, bool alternate, bool Bounce, bool BounceChange, 
                   bool Blend, uint16_t Rate);
         
         ~ScannerSL();
         
         SegmentSet 
-            &segmentSet; 
+            &SegSet; 
 
         int8_t
             dimPow = 80; //80 range -127 -> 127 -80 good for colored bg's
@@ -169,15 +169,15 @@ class ScannerSL : public EffectBasePS {
             *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
         
         palettePS
-            paletteTemp,
-            *palette = nullptr;
+            *palette = nullptr,
+            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety 
         
         patternPS
-            patternTemp,
-            *pattern = nullptr;
+            *pattern = nullptr,
+            patternTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety 
 
         particleSetPS 
-            particleSet;
+            particleSet = {nullptr, 0}; //Must init structs w/ pointers set to null for safety 
 
         void 
             reset(),

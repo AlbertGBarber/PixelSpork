@@ -1,15 +1,15 @@
 #include "NoiseWavesSL.h"
 
 //Constructor with palette
-NoiseWavesSL::NoiseWavesSL(SegmentSet &SegmentSet, palettePS &Palette, CRGB BgColor, uint16_t BlendScale, uint8_t PhaseScale, uint8_t FreqScale, uint16_t Rate):
-    segmentSet(SegmentSet), palette(&Palette), blendScale(BlendScale), phaseScale(PhaseScale), freqScale(FreqScale)
+NoiseWavesSL::NoiseWavesSL(SegmentSet &SegSet, palettePS &Palette, CRGB BgColor, uint16_t BlendScale, uint8_t PhaseScale, uint8_t FreqScale, uint16_t Rate):
+    SegSet(SegSet), palette(&Palette), blendScale(BlendScale), phaseScale(PhaseScale), freqScale(FreqScale)
     {    
         init(BgColor, Rate);
     }
 
 //Constructor with randomly generated palette
-NoiseWavesSL::NoiseWavesSL(SegmentSet &SegmentSet, uint8_t numColors, CRGB BgColor, uint16_t BlendScale, uint8_t PhaseScale, uint8_t FreqScale, uint16_t Rate):
-    segmentSet(SegmentSet), blendScale(BlendScale), phaseScale(PhaseScale), freqScale(FreqScale)
+NoiseWavesSL::NoiseWavesSL(SegmentSet &SegSet, uint8_t numColors, CRGB BgColor, uint16_t BlendScale, uint8_t PhaseScale, uint8_t FreqScale, uint16_t Rate):
+    SegSet(SegSet), blendScale(BlendScale), phaseScale(PhaseScale), freqScale(FreqScale)
     {    
         paletteTemp = paletteUtilsPS::makeRandomPalette(numColors);
         palette = &paletteTemp;
@@ -20,9 +20,9 @@ NoiseWavesSL::~NoiseWavesSL(){
     free(paletteTemp.paletteArr);
 }
 
-//Initializes core common varaibles
+//Initializes core common variables
 void NoiseWavesSL::init(CRGB BgColor, uint16_t Rate){
-    //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
+    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
     bindSegPtrPS();
     bindClassRatesPS();
     bindBGColorPS();
@@ -43,7 +43,7 @@ void NoiseWavesSL::init(CRGB BgColor, uint16_t Rate){
 
 //Updates the effect
 //The core of the effect consists of a brightness wave whose frequency and phase are changed over time using noise values
-//The phase is caculated once every update and added to a cos wave that is calculated at each pixel
+//The phase is calculated once every update and added to a cos wave that is calculated at each pixel
 //The cos wave uses a noise value for its frequency. Normally changing the frequency causes sudden jumps in the effect,
 //but because the noise varies smoothly over time, jumps are avoided
 //Meanwhile the colors also vary with noise based on time, but are not tied to a wave, so the effect is more like random patches
@@ -60,17 +60,17 @@ void NoiseWavesSL::update(){
 
         freqCounter = 0;
         //re-fetch some core variables incase the palette has changed
-        numSegs = segmentSet.numSegs;
-        numLines = segmentSet.numLines;
+        numSegs = SegSet.numSegs;
+        numLines = SegSet.numLines;
         totBlendLength = blendSteps * palette->length;
 
         //Get a phase value for our waves using noise
         //The offset keeps the waves moving across the strip
         noisePhase = inoise8( currentTime/phaseScale ) + offset;
 
-        //run over each segment line and set color and brighhtness values for the whole line
+        //run over each segment line and set color and brightness values for the whole line
         for (uint16_t i = 0; i < numLines; i++) {
-            //Get a changing frequency multplier, which helps produce the waves
+            //Get a changing frequency multiplier, which helps produce the waves
             //We need this to change as we loop or all the pixels will have the same wave value
             //we cap this to keep the frequency from getting too high
             freqCounter = addmod8(freqCounter, 1, 60);
@@ -82,12 +82,12 @@ void NoiseWavesSL::update(){
             index = inoise8( i * blendScale, currentTime/blendSpeed ) + offset;
 
             //Get a brightness based on a cos wave with noisy inputs
-            //The brightness is set by a wave whos frequency and phase vary as functions of noise
+            //The brightness is set by a wave who's frequency and phase vary as functions of noise
             //The noise in turn varies with time
             //This produces a set of brightness waves that both move and grow/shrink across the segment lines
-            //Since noise vary's smoothly, the frequency change is not noticable as long at the noise is "zoomed - in" enough
+            //Since noise vary's smoothly, the frequency change is not noticeable as long at the noise is "zoomed - in" enough
             //In practice this means keeping the time devisor around 10. Setting it higher makes the waves choppy, and lower makes them to fast
-            //Also we add 10 to the freqCounter to make sure we have a noticable frequency at all times
+            //Also we add 10 to the freqCounter to make sure we have a noticeable frequency at all times
             bri = cos8( (freqCounter + 10) * inoise8( currentTime/10 ) / freqScale + noisePhase ); //remove freqCounter for neat blinking
 
             //get the blended color from the palette
@@ -98,14 +98,14 @@ void NoiseWavesSL::update(){
             //take the line color and brightness and apply it to all the seg pixels on the line
             for(uint16_t j = 0; j < numSegs; j++){
                 //get the current pixel's location in the segment set
-                pixelNum = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, j, i);
+                pixelNum = segDrawUtils::getPixelNumFromLineNum(SegSet, numLines, j, i);
 
                 //get background color info for the current pixel
-                colorTarget = segDrawUtils::getPixelColor(segmentSet, pixelNum, *bgColor, bgColorMode, j, i);
+                colorTarget = segDrawUtils::getPixelColor(SegSet, pixelNum, *bgColor, bgColorMode, j, i);
 
                 //get the color blended towards the background and output it
                 colorTarget = colorUtilsPS::getCrossFadeColor(colorOut, colorTarget, 255 - bri);
-                segDrawUtils::setPixelColor(segmentSet, pixelNum, colorTarget, 0, 0, 0);   
+                segDrawUtils::setPixelColor(SegSet, pixelNum, colorTarget, 0, 0, 0);   
             }
         }
         showCheckPS();
@@ -117,7 +117,7 @@ void NoiseWavesSL::update(){
 /*
 //Updates the effect
 //The core of the effect consists of a brightness wave whose frequency and phase are changed over time using noise values
-//The phase is caculated once every update and added to a cos wave that is calculated at each pixel
+//The phase is calculated once every update and added to a cos wave that is calculated at each pixel
 //The cos wave uses a noise value for its frequency. Normally changing the frequency causes sudden jumps in the effect,
 //but because the noise varies smoothly over time, jumps are avoided
 //Meanwhile the colors also vary with noise based on time, but are not tied to a wave, so the effect is more like random patches
@@ -134,7 +134,7 @@ void NoiseWavesPS::update(){
         freqCounter = 0;
         pixelCount = 0;
         //re-fetch some core variables incase the palette has changed
-        numSegs = segmentSet.numSegs;
+        numSegs = SegSet.numSegs;
         totBlendLength = blendSteps * palette->length;
 
         //Get a phase value for our waves using noise
@@ -143,15 +143,15 @@ void NoiseWavesPS::update(){
 
         //run over each of the leds in the segment set and set a color/brightness value
         for (uint8_t i = 0; i < numSegs; i++) {
-            totSegLen = segmentSet.getTotalSegLength(i);
+            totSegLen = SegSet.getTotalSegLength(i);
             for(uint16_t j = 0; j < totSegLen; j++){
-                //Get a changing frequency multplier, which helps produce the waves
+                //Get a changing frequency multiplier, which helps produce the waves
                 //We need this to change as we loop or all the pixels will have the same wave value
                 //we cap this to keep the frequency from getting too high
                 freqCounter = addmod8(freqCounter, 1, 60);
 
                 //get the current pixel's location in the segment set
-                pixelNum = segDrawUtils::getSegmentPixel(segmentSet, i, j);
+                pixelNum = segDrawUtils::getSegmentPixel(SegSet, i, j);
 
                 //Get a color based on some noise
                 //For the color index we add an offset the increments each cycle
@@ -160,12 +160,12 @@ void NoiseWavesPS::update(){
                 index = inoise8( pixelCount * blendScale, currentTime/blendSpeed ) + offset;// beatsin16(4, 0, totBlendLength /2);
                 
                 //Get a brightness based on a cos wave with noisy inputs
-                //The brightness is set by a wave whos frequency and phase vary as functions of noise
+                //The brightness is set by a wave who's frequency and phase vary as functions of noise
                 //The noise in turn varies with time
                 //This produces a set of brightness waves that both move and grow/shrink across the strip with time
-                //Since noise vary's smoothly, the frequency change is not noticable as long at the noise is "zoomed - in" enough
+                //Since noise vary's smoothly, the frequency change is not noticeable as long at the noise is "zoomed - in" enough
                 //In practice this means keeping the time devisor around 10. Setting it higher makes the waves choppy, and lower makes them to fast
-                //Also we add 10 to the freqCounter to make sure we have a noticable frequency at all times
+                //Also we add 10 to the freqCounter to make sure we have a noticeable frequency at all times
                 bri = cos8( (freqCounter + 10) * inoise8( pixelCount, currentTime/10 ) / freqScale + noisePhase );
 
                 //cos8(pixelCount * 30 + bandStart );
@@ -177,12 +177,12 @@ void NoiseWavesPS::update(){
                 //nscale8x3( colorOut.r, colorOut.g, colorOut.b, bri); //scaling for if you want to switch to a blank bg
 
                 //get background color info for the current pixel
-                lineNum = segDrawUtils::getLineNumFromPixelNum(segmentSet, j, i);
-                colorTarget = segDrawUtils::getPixelColor(segmentSet, pixelNum, *bgColor, bgColorMode, i, lineNum);
+                lineNum = segDrawUtils::getLineNumFromPixelNum(SegSet, j, i);
+                colorTarget = segDrawUtils::getPixelColor(SegSet, pixelNum, *bgColor, bgColorMode, i, lineNum);
 
                 //get the color blended towards the background and output it
                 colorOut = colorUtilsPS::getCrossFadeColor(colorOut, colorTarget, 255 - bri);
-                segDrawUtils::setPixelColor(segmentSet, pixelNum, colorOut, 0, 0, 0);   
+                segDrawUtils::setPixelColor(SegSet, pixelNum, colorOut, 0, 0, 0);   
 
                 pixelCount++;
             }

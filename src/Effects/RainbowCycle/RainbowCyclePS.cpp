@@ -1,14 +1,14 @@
 #include "RainbowCyclePS.h"
 
-RainbowCyclePS::RainbowCyclePS(SegmentSet &SegmentSet, uint16_t Length, bool Direction, uint16_t Rate):
-    length(Length), direct(Direction), segmentSet(SegmentSet)
+RainbowCyclePS::RainbowCyclePS(SegmentSet &SegSet, uint16_t Length, bool Direction, uint16_t Rate):
+    length(Length), direct(Direction), SegSet(SegSet)
     {    
         init(Rate);
 	}
 
 //Does a rainbow cycle of length 255
-RainbowCyclePS::RainbowCyclePS(SegmentSet &SegmentSet, bool Direction, uint16_t Rate):
-    direct(Direction), segmentSet(SegmentSet)
+RainbowCyclePS::RainbowCyclePS(SegmentSet &SegSet, bool Direction, uint16_t Rate):
+    direct(Direction), SegSet(SegSet)
     {    
         length = 255;
         init(Rate);
@@ -16,27 +16,27 @@ RainbowCyclePS::RainbowCyclePS(SegmentSet &SegmentSet, bool Direction, uint16_t 
 
 //initializes/resets the core counting and direction vars for the effect
 void RainbowCyclePS::init(uint16_t Rate){
-    //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
+    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
     bindSegPtrPS();
     bindClassRatesPS();
     cycleNum = 0;
     setLength(length);
 }
 
-//set the length of the rainbow, can be longer than the total length of the segmentSet
+//set the length of the rainbow, can be longer than the total length of the SegSet
 void RainbowCyclePS::setLength(uint16_t newLength){
-    numLeds = segmentSet.numLeds;
-    numSegs = segmentSet.numSegs;
+    numLeds = SegSet.numLeds;
+    numSegs = SegSet.numSegs;
     //set the maximum cycle length 
     //ie the total amount of cycles before the effect is back at the start
-    //we allow rainbows that are longer than the segmentSet
+    //we allow rainbows that are longer than the SegSet
     maxCycleLength = numLeds - 1;
     if(length > numLeds){
         maxCycleLength = length;
     }
 }
 
-//core update cycle, draws the rainbows along the segmentSet every rate ms
+//core update cycle, draws the rainbows along the SegSet every rate ms
 void RainbowCyclePS::update(){
     currentTime = millis();
 
@@ -50,8 +50,8 @@ void RainbowCyclePS::update(){
         stepDirect = direct - !direct;
 
         //we grab some segment info in case it's changed (It shouldn't have, but this is a safe guard)
-        numLeds = segmentSet.numLeds;
-        numSegs = segmentSet.numSegs;
+        numLeds = SegSet.numLeds;
+        numSegs = SegSet.numSegs;
         
         //prevents cycle count from overflowing by resetting it when the cycle loops
         //very important to keep the rainbow correct
@@ -67,27 +67,27 @@ void RainbowCyclePS::update(){
         stepVal = maxCycleLength + cycleNum * stepDirect; 
 
         //for each segment, set each pixel in the segment to the appropriate rainbow color
-        //we must call getSegmentPixel(segmentSet, i, j) to account for reversed segments
+        //we must call getSegmentPixel(SegSet, i, j) to account for reversed segments
         for (uint16_t i = 0; i < numSegs; i++) {
             //run along each segment and set its leds to rainbow colors,
             //counting how many leds we've set so fast (ledCount) to make sure the colors are correct
-            totSegLen = segmentSet.getTotalSegLength(i);
+            totSegLen = SegSet.getTotalSegLength(i);
             for(uint16_t j = 0; j < totSegLen; j++){
                 ledCount++;
                 //we always need to make a rainbow of length # of steps
                 //this is determined using (stepVal + ledCount) % length * (256 / length)
-                //where stepVal = maxCycleLength + cycleNum * stepDirect; (see above for explination)
+                //where stepVal = maxCycleLength + cycleNum * stepDirect; (see above for explanation)
                 //and ledCount is the current led number
                 //(stepVal + ledCount) % length offsets our position, while keeping it between 0 and length
                 //while * (256 / length) shifts the counter in (256/length) steps
-                //so that we always finsh a rainbow after length # of steps
+                //so that we always finish a rainbow after length # of steps
                 color = colorUtilsPS::wheel( ( addMod16PS(stepVal, ledCount, maxCycleLength) * 256 / length ), 0, satur, value);
 
                 //get the actual pixel address, and set it
                 //color mode is 0 because we are working out the rainbow color ourselves
-                pixelNum = segDrawUtils::getSegmentPixel(segmentSet, i, j);
+                pixelNum = segDrawUtils::getSegmentPixel(SegSet, i, j);
                 //set the color, segNum and lineNum don't matter for this since we're always in colorMode 0
-                segDrawUtils::setPixelColor(segmentSet, pixelNum, color, 0, 0, 0);
+                segDrawUtils::setPixelColor(SegSet, pixelNum, color, 0, 0, 0);
             }
         }
         showCheckPS();

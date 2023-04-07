@@ -1,26 +1,26 @@
 #include "ColorWipeSLSeg.h"
 
 //Constructor using pattern and palette
-ColorWipeSLSeg::ColorWipeSLSeg(SegmentSet &SegmentSet, palettePS &Palette, patternPS &Pattern, uint16_t WipeLength, uint8_t Style,
+ColorWipeSLSeg::ColorWipeSLSeg(SegmentSet &SegSet, palettePS &Palette, patternPS &Pattern, uint16_t WipeLength, uint8_t Style,
                          bool Simult, bool Alternate, bool WipeDirect, bool SegMode, uint16_t Rate):
-    segmentSet(SegmentSet), palette(&Palette), pattern(&Pattern), wipeLength(WipeLength), style(Style), simult(Simult), alternate(Alternate), wipeDirect(WipeDirect), segMode(SegMode)
+    SegSet(SegSet), palette(&Palette), pattern(&Pattern), wipeLength(WipeLength), style(Style), simult(Simult), alternate(Alternate), wipeDirect(WipeDirect), segMode(SegMode)
     {    
         init(Rate);
 	} 
 
 //Constructor using palette alone 
-ColorWipeSLSeg::ColorWipeSLSeg(SegmentSet &SegmentSet, palettePS &Palette, uint16_t WipeLength, uint8_t Style,
+ColorWipeSLSeg::ColorWipeSLSeg(SegmentSet &SegSet, palettePS &Palette, uint16_t WipeLength, uint8_t Style,
                          bool Simult, bool Alternate, bool WipeDirect, bool SegMode, uint16_t Rate):
-    segmentSet(SegmentSet), palette(&Palette), wipeLength(WipeLength), style(Style), simult(Simult), alternate(Alternate), wipeDirect(WipeDirect), segMode(SegMode)
+    SegSet(SegSet), palette(&Palette), wipeLength(WipeLength), style(Style), simult(Simult), alternate(Alternate), wipeDirect(WipeDirect), segMode(SegMode)
     {   
         setPaletteAsPattern();
         init(Rate);
 	}
 
 //Constructor for a single color wipe
-ColorWipeSLSeg::ColorWipeSLSeg(SegmentSet &SegmentSet, CRGB WipeColor, uint16_t WipeLength, uint8_t Style,
+ColorWipeSLSeg::ColorWipeSLSeg(SegmentSet &SegSet, CRGB WipeColor, uint16_t WipeLength, uint8_t Style,
                          bool Simult, bool Alternate, bool WipeDirect, bool SegMode, uint16_t Rate):
-    segmentSet(SegmentSet), wipeLength(WipeLength), style(Style), simult(Simult), alternate(Alternate), wipeDirect(WipeDirect), segMode(SegMode)
+    SegSet(SegSet), wipeLength(WipeLength), style(Style), simult(Simult), alternate(Alternate), wipeDirect(WipeDirect), segMode(SegMode)
     {    
         paletteTemp = paletteUtilsPS::makeSingleColorPalette(WipeColor);
         palette = &paletteTemp;
@@ -36,7 +36,7 @@ ColorWipeSLSeg::~ColorWipeSLSeg(){
 
 //Sets up the core variables for the effect 
 void ColorWipeSLSeg::init(uint16_t Rate){
-    //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
+    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
     bindSegPtrPS();
     bindClassRatesPS();
     //Store the inital wipe direction for reference later
@@ -45,14 +45,14 @@ void ColorWipeSLSeg::init(uint16_t Rate){
     //This means that if we switch segModes, we'll default to doing a full wipe (0 does a full wipe)
     segWipeLen = 0;
     lineWipeLen = 0;
-    //Set the wipe length (will also set either segWipeLen or lineWipeLen to wipelength depending on segMode )
+    //Set the wipe length (will also set either segWipeLen or lineWipeLen to wipeLength depending on segMode )
     setWipeLength(wipeLength);
     reset();
 }
 
 //Resets various wipe variables to their starting states,
 //restarting the wipe
-//(Note that if looping, startingDirect and the segmentSet direction may be different than their inital values)
+//(Note that if looping, startingDirect and the SegSet direction may be different than their inital values)
 void ColorWipeSLSeg::reset(){
     done = false;
     wipeNumSeq = 0;
@@ -79,8 +79,8 @@ void ColorWipeSLSeg::setPaletteAsPattern(){
 void ColorWipeSLSeg::setWipeLength(uint16_t newLength){
     wipeLength = newLength;
 
-    numLines = segmentSet.numLines;
-    numSegs = segmentSet.numSegs;
+    numLines = SegSet.numLines;
+    numSegs = SegSet.numSegs;
 
     //Record the wipe length into either segWipeLen or lineWipeLen
     if(segMode){
@@ -91,7 +91,7 @@ void ColorWipeSLSeg::setWipeLength(uint16_t newLength){
         lineWipeLen = wipeLength;
     }
 
-    //if wipelength is 0 we'll do a full wipe using all the lines in the segment set
+    //if wipeLength is 0 we'll do a full wipe using all the lines in the segment set
     if (wipeLength == 0 || wipeLength > segOrLineLimit) {
         wipeLength = segOrLineLimit;
     }
@@ -100,7 +100,7 @@ void ColorWipeSLSeg::setWipeLength(uint16_t newLength){
     numWipes = ceil( (float)segOrLineLimit / wipeLength );
 }
 
-//Sets the segMode and changes the wipelength to either segWipeLen or lineWipeLen (recalculating numWipes)
+//Sets the segMode and changes the wipeLength to either segWipeLen or lineWipeLen (recalculating numWipes)
 void ColorWipeSLSeg::setSegMode(bool newSegMode){
     segMode = newSegMode;
     //Change the wipe length
@@ -111,10 +111,10 @@ void ColorWipeSLSeg::setSegMode(bool newSegMode){
 //A quick way of changing all of the looping variables at once.
 //There should be enough variables to cover most looping effect variations.
 //An explanation of each of the variables (ignore the n in the arg names):
-//  looped -- Sets if the wipes loop or not. Looping wipes automatically restart everytime a wipe is finished.
+//  looped -- Sets if the wipes loop or not. Looping wipes automatically restart every time a wipe is finished.
 //            The other variables are only relevant if the wipe is looping, because they modify subsequent loops.
 //  bgLoopFreq (min 2) -- Sets how often a bgWipe is done. ie 2 will be every other loop, 3, every 3 loops, etc
-//                        The minimum is 2, because wiping the background every loop (1) isn't usefull
+//                        The minimum is 2, because wiping the background every loop (1) isn't useful
 //  bgLoop -- If true, then the background color (default 0) will be used as the color wipe every <<bgLoopFreq>> loop
 //            Ie, we wipe a color and then wipe off, looping
 //  loopFreq (min 1) -- Sets on what loops shiftPatLoop, altWipeDirLoop, and altSegDirLoop trigger
@@ -135,8 +135,8 @@ void ColorWipeSLSeg::setSegMode(bool newSegMode){
 //                   start at the opposite end of the segment set, rather than having the wipe just move in the opposite direction    
 //  altSegModeLoop -- If true, will switch segMode setting the effect from wiping segment lines to whole segments, or visa versa.
 //                    When swapping, the wipeLength will be set to segWipeLen or lineWipeLen depending on the segMode.
-//                    see setWipeLength() for info on how thes are set. 
-//                    Note that altSegModeLoop tiggers every loop. 
+//                    see setWipeLength() for info on how these are set. 
+//                    Note that altSegModeLoop triggers every loop. 
 //                    For me, this seemed like the best option rather than tying it to a freq. 
 //                    It seemed weird to want to switch segModes for multiple loops, you might as well just create two different ColorWipes.
 void ColorWipeSLSeg::setUpLoop(bool nLooped, uint8_t nBgLoopFreq, bool nBgLoop, uint8_t nLoopFreq, bool nShiftPatLoop,
@@ -193,7 +193,7 @@ void ColorWipeSLSeg::resetLoop(){
     if( mod16PS(loopCount, loopFreq ) == 0 ){
         //Flip the segment direction
         //This is different than flipping the wipe direction, since it makes the first wipe start at the opposite end of the segment set
-        //Rather than having the wipe just move in the oppsite direction
+        //Rather than having the wipe just move in the opposite direction
         if(altSegDirLoop){
             segDirect = !segDirect;
         }
@@ -225,7 +225,7 @@ void ColorWipeSLSeg::resetLoop(){
 //Or they can happen all at once -- the first line of each wipe is colored, then the second, etc
 //Wipes have a direction, with the option to alternate the direction for each wipe.
 //Once all the wipes are done, we set a flag, ending the wipes, or reseting them if we're looping.
-//Getting all this to work is more fidily than complicated, with most contitions being created to seperate
+//Getting all this to work is more finicky than complicated, with most conditions being created to separate
 //between simultaneous and sequential wiping or line and segment wiping. 
 //At the core, for each update, we go over each wipe, pick the next line to color based on the wipe direction
 //and then color it in segment by segment (or line be line if segMode is true)
@@ -247,10 +247,10 @@ void ColorWipeSLSeg::update(){
             wipeDirect = startingDirect;
         }
         
-        numSegs = segmentSet.numSegs;
-        numLines = segmentSet.numLines;
+        numSegs = SegSet.numSegs;
+        numLines = SegSet.numLines;
 
-        //Set the maximium wipe value, we use this later to skip any parts of wipes that are off the segment set
+        //Set the maximum wipe value, we use this later to skip any parts of wipes that are off the segment set
         if(segMode){
             segOrLineLimit = numSegs - 1;
         } else {
@@ -264,7 +264,7 @@ void ColorWipeSLSeg::update(){
         //  where we draw the next line
         for(uint16_t i = 0; i < numWipes; i++){
             
-            //If we're wiping each wipe length squentially, one at a time
+            //If we're wiping each wipe length sequentially, one at a time
             //we only want to draw a single line with each update. 
             //The line is tracked by wipeNumSeq. 
             //We skip over all other loop iterations
@@ -302,7 +302,7 @@ void ColorWipeSLSeg::update(){
                 if(wipeDirect){
                     //If wipe direct is true then we're moving forward,
                     //so the previous wipe lines will be on the strip, and we're just now about to run off it.
-                    //We need to end the wipe right now, rather than trying to wipe any remaing lines in the wipe length
+                    //We need to end the wipe right now, rather than trying to wipe any remaining lines in the wipe length
                     //So we set the wipeStep to wipeLength - 1, which will end the wipe at the end of the update()
                     wipeStep = wipeLength - 1; 
                 } else {
@@ -339,7 +339,7 @@ void ColorWipeSLSeg::update(){
             }
         }
     
-        //If we havn't reached the wipe length yet, we need to move on to the next line to wipe
+        //If we haven't reached the wipe length yet, we need to move on to the next line to wipe
         //Otherwise, the wipe is finished
         if(wipeStep < wipeLength - 1){
             wipeStep++;
@@ -394,8 +394,8 @@ void ColorWipeSLSeg::doLineWipe(uint16_t wipeNum, uint16_t wipeStep, uint16_t li
         }
         
         //output the color to the pixel, note that if the color mode is non-zero, it will override the wipe style
-        pixelNum = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, j, lineNum);
-        segDrawUtils::setPixelColor(segmentSet, pixelNum, colorOut, modeOut, j, lineNum);
+        pixelNum = segDrawUtils::getPixelNumFromLineNum(SegSet, numLines, j, lineNum);
+        segDrawUtils::setPixelColor(SegSet, pixelNum, colorOut, modeOut, j, lineNum);
     }        
 }
 
@@ -427,7 +427,7 @@ void ColorWipeSLSeg::doSegWipe(uint16_t wipeNum, uint16_t wipeStep, uint16_t seg
         }
 
         //output the color to the pixel, note that if the color mode is non-zero, it will override the wipe style
-        pixelNum = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, segNum, j);
-        segDrawUtils::setPixelColor(segmentSet, pixelNum, colorOut, modeOut, segNum, j);
+        pixelNum = segDrawUtils::getPixelNumFromLineNum(SegSet, numLines, segNum, j);
+        segDrawUtils::setPixelColor(SegSet, pixelNum, colorOut, modeOut, segNum, j);
     }
 }

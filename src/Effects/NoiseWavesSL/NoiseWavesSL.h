@@ -19,7 +19,7 @@ You can change the variables freely, although this may result in jumps in the ef
 
 Inputs guide:
     Overall the effect has two components:
-        1) Waves of varing brightness that shift randonly across the segment lines while growing and shrinking with time
+        1) Waves of varying brightness that shift randomly across the segment lines while growing and shrinking with time
         2) Spots of palette colors that grow and change with time
     
     Brightness wave settings: 
@@ -36,10 +36,10 @@ Inputs guide:
         1) blendScale: Sets how "zoomed-in" the color noise is. Ie it determines how large the patches of color will be
                        Recommend values 10 - 60+. Higher values produce smaller patches.
         2) blendSpeed: How fast the colors blend with time. Must be greater than 0.
-                       This is not a contructor setting, and is defaulted to 10. Lower values will make faster blends
+                       This is not a constructor setting, and is defaulted to 10. Lower values will make faster blends
         3) blendSteps: How many steps there are between colors. 
-                       This is not a contructor setting since the change to the effect isn't very noticable 
-                       unless below a certian value, which causes the colors to become coarse.
+                       This is not a constructor setting since the change to the effect isn't very noticeable 
+                       unless below a certain value, which causes the colors to become coarse.
                        Defaulted to 30.
                     
     Note that colors will always shift over time. This is due to most noise values falling in the center of the range.
@@ -84,15 +84,15 @@ Functions:
 class NoiseWavesSL : public EffectBasePS {
     public:
         //Constructor with palette
-        NoiseWavesSL(SegmentSet &SegmentSet, palettePS &Palette, CRGB BgColor, uint16_t BlendScale, uint8_t PhaseScale, uint8_t FreqScale, uint16_t Rate);  
+        NoiseWavesSL(SegmentSet &SegSet, palettePS &Palette, CRGB BgColor, uint16_t BlendScale, uint8_t PhaseScale, uint8_t FreqScale, uint16_t Rate);  
         
         //Constructor with randomly generated palette
-        NoiseWavesSL(SegmentSet &SegmentSet, uint8_t numColors, CRGB BgColor, uint16_t BlendScale, uint8_t PhaseScale, uint8_t FreqScale, uint16_t Rate);
+        NoiseWavesSL(SegmentSet &SegSet, uint8_t numColors, CRGB BgColor, uint16_t BlendScale, uint8_t PhaseScale, uint8_t FreqScale, uint16_t Rate);
 
         ~NoiseWavesSL();
 
         SegmentSet 
-            &segmentSet; 
+            &SegSet; 
         
         uint8_t 
             bgColorMode = 0,
@@ -109,8 +109,8 @@ class NoiseWavesSL : public EffectBasePS {
             *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
         
         palettePS 
-            paletteTemp,
-            *palette = nullptr;
+            *palette = nullptr,
+            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
 
         void 
             update(void);

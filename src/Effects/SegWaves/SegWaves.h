@@ -22,10 +22,10 @@ to indicate a background pixel (ie set to the BgColor) we use 255 in the pattern
 This does mean if your palette has 255 colors, you'll lose the final color, but you shouldn't have palettes that large
 
 For example, lets say we wanted to do the first two colors of our palette,
-each as length 4 waves, with 3 background leds inbetween each
+each as length 4 waves, with 3 background leds in between each
 we would make a pattern as : {0, 0, 0, 0, 255, 255, 255, 1, 1, 1, 1, 255, 255, 255}
 
-For simple patterns like the previous example, I have writtern a few constructors for the effect
+For simple patterns like the previous example, I have written a few constructors for the effect
 that automate the pattern creation, so you don't have to do it yourself (see constructor notes below)
 
 I have also included a shortcut for making a single wave (a wave of length 1, with only one wave active on the segment set a once)
@@ -44,7 +44,7 @@ The modes are:
 
 Note that switching from random modes to the fixed pattern mode (randMode 0) will cause a jump in colors
 Also if you change the number of segments in your segment set, you'll need to reset the effect when using a random mode
-(The random mode needs to use an array of lenght numSegs + 1)
+(The random mode needs to use an array of length numSegs + 1)
 
 Note that while each entry in the pattern is a uint8_t,
 if you have a lot of colors, with long waves, your patterns may be quite large
@@ -86,7 +86,7 @@ Example calls:
     The waves will move from the last segment to the first
 
     SegWaves(mainSegments, CRGB::Blue, 2, 2, CRGB::Red, 0, true, 140);
-    Will do a blue waves with length 2 and 2 spaces inbetween
+    Will do a blue waves with length 2 and 2 spaces in between
     The bgColor is red
     The fade steps are set to zero, so there is no blending
     The effect updates at a rate of 140ms
@@ -113,7 +113,7 @@ Constructor Inputs:
 
 Functions:
     reset() -- Restarts the wave pattern (also calls resetSegColors())
-    resetSegColors() -- Only neeeded for random modes when changing the number of segments in your set. 
+    resetSegColors() -- Only needed for random modes when changing the number of segments in your set. 
                         Re-creates the segColors array, as used by random modes
     setPatternAsPattern(&inputPattern, colorLength, spacing) -- Takes an input pattern and creates a wave pattern from it using the current palette
                                                                 Ex: uint8_t pattern_arr = {1, 2, 3};
@@ -160,21 +160,24 @@ Notes:
 class SegWaves : public EffectBasePS {
     public:
         //constructor for using the passed in pattern and palette for the wave
-        SegWaves(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint8_t FadeSteps, bool Direct, uint16_t Rate);  
+        SegWaves(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint8_t FadeSteps, bool Direct, uint16_t Rate);  
 
         //constructor for building the wave pattern from the passed in pattern and the palette, using the passed in waveThickness and spacing
-        SegWaves(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, uint8_t WaveThickness, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, bool Direct, uint16_t Rate);
+        SegWaves(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t WaveThickness, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, bool Direct, uint16_t Rate);
 
         //constructor for building a wave using all the colors in the passed in palette, using the waveThickness and spacing for each color
-        SegWaves(SegmentSet &SegmentSet, palettePS &Palette, uint8_t WaveThickness, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, bool Direct, uint16_t Rate);
+        SegWaves(SegmentSet &SegSet, palettePS &Palette, uint8_t WaveThickness, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, bool Direct, uint16_t Rate);
     
         //constructor for doing a single colored wave, using waveThickness and spacing
-        SegWaves(SegmentSet &SegmentSet, CRGB Color, uint8_t WaveThickness, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, bool Direct, uint16_t Rate);
+        SegWaves(SegmentSet &SegSet, CRGB Color, uint8_t WaveThickness, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, bool Direct, uint16_t Rate);
     
         //constructor doing a rainbow based on the number of segments
-        SegWaves(SegmentSet &SegmentSet, uint8_t FadeSteps, bool Direct, uint16_t Rate);
+        SegWaves(SegmentSet &SegSet, uint8_t FadeSteps, bool Direct, uint16_t Rate);
 
         ~SegWaves();
+
+        SegmentSet 
+            &SegSet; 
 
         uint8_t
             colorMode = 0,
@@ -184,25 +187,22 @@ class SegWaves : public EffectBasePS {
         
         uint16_t
             cycleNum = 0; // tracks what how many patterns we've gone through, for reference
-
-        CRGB 
-            bgColorOrig,
-            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
-
-        SegmentSet 
-            &segmentSet; 
-        
-        patternPS
-            patternTemp,
-            *pattern = nullptr;
-        
-        palettePS
-            paletteTemp,
-            *palette = nullptr;
         
         bool 
             fadeOn = true,
             direct;
+
+        CRGB 
+            bgColorOrig,
+            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+        
+        patternPS
+            *pattern = nullptr,
+            patternTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety 
+        
+        palettePS
+            *palette = nullptr,
+            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety 
         
         void 
             makeSingleWave(),

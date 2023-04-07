@@ -1,25 +1,25 @@
 #include "ShiftingSeaSL.h"
 
 // Overview:
-// We start by initializing the offset array using ShiftingSeaUtilsPS::genOffsetArray(); (in seperate file b/c it's shared with ShiftingRainbowSea)
-// Each index of the offset array holds the offset for its corrosponding pixel (max value of palette.length * gradLength) to cover all
+// We start by initializing the offset array using shiftingSeaUtilsPS::genOffsetArray(); (in separate file b/c it's shared with ShiftingRainbowSea)
+// Each index of the offset array holds the offset for its corresponding pixel (max value of palette.length * gradLength) to cover all
 // the color values the pixel can be
-// Then, with each offset cycle, the pixel's color is caculated using the current cycle number and it's offset
+// Then, with each offset cycle, the pixel's color is calculated using the current cycle number and it's offset
 // So all pixels are following the same pattern through the palette, but their individual positions in the pattern are all different
 // creating the effect
 // If the randomShift is on, then with each cycle we do a random check to see if we should change the pixel's offset
 // if so, then we increment it by a random amount up to shiftStep.
 
 //Constructor for effect with pattern and palette
-ShiftingSeaSL::ShiftingSeaSL(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, uint8_t GradLength, uint8_t Smode, uint8_t Grouping, uint16_t Rate):
-    segmentSet(SegmentSet), pattern(&Pattern), palette(&Palette), gradLength(GradLength), sMode(Smode), grouping(Grouping) 
+ShiftingSeaSL::ShiftingSeaSL(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t GradLength, uint8_t Smode, uint8_t Grouping, uint16_t Rate):
+    SegSet(SegSet), pattern(&Pattern), palette(&Palette), gradLength(GradLength), sMode(Smode), grouping(Grouping) 
 {
     init(Rate);
 }
 
 //Constructor for effect with palette
-ShiftingSeaSL::ShiftingSeaSL(SegmentSet &SegmentSet, palettePS &Palette, uint8_t GradLength, uint8_t Smode, uint8_t Grouping, uint16_t Rate):
-    segmentSet(SegmentSet), palette(&Palette), gradLength(GradLength), sMode(Smode), grouping(Grouping) 
+ShiftingSeaSL::ShiftingSeaSL(SegmentSet &SegSet, palettePS &Palette, uint8_t GradLength, uint8_t Smode, uint8_t Grouping, uint16_t Rate):
+    SegSet(SegSet), palette(&Palette), gradLength(GradLength), sMode(Smode), grouping(Grouping) 
 {
     setPaletteAsPattern();
     init(Rate);
@@ -27,8 +27,8 @@ ShiftingSeaSL::ShiftingSeaSL(SegmentSet &SegmentSet, palettePS &Palette, uint8_t
 }
 
 //Constructor for effect with randomly created palette
-ShiftingSeaSL::ShiftingSeaSL(SegmentSet &SegmentSet, uint8_t NumColors, uint8_t GradLength, uint8_t Smode, uint8_t Grouping, uint16_t Rate):
-    segmentSet(SegmentSet), gradLength(GradLength), sMode(Smode), grouping(Grouping) 
+ShiftingSeaSL::ShiftingSeaSL(SegmentSet &SegSet, uint8_t NumColors, uint8_t GradLength, uint8_t Smode, uint8_t Grouping, uint16_t Rate):
+    SegSet(SegSet), gradLength(GradLength), sMode(Smode), grouping(Grouping) 
 {
     paletteTemp = paletteUtilsPS::makeRandomPalette(NumColors);
     palette = &paletteTemp;
@@ -44,7 +44,7 @@ ShiftingSeaSL::~ShiftingSeaSL(){
 
 //initializes core variables
 void ShiftingSeaSL::init(uint16_t Rate){
-    //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
+    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
     bindSegPtrPS();
     bindClassRatesPS();
     resetOffsets();
@@ -75,14 +75,14 @@ void ShiftingSeaSL::setGrouping(uint16_t newGrouping) {
 
 // re-builds the offset array with new values
 void ShiftingSeaSL::resetOffsets() {
-    numLines = segmentSet.numLines;
+    numLines = SegSet.numLines;
     free(offsets);
     offsets = (uint16_t*) malloc(numLines * sizeof(uint16_t));
     setTotalCycleLen();
-    ShiftingSeaUtilsPS::genOffsetArray(offsets, numLines, gradLength, grouping, totalCycleLength, sMode);
+    shiftingSeaUtilsPS::genOffsetArray(offsets, numLines, gradLength, grouping, totalCycleLength, sMode);
 }
 
-//caculates the totalCycleLength, which represents the total number of possible offsets a pixel can hav
+//calculates the totalCycleLength, which represents the total number of possible offsets a pixel can hav
 void ShiftingSeaSL::setTotalCycleLen(){
     patternLen = pattern->length;
     totalCycleLength = gradLength * (patternLen + (uint8_t)addBlank); //addBlank is a bool, so will be either 0 or 1
@@ -90,12 +90,12 @@ void ShiftingSeaSL::setTotalCycleLen(){
 
 //Updates the effect
 //Runs through each pixel, calculates it's color based on the cycle number and the offset
-//and determines which colors from the palette it's inbetween
-//incrments the offset based on the randomShift values
+//and determines which colors from the palette it's in between
+//increments the offset based on the randomShift values
 //then writes it out
 //Note that if addBlank is true, then we want to add an extra blank color to the end of the cycle,
 //but we don't want to modify the existing palette (since it may be used in other effects)
-//So we have to artificially add the extra blank color by manipluating the total number of cycle steps
+//So we have to artificially add the extra blank color by manipulating the total number of cycle steps
 //and then setting the colors manually at the end of the cycle (rather than just getting them from the palette)
 void ShiftingSeaSL::update() {
     currentTime = millis();
@@ -103,7 +103,7 @@ void ShiftingSeaSL::update() {
     if ((currentTime - prevTime) >= *rate) {
         prevTime = currentTime;
         
-        //caculates the totalCycleLength, which represents the total number of possible offsets a pixel can have
+        //calculates the totalCycleLength, which represents the total number of possible offsets a pixel can have
         //we do this on the fly so you can change gradLength and the palette freely
         //If we're adding a blank color to the cycle, we add an extra gradLength to the totalCycleLength
         //to account for the extra blank color cycle steps
@@ -140,7 +140,7 @@ void ShiftingSeaSL::update() {
             
             //get the cross faded color and write it out
             color = colorUtilsPS::getCrossFadeColor(currentColor, nextColor, gradStep, gradLength);
-            segDrawUtils::drawSegLine(segmentSet, i, color, 0);
+            segDrawUtils::drawSegLine(SegSet, i, color, 0);
 
             // randomly increment the offset (keeps the effect varied)
             if (randomShift) {

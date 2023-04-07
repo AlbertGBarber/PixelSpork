@@ -1,11 +1,12 @@
 #ifndef colorUtilsPS_h
 #define colorUtilsPS_h
 
-//TODO: add color dim function (use crossfadeColor with 0 as target)
+//TODO: add color dim function (use crossFadeColor with 0 as target)
 
 #include "FastLED.h"
 #include "MathUtils/mathUtilsPS.h"
 
+//Various functions for manipulating colors, see function comments in the .cpp file for info on each function
 namespace colorUtilsPS{
     
     CRGB
@@ -19,6 +20,7 @@ namespace colorUtilsPS{
     uint8_t
         getCrossFadeColorComp(uint8_t startColor, uint8_t endColor, uint8_t ratio);
     
+    //pre-allocated variables
     static uint8_t
         ratio;
     

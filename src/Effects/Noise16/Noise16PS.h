@@ -35,11 +35,11 @@ You want at least one input to vary with time, otherwise the effect is static
 For option 1 a val of 30 - 100+ works well
 For option 2 a val of 1 - 10 works well
 I only recommend using option 3 with the z_val
-With one value varing in time, you can either vary the others as well, or leave them static
+With one value varying in time, you can either vary the others as well, or leave them static
 Varying them in time can produce a more complex effect, but for some reason certain 
 combinations of x and y values tend to produce some flicker. I've not been able to track down why this happens sadly.
 (using z with x or y seems to be okay tho)
-It's something to do with the oscilations of the two timing effects lining up I think
+It's something to do with the oscillations of the two timing effects lining up I think
 
 Example calls: 
     Noise16PS(mainSegments, 4, 40, 500, 2, 1, 0, 2, 100, 0, 40);
@@ -86,17 +86,17 @@ Functions:
 class Noise16PS : public EffectBasePS {
     public:
         //Constructor with palette
-        Noise16PS(SegmentSet &SegmentSet, palettePS &Palette, uint16_t BlendSteps, uint16_t BlendScale,
+        Noise16PS(SegmentSet &SegSet, palettePS &Palette, uint16_t BlendSteps, uint16_t BlendScale,
                   uint8_t X_mode, uint8_t Y_mode, uint8_t Z_mode, uint16_t X_val, uint16_t Y_val, uint16_t Z_val, uint16_t Rate);
 
         //Constructor with randomly generated palette
-        Noise16PS(SegmentSet &SegmentSet, uint8_t numColors, uint16_t BlendSteps, uint16_t BlendScale,
+        Noise16PS(SegmentSet &SegSet, uint8_t numColors, uint16_t BlendSteps, uint16_t BlendScale,
                   uint8_t X_mode, uint8_t Y_mode, uint8_t Z_mode, uint16_t X_val, uint16_t Y_val, uint16_t Z_val, uint16_t Rate);
 
         ~Noise16PS();
 
         SegmentSet 
-            &segmentSet; 
+            &SegSet; 
         
         uint8_t
             x_mode,
@@ -111,8 +111,8 @@ class Noise16PS : public EffectBasePS {
             blendScale; // the "zoom factor" for the noise
         
         palettePS 
-            paletteTemp,
-            *palette = nullptr;
+            *palette = nullptr,
+            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
 
         void 
             update(void);

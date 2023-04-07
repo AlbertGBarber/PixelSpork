@@ -9,7 +9,7 @@ RandRateCtrlPS::RandRateCtrlPS(uint16_t BaseRate, int16_t RateRangeMin, int16_t 
         RR = new RateRandomizerPS(BaseRate, RateRangeMin, RateRangeMax, 1);
         RR->update(); //get the first random rate
         //Create an instance of RateCtrl, starting from the base rate and transitioning to the RateRandomizer's random rate
-        //cycle is turned off, since we will choose new end rates using the RR after each transtion
+        //looped is turned off, since we will choose new end rates using the RR after each transition
         RC = new RateCtrlPS(BaseRate, RR->outputRate, Easing, false, Rate);
         //point the RC rate to the same rate as the RandRateCtrl instance, so they stay in sync
         RC->rate = rate;
@@ -59,7 +59,7 @@ void RandRateCtrlPS::reset(){
 //updates the effect
 //each update, we call RC->update to get the new output rate from the RateCtrl instance
 //If that instance has reached the end rate, we pick a new end rate using the RateRandomizer instance
-//While picking the new end rate, we also trigger the holding time, to pause the new transtion
+//While picking the new end rate, we also trigger the holding time, to pause the new transition
 void RandRateCtrlPS::update(){
     currentTime = millis();
 
@@ -81,14 +81,14 @@ void RandRateCtrlPS::update(){
             //It's time to choose a new end rate to transition to
             if( ( currentTime - pauseStartTime ) >= pauseTime){
                 paused = false;
-                //Since we're starting a new transtion, 
+                //Since we're starting a new transition, 
                 //we set the starting rate of the RateCtrl instance
                 //as whatever we ended the current one at
                 RC->startRate = RC->outputRate;
                 //choose a new rate, and set it to the end rate of the RateCtrl instance 
                 RR->update(); 
                 RC->endRate = RR->outputRate;
-                //reset the RateCtrl instance to start the new transtion
+                //reset the RateCtrl instance to start the new transition
                 //(this sets rateReached to false)
                 RC->reset();
             }

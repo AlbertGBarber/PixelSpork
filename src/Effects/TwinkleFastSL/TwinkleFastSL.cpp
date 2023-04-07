@@ -1,23 +1,23 @@
 #include "TwinkleFastSL.h"
 
 //palette color constructor
-TwinkleFastSL::TwinkleFastSL(SegmentSet &SegmentSet, palettePS &Palette, uint16_t NumTwinkles, CRGB BgColor, bool Sparkle, uint8_t FadeOutRate, uint16_t Rate):
-    segmentSet(SegmentSet), palette(&Palette), numTwinkles(NumTwinkles), sparkle(Sparkle), fadeOutRate(FadeOutRate)
+TwinkleFastSL::TwinkleFastSL(SegmentSet &SegSet, palettePS &Palette, uint16_t NumTwinkles, CRGB BgColor, bool Sparkle, uint8_t FadeOutRate, uint16_t Rate):
+    SegSet(SegSet), palette(&Palette), numTwinkles(NumTwinkles), sparkle(Sparkle), fadeOutRate(FadeOutRate)
     {    
         init(BgColor, Rate);
     }
 
 //single color constructor
-TwinkleFastSL::TwinkleFastSL(SegmentSet &SegmentSet, CRGB Color, uint16_t NumTwinkles, CRGB BgColor, bool Sparkle, uint8_t FadeOutRate, uint16_t Rate):
-    segmentSet(SegmentSet), numTwinkles(NumTwinkles), sparkle(Sparkle), fadeOutRate(FadeOutRate)
+TwinkleFastSL::TwinkleFastSL(SegmentSet &SegSet, CRGB Color, uint16_t NumTwinkles, CRGB BgColor, bool Sparkle, uint8_t FadeOutRate, uint16_t Rate):
+    SegSet(SegSet), numTwinkles(NumTwinkles), sparkle(Sparkle), fadeOutRate(FadeOutRate)
     {    
         setSingleColor(Color);
         init(BgColor, Rate);
 	}
 
 //random colors constructor
-TwinkleFastSL::TwinkleFastSL(SegmentSet &SegmentSet, uint16_t NumTwinkles, CRGB BgColor, bool Sparkle, uint8_t FadeOutRate, uint16_t Rate):
-    segmentSet(SegmentSet), numTwinkles(NumTwinkles), sparkle(Sparkle), fadeOutRate(FadeOutRate)
+TwinkleFastSL::TwinkleFastSL(SegmentSet &SegSet, uint16_t NumTwinkles, CRGB BgColor, bool Sparkle, uint8_t FadeOutRate, uint16_t Rate):
+    SegSet(SegSet), numTwinkles(NumTwinkles), sparkle(Sparkle), fadeOutRate(FadeOutRate)
     {    
         //we make a random palette of one color so that 
         //if we switch to randMode 0 then we have a palette to use
@@ -31,9 +31,9 @@ TwinkleFastSL::~TwinkleFastSL(){
     free(paletteTemp.paletteArr);
 }
 
-//sets up all the core class vars, and initilizes the pixel and color arrays
+//sets up all the core class vars, and initializes the pixel and color arrays
 void TwinkleFastSL::init(CRGB BgColor, uint16_t Rate){
-    //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
+    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
     bindSegPtrPS();
     bindClassRatesPS();
     bindBGColorPS();
@@ -53,15 +53,15 @@ void TwinkleFastSL::update(){
     if( ( currentTime - prevTime ) >= *rate ) {
         prevTime = currentTime;
 
-        numLines = segmentSet.numLines;
+        numLines = SegSet.numLines;
         paletteLength = palette->length;
 
         //controls the background setting, when sparkleOn is true, the strip will dim with each cycle
         //instead of setting a background
         if (sparkle) {
-            segDrawUtils::fadeSegSetToBlackBy(segmentSet, fadeOutRate);
+            segDrawUtils::fadeSegSetToBlackBy(SegSet, fadeOutRate);
         } else if(fillBG) {
-            segDrawUtils::fillSegSetColor(segmentSet, *bgColor, bgColorMode);
+            segDrawUtils::fillSegSetColor(SegSet, *bgColor, bgColorMode);
         }
 
         //sets a random set of lines to a random or indicated color(s)
@@ -76,7 +76,7 @@ void TwinkleFastSL::update(){
                     break;
             }
             //fill the segment line at the twinkle location with color
-            segDrawUtils::drawSegLine(segmentSet, randLine, color, colorMode);
+            segDrawUtils::drawSegLine(SegSet, randLine, color, colorMode);
         }
         showCheckPS();
     }

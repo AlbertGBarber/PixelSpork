@@ -69,7 +69,7 @@ void patternUtilsPS::shuffle(patternPS &pattern){
 //the code checks to see if the random index matches the current index (passed in)
 //if it does we'll just advance the index by one and return that
 //this stops the same color from being chosen again (assuming the pattern doesn't repeat)
-uint8_t patternUtilsPS::getShuffleIndex(patternPS &pattern, uint8_t currentPatternVal){
+uint8_t patternUtilsPS::getShuffleVal(patternPS &pattern, uint8_t currentPatternVal){
     uint16One = random16(pattern.length); //guess an index
     uint8One = patternUtilsPS::getPatternVal(pattern, uint16One); //get pattern val at the guessed index
     //check if the guessed val is the same as the one passed in

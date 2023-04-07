@@ -29,7 +29,7 @@ void EffectFaderPS::reset() {
     totalBriChng = 0;
 }
 
-//returns a pointer to the a segmentSet from the effect group array
+//returns a pointer to the a SegmentSet from the effect group array
 SegmentSet* EffectFaderPS::getSegPtr(uint8_t effectNum) { 
     if(effectSet->effectArr[effectNum]){
         return effectSet->effectArr[effectNum]->segmentSetPtr;
@@ -65,9 +65,9 @@ void EffectFaderPS::resetSegVars() {
     // then find the maximum brightness across all segmentSets
     // and use it to determine the step rate
     for (uint8_t i = 0; i < *numEffects; i++) {
-        segmentSet = getSegPtr(i);
-        if (segmentSet) {
-            uint8_t brightnessTemp = segmentSet->brightness;
+        SegSet = getSegPtr(i);
+        if (SegSet) {
+            uint8_t brightnessTemp = SegSet->brightness;
             origBrightness_arr[i] = brightnessTemp;
             if (brightnessTemp > maxBrightness) {
                 maxBrightness = brightnessTemp;
@@ -75,7 +75,7 @@ void EffectFaderPS::resetSegVars() {
             // if we're starting from the dim end, set all the segments
             //(we assume for the bright end that the segments are already at their max brightnesses)
             if (direct) {
-                segmentSet->brightness = minBrightness;
+                SegSet->brightness = minBrightness;
             }
         } else{
             origBrightness_arr[i] = 255;
@@ -90,9 +90,9 @@ void EffectFaderPS::resetSegVars() {
 //useful if you want to prematurely end the fade
 void EffectFaderPS::resetBrightness() {
     for (uint8_t i = 0; i < *numEffects; i++) {
-        segmentSet = getSegPtr(i);
-        if (segmentSet) {
-            segmentSet->brightness = origBrightness_arr[i];
+        SegSet = getSegPtr(i);
+        if (SegSet) {
+            SegSet->brightness = origBrightness_arr[i];
         }
     }
 }
@@ -136,8 +136,8 @@ void EffectFaderPS::update() {
             //Update the brightness for all of the segmentSets, adjusting up/down based on the direction
             //capping the results at the max/min values
             for (uint8_t i = 0; i < *numEffects; i++) {
-                segmentSet = getSegPtr(i);
-                if (segmentSet) {
+                SegSet = getSegPtr(i);
+                if (SegSet) {
                     if (direct) {
                         //Increasing in brightness, so we start at the minBrightness, going up over time
                         briChng = minBrightness + totalBriChng;
@@ -151,7 +151,7 @@ void EffectFaderPS::update() {
                             briChng = minBrightness;
                         }
                     }
-                    segmentSet->brightness = briChng;
+                    SegSet->brightness = briChng;
                 }
             }
             prevTime = currentTime;

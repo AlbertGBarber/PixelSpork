@@ -1,5 +1,5 @@
-#ifndef RainbowFontsSLPS_h
-#define RainbowFontsSLPS_h
+#ifndef RainbowFontsSL_h
+#define RainbowFontsSL_h
 
 /*
 This code was adapted from code by Andrew Tuline in adapting PixelBlaze patterns:
@@ -29,10 +29,10 @@ so we'd use beat8(9) in place of time(0.1);
 
 /*
 An effect based on the RainbowFonts pattern in PixelBlaze that rainbow waves that grow and shrink
-The effect is largly the same as the orignal, but I've added the ability to change the frequency of the waves
+The effect is largely the same as the original, but I've added the ability to change the frequency of the waves
 
 The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
-passing in a segmentSet with only one segment containing the whole strip.
+passing in a SegmentSet with only one segment containing the whole strip.
 
 Example calls: 
 
@@ -50,10 +50,10 @@ Functions:
 */
 class RainbowFontsSL : public EffectBasePS {
     public:
-        RainbowFontsSL(SegmentSet &SegmentSet, uint8_t WaveFreq, uint16_t Rate);  
+        RainbowFontsSL(SegmentSet &SegSet, uint8_t WaveFreq, uint16_t Rate);  
 
         SegmentSet 
-            &segmentSet; 
+            &SegSet; 
         
         uint8_t
             waveFreq;

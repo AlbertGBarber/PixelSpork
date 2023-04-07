@@ -2,7 +2,7 @@
 #define pixelInfoPS_h
 
 //struct used in segDrawUtils::getPixelColor
-//used to store all the variables accociated with a segment pixel for setting it's color
+//used to store all the variables associated with a segment pixel for setting it's color
 struct pixelInfoPS {
   CRGB color; //the color the pixel should be based on the colorMode
   uint16_t pixelLoc; //it's physical address on the strip (not local to segment set)

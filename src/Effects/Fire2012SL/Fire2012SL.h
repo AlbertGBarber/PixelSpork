@@ -5,26 +5,26 @@
 
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
-#include "Effects/Fire2012Seg/Utils/Fire2012SegUtilsPS.h"
+#include "Effects/Fire2012Seg/Utils/fire2012SegUtilsPS.h"
 
 /* 
 A traditional fire loop, most useful for strips with a diffuser
 Code modified from https://www.tweaking4all.com/hardware/arduino/adruino-led-strip-effects/#fire
 Similar to Fire2012Seg, but draws a a random fire along each segment LINE rather than along each segment
-Each segment LINE has it's own fire, but the settings are shared accross the set to keep the fires consistent
+Each segment LINE has it's own fire, but the settings are shared across the set to keep the fires consistent
 Note that segment lines are perpendicular to the segments
 
 Fires can be configured to start either at the first or last segment
 
 The fire colors are based on a palette and a background color
 The background color will be the coldest color, and is usually blank
-It is input seperately from the palette because most palettes don't include a blank color
+It is input separately from the palette because most palettes don't include a blank color
 The palette should be ordered from the coldest to the hottest color
 ie, the first color in the palette will be used for the coldest parts of the fire
 while the last color will be used for the hottest
 
 Palettes can be of any length, although 3 - 4 colors seems to work best for normal fires
-try { CRGB::Red, CRGB{255, 143, 0}, CRGB{255, 255, 100} } for a tranditional fire
+try { CRGB::Red, CRGB{255, 143, 0}, CRGB{255, 255, 100} } for a traditional fire
 { CRGB{225, 0, 127}, CRGB{123, 7, 197}, CRGB{238, 130, 238} } for a pink/purple fire
 or { CRGB{16, 124, 126 }, CRGB{ 43, 208, 17 }, CRGB{120, 212, 96} } for a green/blue fire
 
@@ -74,12 +74,12 @@ Functions:
 */
 class Fire2012SL : public EffectBasePS {
     public:
-        Fire2012SL(SegmentSet &SegmentSet, palettePS &Palette, CRGB BgColor, uint8_t Cooling, uint8_t Sparking, bool Blend, bool Direct, uint16_t Rate);  
+        Fire2012SL(SegmentSet &SegSet, palettePS &Palette, CRGB BgColor, uint8_t Cooling, uint8_t Sparking, bool Blend, bool Direct, uint16_t Rate);  
         
         ~Fire2012SL();
 
         SegmentSet 
-            &segmentSet; 
+            &SegSet; 
         
         uint8_t
             cooling,

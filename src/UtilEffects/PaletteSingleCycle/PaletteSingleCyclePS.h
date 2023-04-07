@@ -9,7 +9,7 @@ Takes a single palette and blends between its own colors depending on the blend 
 for example, you could shift all of the palette's colors forward by one
 the palettes are blended at the passed in rate (ms) in the passed in totalSteps steps
 the resulting palette can be accessed as "cyclePalette", it's length will vary depending on the mode
-The blend is always looped, so it will repeat indefinitly 
+The blend is always looped, so it will repeat indefinitely 
 
 A pause time can be set, that will pause the the cycle once a blend has finished before starting the next
 
@@ -36,7 +36,7 @@ Notes:
 Blend Modes:
 Examples below use a palette of  {blue, red, green}
 
-    0 -- Cycles the entire palette by foward/backward by one step each cycle. 
+    0 -- Cycles the entire palette by forward/backward by one step each cycle. 
          ie for direct = true, {blue, red, green} => {green, blue, red} => {red, green, blue} , etc
     1 -- Like mode 0, but a random color is inserted at the beginning (end if direct is false) each cycle, (initially starts as palette)
          ie for direct = true, {rand1, red, green} => {rand4, rand1, red} => {rand5, rand4, rand1}, etc
@@ -98,11 +98,11 @@ class PaletteSingleCyclePS : public EffectBasePS {
                                  
         palettePS
             *inputPalette = nullptr,
-            cyclePalette; //ouput palette
+            cyclePalette = {nullptr, 0}; //ouput palette (is filled in during the first update cycle)
         
         palettePS
-            currentPalette, //starting palette for the current blend
-            nextPalette; //ending palette for the current blend
+            currentPalette  = {nullptr, 0}, //starting palette for the current blend (is filled in during class construction)
+            nextPalette  = {nullptr, 0}; //ending palette for the current blend (is filled in during class construction)
         
         PaletteBlenderPS
             *PB = nullptr; //PaletteBlenderPS instance
@@ -131,7 +131,7 @@ class PaletteSingleCyclePS : public EffectBasePS {
             currentIndex;
         
         CRGB 
-            *paletteColorArr1 = nullptr, //storage for the start/end palette colors, for reference
+            *paletteColorArr1 = nullptr, //storage for the start/end palette colors
             *paletteColorArr2 = nullptr;
 };
 

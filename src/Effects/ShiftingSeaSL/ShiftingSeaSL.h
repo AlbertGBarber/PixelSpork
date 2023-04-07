@@ -1,10 +1,10 @@
-#ifndef ShiftingSeaSLPS_h
-#define ShiftingSeaSLPS_h
+#ifndef ShiftingSeaSL_h
+#define ShiftingSeaSL_h
 
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
 #include "MathUtils/mathUtilsPS.h"
-#include "Utils/ShiftingSeaUtilsPS.h"
+#include "Utils/shiftingSeaUtilsPS.h"
 
 /*
 Cycles each line of a segment set through a pattern of colors. Each segment line is given an random 
@@ -42,12 +42,12 @@ Please note that this effect will not work with the colorModes of segDrawUtils::
 But you can find a rainbow version of the effect in ShiftingRainbowSeaPS.h
 
 The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
-passing in a segmentSet with only one segment containing the whole strip.
+passing in a SegmentSet with only one segment containing the whole strip.
 
 Also note that the class needs a uint16_t array the length of the number of pixels in the segment in order to work
 So if you are short on ram, you might not be able to run this!
 
-This effect can is a little computationally heavy since you are caculating blends for each pixel or line.
+This effect can is a little computationally heavy since you are calculating blends for each pixel or line.
 For a similar effects you could try Lava or NoiseSL.
 
 Example call: 
@@ -70,7 +70,7 @@ Example call:
 Inputs:
     pattern(optional, see constructors) -- Used for making a strobe that follows a specific pattern (using colors from a palette) (see patternPS.h) 
     palette (optional, see constructors) -- The palette from which colors will be choosen
-    numColors (optional, see constructors) -- The length of the randonly created palette used for the effect
+    numColors (optional, see constructors) -- The length of the randomly created palette used for the effect
     gradLength -- (max 255) the number of steps to fade from one color to the next
     sMode -- The mode of the effect, either 0, or 1: 0 for the offsets to be picked between any two colors
                                                      1 for the offsets to be picked from between the first two colors
@@ -79,7 +79,7 @@ Inputs:
     rate -- The update rate (ms)
 
 Functions:
-    resetOffsets() -- Resets the offset array, recaulating offsets for each pixel, will cause a jump if done mid-effect
+    resetOffsets() -- Resets the offset array, re-calculating offsets for each pixel, will cause a jump if done mid-effect
     setMode(newMode) -- Changes the mode of the effect, also resets the offset array
     setGrouping(newGrouping) -- Sets a new grouping value for the effect, also resets the offset array since that's where the grouping is set
     setPaletteAsPattern() -- Sets the effect pattern to match the current palette
@@ -103,19 +103,19 @@ Reference Vars:
 class ShiftingSeaSL : public EffectBasePS {
     public:
         //Constructor for effect with pattern and palette
-        ShiftingSeaSL(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, uint8_t GradLength, uint8_t Smode, uint8_t Grouping, uint16_t Rate);
+        ShiftingSeaSL(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t GradLength, uint8_t Smode, uint8_t Grouping, uint16_t Rate);
 
         //Constructor for effect with palette
-        ShiftingSeaSL(SegmentSet &SegmentSet, palettePS &Palette, uint8_t GradLength, uint8_t Smode, uint8_t Grouping, uint16_t Rate);  
+        ShiftingSeaSL(SegmentSet &SegSet, palettePS &Palette, uint8_t GradLength, uint8_t Smode, uint8_t Grouping, uint16_t Rate);  
 
         //Constructor for effect with randomly created palette
-        ShiftingSeaSL(SegmentSet &SegmentSet, uint8_t NumColors, uint8_t GradLength, uint8_t Smode, uint8_t Grouping, uint16_t Rate);
+        ShiftingSeaSL(SegmentSet &SegSet, uint8_t NumColors, uint8_t GradLength, uint8_t Smode, uint8_t Grouping, uint16_t Rate);
 
         //destructor
         ~ShiftingSeaSL();
 
         SegmentSet 
-            &segmentSet; 
+            &SegSet; 
         
         uint8_t
             shiftThreshold = 15,
@@ -137,12 +137,12 @@ class ShiftingSeaSL : public EffectBasePS {
             *blankColor = &blankColorOrig;
         
         palettePS
-            paletteTemp,
-            *palette = nullptr;
+            *palette = nullptr,
+            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety            
         
         patternPS
-            patternTemp,
-            *pattern = nullptr;
+            *pattern = nullptr,
+            patternTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
         
         void
             setMode(uint8_t newMode),
@@ -156,11 +156,6 @@ class ShiftingSeaSL : public EffectBasePS {
             currentTime,
             prevTime = 0;
 
-        CRGB
-            color,
-            currentColor,
-            nextColor;
-
         uint8_t 
             patternLen,
             curColorIndex, 
@@ -172,6 +167,11 @@ class ShiftingSeaSL : public EffectBasePS {
             curPatIndex,
             *offsets = nullptr,
             step = 0;
+        
+        CRGB
+            color,
+            currentColor,
+            nextColor;
         
         void
             init(uint16_t Rate),

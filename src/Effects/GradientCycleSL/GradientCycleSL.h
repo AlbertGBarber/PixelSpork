@@ -10,13 +10,13 @@ Moves a set of color gradients along the segment set
 the gradients can be set to follow a pattern, use a palette, or set randomly
 The gradients have a set length, and smoothly transition from one color to the next, wrapping at the end
 If the total length of the gradients is longer than the segment set, they will still all transition on
-whatever fits onto the segement set will be drawn at one time
+whatever fits onto the segment set will be drawn at one time
 
 There is a version of this effect that takes less CPU power (GradientCycleSLFastPS)
 It has a few restrictions, but should run faster than this effect
 
 The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
-passing in a segmentSet with only one segment containing the whole strip.
+passing in a SegmentSet with only one segment containing the whole strip.
 
 Example calls: 
     uint8_t pattern_arr = {0, 1, 4};
@@ -36,7 +36,7 @@ Constructor Inputs:
                                           and the length of the array 
                                           (see patternPS.h)   
     palette(optional, see constructors) -- The repository of colors used in the pattern, or can be used as the pattern itself
-    numColors (optional, see contructors) -- The number of randomly choosen colors for the gradients
+    numColors (optional, see constructors) -- The number of randomly choosen colors for the gradients
     gradLength -- How many steps for each gradient
     rate -- The update rate (ms)
 
@@ -45,7 +45,7 @@ Functions:
     setPattern(*newPattern) -- Sets the passed in pattern to be the effect pattern
                               Will force setTotalEffectLength() call, so may cause effect to jump
     setPaletteAsPattern() -- Sets the effect pattern to match the current palette (calls setTotalEffectLength())
-    setGradLength(newGradLength) -- Changes the Gradlength to the specified value, adjusting the length of the gradients (calls setTotalEffectLength())
+    setGradLength(newGradLength) -- Changes the gradLength to the specified value, adjusting the length of the gradients (calls setTotalEffectLength())
     update() -- updates the effect
 
 Reference Vars:
@@ -61,15 +61,18 @@ Notes:
 class GradientCycleSL : public EffectBasePS {
     public:
         //Constructor for using pattern
-        GradientCycleSL(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, uint8_t GradLength, uint16_t Rate); 
+        GradientCycleSL(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t GradLength, uint16_t Rate); 
 
         //Constructor for using the palette as the pattern
-        GradientCycleSL(SegmentSet &SegmentSet, palettePS &Palette, uint8_t GradLength, uint16_t Rate);
+        GradientCycleSL(SegmentSet &SegSet, palettePS &Palette, uint8_t GradLength, uint16_t Rate);
 
         //Constructor for using a random palette as the pattern
-        GradientCycleSL(SegmentSet &SegmentSet, uint8_t NumColors, uint8_t GradLength, uint16_t Rate);
+        GradientCycleSL(SegmentSet &SegSet, uint8_t NumColors, uint8_t GradLength, uint16_t Rate);
 
         ~GradientCycleSL();
+
+        SegmentSet 
+            &SegSet; 
 
         uint8_t
             gradLength;
@@ -79,15 +82,12 @@ class GradientCycleSL : public EffectBasePS {
             cycleNum = 0; // tracks what how many patterns we've gone through, resets every totalCycleLength cycles
 
         patternPS
-            patternTemp,
-            *pattern = nullptr;
+            *pattern = nullptr,
+            patternTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
 
         palettePS
-            paletteTemp,
-            *palette = nullptr;
-
-        SegmentSet 
-            &segmentSet; 
+            *palette = nullptr,
+            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
         
         void 
             setGradLength(uint8_t newGradLength),
@@ -118,7 +118,7 @@ class GradientCycleSL : public EffectBasePS {
         
         void 
             init(uint16_t Rate),
-            setnextColors(uint16_t pixelNum);
+            setNextColors(uint16_t pixelNum);
         
 };
 

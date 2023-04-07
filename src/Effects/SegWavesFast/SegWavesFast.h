@@ -13,7 +13,7 @@ It is a segment based version of the streamerFast effect
 The restrictions when compared to SegWaves are listed below:
 1: There is no fading to shift the waves along the segments
 2: Changing the palette on the fly will have a delayed effect on the colors
-  The exisiting colors will shift off the segments before new ones shift on
+  The existing colors will shift off the segments before new ones shift on
   This prevents this effect from playing well with paletteBlend functions
 3: The same restrictions as (2) apply to changing the pattern
 4: Changing the direction of the effect may break it temporarily
@@ -35,10 +35,10 @@ to indicate a background segment (ie set to the BgColor) we use 255 in the patte
 This does mean if your palette has 255 colors, you'll lose the final color, but you shouldn't have palettes that large
 
 For example, lets say we wanted to do the first two colors of our palette,
-each as length 4 waves, with 3 background leds inbetween each
+each as length 4 waves, with 3 background leds in between each
 we would make a pattern as : {0, 0, 0, 0, 255, 255, 255, 1, 1, 1, 1, 255, 255, 255}
 
-For simple patterns like the previous example, I have writtern a few constructors for the effect
+For simple patterns like the previous example, I have written a few constructors for the effect
 that automate the pattern creation, so you don't have to do it yourself (see constructor notes below)
 
 I have also included a shortcut for making a single wave (a wave of length 1, with only one wave active on the segment set a once)
@@ -67,13 +67,13 @@ Example calls:
     The effect updates at a rate of 120ms
 
     SegWavesFast(mainSegments, palette3, 3, 4, CRGB::Red, true, 120);
-    Will do a wave using all the colors in palette3, each wave will be length 3, with 4 spaces inbetween
+    Will do a wave using all the colors in palette3, each wave will be length 3, with 4 spaces in between
     The bgColor is red
     The waves will move from the last segment to the first
     The waves will update at a 120ms rate
 
     SegWavesFast(mainSegments, CRGB::Blue, 2, 2, CRGB::Red, 0, true, 140);
-    Will do a blue waves with length 2 and 2 spaces inbetween
+    Will do a blue waves with length 2 and 2 spaces in between
     The bgColor is red
     The waves will move from the last segment to the first
     The effect updates at a rate of 140ms
@@ -130,18 +130,21 @@ Notes:
 class SegWavesFast : public EffectBasePS {
     public:
         //constructor for using the passed in pattern and palette for the wave
-        SegWavesFast(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, bool Direct, uint16_t Rate);
+        SegWavesFast(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, bool Direct, uint16_t Rate);
 
         //constructor for building the wave pattern from the passed in pattern and the palette, using the passed in colorLength and spacing
-        SegWavesFast(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, uint8_t WaveThickness, uint8_t Spacing, CRGB BgColor, bool Direct, uint16_t Rate);
+        SegWavesFast(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t WaveThickness, uint8_t Spacing, CRGB BgColor, bool Direct, uint16_t Rate);
         
         //constructor for building a wave using all the colors in the passed in palette, using the colorLength and spacing for each color
-        SegWavesFast(SegmentSet &SegmentSet, palettePS &Palette, uint8_t WaveThickness, uint8_t Spacing, CRGB BgColor, bool Direct, uint16_t Rate);
+        SegWavesFast(SegmentSet &SegSet, palettePS &Palette, uint8_t WaveThickness, uint8_t Spacing, CRGB BgColor, bool Direct, uint16_t Rate);
 
         //constructor for doing a single colored wave, using colorLength and spacing
-        SegWavesFast(SegmentSet &SegmentSet, CRGB Color, uint8_t WaveThickness, uint8_t Spacing, CRGB BgColor, bool Direct, uint16_t Rate);  
+        SegWavesFast(SegmentSet &SegSet, CRGB Color, uint8_t WaveThickness, uint8_t Spacing, CRGB BgColor, bool Direct, uint16_t Rate);  
     
         ~SegWavesFast();
+        
+        SegmentSet 
+            &SegSet;
 
         uint8_t
             randMode = 0;
@@ -155,18 +158,15 @@ class SegWavesFast : public EffectBasePS {
 
         CRGB 
             bgColorOrig,
-            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
-
-        SegmentSet 
-            &segmentSet; 
+            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color) 
         
         patternPS
-            patternTemp,
-            *pattern = nullptr;
+            *pattern = nullptr,
+            patternTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety 
         
         palettePS
-            paletteTemp,
-            *palette = nullptr;
+            *palette = nullptr,
+            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety 
         
         void 
             setPatternAsPattern(patternPS &inputPattern, uint8_t waveThickness, uint8_t spacing),

@@ -10,7 +10,7 @@
 Similar to the classic breathing/heartbeat effect where segment set slowly fades between a main color and a background color.
 But instead of the whole segment set being one color, a gradient is used from a central point.
 This creates something akin to a robotic glowing eye that fades in and out.
-Other than that, the effect is largly identical to BreathPS.
+Other than that, the effect is largely identical to BreathPS.
 With the addition of being able to set the eye's center position and how large it is.
 The effect is set to use multiple colors based on a given pattern and palette.
 The effect will cycle through the colors with each "breath"
@@ -75,7 +75,7 @@ Example calls:
     Does a breathing cycle using the colors from palette3 in order
     The background is blank
     The eyeHalfSize is 8, the eye wraps,
-    The eye position will be fixed (defaulting to the center point of the longst segment),
+    The eye position will be fixed (defaulting to the center point of the longest segment),
     The breathFreq is 5, the effect updates at 50ms
 
     BreathPS(mainSegments, CRGB::Red, CRGB::Blue, 200, 10, false, true, 5, 50);
@@ -123,13 +123,13 @@ Functions:
 Other Settings:
     eyePos -- The center position of the eye, defaulted to the center of the longest segment
     eyeHalfSizeMax (default to eyeHalfSize) -- The upper limit of the eyeHalfSize, only used if randEyeSize is set to true
-    eyeCenterSize (default 1/8 of the eyeHalfSize) -- The size of the center eye portion (see description bove)
+    eyeCenterSize (default 1/8 of the eyeHalfSize) -- The size of the center eye portion (see description above)
     dimPow (default 80, min -127, max 127) -- Adjusts the rate of dimming for the trails (see dimPow in particlesPS.h)
     randEyeSize -- If true then the eyeHalfSize will be randomized between eyeHalfSize and eyeHalfSizeMax for each cycle
     fillBG -- sets if the background is to be filled before after each fade, 
               only needed if your maxBreath isn't 255 and you have multiple colors
     randMode (default 0, unless set by a constructor) -- see mode notes above
-    minBreath (default 60, min 0) -- The minimum breath fade amount. Should be less than maxBreath (see construtors above)
+    minBreath (default 60, min 0) -- The minimum breath fade amount. Should be less than maxBreath (see constructors above)
                                      60 was taken from the original code by ldirko.
     breathFreqOrig -- The default target of the effect's breathFreq pointer variable.
                       Will be set to the passed in breathFreq from the constructor
@@ -144,22 +144,22 @@ Reference vars:
 */
 class BreathEyeSL : public EffectBasePS {
     public:
-        //Consturctor for using a pattern and palette
-        BreathEyeSL(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint16_t EyeHalfSize, bool Wrap, bool RandEyePos, uint8_t BreathFreq, uint16_t Rate);
+        //Constructor for using a pattern and palette
+        BreathEyeSL(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint16_t EyeHalfSize, bool Wrap, bool RandEyePos, uint8_t BreathFreq, uint16_t Rate);
 
         //Constructor for using palette as pattern
-        BreathEyeSL(SegmentSet &SegmentSet, palettePS &Palette, CRGB BgColor, uint16_t EyeHalfSize, bool Wrap, bool RandEyePos, uint8_t BreathFreq, uint16_t Rate);
+        BreathEyeSL(SegmentSet &SegSet, palettePS &Palette, CRGB BgColor, uint16_t EyeHalfSize, bool Wrap, bool RandEyePos, uint8_t BreathFreq, uint16_t Rate);
 
         //Constructor for a single color breath (pass in 0 as the color to trigger randMode 2, fully random)
-        BreathEyeSL(SegmentSet &SegmentSet, CRGB color, CRGB BgColor, uint8_t MaxBreath, uint16_t EyeHalfSize, bool Wrap, bool RandEyePos, uint8_t BreathFreq, uint16_t Rate); 
+        BreathEyeSL(SegmentSet &SegSet, CRGB color, CRGB BgColor, uint8_t MaxBreath, uint16_t EyeHalfSize, bool Wrap, bool RandEyePos, uint8_t BreathFreq, uint16_t Rate); 
 
         //Constructor for rainbow mode
-        BreathEyeSL(SegmentSet &SegmentSet, CRGB BgColor, uint8_t RainbowRate, uint16_t EyeHalfSize, bool Wrap, bool RandEyePos, uint8_t BreathFreq, uint16_t Rate);
+        BreathEyeSL(SegmentSet &SegSet, CRGB BgColor, uint8_t RainbowRate, uint16_t EyeHalfSize, bool Wrap, bool RandEyePos, uint8_t BreathFreq, uint16_t Rate);
 
         ~BreathEyeSL();
 
         SegmentSet 
-            &segmentSet; 
+            &SegSet; 
         
         int8_t 
             dimPow = 80;
@@ -195,11 +195,11 @@ class BreathEyeSL : public EffectBasePS {
 
         palettePS
             *palette = nullptr,
-            paletteTemp;
+            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
         
         patternPS
             *pattern = nullptr,
-            patternTemp;
+            patternTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
         
         void 
             setPaletteAsPattern(),

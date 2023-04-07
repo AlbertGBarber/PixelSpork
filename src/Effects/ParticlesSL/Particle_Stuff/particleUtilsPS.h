@@ -11,7 +11,7 @@
 //which are storage for a group of particles
 //You pass these sets into effects (or the effects create them) and then the effects animate them
 //Because particles has a number of options, creating them manually is a pain
-//To aleviate this, I've created a number of utility functions for changing particle values
+//To alleviate this, I've created a number of utility functions for changing particle values
 //and creating particle sets
 //These functions also give you the option of choosing the values at random, to create random sets of particles
 
@@ -20,7 +20,7 @@
 //(say you wanted to change all their speeds, etc)
 //there are then sub-functions for changing a specific particle's aspects within a set
 
-//undestanding these functions will help you manipulate particles efficiently (see .cpp file for comments)
+//understanding these functions will help you manipulate particles efficiently (see .cpp file for comments)
 
 //series of utility functions for interacting with particles
 namespace particleUtilsPS{
@@ -46,7 +46,7 @@ namespace particleUtilsPS{
     //functions for deleting or reseting particles
     void 
         resetParticle(particlePS *particle),
-        resetParticleset(particleSetPS &particleSet),
+        resetParticleSet(particleSetPS &particleSet),
         resetParticle(particleSetPS &particleSet, uint8_t partNum),
         freeParticleSet(particleSetPS &particleSet),
         freeParticle(particleSetPS &particleSet, uint8_t partNum),

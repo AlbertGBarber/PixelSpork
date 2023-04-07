@@ -1,23 +1,23 @@
 #include "RollingWavesSL2.h"
 
 //constructor with pattern
-RollingWavesSL2::RollingWavesSL2(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate):
-    segmentSet(SegmentSet), pattern(&Pattern), palette(&Palette), gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)
+RollingWavesSL2::RollingWavesSL2(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate):
+    SegSet(SegSet), pattern(&Pattern), palette(&Palette), gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)
     {    
         init(BGColor,Rate);
 	}
 
-//constuctor with palette as pattern
-RollingWavesSL2::RollingWavesSL2(SegmentSet &SegmentSet, palettePS &Palette, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate):
-    segmentSet(SegmentSet), palette(&Palette), gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)
+//constructor with palette as pattern
+RollingWavesSL2::RollingWavesSL2(SegmentSet &SegSet, palettePS &Palette, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate):
+    SegSet(SegSet), palette(&Palette), gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)
     {    
         setPaletteAsPattern();
         init(BGColor, Rate);
 	}
 
 //constructor with random colors
-RollingWavesSL2::RollingWavesSL2(SegmentSet &SegmentSet, uint8_t NumColors, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate):
-    segmentSet(SegmentSet), gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)
+RollingWavesSL2::RollingWavesSL2(SegmentSet &SegSet, uint8_t NumColors, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate):
+    SegSet(SegSet), gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)
     {    
         paletteTemp = paletteUtilsPS::makeRandomPalette(NumColors);
         palette = &paletteTemp;
@@ -33,7 +33,7 @@ RollingWavesSL2::~RollingWavesSL2(){
 
 //inits core variables for the effect
 void RollingWavesSL2::init(CRGB BgColor, uint16_t Rate){
-    //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
+    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
     bindSegPtrPS();
     bindClassRatesPS();
     bindBGColorPS();
@@ -74,7 +74,7 @@ void RollingWavesSL2::setPaletteAsPattern(){
     setTotalEffectLength();
 }
 
-//caculates the totalCycleLength, which represents the total number of possible colors a pixel can have
+//calculates the totalCycleLength, which represents the total number of possible colors a pixel can have
 //ie the total length of all the waves (of each color in the pattern) combined
 //includes the spacing after each wave
 //The blend limit is the length of a wave plus its spacing
@@ -88,12 +88,12 @@ void RollingWavesSL2::setTotalEffectLength(){
 //next line to be drawn
 //!!! You should call this if you ever change the segment set
 void RollingWavesSL2::buildLineArr(){
-    numSegs = segmentSet.numSegs;
+    numSegs = SegSet.numSegs;
     free(nextLine);
     nextLine = (uint16_t*) malloc(numSegs * sizeof(uint16_t));
 
     //fetch some core vars
-    numLines = segmentSet.numLines;
+    numLines = SegSet.numLines;
     numLinesLim = numLines - 1;
 }
 
@@ -155,7 +155,7 @@ void RollingWavesSL2::initalFill(){
     //we need to draw the initial waves on the strip
     //to pre-fill it for the main update cycle
     //to do this we run across all the leds
-    //every gradsteps number of leds, we increment the wave colors,
+    //every gradSteps number of leds, we increment the wave colors,
     //we loop forwards to match the direction of the loop in update()
     //so that where this initial setup ends, 
     //the cycleNum var will be correct
@@ -170,7 +170,7 @@ void RollingWavesSL2::initalFill(){
         colorOut = getWaveColor(cycleNum);
 
         //Draw the colored line
-        segDrawUtils::drawSegLine(segmentSet, i, colorOut, 0);
+        segDrawUtils::drawSegLine(SegSet, i, colorOut, 0);
 
         cycleNum = addmod8(cycleNum, 1, blendLimit);//track what step we're on in the wave
     }
@@ -182,9 +182,9 @@ void RollingWavesSL2::initalFill(){
 //To save time, we store the current line pixels locations in the nextLine array, and then use them in the next loop step
 //This saves us from having to work out the pixels for both lines at each step
 //But also causes an "error" with segment sets with different length segments
-//Because one pixel can be in multiple lines, so the colors of those pixels can be coppied multiple times
+//Because one pixel can be in multiple lines, so the colors of those pixels can be copied multiple times
 //This creates a neat effect, but is technically incorrect
-//For the final led we caculate the next wave blendStep based on the cycleNum and the pattern
+//For the final led we calculate the next wave blendStep based on the cycleNum and the pattern
 //The blendStep after cycle, which tracks what step of the wave we're on
 //The blendStep cycles between 0 and the blendLimit (gradLength + spacing)
 //If the blendStep is 0, then a wave and it's spacing have finished and we choose the next color for the next wave
@@ -193,7 +193,7 @@ void RollingWavesSL2::initalFill(){
 //Then we draw the ending trail up to gradLength
 //After the gradLength we draw any spacing pixels
 //At some point during the wave we will hit the midPoint, this is the "head" of the wave
-//and is drawn at full bightness (so that the wave dimming can be non-linear, but the "head" is always full color)
+//and is drawn at full brightness (so that the wave dimming can be non-linear, but the "head" is always full color)
 //Once all the leds have been filled a cycle is complete and cycleNum is incremented
 void RollingWavesSL2::update(){
     currentTime = millis();
@@ -211,7 +211,7 @@ void RollingWavesSL2::update(){
         //We need to get the pixel locations of the final segment line
         //(Which is the one the loop starts on)
         for(uint16_t j = 0; j < numSegs; j++){
-            nextLine[j] = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, j, numLinesLim);
+            nextLine[j] = segDrawUtils::getPixelNumFromLineNum(SegSet, numLines, j, numLinesLim);
         }
 
         //Run backwards across all the segment lines and copy the color from the line before it
@@ -238,7 +238,7 @@ void RollingWavesSL2::update(){
                     //The nextPixelNumber from the previous loop iteration is now
                     //the pixelNumber for this iteration
                     pixelNum = nextLine[j];
-                    segDrawUtils::setPixelColor(segmentSet, pixelNum, colorOut, 0, j, i);
+                    segDrawUtils::setPixelColor(SegSet, pixelNum, colorOut, 0, j, i);
                 }
             } else {
                 //copy the pixel colors from the previous line to the current one
@@ -248,9 +248,9 @@ void RollingWavesSL2::update(){
                     //The pixel locations from the previous loop are now the current ones
                     //and we now need to fill in the next line locations
                     pixelNum = nextLine[j];
-                    nextLine[j] = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, j, i - 1);
+                    nextLine[j] = segDrawUtils::getPixelNumFromLineNum(SegSet, numLines, j, i - 1);
                     //copy the color of the next pixel in line into the current pixel
-                    segmentSet.leds[pixelNum] = segmentSet.leds[nextLine[j]];
+                    SegSet.leds[pixelNum] = SegSet.leds[nextLine[j]];
                 }
             }
         }
@@ -264,7 +264,7 @@ void RollingWavesSL2::update(){
 //Then we draw the ending trail up to gradLength
 //After the gradLength we draw any spacing pixels
 //At some point during the wave we will hit the midPoint, this is the "head" of the wave
-//and is drawn at full bightness (so that the wave dimming can be non-linear, but the "head" is always full color)
+//and is drawn at full brightness (so that the wave dimming can be non-linear, but the "head" is always full color)
 //Once all the leds have been filled a cycle is complete and cycleNum is incremented
 CRGB RollingWavesSL2::getWaveColor(uint8_t step){
 
@@ -305,8 +305,8 @@ CRGB RollingWavesSL2::getWaveColor(uint8_t step){
 //step == totalSteps is fully dimmed
 //Note that we offset totalSteps by 1, so we never reach full dim (since it would produce blank pixels)
 //the maximum brightness is scaled by dimPow
-//dimPow 255 will produce a normal linear gradient, but for more shimmery waves we can dial the bightness down
-//The "head" wave pixel will still be drawn at full brightness since it's drawn seperatly 
+//dimPow 255 will produce a normal linear gradient, but for more shimmery waves we can dial the brightness down
+//The "head" wave pixel will still be drawn at full brightness since it's drawn separately 
 CRGB RollingWavesSL2::desaturate(CRGB &color, uint8_t step, uint8_t totalSteps) {
 
     dimRatio = (dimPow - (uint16_t)step * dimPow / (totalSteps + 1));
@@ -333,7 +333,7 @@ void RollingWavesSL2::setNextColors(uint16_t segPixelNum){
         currentColor = colorUtilsPS::randColor();
     } else {
         //choose a color randomly from the pattern (making sure it's not the same as the current color)
-        currentPattern = patternUtilsPS::getShuffleIndex(*pattern, currentPattern);
+        currentPattern = patternUtilsPS::getShuffleVal(*pattern, currentPattern);
         currentColor = paletteUtilsPS::getPaletteColor( *palette, currentPattern );
     }
 }

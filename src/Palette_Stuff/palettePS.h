@@ -4,8 +4,8 @@
 #include "FastLED.h"
 
 //A struct for holding an array of colors and its length in one place
-//this makes passing it to effects and functions simplier
-//(and allows you to do shinanigans by changing the length artificially)
+//this makes passing it to effects and functions easier
+//(and allows you to do shenanigans by changing the length artificially)
 //See paletteUtils.h for how to interact with palettes
 
 //note that the paletteArr is a pointer to an array of CRGB colors
@@ -15,8 +15,29 @@
 //CRGB palette_arr[] = { CRGB::Red, CRGB::Blue, CRGB::Green, CRGB::Purple, CRGB::Yellow };
 //palettePS palette = {palette_arr, SIZE(palette_arr)};
 struct palettePS {
-  CRGB *paletteArr = nullptr;
+  CRGB *paletteArr;
   uint8_t length;
 } ;
+
+/*
+A struct for storing an array of palettes
+Contains a pointer to the array and the length of the array (number of palettes)
+
+Example declaration:
+    (assuming you've already declared palette 1 and 2, etc)
+    palettePS *paletteArr[] = { &palette1, &palette2, etc};
+    paletteSetPS paletteSet = {paletteArr, SIZE(paletteArr)};
+*/
+struct paletteSetPS {
+    palettePS **paletteArr;
+    uint8_t length;
+
+    //Returns the pointer to a palette at the index in the palette set (wraps so you always get a palette)
+    //Most palette functions take a palette pointer.
+    palettePS *getPalette(uint8_t index){
+        return paletteArr[ mod8(index, length) ];
+    };
+};
+
 
 #endif

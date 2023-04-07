@@ -17,7 +17,7 @@ tModes:
 
 segMode:
     The effect is adapted to work on segment lines, whole segments for 2D use, or on single pixels (1D)
-    This is contolled by the segMode var:
+    This is controlled by the segMode var:
         0: Twinkles will be drawn on segment lines
         1: Twinkles will be drawn on whole segments
         2: Twinkles will be drawn on individual pixels
@@ -42,7 +42,7 @@ Example calls:
     The lines will be turned on one at a time, and then off one at a time (mode 1), with 100ms between each cycle
 
     FairyLightsSLSeg(mainSegments, 20, 0, 2, 3, 80);
-    Will choose 20 pixels (segMode 2) each cycle to set to random colors, using a blank backgound, 
+    Will choose 20 pixels (segMode 2) each cycle to set to random colors, using a blank background, 
     (note this sets randMode = 1)
     Each cycle, a new line will be turned on, while an old is turned off (mode 2), with 80ms in between each cycle
 
@@ -86,19 +86,19 @@ Reference Vars:
 class FairyLightsSLSeg : public EffectBasePS {
     public:
         //Palette based constructor
-        FairyLightsSLSeg(SegmentSet &SegmentSet, palettePS &Palette, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode, uint8_t SegMode, uint16_t Rate);
+        FairyLightsSLSeg(SegmentSet &SegSet, palettePS &Palette, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode, uint8_t SegMode, uint16_t Rate);
         
         //Single color constructor
-        FairyLightsSLSeg(SegmentSet &SegmentSet, CRGB Color, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode, uint8_t SegMode, uint16_t Rate);
+        FairyLightsSLSeg(SegmentSet &SegSet, CRGB Color, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode, uint8_t SegMode, uint16_t Rate);
         
         //Random colors constructor
-        FairyLightsSLSeg(SegmentSet &SegmentSet, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode, uint8_t SegMode, uint16_t Rate); 
+        FairyLightsSLSeg(SegmentSet &SegSet, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode, uint8_t SegMode, uint16_t Rate); 
 
         //destructor
         ~FairyLightsSLSeg();
 
         SegmentSet 
-            &segmentSet; 
+            &SegSet; 
         
         uint8_t
             segMode, //for reference, use setSegMode() to set
@@ -117,7 +117,8 @@ class FairyLightsSLSeg : public EffectBasePS {
             *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
         
         palettePS
-            *palette = nullptr;
+            *palette = nullptr,
+            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
 
         bool
             reDrawAll = false,
@@ -145,9 +146,6 @@ class FairyLightsSLSeg : public EffectBasePS {
         
         uint16_t
             twinkleRange;
-        
-        palettePS
-            paletteTemp;
         
         CRGB 
             color,

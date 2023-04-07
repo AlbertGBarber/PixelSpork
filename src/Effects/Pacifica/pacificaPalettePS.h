@@ -1,7 +1,7 @@
 
 #ifndef pacificaPalettePS_h
 #define pacificaPalettePS_h
-#include "PaletteFiles.h"
+#include "Include_Lists/PaletteFiles.h"
 
 //I've translated the original Pacifica palettes into my palettes
 //These produce a very slightly different blend of colors, but it still looks good
@@ -38,3 +38,4 @@ static palettePS
     pacificaPal3PS = {paPal3_arr, SIZE(paPal3_arr)};
 
 #endif
+

@@ -1,8 +1,8 @@
 #include "PacificaHueSL.h"
 
 //Normal constructor
-PacificaHueSL::PacificaHueSL(SegmentSet &SegmentSet, uint16_t Rate):
-    segmentSet(SegmentSet)
+PacificaHueSL::PacificaHueSL(SegmentSet &SegSet, uint16_t Rate):
+    SegSet(SegSet)
     {    
         //use 0 for the hueRate b/c we don't want the hue to change
         init(0, Rate);
@@ -10,8 +10,8 @@ PacificaHueSL::PacificaHueSL(SegmentSet &SegmentSet, uint16_t Rate):
 
 //Normal constructor addWhiteCaps and hue setting
 //The default hue is 130 (found in PacificaHuePal.h)
-PacificaHueSL::PacificaHueSL(SegmentSet &SegmentSet, bool AddWhiteCaps, uint8_t Hue, uint16_t Rate):
-    segmentSet(SegmentSet), addWhiteCaps(AddWhiteCaps)
+PacificaHueSL::PacificaHueSL(SegmentSet &SegSet, bool AddWhiteCaps, uint8_t Hue, uint16_t Rate):
+    SegSet(SegSet), addWhiteCaps(AddWhiteCaps)
     {    
         //use 0 for the hueRate b/c we don't want the hue to change
         init(0, Rate);
@@ -20,8 +20,8 @@ PacificaHueSL::PacificaHueSL(SegmentSet &SegmentSet, bool AddWhiteCaps, uint8_t 
 
 //constructor with addWhiteCaps and hue rate settings
 //The hue will be the initial hue of the palette
-PacificaHueSL::PacificaHueSL(SegmentSet &SegmentSet, bool AddWhiteCaps, uint8_t Hue, uint16_t HueRate, uint16_t Rate):
-    segmentSet(SegmentSet), addWhiteCaps(AddWhiteCaps)
+PacificaHueSL::PacificaHueSL(SegmentSet &SegSet, bool AddWhiteCaps, uint8_t Hue, uint16_t HueRate, uint16_t Rate):
+    SegSet(SegSet), addWhiteCaps(AddWhiteCaps)
     {    
         init(HueRate, Rate);
         setHue(Hue);
@@ -33,7 +33,7 @@ PacificaHueSL::~PacificaHueSL(){
 
 //sets up core effect variables
 void PacificaHueSL::init(uint16_t HueRate, uint16_t Rate){
-    //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
+    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
     bindSegPtrPS();
     bindClassRatesPS();
     PacificaPalette = new PacificaHuePalPS();
@@ -71,13 +71,13 @@ void PacificaHueSL::setHue(uint8_t newHue){
 //Likewise, addWhiteCaps()'s purpose was to brighten the colors where multiple waves met,
 //But we are now basically doing this by default with common line pixels
 //so addWhiteCaps() is now only needed for exact matrixes
-//Overall, the end result is very similar to the orignal Pacifica, and still very pretty
+//Overall, the end result is very similar to the original Pacifica, and still very pretty
 void PacificaHueSL::update(){
     currentTime = millis();
 
-    deltams = currentTime - prevTime;
+    deltaTime = currentTime - prevTime;
     //if it's time to update the effect, do so
-    if( ( deltams ) >= *rate ) {
+    if( ( deltaTime ) >= *rate ) {
         prevTime = currentTime;
         
         //increment the hue if needed
@@ -89,23 +89,23 @@ void PacificaHueSL::update(){
 
         //fetch some core vars
         //we re-fetch these in case the segment set has changed
-        numSegs = segmentSet.numSegs;
-        numLines = segmentSet.numLines;
+        numSegs = SegSet.numSegs;
+        numLines = SegSet.numLines;
 
         //Increment the four "color index start" counters, one for each wave layer.
         //Each is incremented at a different speed, and the speeds vary over time.
-        speedfactor1 = beatsin16(3, 179, 269);
-        speedfactor2 = beatsin16(4, 179, 269);
-        deltams1 = (deltams * speedfactor1) / 256;
-        deltams2 = (deltams * speedfactor2) / 256;
-        deltams21 = (deltams1 + deltams2) / 2;
-        sCIStart1 += (deltams1 * beatsin88(1011,10,13));
-        sCIStart2 -= (deltams21 * beatsin88(777,8,11));
-        sCIStart3 -= (deltams1 * beatsin88(501,5,7));
-        sCIStart4 -= (deltams2 * beatsin88(257,4,6));
+        speedFactor1 = beatsin16(3, 179, 269);
+        speedFactor2 = beatsin16(4, 179, 269);
+        deltaTime1 = (deltaTime * speedFactor1) / 256;
+        deltaTime2 = (deltaTime * speedFactor2) / 256;
+        deltaTime21 = (deltaTime1 + deltaTime2) / 2;
+        sCIStart1 += (deltaTime1 * beatsin88(1011,10,13));
+        sCIStart2 -= (deltaTime21 * beatsin88(777,8,11));
+        sCIStart3 -= (deltaTime1 * beatsin88(501,5,7));
+        sCIStart4 -= (deltaTime2 * beatsin88(257,4,6));
 
         //Clear out the LED array to a dim background
-        segDrawUtils::fillSegSetColor(segmentSet, *bgColor, 0);
+        segDrawUtils::fillSegSetColor(SegSet, *bgColor, 0);
 
         //Render each of four layers, with different scales and speeds, that vary over time
         doOneLayer( &PacificaPalette->pacificaPal1PS, sCIStart1, beatsin16( 3, 11 * 256, 14 * 256), beatsin8( 10, 70, 130), 0-beat16(301) ); 
@@ -115,7 +115,7 @@ void PacificaHueSL::update(){
 
         //Add brighter 'whitecaps' where the waves lines up more
         //only needed for exact matrixes
-        //(for onther shapes was already add the waves together in doOneLayer when pixels are common to multiple lines)
+        //(for other shapes was already add the waves together in doOneLayer when pixels are common to multiple lines)
         if(addWhiteCaps){
             addWhitecaps();
         }
@@ -125,35 +125,35 @@ void PacificaHueSL::update(){
 }
 
 //Add one layer of waves into the led array
-void PacificaHueSL::doOneLayer(palettePS *palette, uint16_t cistart, uint16_t wavescale, uint8_t bri, uint16_t ioff){
-    ci = cistart;
-    waveangle = ioff;
-    wavescale_half = (wavescale / 2) + 20;
+void PacificaHueSL::doOneLayer(palettePS *palette, uint16_t ciStart, uint16_t waveScale, uint8_t bri, uint16_t iOff){
+    ci = ciStart;
+    waveAngle = iOff;
+    waveScaleHalf = (waveScale / 2) + 20;
     //Run over each of the lines and set a color
     //We get one color for each segment line and then output it to all the segments
     for (uint16_t i = 0; i < numLines; i++) {
-        waveangle += 250;
-        s16 = sin16( waveangle ) + 32768;
-        cs = scale16( s16 , wavescale_half ) + wavescale_half;
+        waveAngle += 250;
+        s16 = sin16( waveAngle ) + 32768;
+        cs = scale16( s16 , waveScaleHalf ) + waveScaleHalf;
         ci += cs;
-        sindex16 = sin16( ci ) + 32768;
-        index = scale16( sindex16, totBlendLength );
+        sIndex16 = sin16( ci ) + 32768;
+        index = scale16( sIndex16, totBlendLength );
         //returns the blended color from the palette mapped into numSteps
         colorOut = paletteUtilsPS::getPaletteGradColor(*palette, index, 0, totBlendLength, numSteps);
         nscale8x3(colorOut.r, colorOut.g, colorOut.b, bri);
 
         //output the color to all the line segment pixels
         //Since the colors are additive, pixels in multiple lines will be brighter than those in single lines
-        //This is more or less eqivalent to doing addWhitecaps()
+        //This is more or less equivalent to doing addWhitecaps()
         for(uint16_t j = 0; j < numSegs; j++){
-            pixelNum = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, j, i);
-            segmentSet.leds[pixelNum] += colorOut;
+            pixelNum = segDrawUtils::getPixelNumFromLineNum(SegSet, numLines, j, i);
+            SegSet.leds[pixelNum] += colorOut;
 
             //Need to check to dim the pixel color manually
             //b/c we're not calling setPixelColor directly
             //We only want to do this once per pixel, so we only do it if we're not setting whitecaps
             if(!addWhiteCaps){
-                segDrawUtils::handleBri(segmentSet, pixelNum);
+                segDrawUtils::handleBri(SegSet, pixelNum);
             }
         }
     }
@@ -162,7 +162,7 @@ void PacificaHueSL::doOneLayer(palettePS *palette, uint16_t cistart, uint16_t wa
 // Add extra 'white' to areas where the four layers of light have lined up brightly
 void PacificaHueSL::addWhitecaps(){
     //I've set the base threshold to 0, seems to work best with the hue based palette 
-    basethreshold = 0;// beatsin8( 9, 35, 45); //modified limits from original values: 55, 65
+    baseThreshold = 0;// beatsin8( 9, 35, 45); //modified limits from original values: 55, 65
     wave = beat8( 7 );
 
     //each line has one color, so we only set the threshold once
@@ -170,22 +170,22 @@ void PacificaHueSL::addWhitecaps(){
     //so their colors from doOneLayer() can differ
     //We also set a cap on the brightness, so pixel's don't become fully white
     for (uint16_t i = 0; i < numLines; i++) {
-        threshold = scale8( sin8( wave ), 20) + basethreshold;
+        threshold = scale8( sin8( wave ), 20) + baseThreshold;
         wave += 7;
         for(uint16_t j = 0; j < numSegs; j++){
-            pixelNum = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, j, i);
-            lightLvl = segmentSet.leds[pixelNum].getAverageLight();
+            pixelNum = segDrawUtils::getPixelNumFromLineNum(SegSet, numLines, j, i);
+            lightLvl = SegSet.leds[pixelNum].getAverageLight();
             if( lightLvl > threshold && lightLvl < thresholdMax) {
                 overage = lightLvl - threshold;
                 overage2 = qadd8( overage, overage );
                 //modified the white cap addition to better match the current hue
                 //CRGB( overage, overage2, qadd8( overage2, overage2) ); 
-                segmentSet.leds[pixelNum] += CHSV(PacificaPalette->pfHue, overage2, qadd8( overage2, overage2));
+                SegSet.leds[pixelNum] += CHSV(PacificaPalette->pfHue, overage2, qadd8( overage2, overage2));
             }
             //Need to check to dim the pixel color manually
             //b/c we're not calling setPixelColor directly
             //we do this here b/c addWhitecaps is the last function in setting the colors
-            segDrawUtils::handleBri(segmentSet, pixelNum);
+            segDrawUtils::handleBri(SegSet, pixelNum);
         }
     }
 }
@@ -196,13 +196,13 @@ void PacificaHueSL::addWhitecaps(){
 //You just end up dimming all the colors
 void PacificaHueSL::deepenColors(){
     for (uint16_t i = 0; i < numSegs; i++) {
-        totSegLen = segmentSet.getTotalSegLength(i);
+        totSegLen = SegSet.getTotalSegLength(i);
         for(uint16_t j = 0; j < totSegLen; j++){
-            pixelNum = segDrawUtils::getSegmentPixel(segmentSet, i, j);
-            segmentSet.leds[pixelNum].blue  = scale8( segmentSet.leds[pixelNum].blue, 145); //173?
-            segmentSet.leds[pixelNum].green = scale8( segmentSet.leds[pixelNum].green, 200); //173?
-            segmentSet.leds[pixelNum].red = scale8( segmentSet.leds[pixelNum].red, 200); //173?
-            segmentSet.leds[pixelNum] |= CHSV((PacificaPalette->pfHue + 6), 255, 8); //CRGB( 2, 5, 7);
+            pixelNum = segDrawUtils::getSegmentPixel(SegSet, i, j);
+            SegSet.leds[pixelNum].blue  = scale8( SegSet.leds[pixelNum].blue, 145); //173?
+            SegSet.leds[pixelNum].green = scale8( SegSet.leds[pixelNum].green, 200); //173?
+            SegSet.leds[pixelNum].red = scale8( SegSet.leds[pixelNum].red, 200); //173?
+            SegSet.leds[pixelNum] |= CHSV((PacificaPalette->pfHue + 6), 255, 8); //CRGB( 2, 5, 7);
         }
     }
 } 

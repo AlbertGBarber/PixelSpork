@@ -1,5 +1,5 @@
-#ifndef PrideWPalSL2PS_h
-#define PrideWPalSL2PS_h
+#ifndef PrideWPalSL2_h
+#define PrideWPalSL2_h
 
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
@@ -8,7 +8,7 @@ An effect based on Pride2015 by Mark Kriegsman (https://gist.github.com/kriegsma
 work done by Jason Coon: https://github.com/jasoncoon/fibonacci-demoreel 
 It has been adapted to work with segments
 This version of the effect draws bands of color that shift out/in along segment lines,
-while brightness waves rotate around the segment set (each line gets one brightess that changes over time)
+while brightness waves rotate around the segment set (each line gets one brightness that changes over time)
 creating ever-changing waves of color that shift and blend.
 Overall it looks similar to Jason Coon's Pride version as applied to his fibonacci:
 https://www.youtube.com/watch?list=PLUYGVM-2vDxJpEjrSeHCH8u1hxFz4qawU&v=b4lfvXZvJuk&feature=emb_title
@@ -31,15 +31,15 @@ Inputs guide:
     This guide will focus on using a palette, since all the variables effect it
     The rainbow mode is more of an "as-is", where I don't expect people to change the variables
     Overall the effect has two components:
-        1) Waves of varing brightness that rotate clockwise around the segment and shift with time
+        1) Waves of varying brightness that rotate clockwise around the segment and shift with time
         2) Waves of palette colors that shift from the center segment to the outer (or visa versa)
-        These components are largly independent and have their own settings, which I will go over below:
+        These components are largely independent and have their own settings, which I will go over below:
     
     Brightness wave settings: 
-        1) brightDepthMin and brightDepthMax: These control the max and min brigthnesses the waves reach
+        1) brightDepthMin and brightDepthMax: These control the max and min brightnesses the waves reach
                                              By default the mas is 250 and the min 120, which leans more towards the 
-                                             dark side. A lower min value will keep the segments at a "flat" brighness for longer
-        2) briThetaInc16Min and briThetaInc16Max: As the effect runs, thr brighness waves divide between smaller, more numerous
+                                             dark side. A lower min value will keep the segments at a "flat" brightness for longer
+        2) briThetaInc16Min and briThetaInc16Max: As the effect runs, thr brightness waves divide between smaller, more numerous
                                                   waves and larger, but fewer waves. The briTheta max and min values indirectly
                                                   set the maximum and minimum number of waves. The defaults for these values are
                                                   20 and 40, which vary the waves from ~2-4. I give you the option to randomize these
@@ -50,7 +50,7 @@ Inputs guide:
                          You can find the ranges for this in init(), also see randomizeBriFreq().
         
     Color change settings: 
-        1) hueChangeMin and hueChangeMax: Sets the minimum and maxium shifts for colors in the palette. This effects
+        1) hueChangeMin and hueChangeMax: Sets the minimum and maximum shifts for colors in the palette. This effects
                                           how quickly colors will change. The defaults for these are 3 and 7. 
                                           The actual shift value will vary between the min and max over time.
                                           Keeping these both low will produce a slow shift.
@@ -60,7 +60,7 @@ Inputs guide:
 
     Note that I only have functions for randomizing briThetaInc16Min/briThetaInc16Max and briThetaFreq. These produce the most 
     dramatic change in the effect, and both have a wide range of inputs where the effect still works. You can vary the other
-    varaibles, but the effects will be more subtle
+    variables, but the effects will be more subtle
 
 
 Example calls:
@@ -70,7 +70,7 @@ Example calls:
     The effect updates at 80ms
 
     PrideWPalSL2(ringSegments, 4, true, true, 80);
-    Will do an effect using 4 random colors (in a randonly generated palette)
+    Will do an effect using 4 random colors (in a randomly generated palette)
     Colors will shift from the center to the outer segment
     The brightness wave values will be randomized, see init() for the ranges
     The effect updates at 80ms
@@ -97,7 +97,7 @@ Constructor inputs:
                     See init() for the ranges
     rate -- The update rate (ms) note that this is synced with all the particles.
 
-    For the constuctor will all the inputs, the variables in order are:
+    For the constructor will all the inputs, the variables in order are:
         GradLength, BrightDepthMin, BrightDepthMax, BriThetaFreq, BriThetaInc16Min,
         BriThetaInc16Max, HueChangeMin, HueChangeMax
     You can read the details of these below in Other Settings
@@ -125,16 +125,16 @@ Other Settings (see Inputs Guide for more info on most vars):
 class PrideWPalSL2 : public EffectBasePS {
     public:
         //Constructor for rainbow mode
-        PrideWPalSL2(SegmentSet &SegmentSet, bool Direct, bool RandomBriInc, uint16_t Rate);
+        PrideWPalSL2(SegmentSet &SegSet, bool Direct, bool RandomBriInc, uint16_t Rate);
 
         //Constructor for palette input
-        PrideWPalSL2(SegmentSet &SegmentSet, palettePS &Palette, bool Direct, bool RandomBriInc, uint16_t Rate);  
+        PrideWPalSL2(SegmentSet &SegSet, palettePS &Palette, bool Direct, bool RandomBriInc, uint16_t Rate);  
 
         //Constructor for making a random palette
-        PrideWPalSL2(SegmentSet &SegmentSet, uint8_t numColors, bool Direct, bool RandomBriInc, uint16_t Rate);
+        PrideWPalSL2(SegmentSet &SegSet, uint8_t numColors, bool Direct, bool RandomBriInc, uint16_t Rate);
 
         //Constructor with inputs for all main variables
-        PrideWPalSL2(SegmentSet &SegmentSet, palettePS &Palette, bool Direct, uint8_t GradLength, 
+        PrideWPalSL2(SegmentSet &SegSet, palettePS &Palette, bool Direct, uint8_t GradLength, 
                      uint8_t BrightDepthMin, uint8_t BrightDepthMax, uint16_t BriThetaFreq, 
                      uint8_t BriThetaInc16Min, uint8_t BriThetaInc16Max, uint8_t HueChangeMin, 
                      uint8_t HueChangeMax, uint16_t Rate);
@@ -142,7 +142,7 @@ class PrideWPalSL2 : public EffectBasePS {
         ~PrideWPalSL2();
 
         SegmentSet 
-            &segmentSet; 
+            &SegSet; 
         
         //commented values are values from Mark's code
         uint8_t
@@ -157,13 +157,13 @@ class PrideWPalSL2 : public EffectBasePS {
             gradLength = 20, //How many gradient steps to shift colors
             briThetaFreq = 350; //203 //how long we spend transitioning through waves
         
-        palettePS
-            paletteTemp,
-            *palette = nullptr;
-        
         bool
             direct,
             prideMode = false;
+        
+        palettePS
+            *palette = nullptr,
+            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
 
         void 
             randomizeBriInc(uint8_t briThetaMinMin, uint8_t briThetaMinMax, uint8_t briThetaMaxMin, uint8_t briThetaMaxMax ),
@@ -179,23 +179,23 @@ class PrideWPalSL2 : public EffectBasePS {
             sat8,
             bri8,
             hue8,
-            brightdepth,
+            brightDepth,
             index,
-            msmultiplier;
+            msMultiplier;
 
         uint16_t
             numSteps,
-            deltams,
-            sPseudotime = 0,
+            deltaTime,
+            sPseudoTime = 0,
             sHue16 = 0,
             hue16,
-            hueinc16,
-            brightnesstheta16,
-            brightnessthetainc16,
+            hueInc16,
+            brightnessTheta16,
+            brightnessThetaInc16,
             b16,
             bri16,
             h16_128,
-            pixelnumber,
+            pixelNum,
             numLines,
             numSegs,
             segOut;

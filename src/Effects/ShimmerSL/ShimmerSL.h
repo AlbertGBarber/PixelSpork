@@ -1,12 +1,12 @@
-#ifndef ShimmerSLPS_h
-#define ShimmerSLPS_h
+#ifndef ShimmerSL_h
+#define ShimmerSL_h
 
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
 
 /*
 A simple effect
-Colors all the pixels in a segmentSet either using a single color, choosing colors from a palette, or at random
+Colors all the pixels in a SegmentSet either using a single color, choosing colors from a palette, or at random
 each pixel is dimmed a random amount each cycle, which produces the effect
 The dim range is controlled by ShimmerSLMin and ShimmerSLMax.
 
@@ -18,11 +18,11 @@ You can change the color by using <your effect name>->paletteTemp.paletteArr[0] 
 or by calling paletteUtils::setColor(<your effect name>->paletteTemp, 0, <your color>)
 
 The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
-passing in a segmentSet with only one segment containing the whole strip.
+passing in a SegmentSet with only one segment containing the whole strip.
 Or you can set lineMode to false, which means each pixel always gets it's own shimmer value.
 
 Example calls: 
-    ShimmerSL(SegmentSet &SegmentSet, 0, 180, 80);
+    ShimmerSL(SegmentSet &SegSet, 0, 180, 80);
     Each pixel will be set to a random color, refreshing at 80ms
     The dim range will be 0 to 180.
     (note this sets randMode = 1)
@@ -59,18 +59,18 @@ class ShimmerSL : public EffectBasePS {
     public:
 
         //Constructor using a random shimmer color
-        ShimmerSL(SegmentSet &SegmentSet, uint8_t ShimmerMin, uint8_t ShimmerMax, uint16_t Rate);
+        ShimmerSL(SegmentSet &SegSet, uint8_t ShimmerMin, uint8_t ShimmerMax, uint16_t Rate);
 
         //Constructor using a set shimmer color
-        ShimmerSL(SegmentSet &SegmentSet, CRGB ShimmerColor, uint8_t ShimmerMin, uint8_t ShimmerMax, uint16_t Rate);  
+        ShimmerSL(SegmentSet &SegSet, CRGB ShimmerColor, uint8_t ShimmerMin, uint8_t ShimmerMax, uint16_t Rate);  
 
-        //Constuctor for colors randomly choosen from palette
-        ShimmerSL(SegmentSet &SegmentSet, palettePS &Palette, uint8_t ShimmerMin, uint8_t ShimmerMax, uint16_t Rate);
+        //Constructor for colors randomly choosen from palette
+        ShimmerSL(SegmentSet &SegSet, palettePS &Palette, uint8_t ShimmerMin, uint8_t ShimmerMax, uint16_t Rate);
 
         ~ShimmerSL();
 
         SegmentSet 
-            &segmentSet; 
+            &SegSet; 
         
         uint8_t
             randMode = 0,
@@ -81,9 +81,9 @@ class ShimmerSL : public EffectBasePS {
         bool    
             lineMode = true;
         
-        palettePS
-            paletteTemp,
-            *palette = nullptr;
+        palettePS   
+            *palette = nullptr,
+            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
 
         void
             setSingleColor(CRGB Color),

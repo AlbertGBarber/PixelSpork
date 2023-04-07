@@ -1,15 +1,15 @@
 #include "BreathPS.h"
 
-//consturctor for using a pattern and palette
-BreathPS::BreathPS(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint8_t BreathFreq, uint16_t Rate):
-    segmentSet(SegmentSet), pattern(&Pattern), palette(&Palette)
+//constructor for using a pattern and palette
+BreathPS::BreathPS(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint8_t BreathFreq, uint16_t Rate):
+    SegSet(SegSet), pattern(&Pattern), palette(&Palette)
     {    
         init(BgColor, BreathFreq, Rate);
 	}
 
 //constructor for using palette as pattern
-BreathPS::BreathPS(SegmentSet &SegmentSet, palettePS &Palette, CRGB BgColor, uint8_t BreathFreq, uint16_t Rate):
-    segmentSet(SegmentSet), palette(&Palette)
+BreathPS::BreathPS(SegmentSet &SegSet, palettePS &Palette, CRGB BgColor, uint8_t BreathFreq, uint16_t Rate):
+    SegSet(SegSet), palette(&Palette)
     {    
         setPaletteAsPattern();
         init(BgColor, BreathFreq, Rate);
@@ -19,10 +19,10 @@ BreathPS::BreathPS(SegmentSet &SegmentSet, palettePS &Palette, CRGB BgColor, uin
 //Note that maxBreath only included as a input for this constructor because doing partial fades 
 //really only makes sense when using a single color
 //With multiple colors in a pattern, the colors will jump if you don't do full fades
-//Passing in maxBreath also forces the compiler to differenciate this constructor from the rainbow one below
+//Passing in maxBreath also forces the compiler to differentiate this constructor from the rainbow one below
 //(CRGB's look like uint8_t's to the compiler)
-BreathPS::BreathPS(SegmentSet &SegmentSet, CRGB color, CRGB BgColor, uint8_t MaxBreath, uint8_t BreathFreq, uint16_t Rate):
-    segmentSet(SegmentSet), maxBreath(MaxBreath)
+BreathPS::BreathPS(SegmentSet &SegSet, CRGB color, CRGB BgColor, uint8_t MaxBreath, uint8_t BreathFreq, uint16_t Rate):
+    SegSet(SegSet), maxBreath(MaxBreath)
     {    
         if(color == CRGB{0,0,0}){
             randMode = 1; //set mode to 3 since we are doing a full random set of colors
@@ -35,8 +35,8 @@ BreathPS::BreathPS(SegmentSet &SegmentSet, CRGB color, CRGB BgColor, uint8_t Max
     }
 
 //constructor for rainbow mode
-BreathPS::BreathPS(SegmentSet &SegmentSet, CRGB BgColor, uint8_t RainbowRate, uint8_t BreathFreq, uint16_t Rate):
-    segmentSet(SegmentSet), rainbowRate(RainbowRate)
+BreathPS::BreathPS(SegmentSet &SegSet, CRGB BgColor, uint8_t RainbowRate, uint8_t BreathFreq, uint16_t Rate):
+    SegSet(SegSet), rainbowRate(RainbowRate)
     {    
         randMode = 4; //set mode to 4 for rainbow mode
        
@@ -54,7 +54,7 @@ BreathPS::~BreathPS(){
 
 //bind core class vars
 void BreathPS::init(CRGB BgColor, uint8_t BreathFreq, uint16_t Rate){
-    //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
+    //bind the rate and SegmentSet pointer vars since they are inherited from BaseEffectPS
     bindSegPtrPS();
     bindClassRatesPS();
     //bind background color pointer
@@ -106,7 +106,7 @@ void BreathPS::getNextColor(){
         case 2: //Colors will be choosen randomly from the palette (not allowing repeats)
             //Note that we use the palIndex to keep track of what palette color we're doing
             //So that we don't choose it twice
-            palIndex = patternUtilsPS::getShuffleIndex( *pattern, palIndex );
+            palIndex = patternUtilsPS::getShuffleVal( *pattern, palIndex );
             breathColor = paletteUtilsPS::getPaletteColor( *palette, palIndex );
             break;
         case 3://Colors will be choosen randomly from the palette (allowing repeats)
@@ -128,7 +128,7 @@ void BreathPS::getNextColor(){
 //Each update we get a breath (brightness) value based on some math (taken from Irdkir's original code)
 //We then apply the brightness to our current breath color and output it to the whole segment set
 //To switch to the next color we need to catch when a full cycle has finished (faded in and out fully)
-//To do this we check the brighness value, if it passes a threshold, we know it has faded, and can set the next color
+//To do this we check the brightness value, if it passes a threshold, we know it has faded, and can set the next color
 void BreathPS::update(){
     currentTime = millis();
 
@@ -140,11 +140,11 @@ void BreathPS::update(){
         breath = map8(breath, minBreath, maxBreath); //map from 0, 255 to min and maxBreath;
 
         colorOut = colorUtilsPS::getCrossFadeColor(breathColor, *bgColor, breath);
-        segDrawUtils::fillSegSetColor(segmentSet, colorOut, 0);
+        segDrawUtils::fillSegSetColor(SegSet, colorOut, 0);
 
         //If we've reached the end of the current fade we need to choose the next color to fade to
         //To do this we check the fade brightness. Since we are sampling the brightness from a wave
-        //output, we don't know the exact top value of the wave (it will skip values depending on freqency)
+        //output, we don't know the exact top value of the wave (it will skip values depending on frequency)
         //So we check that it's past a certain point, pick a color and then prevent any new colors from being choosen
         //(we want the point to be close to the peak, so that we choose a new color when the fade is almost finished)
         //From experimentation a difference of 5 from the peak (maxBreath) seems to work well. The highest possible peak is 255.

@@ -1,5 +1,5 @@
-#ifndef RollingWavesFastSLPS_h
-#define RollingWavesFastSLPS_h
+#ifndef RollingWavesFastSL_h
+#define RollingWavesFastSL_h
 
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
@@ -15,18 +15,18 @@ The default value of dimPow is 120, this gives a nice, water-like shimmer to the
 A spacing can be added between the waves, which can be set to a background color
 
 The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
-passing in a segmentSet with only one segment containing the whole strip.
+passing in a SegmentSet with only one segment containing the whole strip.
 
-Note that this effect should not be run alongside other effects on the same segmentSet
+Note that this effect should not be run alongside other effects on the same SegmentSet
 since it needs to use the existing colors of the leds
 
 Note that for full waves, odd numbered gradLengths work the best
 
-This effect is the same as RollingWavesPS, but should need fewer caculations per cycle
-because it only works out the colors once. It may take up more programing space.
+This effect is the same as RollingWavesPS, but should need fewer calculations per cycle
+because it only works out the colors once. It may take up more programming space.
 however it does have a few extra restrictions
 1: Changing the palette on the fly will have a delayed effect on the colors
-   The exisiting colors will shift off the strip before new ones shift on
+   The existing colors will shift off the strip before new ones shift on
    This prevents this effect from playing well with paletteBlend functions
 2: The same restrictions as (1) apply to changing the pattern, the gradLength, the spacing, or trailModes
 3: Changing the direction of the segments or segment set mid-effect may break it temporarily
@@ -52,7 +52,7 @@ Example calls:
     RollingWavesFastSL(mainSegments, palette, 0, 9, 0, 2, 80);
     Will do a set of waves matching the input palette with an blank background
     Each wave will be 9 pixels long, the wave will consist of the trailing portion only
-    There will be two spaces inbetween each wave,
+    There will be two spaces in between each wave,
     The effect will update at 80ms
 
     RollingWavesFastSL(mainSegments, 1, CRGB::Red, 12, 1, 3, 80);
@@ -66,7 +66,7 @@ Constructor Inputs:
                                            and the length of the array 
                                            (see patternPS.h)   
     palette(optional, see constructors) -- The repository of colors used in the pattern, or can be used as the pattern itself
-    numColors (optional, see contructors) -- The number of randomly choosen colors for the gradients
+    numColors (optional, see constructors) -- The number of randomly choosen colors for the gradients
     BgColor -- The color of the spacing pixels. It is a pointer, so it can be tied to an external variable
     gradLength -- How many steps for each gradient
     trailMode -- They type of waves used (see trailMode section below)
@@ -93,7 +93,7 @@ Functions:
     setPattern(*newPattern) -- Sets the passed in pattern to be the effect pattern
                                Will force setTotalEffectLength() call, so may cause effect to jump
     setPaletteAsPattern() -- Sets the effect pattern to match the current palette (calls setTotalEffectLength())
-    setGradLength(newGradLength) -- Changes the gradlength to the specified value, adjusting the length of the waves (calls setTotalEffectLength())
+    setGradLength(newGradLength) -- Changes the gradLength to the specified value, adjusting the length of the waves (calls setTotalEffectLength())
     setSpacing(newSpacing) -- Changes the spacing to the specified value, (calls setTotalEffectLength())
     setTrailMode(newTrailMode) -- Changes the trail mode used for the waves
     update() -- updates the effect
@@ -122,15 +122,18 @@ Notes:
 class RollingWavesFastSL : public EffectBasePS {
     public:
         //Constructor with pattern
-        RollingWavesFastSL(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate); 
+        RollingWavesFastSL(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate); 
 
-        //Constuctor with palette as pattern
-        RollingWavesFastSL(SegmentSet &SegmentSet, palettePS &Palette, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate);
+        //Constructor with palette as pattern
+        RollingWavesFastSL(SegmentSet &SegSet, palettePS &Palette, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate);
 
         //Constructor with random colors
-        RollingWavesFastSL(SegmentSet &SegmentSet, uint8_t NumColors, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate);
+        RollingWavesFastSL(SegmentSet &SegSet, uint8_t NumColors, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate);
 
         ~RollingWavesFastSL();
+
+        SegmentSet 
+            &SegSet; 
 
         uint8_t
             randMode = 0,
@@ -152,15 +155,12 @@ class RollingWavesFastSL : public EffectBasePS {
             *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
 
         patternPS
-            patternTemp,
-            *pattern = nullptr;
+            *pattern = nullptr,
+            patternTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
 
         palettePS
-            paletteTemp,
-            *palette = nullptr;
-
-        SegmentSet 
-            &segmentSet; 
+            *palette = nullptr,
+            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
 
         void 
             setGradLength(uint8_t newGradLength),

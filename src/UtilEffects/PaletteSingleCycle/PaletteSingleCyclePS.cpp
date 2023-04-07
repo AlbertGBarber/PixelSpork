@@ -109,7 +109,7 @@ void PaletteSingleCyclePS::switchPalette(){
     switch (blendMode){
         case 0: default: {
             //copy the next palette into the current palette
-            //then copy the input palette into the next palette shifited forward/backwards by 1
+            //then copy the input palette into the next palette shifted forward/backwards by 1
             for(uint8_t i = 0; i < paletteLength; i++ ){
                 currentIndex = i + (stepDirect * (cycleNum + 1) + paletteLength); //we add paletteLength to prevent this from going negative
                 paletteColorArr1[i] = paletteUtilsPS::getPaletteColor(nextPalette, i);

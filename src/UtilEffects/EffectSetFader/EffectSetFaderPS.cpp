@@ -65,7 +65,7 @@ void EffectSetFaderPS::resetBrightness(){
 
 //Updates the fader
 //Basically we're directing the EffectFader instance to either fade the effects in the effect set in or out based on the time
-//We don't caculate anything to actually do the fading here, we just manage the EffectFader
+//We don't calculate anything to actually do the fading here, we just manage the EffectFader
 //The fader directly manipulates the brightness setting of each effect's segment set
 //For more info on how the fader works, see EffectFaderPS.h
 //The EffectSetFader does on fade in/out cycle before being "done", which fades the effect set in and out.
@@ -75,9 +75,9 @@ void EffectSetFaderPS::resetBrightness(){
 void EffectSetFaderPS::update(void){
     currentTime = millis(); 
     
-    //Check if it's time to update, ultimatly the update rate isn't super important, as long as it's fast enough to not look choppy
+    //Check if it's time to update, ultimately the update rate isn't super important, as long as it's fast enough to not look choppy
     //We always update on the first cycle, so that we start the fading before any effects are updated in the effect set.
-    //(otherwise you'd get a flash of the default bightness before the fading kicks in)
+    //(otherwise you'd get a flash of the default brightness before the fading kicks in)
     if(firstUpdate || ( currentTime - prevTime ) >= *rate) {
         prevTime = currentTime;
         firstUpdate = false;

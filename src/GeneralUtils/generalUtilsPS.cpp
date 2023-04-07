@@ -27,7 +27,7 @@ patternPS generalUtilsPS::setPaletteAsPattern(palettePS &palette, uint16_t color
     uint8_t *pattern_arr = (uint8_t*) malloc( patternLength * sizeof(uint8_t) );
     for(uint16_t i = 0; i < patternLength; i++){
         //We want i to increment every colorLength steps, so we divide by colorLength 
-        //(taking advantage that interger division alaways rounds down)
+        //(taking advantage that integer division always rounds down)
         pattern_arr[i] = i / colorLength;
     }
     newPattern = {pattern_arr, patternLength};
@@ -84,13 +84,13 @@ patternPS generalUtilsPS::setPatternAsPattern(patternPS &inputPattern, uint8_t c
 patternPS generalUtilsPS::setPaletteAsPattern(palettePS &palette, uint8_t colorLength, uint8_t spacing){
     patternPS newPattern;
     uint8_t repeatLength = (colorLength + spacing);
-    uint8_t palettelength = palette.length;
-    uint16_t totalPatternLength = palettelength * repeatLength; //the total length taken up by a single color and spacing
+    uint8_t paletteLength = palette.length;
+    uint16_t totalPatternLength = paletteLength * repeatLength; //the total length taken up by a single color and spacing
     //create new storage for the pattern array
     uint8_t *pattern_arr = (uint8_t*) malloc(totalPatternLength*sizeof(uint8_t));
 
     //for each color in the palette, we fill in the color and spacing for the output pattern
-    for(uint16_t i = 0; i < palettelength; i++){
+    for(uint16_t i = 0; i < paletteLength; i++){
         //for each color in the palette we run over the length of the color and spacing
         //for the indexes up to color length, we set them as the current palette index
         //after that we set them as spacing (255)

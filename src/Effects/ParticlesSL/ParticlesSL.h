@@ -1,7 +1,7 @@
-#ifndef ParticlesSLPS_h
-#define ParticlesSLPS_h
+#ifndef ParticlesSL_h
+#define ParticlesSL_h
 
-//KNOWN BUG (seems to be fixed in current fastled code) 
+//KNOWN BUG (seems to be fixed in current FastLED code) 
 //          -- The first led in the segment set will be set to a static color
 //             This bug is very inconsistent, and seems to depend on a memory issue somewhere
 //             It seems to mainly affect effects using particles, but exhaustive testing has not been done
@@ -31,7 +31,7 @@ This effect is fully compatible with color modes, and the bgColor is a pointer, 
 to an external color variable
 
 The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
-passing in a segmentSet with only one segment containing the whole strip. For 2D segments
+passing in a SegmentSet with only one segment containing the whole strip. For 2D segments
 particles move along segment lines, with the particle being replicated across all the segments
 ie like a wave.
 
@@ -39,8 +39,8 @@ Note that unlike other effects the update rate is not externally controllable, a
 update rates of the particles
 
 Due to the way the effect is programmed, particles that are placed later in the particleSet will run "in front"
-of those eariler in the set. This means that when two particles pass each other, the later one will be drawn 
-over the eariler one.
+of those earlier in the set. This means that when two particles pass each other, the later one will be drawn 
+over the earlier one.
 You can adjust this behavior by turning on "blend", which will add particle colors together as they pass by each other
 However this does have two draw backs:
 1: Due to the way particle trails are drawn, this forces the background to be re-drawn each update cycle,
@@ -48,7 +48,7 @@ However this does have two draw backs:
 2: For colored backgrounds, the particles colors are added to the background colors.
   This will in most cases significantly change the particle colors 
   For example, blue particles running on a red background will appear purple (blue +  red = purple)
-  This can be used to create some nice effects, (like oceanish of lavaish looking things),
+  This can be used to create some nice effects, (like ocean-ish of lava-ish looking things),
   But overall I do not recommend using blend for colored backgrounds
 3: Using blend on segment sets with lines of un-equal length may look weird, because
   pixels may be added to many times where multiple lines converge/overlap
@@ -76,19 +76,19 @@ including choosing properties at random. I break this down in the constructor in
 The created particle set will be bound to the particleSet pointer in the effect, so you can manipulate it from outside
 
 Please note the following bounce behavior of particles:
-For a particle to bounce, it must reverse it's direction once it hits either end of the segmentSet
+For a particle to bounce, it must reverse it's direction once it hits either end of the SegmentSet
 However, how/when it bounces is a matter of opinion. I have opted for the following:
 The particle only bounces when it's main body (not trail) reaches an end point.
 Both the front and rear trails wrap back on themselves as the particle bounces
 Ie the head of the trail moves back down the strip, opposite the direction of the particle
 The rear trail is always drawn last.
-In paractice this means that particles with two trails mimics the classic "cyclon" scanner look, where the front of the 
+In practice this means that particles with two trails mimics the classic "cylon" scanner look, where the front of the 
 trail moves disappears off the strip (it is actually wrapping back, but is over written by the rear trail, which is drawn after)
 While for particles with only a rear trail, it naturally fades as like it would for a physical streamer/flame/etc
 Finally, for particles with only a front trail the trail also wraps back, but under the particle,
 this does look a little weird, but there's not a good real world approximation to this kind of particle, so w/e.
 For particles where the body size is larger than one, when bounce happens, the entire body reverses direction at once
-This is not visually noticable, and makes coding easier. But it does mean there's no "center" of a particle
+This is not visually noticeable, and makes coding easier. But it does mean there's no "center" of a particle
 
 Example calls: 
     using the particleSet defined above:
@@ -127,7 +127,7 @@ Constructor inputs for creating a particle set:
 Trail Modes:
     Taken from particlePS.h:
     Trails blend cleanly into the background color over the trail length
-    (like waving a flame around, or a metor trail)
+    (like waving a flame around, or a meteor trail)
     Trail options:
     0: no trails
     1: one trail facing away from the direction of motion (like a comet)
@@ -144,7 +144,7 @@ Trail Modes:
 
 DimPow:
     The rate of dimming for the trails can be adjusted using dimPow. This allows you to produce a brighter head
-    making the comet effect more noticable
+    making the comet effect more noticeable
     The range of dimPow is -127 to 127, it's defaulted to 80
     Positive values quicken the dimming, while negative ones slow it down
     setting the negative value below 80, seems to bug it out tho
@@ -171,17 +171,17 @@ Notes:
 class ParticlesSL : public EffectBasePS {
     public:
         //Constructor for having the effect generate a set of particles
-        ParticlesSL(SegmentSet &SegmentSet, palettePS &Palette, CRGB BgColor, uint8_t numParticles, uint8_t direction, 
+        ParticlesSL(SegmentSet &SegSet, palettePS &Palette, CRGB BgColor, uint8_t numParticles, uint8_t direction, 
                     uint16_t baseSpeed, uint16_t speedRange, uint16_t size, uint16_t sizeRange, uint8_t trailType, 
                     uint8_t trailSize, uint8_t trailRange, uint8_t bounce, uint8_t colorIndex, bool randColor);  
 
         //Constructor for using a passed in set of particles
-        ParticlesSL(SegmentSet &SegmentSet, particleSetPS &ParticleSet, palettePS &Palette, CRGB BgColor);
+        ParticlesSL(SegmentSet &SegSet, particleSetPS &ParticleSet, palettePS &Palette, CRGB BgColor);
 
         ~ParticlesSL();
 
         SegmentSet 
-            &segmentSet; 
+            &SegSet; 
 
         int8_t
             dimPow = 80; //80 range -127 -> 127 -80 good for colored bg's
@@ -203,7 +203,7 @@ class ParticlesSL : public EffectBasePS {
 
         particleSetPS 
             *particleSet = nullptr, //the particle set used in the effect
-            particleSetTemp; //storage for self created particle sets
+            particleSetTemp = {nullptr, 0}; //storage for self created particle sets, init to empty for safety.
 
         void 
             reset(),
@@ -211,6 +211,10 @@ class ParticlesSL : public EffectBasePS {
             update(void);
     
     private:
+        unsigned long
+            currentTime,
+            prevTime = 0;
+            
         //most of these vars are storage for particle properties
         int8_t
             trailDirectionAdj,
@@ -225,7 +229,7 @@ class ParticlesSL : public EffectBasePS {
 
         uint16_t 
             speed,
-            updateRate = 0, //initilized to 0 to ensure an initial update
+            updateRate = 0, //initialized to 0 to ensure an initial update
             position,
             size,
             maxPosition,
@@ -236,10 +240,6 @@ class ParticlesSL : public EffectBasePS {
             numSegs,
             pixelNum,
             getTrailLedLoc(bool trailDirect, uint8_t trailPixelNum, uint16_t maxPosition);
-
-        unsigned long
-            currentTime,
-            prevTime = 0;
         
         bool
             direction,

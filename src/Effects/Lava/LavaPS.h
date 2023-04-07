@@ -74,32 +74,32 @@ Other Settings:
     *hueRate (default bound to hueRateOrig) -- The hue shifting time (ms). It's a pointer so you can bind it externally (only relevant for rainbow mode)
 
 Reference vars:
-    hueoffset -- The amount of offset during rainbow mode (resets at 255) (see rainbow mode notes above)
+    hueOffset -- The amount of offset during rainbow mode (resets at 255) (see rainbow mode notes above)
 
 */
 class LavaPS : public EffectBasePS {
     public:
         //Constructor for effect using default lava palette, blendSteps and blendScale
-        LavaPS(SegmentSet &SegmentSet, uint16_t Rate);  
+        LavaPS(SegmentSet &SegSet, uint16_t Rate);  
 
         //Constructor for effect with default lava palette, but custom scale and steps
-        LavaPS(SegmentSet &SegmentSet, uint16_t BlendSteps, uint16_t BlendScale, uint16_t Rate);  
+        LavaPS(SegmentSet &SegSet, uint16_t BlendSteps, uint16_t BlendScale, uint16_t Rate);  
 
         //Constructor for effect using colors from palette
-        LavaPS(SegmentSet &SegmentSet, palettePS &Palette, uint16_t BlendSteps, uint16_t BlendScale, uint16_t Rate);
+        LavaPS(SegmentSet &SegSet, palettePS &Palette, uint16_t BlendSteps, uint16_t BlendScale, uint16_t Rate);
         
         //constructor for a randomly created palette
-        LavaPS(SegmentSet &SegmentSet, uint8_t numColors, uint16_t BlendSteps, uint16_t BlendScale, uint16_t Rate);
+        LavaPS(SegmentSet &SegSet, uint8_t numColors, uint16_t BlendSteps, uint16_t BlendScale, uint16_t Rate);
     
         ~LavaPS();
 
         SegmentSet 
-            &segmentSet; 
+            &SegSet; 
         
         uint8_t 
             rainSat = 255, //saturation value for rainbow mode
             rainVal = 255, //"value" value for rainbow mode
-            hueoffset = 0; //offset for the hue in rainbow mode (helps keeps the colors)
+            hueOffset = 0; //offset for the hue in rainbow mode (helps keeps the colors)
         
         uint16_t
             blendSteps = 30,
@@ -116,9 +116,9 @@ class LavaPS : public EffectBasePS {
             lavalPalette_arr[5] = { CRGB::DarkRed, CRGB::Maroon, CRGB::Red, CRGB::Orange, CRGB(245, 202, 10) };
         
         palettePS
-            paletteTemp,
-            *palette = nullptr;
-
+            *palette = nullptr,
+            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
+            
         void 
             update(void);
     

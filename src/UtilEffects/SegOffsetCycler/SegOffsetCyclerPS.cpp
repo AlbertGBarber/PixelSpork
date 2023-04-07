@@ -1,24 +1,24 @@
 #include "SegOffsetCyclerPS.h"
 
 //constructor for multiple segmentSets
-SegOffsetCyclerPS::SegOffsetCyclerPS(SegmentSet** SegmentSetArr, uint8_t NumSegSets, uint8_t ColorMode, bool direction, uint16_t Rate):
+SegOffsetCyclerPS::SegOffsetCyclerPS(SegmentSet **SegmentSetArr, uint8_t NumSegSets, uint8_t ColorMode, bool direction, uint16_t Rate):
     segGroup(SegmentSetArr), numSegSets(NumSegSets)
     {    
         init(direction, ColorMode, Rate);
 	}
 
-//constructor for a single segmentSet
-SegOffsetCyclerPS::SegOffsetCyclerPS(SegmentSet &segmentSet, uint8_t ColorMode, bool direction, uint16_t Rate)
+//constructor for a single SegmentSet
+SegOffsetCyclerPS::SegOffsetCyclerPS(SegmentSet &SegSet, uint8_t ColorMode, bool direction, uint16_t Rate)
     {
         init(direction, ColorMode, Rate);
-        setGroup(segmentSet);
+        setGroup(SegSet);
     }
 
 SegOffsetCyclerPS::~SegOffsetCyclerPS(){
     free(segGroupTemp);
 }
 
-//initilization
+//initialization
 void SegOffsetCyclerPS::init(bool direction, uint8_t ColorMode, uint16_t rate){
     setRate(rate);
     colorModeOrig = ColorMode;
@@ -26,34 +26,34 @@ void SegOffsetCyclerPS::init(bool direction, uint8_t ColorMode, uint16_t rate){
     setCycle(direction, true);
 }
 
-//changes the segmentset group
-void SegOffsetCyclerPS::setGroup(SegmentSet** SegmentSetArr, uint8_t NumSegsSets){
+//changes the segmentSet group
+void SegOffsetCyclerPS::setGroup(SegmentSet **SegmentSetArr, uint8_t NumSegsSets){
     segGroup = SegmentSetArr;
     numSegSets = NumSegsSets;
 }
 
-//sets up a group for a single segmentSet
+//sets up a group for a single SegmentSet
 //creates a SegmentSet array addressed to the groupTemp pointer
-//and fills it with the address of the passed in segmentSet
-//then assignes the array to group
-//lets you delete the groupTemp when a new segmentSet is assigned
-//without worring about deleting parts of any external arrays that may have been assigned to the group before
-void SegOffsetCyclerPS::setGroup(SegmentSet &segmentSet){
+//and fills it with the address of the passed in SegmentSet
+//then assigns the array to group
+//lets you delete the groupTemp when a new SegmentSet is assigned
+//without worrying about deleting parts of any external arrays that may have been assigned to the group before
+void SegOffsetCyclerPS::setGroup(SegmentSet &SegSet){
     free(segGroupTemp);
     segGroupTemp = (SegmentSet**) malloc(1 * sizeof(SegmentSet*));
-    segGroupTemp[0] = &segmentSet;
+    segGroupTemp[0] = &SegSet;
     segGroup = segGroupTemp;
     numSegSets = 1;
 }
 
-//ties all the segmentSet's offsetRates to the Util rate
+//ties all the SegmentSet's offsetRates to the Util rate
 void SegOffsetCyclerPS::bindSegRates(){
     for(uint8_t i = 0; i < numSegSets; i++){ 
         segGroup[i]->offsetRate = rate;
     }
 } 
 
-//chnages the update rate
+//changes the update rate
 //re-binds rateOrig to the actual update rate
 void SegOffsetCyclerPS::setRate(uint16_t newRate){
     rateOrig = newRate;
@@ -68,7 +68,7 @@ void SegOffsetCyclerPS::setCycle(bool newDirect, bool newRunOffset) {
 }
 
 //sets the direction of the offset cycle
-//newDirct = true will set the gradient to move positivly along the strip, false will set to reverse
+//newDirect = true will set the gradient to move positively along the strip, false will set to reverse
 void SegOffsetCyclerPS::setDirect(bool newDirect){
     direct = newDirect;
     for(uint8_t i = 0; i < numSegSets; i++){ 
@@ -86,7 +86,7 @@ void SegOffsetCyclerPS::setOffsetActive(bool newRunOffset){
 
 //updates a cycle, if it's turned on, and enough time has passed
 //The offsetMax values should match those in segDrawUtils::getPixelColor()
-//basically 255 for all rainbow modes, then the segmentSet vars for all others
+//basically 255 for all rainbow modes, then the SegmentSet vars for all others
 void SegOffsetCyclerPS::update(){
 
     if( ( currentTime - prevTime ) >= *rate ) {

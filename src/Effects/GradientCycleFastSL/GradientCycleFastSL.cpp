@@ -1,15 +1,15 @@
 #include "GradientCycleFastSL.h"
 
 //constructor with pattern
-GradientCycleFastSL::GradientCycleFastSL(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, uint8_t GradLength, uint16_t Rate):
-    segmentSet(SegmentSet), pattern(&Pattern), palette(&Palette), gradLength(GradLength)
+GradientCycleFastSL::GradientCycleFastSL(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t GradLength, uint16_t Rate):
+    SegSet(SegSet), pattern(&Pattern), palette(&Palette), gradLength(GradLength)
     {    
         init(Rate);
 	}
 
-//constuctor with palette as pattern
-GradientCycleFastSL::GradientCycleFastSL(SegmentSet &SegmentSet, palettePS &Palette, uint8_t GradLength, uint16_t Rate):
-    segmentSet(SegmentSet), palette(&Palette), gradLength(GradLength)
+//constructor with palette as pattern
+GradientCycleFastSL::GradientCycleFastSL(SegmentSet &SegSet, palettePS &Palette, uint8_t GradLength, uint16_t Rate):
+    SegSet(SegSet), palette(&Palette), gradLength(GradLength)
     {    
         setPaletteAsPattern();
         init(Rate);
@@ -17,8 +17,8 @@ GradientCycleFastSL::GradientCycleFastSL(SegmentSet &SegmentSet, palettePS &Pale
 
 //constructor with palette of randomly choosen colors
 //(does not set randColors or randColor mode)
-GradientCycleFastSL::GradientCycleFastSL(SegmentSet &SegmentSet, uint8_t NumColors, uint8_t GradLength, uint16_t Rate):
-    segmentSet(SegmentSet), gradLength(GradLength)
+GradientCycleFastSL::GradientCycleFastSL(SegmentSet &SegSet, uint8_t NumColors, uint8_t GradLength, uint16_t Rate):
+    SegSet(SegSet), gradLength(GradLength)
     {    
         paletteTemp = paletteUtilsPS::makeRandomPalette(NumColors);
         palette = &paletteTemp;
@@ -33,7 +33,7 @@ GradientCycleFastSL::~GradientCycleFastSL(){
 
 //inits core variables for the effect
 void GradientCycleFastSL::init(uint16_t Rate){
-    //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
+    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
     bindSegPtrPS();
     bindClassRatesPS();
 }
@@ -60,13 +60,13 @@ void GradientCycleFastSL::initalFill(){
     nextColor = paletteUtilsPS::getPaletteColor(*palette, nextPattern);
 
     //fetch some core vars
-    numLines = segmentSet.numLines;
+    numLines = SegSet.numLines;
     numLinesLim = numLines - 1;
-    longestSeg = segmentSet.segNumMaxNumLines;
+    longestSeg = SegSet.segNumMaxNumLines;
 
     //We need to draw the initial gradients on the strip to pre-fill it for the main update cycle.
     //To do this we run across all the leds.
-    //Every gradsteps number of leds, we rotate the gradient colors, transitioning from the current color to the next
+    //Every gradSteps number of leds, we rotate the gradient colors, transitioning from the current color to the next
     //We run across them backwards so that the end pattern runs positively along the strip
     //The loop direction must match that in the update() function, so that the inital output 
     //runs in the same direction as when the effect is updated
@@ -78,10 +78,10 @@ void GradientCycleFastSL::initalFill(){
             pickNextColor();
         }
 
-        // get the crossfade between the current and next color, where the transition is gradsteps long
+        // get the cross-fade between the current and next color, where the transition is gradSteps long
         colorOut = colorUtilsPS::getCrossFadeColor(currentColor, nextColor, cycleNum, gradLength);
         //Draw the colored line
-        segDrawUtils::drawSegLine(segmentSet, i, colorOut, 0);
+        segDrawUtils::drawSegLine(SegSet, i, colorOut, 0);
 
         cycleNum = addmod8(cycleNum, 1, gradLength);//track what step we're on in the gradient
     }
@@ -90,11 +90,11 @@ void GradientCycleFastSL::initalFill(){
 
 //The update cycle
 //Every gradLength steps we switch to the next color,
-//To avoid re-caculating the same blend repeatedly, we only work out the blend for the first line in the segment set
+//To avoid re-calculating the same blend repeatedly, we only work out the blend for the first line in the segment set
 //since this is the only new color entering the strip
 //For all the other lines we simply copy the color of the line in front of it
 //To copy the color we always copy from the pixel on the longest segment,
-//Since all the pixels on the longest segment are on seperate lines
+//Since all the pixels on the longest segment are on separate lines
 //(unlike shorter segments, where a single pixel can be in multiple lines, so it's color may not be what we expect)
 //This way we shift the gradients along the strip
 //The gradient we're on is tracked by cycleNum and patternCount, which vary from 0 to gradLent,
@@ -107,9 +107,9 @@ void GradientCycleFastSL::update(){
         prevTime = currentTime;
 
         //fetch some core vars
-        numLines = segmentSet.numLines;
+        numLines = SegSet.numLines;
         numLinesLim = numLines - 1;
-        longestSeg = segmentSet.segNumMaxNumLines;
+        longestSeg = SegSet.segNumMaxNumLines;
 
         //We need to pre-fill the strip with a full cycle the first time the update is called
         //so that the colors are copied down the strip correctly on subsequent cycles
@@ -129,17 +129,17 @@ void GradientCycleFastSL::update(){
                     pickNextColor();
                 }
                 colorOut = colorUtilsPS::getCrossFadeColor(currentColor, nextColor, cycleNum, gradLength);
-                segDrawUtils::drawSegLine(segmentSet, i, colorOut, 0);
+                segDrawUtils::drawSegLine(SegSet, i, colorOut, 0);
             } else {
                 //Copy the pixel color from the previous line
                 //To copy the color we always copy from the pixel on the longest segment,
-                //Since all the pixels on the longest segment are on seperate lines
+                //Since all the pixels on the longest segment are on separate lines
                 //(unlike shorter segments, where a single pixel can be in multiple lines, so it's color may not be what we expect)
-                pixelNum = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, longestSeg, i - 1);
-                colorOut = segmentSet.leds[pixelNum];
+                pixelNum = segDrawUtils::getPixelNumFromLineNum(SegSet, numLines, longestSeg, i - 1);
+                colorOut = SegSet.leds[pixelNum];
                 
                 //write out the copied color to the whole line
-                segDrawUtils::drawSegLine(segmentSet, i, colorOut, 0);
+                segDrawUtils::drawSegLine(SegSet, i, colorOut, 0);
             }
         }
 
@@ -170,7 +170,7 @@ void GradientCycleFastSL::pickNextColor(){
         nextColor = colorUtilsPS::randColor();
     } else {
         //choose a color randomly from the pattern (making sure it's not the same as the current color)
-        nextPattern = patternUtilsPS::getShuffleIndex(*pattern, currentPattern);
+        nextPattern = patternUtilsPS::getShuffleVal(*pattern, currentPattern);
         nextColor = paletteUtilsPS::getPaletteColor( *palette, nextPattern );  
     }
 }

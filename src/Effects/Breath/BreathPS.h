@@ -93,7 +93,7 @@ Functions:
 
 Other Settings:
     randMode (default 0, unless set by a constructor) -- see mode notes above
-    minBreath (default 60, min 0) -- The minimum breath fade amount. Should be less than maxBreath (see construtors above)
+    minBreath (default 60, min 0) -- The minimum breath fade amount. Should be less than maxBreath (see constructors above)
                                      60 was taken from the original code by ldirko.
     breathFreqOrig -- The default target of the effect's breathFreq pointer variable.
                       Will be set to the passed in breathFreq from the constructor
@@ -109,22 +109,22 @@ Reference vars:
 class BreathPS : public EffectBasePS {
     public:
 
-        //Consturctor for using a pattern and palette
-        BreathPS(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint8_t BreathFreq, uint16_t Rate);
+        //Constructor for using a pattern and palette
+        BreathPS(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint8_t BreathFreq, uint16_t Rate);
 
         //Constructor for using palette as pattern
-        BreathPS(SegmentSet &SegmentSet, palettePS &Palette, CRGB BgColor, uint8_t BreathFreq, uint16_t Rate);
+        BreathPS(SegmentSet &SegSet, palettePS &Palette, CRGB BgColor, uint8_t BreathFreq, uint16_t Rate);
 
         //Constructor for a single color breath (pass in 0 as the color to trigger randMode 2, fully random)
-        BreathPS(SegmentSet &SegmentSet, CRGB color, CRGB BgColor, uint8_t MaxBreath, uint8_t BreathFreq, uint16_t Rate); 
+        BreathPS(SegmentSet &SegSet, CRGB color, CRGB BgColor, uint8_t MaxBreath, uint8_t BreathFreq, uint16_t Rate); 
 
         //Constructor for rainbow mode
-        BreathPS(SegmentSet &SegmentSet, CRGB BgColor, uint8_t RainbowRate, uint8_t BreathFreq, uint16_t Rate);
+        BreathPS(SegmentSet &SegSet, CRGB BgColor, uint8_t RainbowRate, uint8_t BreathFreq, uint16_t Rate);
 
         ~BreathPS();
 
         SegmentSet 
-            &segmentSet; 
+            &SegSet; 
         
         uint8_t
             breathFreqOrig,
@@ -146,11 +146,11 @@ class BreathPS : public EffectBasePS {
 
         palettePS
             *palette = nullptr,
-            paletteTemp;
+            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
         
         patternPS
             *pattern = nullptr,
-            patternTemp;
+            patternTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety;
         
         void 
             setPaletteAsPattern(),

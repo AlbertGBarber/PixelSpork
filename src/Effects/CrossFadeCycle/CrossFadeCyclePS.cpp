@@ -1,23 +1,23 @@
 #include "CrossFadeCyclePS.h"
 
-//consturctor for using a pattern and palette
-CrossFadeCyclePS::CrossFadeCyclePS(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, uint8_t Steps, uint16_t Rate):
-    segmentSet(SegmentSet), pattern(&Pattern), palette(&Palette), steps(Steps)
+//constructor for using a pattern and palette
+CrossFadeCyclePS::CrossFadeCyclePS(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t Steps, uint16_t Rate):
+    SegSet(SegSet), pattern(&Pattern), palette(&Palette), steps(Steps)
     {    
         init(Rate);
 	}
 
 //constructor for using palette as pattern
-CrossFadeCyclePS::CrossFadeCyclePS(SegmentSet &SegmentSet, palettePS &Palette, uint8_t Steps, uint16_t Rate):
-    segmentSet(SegmentSet), palette(&Palette), steps(Steps)
+CrossFadeCyclePS::CrossFadeCyclePS(SegmentSet &SegSet, palettePS &Palette, uint8_t Steps, uint16_t Rate):
+    SegSet(SegSet), palette(&Palette), steps(Steps)
     {    
         setPaletteAsPattern();
         init(Rate);
 	}
 
 //constructor for fully random colors (mode 1)
-CrossFadeCyclePS::CrossFadeCyclePS(SegmentSet &SegmentSet, uint8_t Steps, uint16_t Rate):
-    segmentSet(SegmentSet), steps(Steps)
+CrossFadeCyclePS::CrossFadeCyclePS(SegmentSet &SegSet, uint8_t Steps, uint16_t Rate):
+    SegSet(SegSet), steps(Steps)
     {    
         randMode = 1; //set mode to 1 since we are doing a full random set of colors
         //setup a minimal backup palette of random colors of length 2
@@ -37,7 +37,7 @@ CrossFadeCyclePS::~CrossFadeCyclePS(){
 
 //bind core class vars
 void CrossFadeCyclePS::init(uint16_t Rate){
-    //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
+    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
     bindSegPtrPS();
     bindClassRatesPS();
     reset();
@@ -55,7 +55,7 @@ void CrossFadeCyclePS::reset(){
     //once that is drawn set done to true, as there is nothing else to draw
     if(pattern->length <= 1){
         colorOut = paletteUtilsPS::getPaletteColor( *palette, pattern->patternArr[0]);
-        segDrawUtils::fillSegSetColor(segmentSet, colorOut, 0);
+        segDrawUtils::fillSegSetColor(SegSet, colorOut, 0);
     }
 
     //Get the inital color and the first end color
@@ -89,7 +89,7 @@ void CrossFadeCyclePS::getNextColor(){
             nextColor = colorUtilsPS::randColor();
             break;
         case 2: //Colors will be choosen randomly from the palette (not allowing repeats)
-            palIndex = patternUtilsPS::getShuffleIndex( *pattern, palIndex );
+            palIndex = patternUtilsPS::getShuffleVal( *pattern, palIndex );
             nextColor = paletteUtilsPS::getPaletteColor( *palette, palIndex );
             break;
     }
@@ -118,9 +118,9 @@ void CrossFadeCyclePS::update(){
 
         prevTime = currentTime;
         
-        //caculate the next step of the current fade and display it
+        //calculate the next step of the current fade and display it
         colorOut = colorUtilsPS::getCrossFadeColor(startColor, nextColor, currentStep, steps);
-        segDrawUtils::fillSegSetColor(segmentSet, colorOut, 0);
+        segDrawUtils::fillSegSetColor(SegSet, colorOut, 0);
         currentStep++;
 
         //if we've reached the end of the current fade

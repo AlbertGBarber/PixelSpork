@@ -1,19 +1,19 @@
 #include "NoiseGradSL.h"
 
 //Constructor with palette
-NoiseGradSL::NoiseGradSL(SegmentSet &SegmentSet, palettePS &Palette, CRGB BgColor, uint16_t BlendStepsBase, 
+NoiseGradSL::NoiseGradSL(SegmentSet &SegSet, palettePS &Palette, CRGB BgColor, uint16_t BlendStepsBase, 
                                        uint16_t BlendStepsRange, uint8_t PhaseScale, uint8_t FreqScale, uint8_t BriScale, 
                                        uint16_t BlendRate, uint16_t Rate):
-    segmentSet(SegmentSet), palette(&Palette), blendStepsBase(BlendStepsBase), blendStepsRange(BlendStepsRange), phaseScale(PhaseScale), freqScale(FreqScale), briScale(BriScale)
+    SegSet(SegSet), palette(&Palette), blendStepsBase(BlendStepsBase), blendStepsRange(BlendStepsRange), phaseScale(PhaseScale), freqScale(FreqScale), briScale(BriScale)
     {    
         init(BgColor, BlendRate, Rate);
 	}
 
 //Constructor with randomly generated palette
-NoiseGradSL::NoiseGradSL(SegmentSet &SegmentSet, uint8_t numColors, CRGB BgColor, uint16_t BlendStepsBase, 
+NoiseGradSL::NoiseGradSL(SegmentSet &SegSet, uint8_t numColors, CRGB BgColor, uint16_t BlendStepsBase, 
                                        uint16_t BlendStepsRange, uint8_t PhaseScale, uint8_t FreqScale, uint8_t BriScale,
                                        uint16_t BlendRate, uint16_t Rate):
-    segmentSet(SegmentSet), blendStepsBase(BlendStepsBase), blendStepsRange(BlendStepsRange), phaseScale(PhaseScale), freqScale(FreqScale), briScale(BriScale)
+    SegSet(SegSet), blendStepsBase(BlendStepsBase), blendStepsRange(BlendStepsRange), phaseScale(PhaseScale), freqScale(FreqScale), briScale(BriScale)
     {    
         paletteTemp = paletteUtilsPS::makeRandomPalette(numColors);
         palette = &paletteTemp;
@@ -24,9 +24,9 @@ NoiseGradSL::~NoiseGradSL(){
     free(paletteTemp.paletteArr);
 }
 
-//Initializes core common varaibles
+//Initializes core common variables
 void NoiseGradSL::init(CRGB BgColor, uint16_t BlendRate, uint16_t Rate){
-    //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
+    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
     bindSegPtrPS();
     bindClassRatesPS();
     bindBGColorPS();
@@ -73,7 +73,7 @@ void NoiseGradSL::init(CRGB BgColor, uint16_t BlendRate, uint16_t Rate){
 //We only pick a new shift value at most once every blendRate (ms), and then quickly blend to it, which helps keep the effect smooth
 //To add some more interest, the brightness of each segment line is modulated by a noise function
 //Which produces random blobs of dimmed pixels (similar to the lava effect)
-//Both of these extra steps can be turned off by setting blendStepsRange = 0 and dobrightness = false
+//Both of these extra steps can be turned off by setting blendStepsRange = 0 and doBrightness = false
 void NoiseGradSL::update(){
     currentTime = millis();
 
@@ -94,8 +94,8 @@ void NoiseGradSL::update(){
                 shiftBlendSteps();    
         }
         //re-fetch some core variables
-        numSegs = segmentSet.numSegs;
-        numLines = segmentSet.numLines;
+        numSegs = SegSet.numSegs;
+        numLines = SegSet.numLines;
         totBlendLength = blendSteps * palette->length;
 
         //Get a phase value for our waves using noise
@@ -110,7 +110,7 @@ void NoiseGradSL::update(){
         //To shift the colors across the segments we change the offset value in getPaletteGradColor()
         //To get the offset we use colorOffset + colorIndex where colorOffset cycles from 0 to totBlendLength
         //This ensures that the whole palette is seen.
-        //Unfortunatly just adding the offsets togther shifts the colors in reverse across the segments
+        //Unfortunately just adding the offsets together shifts the colors in reverse across the segments
         //To shift them forward, we need to subtract the offsets, but we need to keep everything positive
         //so we use the mod formula below. Adding 2 * totBlendLength ensures that we stay positive, but doesn't
         //effect the final result
@@ -140,22 +140,22 @@ void NoiseGradSL::update(){
                 bri = 255;
             }
 
-            //get the blended palette color of each line based on the line number and the offset we caluclated for this cycle
+            //get the blended palette color of each line based on the line number and the offset we calculated for this cycle
             colorOut = paletteUtilsPS::getPaletteGradColor(*palette, i, colorOffsetTot, totBlendLength, blendSteps);
 
             //color each segment pixel in the blended palette color
             for(uint16_t j = 0; j < numSegs; j++){
                 //get the current pixel's location in the segment set
-                pixelNum = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, j, i);
+                pixelNum = segDrawUtils::getPixelNumFromLineNum(SegSet, numLines, j, i);
 
                 //get background color info for the current pixel
-                colorTarget = segDrawUtils::getPixelColor(segmentSet, pixelNum, *bgColor, bgColorMode, j, i);
+                colorTarget = segDrawUtils::getPixelColor(SegSet, pixelNum, *bgColor, bgColorMode, j, i);
 
                 //get the color blended towards the background and output it
                 colorTarget = colorUtilsPS::getCrossFadeColor(colorOut, colorTarget, 255 - bri);
                 //colorFinal = colorOut;
                 //nscale8x3( colorFinal.r, colorFinal.g, colorFinal.b, bri); //scaling for if you want to switch to a blank bg
-                segDrawUtils::setPixelColor(segmentSet, pixelNum, colorTarget, 0, 0, 0);   
+                segDrawUtils::setPixelColor(SegSet, pixelNum, colorTarget, 0, 0, 0);   
 
             }
         }
@@ -166,7 +166,7 @@ void NoiseGradSL::update(){
     }
 }
 
-//Shifts the blendSteps towards the blendStepstarget by one step (this keeps things smooth)
+//Shifts the blendSteps towards the blendStepsTarget by one step (this keeps things smooth)
 //If it's reached the target, pick a new target to shift to
 //!!Do NOT set the blendSteps directly after turning on shiftBlendSteps()
 //if you do, be sure to adjust blendSteps = blendStepsTarget
@@ -177,7 +177,7 @@ void NoiseGradSL::shiftBlendSteps(){
 
         //set the scale step (+1 or -1)
         //if we happen to have re-rolled the current scale, then 
-        //we want to re-roll. The easist way to do this is to set scaleStep to 0
+        //we want to re-roll. The easiest way to do this is to set scaleStep to 0
         //so scaleTarget will stay equal to scale, triggering a re-roll when setShiftScale is called again
         if(blendStepsTarget == blendSteps){
             blendStepsStep = 0;

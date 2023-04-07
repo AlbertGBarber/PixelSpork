@@ -1,4 +1,4 @@
-#include "segmentSet.h"
+#include "SegmentSet.h"
 
 SegmentSet::SegmentSet(struct CRGB *Leds, uint16_t LedArrSize, Segment **SegArr, uint16_t NumSegs) :
     numSegs(NumSegs), segArr(SegArr), leds(Leds), ledArrSize(LedArrSize)	
@@ -7,7 +7,7 @@ SegmentSet::SegmentSet(struct CRGB *Leds, uint16_t LedArrSize, Segment **SegArr,
 		setNumLines();	
 		setNumLeds();
 
-		//Reset the gradient values to use the keey segment vars set above
+		//Reset the gradient values to use the key segment vars set above
 		resetGradVals();
 		
 		//create a default gradient palette
@@ -27,7 +27,8 @@ void SegmentSet::resetGradVals(){
 	gradSegVal = numSegs;
 }
 
-//Gets and sets the maxium length across all segments
+//Gets and sets the number of lines across all segments
+//The number of lines in the segment set is equal to the length of the longest segment
 //Also records the segment with the maximum segment length as segNumMaxNumLines
 void SegmentSet::setNumLines(void){
   	numLines = 0;
@@ -70,11 +71,6 @@ uint16_t SegmentSet::getTotalNumSec(uint16_t segNum){
 	return getSegPtr(segNum)->numSec;//secNum = 0, it's not needed for the call
 }
 
-// //returns the pointer to the specified segment
-// uint16_t  SegmentSet::getSectionPtr(uint16_t segNum){
-// 	getSegPtr(segNum);
-// }
-
 //!!Only works for segments with continuous sections (not mixed sections!)
 //returns the start pixel of the specified section in the specified segment (secNum is the index of the section within the segment array)
 //ie the start pixel of the 0th section in the 0th segment
@@ -83,7 +79,7 @@ uint16_t SegmentSet::getSecStartPixel(uint16_t segNum, uint8_t secNum){
 }
 
 //!!Only works for segments with mixed sections (not continuous sections!)
-//returns the physcial led location of the pixel in the passed in segment number and segment pixel number
+//returns the physical led location of the pixel in the passed in segment number and segment pixel number
 //ie the 5th pixel in 0th section of the 0th segment
 uint16_t SegmentSet::getSecMixPixel(uint16_t segNum, uint8_t secNum, uint16_t pixelNum ){
 	return getSegPtr(segNum)->getSecMixPixel(secNum, pixelNum);
@@ -102,7 +98,7 @@ int16_t SegmentSet::getSecTrueLength(uint16_t segNum, uint8_t secNum){
 
 //returns the direction of the specified segment
 bool SegmentSet::getSegDirection(uint16_t segNum){
-	return getSegPtr(segNum)->dirct;
+	return getSegPtr(segNum)->direct;
 }
 
 //returns the isSingle var for the specified segment
@@ -117,12 +113,12 @@ bool SegmentSet::getSecIsSingle(uint16_t segNum, uint8_t secNum){
 }
 
 //returns the pointer to the specified segment's section array
-segmentSecCont* SegmentSet::getSecArrPtr(uint16_t segNum){
+const segmentSecCont* SegmentSet::getSecArrPtr(uint16_t segNum){
 	return getSegPtr(segNum)->secPtr;
 }
 
 //returns the pointer to the specified segment's section mixed array
-segmentSecMix* SegmentSet::getSecMixArrPtr(uint16_t segNum){
+const segmentSecMix* SegmentSet::getSecMixArrPtr(uint16_t segNum){
 	return getSegPtr(segNum)->secMixPtr;
 }
 
@@ -143,10 +139,10 @@ segmentSecMix* SegmentSet::getSecMixArrPtr(uint16_t segNum){
 
 //sets the direction of the specified segment to the specified direction
 void SegmentSet::setSegDirection(uint16_t segNum, bool direction){
-	getSegPtr(segNum)->dirct = direction;
+	getSegPtr(segNum)->direct = direction;
 }
 
-//sets all the segments in the segmentSet to the specified direction
+//sets all the segments in the SegmentSet to the specified direction
 void SegmentSet::setAllSegDirection(bool direction){
 	for(uint16_t i = 0; i < numSegs; i++ ){
 		setSegDirection(i, direction);
@@ -175,9 +171,9 @@ void SegmentSet::flipSegDirectionEvery(uint8_t freq, bool startAtFirst){
 }
 
 //sets the direction of every freq segment, starting with the first segment according to startAtFirst
-//ie if you have three segments and do setsegDirectionEvery(2, true, true), the first and third segment will be be set to true
+//ie if you have three segments and do setSegDirectionEvery(2, true, true), the first and third segment will be be set to true
 //but if you do flipSegDirectionEvery(2, true, false), only the second segment will be set to true
-void SegmentSet::setsegDirectionEvery(uint8_t freq, bool direction, bool startAtFirst){
+void SegmentSet::setSegDirectionEvery(uint8_t freq, bool direction, bool startAtFirst){
 	//run over the segments and check if they match the flip frequency,
 	//if they do, set the direction
 	for(uint16_t i = 0; i < numSegs; i++ ){
@@ -187,7 +183,7 @@ void SegmentSet::setsegDirectionEvery(uint8_t freq, bool direction, bool startAt
 	}
 }
 
-//checks if a given segment number occurs in the segmentSet at the given freq, accouting for if the 
+//checks if a given segment number occurs in the SegmentSet at the given freq, accounting for if the 
 //count is started at the first segment or not
 //ie does segment 3 occur at a frequency of 2 (it doesn't), but segment 6 occurs at frequencies of both 2 and 3
 //(if we start at the first segment)
@@ -205,7 +201,7 @@ bool SegmentSet::checkSegFreq(uint8_t freq, uint16_t segNum, bool startAtFirst){
 	//otherwise we need to skip ahead one, as we are offsetting from the first segment
 	uint16_t testNum = segNum + !startAtFirst;
 	
-	//if the segment occurs at the freq, and it isn't off the end of the segmentSet
+	//if the segment occurs at the freq, and it isn't off the end of the SegmentSet
 	//then return true
 	//testNum % freq
 	return (mod16PS(testNum, freq) == 0 && segNum < numSegs);

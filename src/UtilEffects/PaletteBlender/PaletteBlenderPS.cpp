@@ -67,7 +67,7 @@ void PaletteBlenderPS::setupBlendPalette(uint8_t newBlendPaletteLength){
 void PaletteBlenderPS::update(){
     currentTime = millis();
 
-    //if the blend is active, and enougth time has passed, update the palette
+    //if the blend is active, and enough time has passed, update the palette
     if( ( currentTime - prevTime ) >= *rate ){
         if(!paused && !blendEnd){
             prevTime = currentTime;

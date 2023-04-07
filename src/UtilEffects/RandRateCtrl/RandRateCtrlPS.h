@@ -39,7 +39,7 @@ Constructor Inputs:
     rate -- The update rate of the utility (ms)
 
 Functions:
-    Note: Most of these are setter functions for changing the varaibles in the RateRandomizer and RateCtrl instances
+    Note: Most of these are setter functions for changing the variables in the RateRandomizer and RateCtrl instances
     These instances are public. You can access them directly via  RR-> and RC-> respectively
     setRangeMin(newRangeMin) -- Changes the rateRangeMin used in the RateRandomizer instance 
     setRangeMax(newRangeMax) -- Changes the rateRangeMax used in the RateRandomizer instance 
@@ -50,7 +50,7 @@ Functions:
     update() -- updates the effect
 
 Other Settings:
-    pauseTime (default 0) -- Sets a time (ms) that the output rate will be held at after finishing a transiton before starting the next
+    pauseTime (default 0) -- Sets a time (ms) that the output rate will be held at after finishing a transition before starting the next
 
 Flags:
     paused -- Set when the class is in the holding time after transitioning between rates
@@ -68,12 +68,6 @@ class RandRateCtrlPS : public EffectBasePS {
         RandRateCtrlPS(uint16_t BaseRate, int16_t RateRangeMin, int16_t RateRangeMax, bool Easing, uint16_t Rate);
 
         ~RandRateCtrlPS();  
-
-        RateRandomizerPS
-            *RR = nullptr;
-        
-        RateCtrlPS
-            *RC = nullptr;
         
         uint16_t
             pauseTime = 0,
@@ -81,6 +75,12 @@ class RandRateCtrlPS : public EffectBasePS {
         
         bool
             paused = false;
+        
+        RateRandomizerPS
+            *RR = nullptr;
+        
+        RateCtrlPS
+            *RC = nullptr;
         
         void 
             setRangeMin(int16_t newRangeMin),

@@ -1,10 +1,10 @@
 #include "PatternShifterSeg.h"
 
-PatternShifterSeg::PatternShifterSeg(SegmentSet &SegmentSet, shiftPatternPS &ShiftPattern, palettePS &Palette, CRGB BgColor, 
+PatternShifterSeg::PatternShifterSeg(SegmentSet &SegSet, shiftPatternPS &ShiftPattern, palettePS &Palette, CRGB BgColor, 
                                      bool RepeatLine, bool RepeatSeg, bool Direct, uint16_t Rate):
-    segmentSet(SegmentSet), palette(&Palette), repeatLine(RepeatLine), repeatSeg(RepeatSeg), direct(Direct)
+    SegSet(SegSet), palette(&Palette), repeatLine(RepeatLine), repeatSeg(RepeatSeg), direct(Direct)
     {    
-        //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
+        //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
         bindSegPtrPS();
         bindClassRatesPS();
         //bind background color pointer (if needed)
@@ -27,8 +27,8 @@ void PatternShifterSeg::setShiftPattern(shiftPatternPS &newShiftPattern){
     //number of "rows" in the pattern
     numPatRows = shiftPattern->numRows;
 
-    numLines = segmentSet.numLines;
-    numSegs = segmentSet.numSegs;
+    numLines = SegSet.numLines;
+    numSegs = SegSet.numSegs;
     //how many segment lines the pattern takes up
     patLineLength = shiftPattern->patLineLength;
 
@@ -41,7 +41,7 @@ void PatternShifterSeg::setShiftPattern(shiftPatternPS &newShiftPattern){
 
     //Set the wrapping point for the pattern
     //If the pattern is longer than the number of segments we need to increase the mod amount
-    //so that the whole pattern is cycled accross the segments
+    //so that the whole pattern is cycled across the segments
     numPatSegs = shiftPattern->numSegs;
     if(numPatSegs > numSegs){
         modVal = numPatSegs;
@@ -57,8 +57,8 @@ void PatternShifterSeg::setRepeat(bool newRepeatSeg, bool newRepeatLine){
     repeatSeg = newRepeatSeg;
     repeatLine = newRepeatLine;
 
-    numLines = segmentSet.numLines;
-    numSegs = segmentSet.numSegs;
+    numLines = SegSet.numLines;
+    numSegs = SegSet.numSegs;
 
     //how many segment lines the pattern takes up
     patLineLength = shiftPattern->patLineLength;
@@ -101,7 +101,7 @@ void PatternShifterSeg::update(){
     if( ( currentTime - prevTime ) >= *rate ) {
         prevTime = currentTime;
 
-        numSegs = segmentSet.numSegs;
+        numSegs = SegSet.numSegs;
 
         //We use this to shift the segment pattern forward or backward based on the direction
         //It resolves to either 1 or -1 depending on direct.
@@ -110,7 +110,7 @@ void PatternShifterSeg::update(){
         //If we're not repeating, we need to turn off the last segment  
         //that the pattern was on for the previous cycle (as long as it's in the segment set)
         if(!repeatSeg && prevSeg < numSegs){
-            segDrawUtils::fillSegColor(segmentSet, prevSeg, *bgColor, bgColorMode);
+            segDrawUtils::fillSegColor(SegSet, prevSeg, *bgColor, bgColorMode);
         }
        
         //To draw the pattern, we run over each pattern "row", getting the start and end lines, 
@@ -177,8 +177,8 @@ void PatternShifterSeg::update(){
                         modeOut = colorMode;
                     }
                     //get the physical pixel location and output the color and colorMode
-                    pixelNum = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, segNum, j);
-                    segDrawUtils::setPixelColor(segmentSet, pixelNum, colorOut, modeOut, segNum, j);
+                    pixelNum = segDrawUtils::getPixelNumFromLineNum(SegSet, numLines, segNum, j);
+                    segDrawUtils::setPixelColor(SegSet, pixelNum, colorOut, modeOut, segNum, j);
                 }
             }
         }

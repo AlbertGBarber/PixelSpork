@@ -9,8 +9,8 @@
 #include "pins_arduino.h"
 #endif
 
-#include "PaletteFiles.h"
-#include "PatternFiles.h"
+#include "Include_Lists/PaletteFiles.h"
+#include "Include_Lists/PatternFiles.h"
 #include "ColorUtils/colorUtilsPS.h"
 
 //namespace for general functions that are used in multiple effects

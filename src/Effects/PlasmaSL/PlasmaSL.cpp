@@ -1,15 +1,15 @@
 #include "PlasmaSL.h"
 
 //Constructor for effect with palette
-PlasmaSL::PlasmaSL(SegmentSet &SegmentSet, palettePS &Palette, uint16_t BlendSteps, bool Randomize, uint16_t Rate):
-    segmentSet(SegmentSet), palette(&Palette), blendSteps(BlendSteps), randomize(Randomize)
+PlasmaSL::PlasmaSL(SegmentSet &SegSet, palettePS &Palette, uint16_t BlendSteps, bool Randomize, uint16_t Rate):
+    SegSet(SegSet), palette(&Palette), blendSteps(BlendSteps), randomize(Randomize)
     {    
         init(Rate);
 	}
 
 //Constructor for effect with randomly chosen palette
-PlasmaSL::PlasmaSL(SegmentSet &SegmentSet, uint8_t numColors, uint16_t BlendSteps, bool Randomize, uint16_t Rate):
-    segmentSet(SegmentSet), blendSteps(BlendSteps), randomize(Randomize)
+PlasmaSL::PlasmaSL(SegmentSet &SegSet, uint8_t numColors, uint16_t BlendSteps, bool Randomize, uint16_t Rate):
+    SegSet(SegSet), blendSteps(BlendSteps), randomize(Randomize)
     {    
         paletteTemp = paletteUtilsPS::makeRandomPalette(numColors);
         palette = &paletteTemp;
@@ -23,7 +23,7 @@ PlasmaSL::~PlasmaSL(){
 //sets up variables for the effect
 //if randomize is true, the phases, phaseBase beat times, and frequencies will be randomized
 void PlasmaSL::init(uint16_t Rate){
-    //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
+    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
     bindSegPtrPS();
     bindClassRatesPS();
 
@@ -50,7 +50,7 @@ void PlasmaSL::randomizeFreq(uint8_t freqMin, uint8_t freqMax){
 }
 
 //This demonstrates 2D sinusoids in 1D using 16 bit math.
-//Basically we combine two waves use the result for bightness and color
+//Basically we combine two waves use the result for brightness and color
 //To keep the effect varied we use two phase values for each wave. 
 //One varies using beatsin, while the other shifts up and down to random values over time
 //Combined, these phases help give the effect a unique look and prevent it from repeating itself too often
@@ -71,10 +71,10 @@ void PlasmaSL::update(){
         phaseWave1 = beatsin8(6 + pAdj1, -64, 64);
         phaseWave2 = beatsin8(7 + pAdj2, -64, 64);
 
-        numLines = segmentSet.numLines;
+        numLines = SegSet.numLines;
         totBlendLength = blendSteps * palette->length;
 
-        //run over each of the lines in the segement set and set a color value
+        //run over each of the lines in the segment set and set a color value
         for (uint16_t i = 0; i < numLines; i++) {
             //For each of the LED's in the strand, set a brightness based on a wave as follows:
             //Create a wave and add a phase change and add another wave with its own phase change.
@@ -91,11 +91,11 @@ void PlasmaSL::update(){
             //colorOut = colorUtilsPS::getCrossFadeColor(colorOut, 0, 255 - brightness);
             nscale8x3(colorOut.r, colorOut.g, colorOut.b, brightness);
 
-            //reverse the line number so that the effect moves positivly along the strip
+            //reverse the line number so that the effect moves positively along the strip
             lineNum = numLines - i - 1;
 
             //write the color out to all the leds in the segment line
-            segDrawUtils::drawSegLine(segmentSet, lineNum, colorOut, 0);
+            segDrawUtils::drawSegLine(SegSet, lineNum, colorOut, 0);
         }
         showCheckPS();
     }
@@ -113,7 +113,7 @@ void PlasmaSL::shiftPhase(uint8_t *phase, uint8_t *phaseTarget, int8_t *phaseSte
 
         //set the scale step (+1 or -1)
         //if we happen to have re-rolled the current scale, then 
-        //we want to re-roll. The easist way to do this is to set scaleStep to 0
+        //we want to re-roll. The easiest way to do this is to set scaleStep to 0
         //so scaleTarget will stay equal to scale, triggering a re-roll when setShiftScale is called again
         if(*phaseTarget == *phase){
             *phaseStep = 0;

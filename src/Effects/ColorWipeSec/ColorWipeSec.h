@@ -10,7 +10,7 @@ This effect is similar to ColorWipeSLSeg.h, but instead of wiping whole lines or
 each each segment in order.
 
 ie for a set with five segments, the first would be wiped one pixel at a time, then the second segment, etc.
-Note that you really need a segment set with mulitple segment for this effect to work well.
+Note that you really need a segment set with multiple segment for this effect to work well.
 
 Wipes have a direction, either starting from the first or last segment pixel. This can be set to alternate with each wipe.
 
@@ -40,12 +40,12 @@ Looping:
     wipe a background color, etc when looping. You can configure these options all at once using setUpLoop().
     Or you can set them individually.
 
-    The loop options give you alot of flexibility in creating different effects, I encourage you to play with them!
-    If you can't setup exactly what you want, you can always create multiple ColorWipes, and envoke them manually, 
-    swaping/reseting them out as they are "done".
+    The loop options give you a lot of flexibility in creating different effects, I encourage you to play with them!
+    If you can't setup exactly what you want, you can always create multiple ColorWipes, and invoke them manually, 
+    swapping/reseting them out as they are "done".
 
 The Loop Options: 
-    looped -- Sets if the wipes loop or not. Looping wipes automatically restart everytime a wipe is finished.
+    looped -- Sets if the wipes loop or not. Looping wipes automatically restart every time a wipe is finished.
               The other variables are only relevant if the wipe is looping, because they modify subsequent loops.
     bgLoop -- If true, then the background color (default 0) will be used as the color wipe every other loop
               Ie, we wipe a color and then wipe off, looping
@@ -102,11 +102,11 @@ Constructor Inputs:
     palette(optional, see constructors) -- The set of colors that color wipes will use
     pattern(optional, see constructors) -- A pattern is struct made from a 1-d array of palette indexes ie {0, 1, 3, 6, 7} 
                                           and the length of the array (see patternPS.h)   
-    color (optional, see contructors) -- A single color for all the wipes
+    color (optional, see constructors) -- A single color for all the wipes
     style -- How the colors are displayed for the wipe(s) (see notes in intro above)
     alternate -- If true, wipes will alternate directions (ie if one wipe is going forward, the next will reverse)
     wipeDirect -- The direction of the first wipe, true is forward
-    segwipeDir -- The order the segments are wiped in, true is first to last
+    segWipeDir -- The order the segments are wiped in, true is first to last
     Rate -- The update rate of the effect (ms)
 
 Functions:
@@ -143,21 +143,21 @@ Flags:
 class ColorWipeSec : public EffectBasePS {
     public:
         //Constructor using pattern and palette
-        ColorWipeSec(SegmentSet &SegmentSet, palettePS &Palette, patternPS &Pattern, uint8_t Style,
+        ColorWipeSec(SegmentSet &SegSet, palettePS &Palette, patternPS &Pattern, uint8_t Style,
                       bool Alternate, bool WipeDirect, bool SegWipeDir, uint16_t Rate);
 
         //Constructor using palette alone
-        ColorWipeSec(SegmentSet &SegmentSet, palettePS &Palette, uint8_t Style, bool Alternate, bool WipeDirect, 
+        ColorWipeSec(SegmentSet &SegSet, palettePS &Palette, uint8_t Style, bool Alternate, bool WipeDirect, 
                      bool SegWipeDir, uint16_t Rate);
 
         //Constructor for a single color wipe           
-        ColorWipeSec(SegmentSet &SegmentSet, CRGB WipeColor, uint8_t Style, bool Alternate, bool WipeDirect, 
+        ColorWipeSec(SegmentSet &SegSet, CRGB WipeColor, uint8_t Style, bool Alternate, bool WipeDirect, 
                      bool SegWipeDir, uint16_t Rate);
     
         ~ColorWipeSec();
 
         SegmentSet 
-            &segmentSet; 
+            &SegSet; 
 
         CRGB 
             bgColorOrig = 0, //default background color (blank)
@@ -168,7 +168,7 @@ class ColorWipeSec : public EffectBasePS {
             colorMode = 0,
             bgColorMode = 0;
         
-          uint16_t
+        uint16_t
             pixelCount = 0, //for reference
             segWipeCount = 0, //for reference
             patOffset = 0, //for reference
@@ -193,11 +193,11 @@ class ColorWipeSec : public EffectBasePS {
         
         palettePS
             *palette = nullptr,
-            paletteTemp;
+            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
         
         patternPS
             *pattern = nullptr,
-            patternTemp;
+            patternTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
 
         void 
             reset(),

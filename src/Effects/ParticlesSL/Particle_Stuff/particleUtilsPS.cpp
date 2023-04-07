@@ -17,7 +17,7 @@ void particleUtilsPS::resetParticle(particleSetPS &particleSet, uint8_t partNum)
 }
 
 //resets a set of particles back to their starting position and sets their update time to 0
-void particleUtilsPS::resetParticleset(particleSetPS &particleSet){
+void particleUtilsPS::resetParticleSet(particleSetPS &particleSet){
     for(uint8_t i = 0; i < particleSet.length; i++ ){
         resetParticle(particleSet, i);
     }
@@ -50,7 +50,7 @@ particleSetPS particleUtilsPS::buildParticleSet(uint8_t numParticles, uint16_t m
 
     //sets the particle positions to their start positions
     //and sets their lastUpdateTime's to 0
-    resetParticleset(newParticleSet);
+    resetParticleSet(newParticleSet);
 
     return newParticleSet;
 }
@@ -91,7 +91,7 @@ void particleUtilsPS::randomizeParticle(particleSetPS &particleSet, uint8_t part
 //The properties are set by propNum:
 //  0: The start positions of the particle (randomizes them)
 //  1: The directions of the particles
-//  2: The speeds of the particiles
+//  2: The speeds of the particles
 //  3: The size of the particles
 //  4: The trail types of the particles
 //  5: The trail lengths particles
@@ -142,7 +142,7 @@ void particleUtilsPS::setParticleSetProp(particleSetPS &particleSet, uint8_t pro
 
 //Sets a particle's startPosition to the passed in value
 //if rand is true, it will be choosen randomly up to the passed in position
-//(generally use the segmentSet length as the position for rand)
+//(generally use the SegmentSet length as the position for rand)
 void particleUtilsPS::setParticleSetPosition(particleSetPS &particleSet, uint8_t partNum, uint16_t position, bool rand){
     if(rand){
         position = random16(position);
@@ -213,7 +213,7 @@ void particleUtilsPS::setTrailRand(particleSetPS &particleSet, uint8_t partNum, 
     //with the random value choosen, we need to match it to a trail
     //we go over each trail flag in order, reducing the randVal at each flag if it's set
     //once randVal is 0, we've reached the trail type that matches the randVal
-    //Think of it like an extended while loop, where we seaching for the randVal, but only incrementing if the trail flag is set
+    //Think of it like an extended while loop, where we searching for the randVal, but only incrementing if the trail flag is set
     if(noTrails && randVal > 0){
         trailType = 0;
         randVal--;
@@ -248,7 +248,7 @@ void particleUtilsPS::setParticleSetTrailSize(particleSetPS &particleSet, uint8_
     particleSet.particleArr[partNum]->trailSize = trailSize + random8(range + 1);
 }
 
-//sets a particle's bounc ebehavior on the passed in bounce value
+//sets a particle's bounce behavior on the passed in bounce value
 //to set the bounce randomly, pass in a value > 1
 void particleUtilsPS::setParticleSetBounce(particleSetPS &particleSet, uint8_t partNum, uint8_t bounce){
     if(bounce > 1){
@@ -293,20 +293,20 @@ void particleUtilsPS::freeParticle(particleSetPS &particleSet, uint8_t partNum){
     free(particleSet.particleArr[partNum]);
 }
 
-//for gettint particle trail colors
+//for getting particle trail colors
 //returns a blended color towards the target color based on the input steps and totalSteps
 //step == totalSteps is fully blended
 //Note that we offset totalSteps by 1, so we never reach full blend (since it would produce background pixels)
 //the maximum brightness is scaled by dimPow
-//dimPow 0 will produce a normal linear gradient, but for more shimmery waves we can dial the bightness down
-//dimpow of 80 gives a good effect
-//The body of the particle will still be drawn at full brightness since it's drawn seperately 
+//dimPow 0 will produce a normal linear gradient, but for more shimmery waves we can dial the brightness down
+//dimPow of 80 gives a good effect
+//The body of the particle will still be drawn at full brightness since it's drawn separately 
 CRGB particleUtilsPS::getTrailColor(CRGB &color, CRGB &targetColor, uint8_t step, uint8_t totalSteps, int8_t dimPow) {
     
     //dimRatio = ( (uint16_t)step * dimPow ) / (totalSteps + 1) ;
     
     //alternate dimming formula for more aggressive dimming (set dimPow between -127 and 127)
-    //basically subtracts a term from the step value to simiulate an increase in dimming
+    //basically subtracts a term from the step value to simulate an increase in dimming
     //the subtraction term decreases as we get closer to totalSteps, so we don't bug out and over run
     dimRatio = ( (uint16_t)step * (255 - dimPow) ) / (totalSteps + 1) + dimPow; 
 

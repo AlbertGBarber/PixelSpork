@@ -1,8 +1,8 @@
 #include "ColorMeltSL.h"
 
 //Constructor for rainbow mode
-ColorMeltSL::ColorMeltSL(SegmentSet &SegmentSet, uint8_t MeltFreq, uint8_t PhaseFreq, bool BriInvert, uint16_t Rate):
-    segmentSet(SegmentSet), meltFreq(MeltFreq), phaseFreq(PhaseFreq), briInvert(BriInvert)
+ColorMeltSL::ColorMeltSL(SegmentSet &SegSet, uint8_t MeltFreq, uint8_t PhaseFreq, bool BriInvert, uint16_t Rate):
+    SegSet(SegSet), meltFreq(MeltFreq), phaseFreq(PhaseFreq), briInvert(BriInvert)
     {    
         rainbowMode = true;
         init(Rate);
@@ -14,15 +14,15 @@ ColorMeltSL::ColorMeltSL(SegmentSet &SegmentSet, uint8_t MeltFreq, uint8_t Phase
 	}
 
 //Constructor for colors from palette
-ColorMeltSL::ColorMeltSL(SegmentSet &SegmentSet, palettePS &Palette, uint8_t MeltFreq, uint8_t PhaseFreq, bool BriInvert, uint16_t Rate):
-    segmentSet(SegmentSet), palette(&Palette), meltFreq(MeltFreq), phaseFreq(PhaseFreq), briInvert(BriInvert)
+ColorMeltSL::ColorMeltSL(SegmentSet &SegSet, palettePS &Palette, uint8_t MeltFreq, uint8_t PhaseFreq, bool BriInvert, uint16_t Rate):
+    SegSet(SegSet), palette(&Palette), meltFreq(MeltFreq), phaseFreq(PhaseFreq), briInvert(BriInvert)
     {    
         init(Rate);
 	}
 
 //Constructor for a randomly created palette
-ColorMeltSL::ColorMeltSL(SegmentSet &SegmentSet, uint8_t numColors, uint8_t MeltFreq, uint8_t PhaseFreq, bool BriInvert, uint16_t Rate):
-    segmentSet(SegmentSet), meltFreq(MeltFreq), phaseFreq(PhaseFreq), briInvert(BriInvert)
+ColorMeltSL::ColorMeltSL(SegmentSet &SegSet, uint8_t numColors, uint8_t MeltFreq, uint8_t PhaseFreq, bool BriInvert, uint16_t Rate):
+    SegSet(SegSet), meltFreq(MeltFreq), phaseFreq(PhaseFreq), briInvert(BriInvert)
     {    
         init(Rate);
         paletteTemp = paletteUtilsPS::makeRandomPalette(numColors);
@@ -34,7 +34,7 @@ ColorMeltSL::~ColorMeltSL(){
 }
 
 void ColorMeltSL::init(uint16_t Rate){
-    //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
+    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
     bindSegPtrPS();
     bindClassRatesPS();
     if(phaseFreq == 0){
@@ -74,8 +74,8 @@ void ColorMeltSL::update(){
         
         //fetch some core vars
         //we re-fetch these in case the segment set or palette has changed
-        numSegs = segmentSet.numSegs;
-        numLines = segmentSet.numLines;
+        numSegs = SegSet.numSegs;
+        numLines = SegSet.numLines;
 
         hl = numLines/hlDiv;
         t1 = beat8(meltFreq); 
@@ -119,8 +119,8 @@ void ColorMeltSL::update(){
             for (uint16_t j = 0; j < numSegs; j++) {
                 //get the physical pixel location based on the line and seg numbers
                 //and then write out the color
-                pixelNum = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, j,  numLines - i - 1);
-                segDrawUtils::setPixelColor(segmentSet, pixelNum, colorOut, 0, 0, 0);
+                pixelNum = segDrawUtils::getPixelNumFromLineNum(SegSet, numLines, j,  numLines - i - 1);
+                segDrawUtils::setPixelColor(SegSet, pixelNum, colorOut, 0, 0, 0);
             }
         }
         showCheckPS();

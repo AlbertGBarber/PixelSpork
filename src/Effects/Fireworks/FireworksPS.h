@@ -11,7 +11,7 @@
 #include "Effects/ParticlesSL/Particle_Stuff/particleUtilsPS.h"
 
 /* 
-A 1D firework simulation inpired heavily by https://www.reddit.com/r/arduino/comments/c3sd46/i_made_this_fireworks_effect_for_my_led_strips/
+A 1D firework simulation inspired heavily by https://www.reddit.com/r/arduino/comments/c3sd46/i_made_this_fireworks_effect_for_my_led_strips/
 Spawns multiple fireworks across the strip that explode into a series of sparks
 There are a lot of options for adjusting how the fireworks look
 I suggest you look at the inputs guide below, or try out one of the constructor examples
@@ -42,12 +42,12 @@ However this does have two draw backs:
 2: For colored backgrounds, the particles colors are added to the background colors.
   This will in most cases significantly change the particle colors 
   For example, blue particles running on a red background will appear purple (blue +  red = purple)
-  This can be used to create some nice effects, (like oceanish of lavaish looking things),
+  This can be used to create some nice effects, (like ocean-ish of lava-ish looking things),
   But overall I do not recommend using blend for colored backgrounds
 
-Note that this effect does require three seperate arrays: 
+Note that this effect does require three separate arrays: 
     A bool array fireworks[maxNumFireworks] that stores if a firework is active or not
-    A particleSet with a paricle array of size maxNumFireworks * (maxNumSparks + 1)
+    A particleSet with a particle array of size maxNumFireworks * (maxNumSparks + 1)
     A CRGB array of trailEndColors[maxNumFireworks * (maxNumSparks + 1)] to store the trail color for each particle
 So watch your memory usage
 
@@ -61,10 +61,10 @@ A firework has 7 core inputs:
     Rate: The fastest particle speed (speed is the update time in ms, so lower rate => higher speed)
     SpeedRange: The slowest speed a particle can have
 There are some other, secondary variables listed in the Other Settings section below,
-but you probably won't need to tweak these initally
+but you probably won't need to tweak these initially
 
 In general the number of fireworks, sparks and spawn chance are up to you based on your strip size
-Lifebase is used to set a limit on all the sparks life, but you still want to give the sparks time to move
+LifeBase is used to set a limit on all the sparks life, but you still want to give the sparks time to move
 So lifeBase should probably be 2000+ (2 sec). You should also know that the effect adds a random bit of extra 
 life to each spark, set by lifeRange (default 500, ie 0.5 sec)
 speedDecay is the percent the speed decreases each time the particle is drawn. Starting at 5 or 10 
@@ -72,7 +72,7 @@ and then going from there should work. A lower value will let the sparks spread 
 Rate and speedRange do a lot of work in shaping how the firework looks. Rate is the fastest possible speed
 for the sparks (rate is the update rate so lower value => higher speed) while speedRange how much the speed varies by
 Overall, rate sets how fast the average spark moves, while speedRange sets how different spark speeds are from one another
-So you can have low speeds and low ranges to make a slow, clumped up firework, or have high speeds and highe range
+So you can have low speeds and low ranges to make a slow, clumped up firework, or have high speeds and high range
 so that the sparks move quick and spread out more.
 I recommend starting with a rate of 40-60 and a speedRange of 300 - 600.
 
@@ -120,14 +120,14 @@ Example calls:
 
 Constructor Inputs:
     palette(optional, see constructors) -- The set of colors that firework colors will be picked from
-    numColors (optional, see contructors) -- The number of randomly choosen colors for fireworks
-    color (optional, see contructors) -- A single color for all the fireworks
+    numColors (optional, see constructors) -- The number of randomly choosen colors for fireworks
+    color (optional, see constructors) -- A single color for all the fireworks
     maxNumFireworks -- The maximum number of simultaneous fireworks that can be active at one time
     maxNumSparks -- The number of sparks spawned per firework
-    spawnChance -- The likelyhood of a firework spawning (percent out of 100, larger is more likley)
+    spawnChance -- The likely-hood of a firework spawning (percent out of 100, larger is more likely)
     lifeBase -- The longest time a spark can exist (in ms)
     speedDecay -- The percent a spark's speed is reduced by per update cycle (out of 100)
-    rate -- The maxium speed for the sparks, also the effect update rate (is a pointer like in other effects)
+    rate -- The maximum speed for the sparks, also the effect update rate (is a pointer like in other effects)
     speedRange -- The cap for the slowest speed for the sparks (speed is rate + speedRange) (ms)
 
 Functions:
@@ -141,7 +141,7 @@ Other Settings:
     burstBlendLimit (default 100) -- The number of steps (out of 255) to blend from the burst color to the spark color                        
     lifeRange ( default 500 (ms) ) -- Added to the lifeBase as random(lifeRange) to set the maximum spark life
                                       Adds a bit of variation so not all the sparks decay at the same time at lower caps
-    centerLife (default lifeBase/10 + 100 ) -- How long the centeral "bomb" lives for in ms
+    centerLife (default lifeBase/10 + 100 ) -- How long the central "bomb" lives for in ms
     size (default 1) -- The size of the sparks, only change this for big fireworks
     sizeRange (default 0) -- A random factor for setting the spark sizes 
                              Sparks will be size + random(sizeRange)
@@ -161,22 +161,22 @@ Other Settings:
 class FireworksPS : public EffectBasePS {
     public:
         //Constructor for fireworks using a palette
-        FireworksPS(SegmentSet &SegmentSet, palettePS &Palette, uint8_t MaxNumFireworks, uint8_t MaxNumSparks, 
+        FireworksPS(SegmentSet &SegSet, palettePS &Palette, uint8_t MaxNumFireworks, uint8_t MaxNumSparks, 
                     uint8_t SpawnChance, uint16_t LifeBase, uint8_t SpeedDecay, uint16_t Rate, uint16_t SpeedRange); 
 
         //Constructor for fireworks using a palette of random colors
-        FireworksPS(SegmentSet &SegmentSet, uint16_t numColors, uint8_t MaxNumFireworks, uint8_t MaxNumSparks, 
+        FireworksPS(SegmentSet &SegSet, uint16_t numColors, uint8_t MaxNumFireworks, uint8_t MaxNumSparks, 
                     uint8_t SpawnChance, uint16_t LifeBase, uint8_t SpeedDecay, uint16_t Rate, uint16_t SpeedRange);
 
         //Constructor for fireworks of a single color
         //!!If using pre-build FastLED colors you need to pass them as CRGB( *color code* )
-        FireworksPS(SegmentSet &SegmentSet, CRGB Color, uint8_t MaxNumFireworks, uint8_t MaxNumSparks, 
+        FireworksPS(SegmentSet &SegSet, CRGB Color, uint8_t MaxNumFireworks, uint8_t MaxNumSparks, 
                     uint8_t SpawnChance, uint16_t LifeBase, uint8_t SpeedDecay, uint16_t Rate, uint16_t SpeedRange);
                 
         ~FireworksPS();
 
         SegmentSet 
-            &segmentSet; 
+            &SegSet; 
 
         uint8_t
             spawnChance,
@@ -210,19 +210,18 @@ class FireworksPS : public EffectBasePS {
             *bgColor = &bgColorOrig; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
 
         palettePS
-            paletteTemp,
-            *palette = nullptr;
+            *palette = nullptr,
+            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
 
         particleSetPS 
             *particleSet = nullptr, //the particle set used in the effect
-            particleSetTemp; //storage for self created particle sets
+            particleSetTemp = {nullptr, 0}; //storage for self created particle sets (init to an empty set for safety)
 
         void 
             setupFireworks(uint8_t newMaxNumFireworks, uint8_t newMaxNumSparks),
             update(void);
     
     private:
-        
         unsigned long
             currentTime,
             prevTime = 0;
@@ -252,13 +251,13 @@ class FireworksPS : public EffectBasePS {
         bool
             partDirect,
             firstPart,
-            movePart; //flag for if a particle should move thise cycle
+            movePart; //flag for if a particle should move this cycle
         
         particlePS
             *particlePtr = nullptr;
 
         pixelInfoPS
-            pixelInfo{0, 0, 0, 0};
+            pixelInfo = {0, 0, 0, 0};
 
         CRGB 
             *trailEndColors = nullptr, //used to store the last colors of each trail, so the background color can be set

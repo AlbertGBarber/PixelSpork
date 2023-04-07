@@ -44,7 +44,7 @@ void PaletteSliderPS::setPaletteAsPattern(){
 }
 
 //Creates the ouput slider palette according to the passed in length
-//Note that it deletes any exisiting slider palette
+//Note that it deletes any existing slider palette
 //It also resets the effect and calls update() once to fill in the initial palette colors
 void PaletteSliderPS::makeSliderPalette(uint16_t paletteLength){
     //create a new palette of the passed in length
@@ -95,7 +95,7 @@ void PaletteSliderPS::update(){
             }
         }
         
-        //We need to advance slider palette colors to thier next steps
+        //We need to advance slider palette colors to their next steps
         sliderPalLen = sliderPalette.length;
         //If we're shifting the colors forward by 1 for each blend then
         //the patternStep is only one. So that each color follows the one ahead of it

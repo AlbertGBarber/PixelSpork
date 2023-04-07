@@ -20,7 +20,7 @@ Ie if you had a pattern where and single segment line was lit up,
 it would be shifted from one segment line to the next as the effect runs.
 (This doesn't change the pattern, all the movement is local to the effect)
 
-This effect is really only usefull for segment set with multiple segments
+This effect is really only useful for segment set with multiple segments
 Ie 2D shapes
 
 The shiftPattern can be set to repeat, which will draw the pattern as many times as possible along the segment set
@@ -49,7 +49,7 @@ Example calls:
     See shiftPatternPS.h for how to create one.
 
     A super basic pattern for a segment set with a single segment (one strip)
-    This pattern is just two dots seperated by a space.
+    This pattern is just two dots separated by a space.
 
     uint16_t patternSegs = mainSegments.numSegs;
 
@@ -93,10 +93,10 @@ Reference Vars:
 */
 class PatternShifterSL : public EffectBasePS {
     public:
-        PatternShifterSL(SegmentSet &SegmentSet, shiftPatternPS &ShiftPattern, palettePS &Palette, CRGB BgColor, bool Repeat, uint16_t Rate);  
+        PatternShifterSL(SegmentSet &SegSet, shiftPatternPS &ShiftPattern, palettePS &Palette, CRGB BgColor, bool Repeat, uint16_t Rate);  
 
         SegmentSet 
-            &segmentSet; 
+            &SegSet; 
         
         uint8_t
             colorMode = 0,
@@ -144,7 +144,7 @@ class PatternShifterSL : public EffectBasePS {
             rowStartIndex,
             startLine,
             endLine,
-            crntRepeatNum,
+            curRepeatNum,
             prevLine = 65535,
             repeatCount = 1;
         

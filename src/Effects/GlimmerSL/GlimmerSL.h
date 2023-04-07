@@ -18,7 +18,7 @@ With two sets, the length is doubled
 Both glimmerColor and bgColor are pointers, so you can bind them to external color vars
 
 The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
-passing in a segmentSet with only one segment containing the whole strip.
+passing in a SegmentSet with only one segment containing the whole strip.
 Or you can set lineMode to false, which makes each glimmer an individual pixel 
 (useful for using multi-segment color modes, while still only glimmering individual pixels)
 
@@ -29,12 +29,12 @@ TwoPixelSets setting:
 Example calls: 
     GlimmerSL(mainSegments, 8, CRGB::Blue, 0, true, 10, 50);
     Will choose 8 pixels to cycle to/from off to CRGB::Blue 
-    Two sets of pixels will be faded in/out at one time, going through 10 fade steSLPS, with 50ms between each step
+    Two sets of pixels will be faded in/out at one time, going through 10 fade steps, with 50ms between each step
 
     GlimmerSL(mainSegments, 10, CRGB::Blue, CRGB::Red, false, 20, 100, 255, 60);
     Will choose 10 pixels to to cycle to/from CRGB::Red to CRGB::Blue 
     One set of pixels will be faded in then out before a new set is choosen
-    The range of the fades will be between 100 and 255, with 20 fade steSLPS, with 60ms between each step
+    The range of the fades will be between 100 and 255, with 20 fade steps, with 60ms between each step
 
 Constructor Inputs:
     numGlims -- The amount of random pixels choosen for fading
@@ -42,12 +42,12 @@ Constructor Inputs:
     BgColor -- The color of the background, this is the color that not-fading pixels will be
     twoPixelSets -- (bool) sets if one or two sets of pixels will be fading in/out at once (true for two sets)
     fadeMin (optional, max 255, default 50) -- The minimum amount that a pixel will fade by
-    fademax (optional, max 255, default 255) -- The maximum amount that a pixel will fade by
+    fadeMax (optional, max 255, default 255) -- The maximum amount that a pixel will fade by
     fadeSteps -- The number of steps it takes a pixel to fade (one step every update cycle)
     rate -- The update rate (ms)
 
 Functions:
-    setNumGlims(newnumGlims) -- Changes the number of pixels fading,
+    setNumGlims(newNumGlims) -- Changes the number of pixels fading,
                                 If the new number of pixels is different than the current numGlims,
                                 the glimmer arrays will be re-created, and the effect will be reset
                                 (otherwise, nothing will happen)
@@ -64,29 +64,29 @@ Other Settings:
     fadeMin  and fadeMax -- (see Constructor inputs)
 
 Flags: 
-    fadeIn -- Tracks is the set of leds is fading in or not, for two sets, this varaible will be toggled mid-set
+    fadeIn -- Tracks is the set of leds is fading in or not, for two sets, this variable will be toggled mid-set
 
 Reference Vars:
     numGlims -- The number of glimmering particles, set using setNumGlims()
-    step -- Tracks the fade step we're on, max value is fadeSteSLPS, is reset to 0 once a fade is finished
+    step -- Tracks the fade step we're on, max value is fadeSteps, is reset to 0 once a fade is finished
 
 Notes:
     Requires uint16_t array and uint8_t arrays of length up to 2*numGlims to work, make sure you have the memory for them!
     Likewise, changing the number of glimmers, or setting the effect to use two sets of glimmers, requires
-    the arrays to be re-created, so you need to call setnumGlims(newnumGlims) or setTwoSets(newSetting)
+    the arrays to be re-created, so you need to call setNumGlims(newNumGlims) or setTwoSets(newSetting)
 */
 class GlimmerSL : public EffectBasePS {
     public:
         //Constructor using default fade in and out values
-        GlimmerSL(SegmentSet &SegmentSet, uint16_t NumGlims, CRGB GlimmerColor, CRGB BgColor, bool TwoPixelSets, uint8_t FadeSteSLPS, uint16_t Rate);  
+        GlimmerSL(SegmentSet &SegSet, uint16_t NumGlims, CRGB GlimmerColor, CRGB BgColor, bool TwoPixelSets, uint8_t FadeSteps, uint16_t Rate);  
         
-        //Constuctor for setting maximum fade in and out values
-        GlimmerSL(SegmentSet &SegmentSet, uint16_t NumGlims, CRGB GlimmerColor, CRGB BgColor, bool TwoPixelSets, uint8_t FadeSteSLPS, uint8_t FadeMin, uint8_t FadeMax, uint16_t Rate);
+        //Constructor for setting maximum fade in and out values
+        GlimmerSL(SegmentSet &SegSet, uint16_t NumGlims, CRGB GlimmerColor, CRGB BgColor, bool TwoPixelSets, uint8_t FadeSteps, uint8_t FadeMin, uint8_t FadeMax, uint16_t Rate);
 
         ~GlimmerSL();
         
         SegmentSet 
-            &segmentSet; 
+            &SegSet; 
         
         uint8_t 
             colorMode = 0,
@@ -132,18 +132,18 @@ class GlimmerSL : public EffectBasePS {
             numLines,
             numSegs,
             pixelNum;
+        
+        bool
+            firstFade = false;
 
         pixelInfoPS
-            pixelInfo{0, 0, 0, 0};
+            pixelInfo = {0, 0, 0, 0};
         
         CRGB 
             startColor,
             targetColor,
             fadeColor,
             getFadeColor(uint8_t glimNum);
-        
-        bool
-            firstFade = false;
         
         void 
             init(CRGB GlimmerColor, CRGB BgColor, uint16_t Rate),

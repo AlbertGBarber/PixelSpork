@@ -7,7 +7,7 @@
 
 /*
 An effect where palette colors are drawn as a gradient across segment lines
-The graident is shifted based on the output of a noise function,
+The gradient is shifted based on the output of a noise function,
 while the brightness is randomly set in blobs across the segment lines.
 
 The length of the color gradient can be set to shift over time in quick bursts
@@ -19,13 +19,13 @@ You can change the variables freely, although this may result in jumps in the ef
 
 Inputs guide:
     Overall the effect has two components:
-        1) A graident of palette colors that shifts along the segment set in random jumps
+        1) A gradient of palette colors that shifts along the segment set in random jumps
         2) Spots of brightness that grow and change with time
     
     Blend settings: 
         1) blendStepsBase: The minimum number of gradient steps between palette colors. The actual number of steps is
                            stored in blendSteps, which is shifted over time (unless blendStepsRange is 0)
-        2) blendStepsRange: The maxium amount added to blendStepBase. Sets the upper limit for blendSteps
+        2) blendStepsRange: The maximum amount added to blendStepBase. Sets the upper limit for blendSteps
                             ie blendSteps = blendStepBase + random(blendStepsRange);
                             If you set blendStepsRange to 0 then there will be no shifting and blendSteps will stay at it's current value.
         3) blendRate: How often (in ms) the blendSteps are shifted. Constantly shifting the blendSteps looks choppy
@@ -85,7 +85,7 @@ Constructor inputs:
     numColors (optional, see constructors) -- How many colors will be in the randomly created palette
     bgColor --  The color of the background pixels.
     blendStepsBase -- The minimum number of gradient steps between palette colors. (See Inputs Guide above)
-    blendStepsRange -- The maxium amount added to blendStepBase for shifting. (See Inputs Guide above)
+    blendStepsRange -- The maximum amount added to blendStepBase for shifting. (See Inputs Guide above)
     phaseScale -- Sets how must the gradient wobbles. Must be greater than 0. (See Inputs Guide above)
     freqScale -- Sets how long the waves are. Must be greater than 0. (See Inputs Guide above)
     briScale -- Sets how "zoomed-in" the brightness noise is. (See Inputs Guide above)
@@ -106,17 +106,17 @@ Functions:
 class NoiseGradSL : public EffectBasePS {
     public:
         //Constructor with palette
-        NoiseGradSL(SegmentSet &SegmentSet, palettePS &Palette, CRGB BgColor, uint16_t BlendStepsBase, uint16_t BlendStepsRange,
+        NoiseGradSL(SegmentSet &SegSet, palettePS &Palette, CRGB BgColor, uint16_t BlendStepsBase, uint16_t BlendStepsRange,
                     uint8_t PhaseScale, uint8_t FreqScale, uint8_t BriScale, uint16_t BlendRate, uint16_t Rate);  
 
         //Constructor with randomly generated palette
-        NoiseGradSL(SegmentSet &SegmentSet, uint8_t numColors, CRGB BgColor, uint16_t BlendStepsBase, uint16_t BlendStepsRange,
+        NoiseGradSL(SegmentSet &SegSet, uint8_t numColors, CRGB BgColor, uint16_t BlendStepsBase, uint16_t BlendStepsRange,
                     uint8_t PhaseScale, uint8_t FreqScale, uint8_t BriScale, uint16_t BlendRate, uint16_t Rate);
         
         ~NoiseGradSL();
 
         SegmentSet 
-            &segmentSet; 
+            &SegSet; 
         
         uint8_t 
             bgColorMode = 0,
@@ -142,8 +142,8 @@ class NoiseGradSL : public EffectBasePS {
             *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
         
         palettePS 
-            paletteTemp,
-            *palette = nullptr;
+            *palette = nullptr,
+            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
 
         void 
             update(void);

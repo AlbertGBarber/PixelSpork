@@ -7,7 +7,7 @@
 
 /*
 Draws a repeated rainbow of a set length repeatedly along segment lines
-shifts the rainbows in along the segmentSet liens in the passed in direction at the passed in rate
+shifts the rainbows in along the SegmentSet liens in the passed in direction at the passed in rate
 suggested min length is 5 (ie red, yellow, green, blue, indigo/violet)
 
 This is the 2D version of rainbowCycle which draws on segment lines or whole segments
@@ -61,13 +61,13 @@ Reference Vars:
 */
 class RainbowCycleSLSeg : public EffectBasePS {
     public:
-        RainbowCycleSLSeg(SegmentSet &SegmentSet, uint16_t Length, bool Direction, bool SegMode, uint16_t Rate); 
+        RainbowCycleSLSeg(SegmentSet &SegSet, uint16_t Length, bool Direction, bool SegMode, uint16_t Rate); 
 
         //Does a rainbow cycle of length 255
-        RainbowCycleSLSeg(SegmentSet &SegmentSet, bool Direction, bool SegMode, uint16_t Rate); 
+        RainbowCycleSLSeg(SegmentSet &SegSet, bool Direction, bool SegMode, uint16_t Rate); 
 
         SegmentSet 
-            &segmentSet;
+            &SegSet;
     
         uint8_t
             satur = 255,

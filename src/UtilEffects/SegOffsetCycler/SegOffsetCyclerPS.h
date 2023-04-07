@@ -9,7 +9,7 @@
   #include "WConstants.h"
 #endif
 
-#include "SegmentFiles.h"
+#include "Include_Lists/SegmentFiles.h"
 #include "Effects/EffectBasePS.h"
 //*note Util == this class in comments below
 
@@ -26,24 +26,24 @@ for this Util, colorMode is a pointer, so you can point it to your effect's colo
 ie colorMode = &yourEffectsColorMode;
 To change colorMode directly, use colorModeOrig --> ie colorModeOrig = yourColorMode;
 
-The Util can be specified to work on a single segmentSet
+The Util can be specified to work on a single SegmentSet
 or an array of segmentSets, see class constructors below for details
-specifiy a segmentSet array like:
+specify a SegmentSet array like:
 SegmentSet *setArray[] = {&segmentSet1, &segmentSet2, etc}
 you may rebind the segmentSets using the setGroup() functions
 
-By default all the segmentSet will have their offsetRates bound to the Util's 
+By default all the SegmentSet will have their offsetRates bound to the Util's 
 so changing the offsetRate of the Util will also change it for all the segments
 
 Make sure you use the Util's functions for adjusting the settings. They will set the settings for all the 
 segmentSets. The variables in this Util are for reference
 ie use setDirect(), setRate(), setOffsetActive() instead of just changing direct, runOffset, Rate
-(you can change colorMode dirctly since this is independent of the segmentSets)
+(you can change colorMode directly since this is independent of the segmentSets)
 
 Example calls: 
-    SegOffsetCyclerPS(segmentSet, 1, true, 30);
+    SegOffsetCyclerPS(SegmentSet, 1, true, 30);
     Sets the offset using colorMode 1 in the forward direction at a rate of 30ms
-    for a single segmentset
+    for a single segmentSet
 
     SegmentSet *setArray[] = {&segmentSet1, &segmentSet2}
     SegOffsetCyclerPS(setArray, SIZE(setArray), 4, false, 50);
@@ -51,7 +51,7 @@ Example calls:
     for an array of segmentSets (containing segmentSet1 and segmentSet2)
 
 Constructor Inputs:
-    segmentSet (optional, see constructors) -- A single segmentSet whose offset will be changed
+    SegmentSet (optional, see constructors) -- A single SegmentSet whose offset will be changed
     segmentSetArr (optional, see constructors) -- An array of segmentSets whose offsets will be changed
     colorMode -- The colorMode used for the offset
     direction -- The direction of the offset (true is forward)
@@ -62,8 +62,8 @@ Functions:
     setDirect(newDirect) -- Sets the offset direction
     setOffsetActive(newRunOffset) -- Turns the offset on or off
     setRate(newRate) -- Changes the offset rate (also changes it for all the segmentSets)
-    setGroup(SegmentSet** SegmentSetArr, NumSegSets) -- Sets the Util to act on the passed in segmentSet array
-    setGroup(SegmentSet &segmentSet) -- Sets the Util to act on the passed in segmentSet only
+    setGroup(SegmentSet** SegmentSetArr, NumSegSets) -- Sets the Util to act on the passed in SegmentSet array
+    setGroup(SegmentSet &SegSet) -- Sets the Util to act on the passed in SegmentSet only
     update() -- updates the effect
 
 Other Settings:
@@ -75,7 +75,7 @@ Other Settings:
 class SegOffsetCyclerPS : public EffectBasePS {
     public:
         //two constructors, for single and multiple segmentSets
-        SegOffsetCyclerPS(SegmentSet &segmentSet, uint8_t ColorMode, bool direction, uint16_t Rate);
+        SegOffsetCyclerPS(SegmentSet &SegSet, uint8_t ColorMode, bool direction, uint16_t Rate);
 
         SegOffsetCyclerPS(SegmentSet **SegmentSetArr, uint8_t NumSegSets, uint8_t ColorMode, bool direction, uint16_t Rate);
 
@@ -94,8 +94,8 @@ class SegOffsetCyclerPS : public EffectBasePS {
             setDirect(bool newDirect), //sets the shift direction, 
             setRate(uint16_t newRate),
             setOffsetActive(bool newRunOffset),
-            setGroup(SegmentSet** SegmentSetArr, uint8_t NumSegSets), //sets a new group of segmentSets to act on
-            setGroup(SegmentSet &segmentSet), //sets a new segmentSet to act on
+            setGroup(SegmentSet **SegmentSetArr, uint8_t NumSegSets), //sets a new group of segmentSets to act on
+            setGroup(SegmentSet &SegSet), //sets a new SegmentSet to act on
             update();
         
     private:
@@ -114,7 +114,7 @@ class SegOffsetCyclerPS : public EffectBasePS {
             prevTime;
 
         SegmentSet
-            **segGroupTemp = nullptr, //temp pointer used for setting up single segmentSets, seperate from group to allow safe deletion
+            **segGroupTemp = nullptr, //temp pointer used for setting up single segmentSets, separate from group to allow safe deletion
             **segGroup = nullptr;
         
         void

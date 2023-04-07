@@ -1,15 +1,15 @@
 #include "LarsonScannerSL.h"
 
-LarsonScannerSL::LarsonScannerSL(SegmentSet &SegmentSet, uint8_t ScanType, CRGB scanColor, CRGB BgColor, uint8_t EyeSize, uint8_t TrailLength, uint16_t Rate):
-    segmentSet(SegmentSet), scanType(ScanType), eyeSize(EyeSize), trailLength(TrailLength)
+LarsonScannerSL::LarsonScannerSL(SegmentSet &SegSet, uint8_t ScanType, CRGB scanColor, CRGB BgColor, uint8_t EyeSize, uint8_t TrailLength, uint16_t Rate):
+    SegSet(SegSet), scanType(ScanType), eyeSize(EyeSize), trailLength(TrailLength)
     {    
-        //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
+        //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
         bindSegPtrPS();
         bindClassRatesPS();
         //bind background color pointer
         bindBGColorPS();
-        //create an instance of ParticlsPS to animate the particles for the scanner
-        scannerInst = new ParticlesSL(segmentSet, particleSet, palette, BgColor);
+        //create an instance of ParticlesPS to animate the particles for the scanner
+        scannerInst = new ParticlesSL(SegSet, particleSet, palette, BgColor);
         //bind the ParticlesSL instance background color to point to the LarsonScannerSL's background color
         scannerInst->bgColor = bgColor;
         setColor(scanColor);
@@ -53,7 +53,7 @@ void LarsonScannerSL::setBounce(bool newBounce){
 //     That move back and forth, intersecting in the center of the strip
 //     (note that this mode uses blend, see ParticlesPS.h for details)
 void LarsonScannerSL::setScanType(uint8_t newScanType){
-    numLines = segmentSet.numLines;
+    numLines = SegSet.numLines;
     scanType = newScanType;
 
     //Free all particles and the particle array pointer

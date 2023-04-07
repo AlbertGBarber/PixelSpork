@@ -1,7 +1,7 @@
 {
     "name": "PixelSpork",
-    "description": "Insert Descript",
-    "keywords": "led" "WS2182" "FastLED" "Neopixel" "WS2811",
+    "description": "A WS2812+ LED Effects library based on FastLed.",
+    "keywords": "led" "WS2812" "FastLED" "Neopixel" "WS2811",
     "authors": [
         {
             "name": "Albert Barber",

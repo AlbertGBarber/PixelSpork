@@ -29,6 +29,7 @@
 #define qsuba(x, b) ((x>b)?x-b:0)   
 #endif
 
+//Returns the length of an array
 #if !defined(SIZE)
 #define SIZE(x) (sizeof((x)) / sizeof((x)[0]))
 #endif
@@ -40,7 +41,7 @@ uint16_t mod16PS(uint16_t num1, uint16_t num2);;
 
 //based on fastLED addmod8
 //faster add mod for 16 bit unsigned numbers
-//adds the two numbers togther and returns the mod of the result from a third number
+//adds the two numbers together and returns the mod of the result from a third number
 //!!ONLY works with unsigned numbers
 uint16_t addMod16PS(uint16_t num1, uint16_t num2, uint16_t modNum);
 

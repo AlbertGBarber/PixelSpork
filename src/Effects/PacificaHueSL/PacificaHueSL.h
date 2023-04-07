@@ -30,9 +30,9 @@ Almost all of the code is directly copied from the original linked above
 If you have any questions about how it works, please direct them to Mark Kriegsman
 
 I've made the addWhiteCaps() function optional. You can turn it on by setting addWhiteCaps true
-It brightnes the areas where waves meet. It works best for blue hues, 
-For all segment shapes except matricies the code will now do this automatically.
-So you should only need to turn addWhiteCaps() on for matricies
+It brightness the areas where waves meet. It works best for blue hues, 
+For all segment shapes except matrices the code will now do this automatically.
+So you should only need to turn addWhiteCaps() on for matrices
 I've also added a constant thresholdMax value that caps the white cap light level
 To prevent them from getting too white
 
@@ -51,7 +51,7 @@ This keeps with the look of the original effect
         Blue/Purple: 150 to ~180
         Purple/Red: 180 to 240
         
-By default the hue is set to 130, which closly matches the colors from the original effect.
+By default the hue is set to 130, which closely matches the colors from the original effect.
 
 You can also set the hue to cycle through colors over time at hueRate (ms) (see constructors below)
 A hue rate of 0 will stop the hue cycle
@@ -93,19 +93,19 @@ Reference vars:
 class PacificaHueSL : public EffectBasePS {
     public:
         //Normal constructor
-        PacificaHueSL(SegmentSet &SegmentSet, uint16_t Rate);  
+        PacificaHueSL(SegmentSet &SegSet, uint16_t Rate);  
 
         //constructor with addWhiteCaps setting
-        PacificaHueSL(SegmentSet &SegmentSet, bool AddWhiteCaps, uint8_t Hue, uint16_t Rate);
+        PacificaHueSL(SegmentSet &SegSet, bool AddWhiteCaps, uint8_t Hue, uint16_t Rate);
 
         //constructor with addWhiteCaps and hue rate settings
         //The hue will be the initial hue of the palette
-        PacificaHueSL(SegmentSet &SegmentSet, bool AddWhiteCaps, uint8_t Hue, uint16_t HueRate, uint16_t Rate);
+        PacificaHueSL(SegmentSet &SegSet, bool AddWhiteCaps, uint8_t Hue, uint16_t HueRate, uint16_t Rate);
 
         ~PacificaHueSL();
 
         SegmentSet 
-            &segmentSet; 
+            &SegSet; 
 
         PacificaHuePalPS
             *PacificaPalette = nullptr;
@@ -131,13 +131,13 @@ class PacificaHueSL : public EffectBasePS {
             currentTime,
             prevTime = 0,
             prevHueTime = 0,
-            deltams,
-            deltams1,
-            deltams2,
-            deltams21;
+            deltaTime,
+            deltaTime1,
+            deltaTime2,
+            deltaTime21;
         
         uint8_t
-            basethreshold,
+            baseThreshold,
             wave,
             threshold,
             lightLvl,
@@ -153,15 +153,15 @@ class PacificaHueSL : public EffectBasePS {
             sCIStart2,
             sCIStart3, 
             sCIStart4,
-            speedfactor1,
-            speedfactor2,
+            speedFactor1,
+            speedFactor2,
             ci,
-            waveangle,
-            wavescale_half,
+            waveAngle,
+            waveScaleHalf,
             s16,
             cs,
             index,
-            sindex16;
+            sIndex16;
         
         CRGB
             *bgColor = nullptr, //bgColor is a pointer, it is tied to the bgColor in the PacificaHuePalPS
@@ -169,7 +169,7 @@ class PacificaHueSL : public EffectBasePS {
         
         void 
             init(uint16_t HueRate, uint16_t Rate),
-            doOneLayer( palettePS *palette, uint16_t cistart, uint16_t wavescale, uint8_t bri, uint16_t ioff),
+            doOneLayer( palettePS *palette, uint16_t ciStart, uint16_t waveScale, uint8_t bri, uint16_t iOff),
             addWhitecaps();
 };
 

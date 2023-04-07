@@ -1,9 +1,9 @@
 #include "PatternShifterSL.h"
 
-PatternShifterSL::PatternShifterSL(SegmentSet &SegmentSet, shiftPatternPS &ShiftPattern, palettePS &Palette, CRGB BgColor, bool Repeat, uint16_t Rate):
-    segmentSet(SegmentSet), palette(&Palette), repeat(Repeat)
+PatternShifterSL::PatternShifterSL(SegmentSet &SegSet, shiftPatternPS &ShiftPattern, palettePS &Palette, CRGB BgColor, bool Repeat, uint16_t Rate):
+    SegSet(SegSet), palette(&Palette), repeat(Repeat)
     {    
-        //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
+        //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
         bindSegPtrPS();
         bindClassRatesPS();
         //bind background color pointer (if needed)
@@ -21,7 +21,7 @@ void PatternShifterSL::reset(){
 //Sets the pattern to be the passed in pattern, also sets up various effect variables
 //If you change the pattern you must do it via this function
 void PatternShifterSL::setShiftPattern(shiftPatternPS &newShiftPattern){
-    numLines = segmentSet.numLines;
+    numLines = SegSet.numLines;
     
     shiftPattern = &newShiftPattern;
     //number of "rows" in the pattern
@@ -36,14 +36,14 @@ void PatternShifterSL::setShiftPattern(shiftPatternPS &newShiftPattern){
     //We need to cap the number of pattern segments if it's greater than the number of segments in the segment set
     //Otherwise we'd try to draw onto segments that didn't exist
     //(it's fine if the pattern has fewer segments than numSegs, nothing will be draw on the missing segments)
-    uint16_t numSegs = segmentSet.numSegs;
+    uint16_t numSegs = SegSet.numSegs;
     if(numPatSegs > numSegs){
         numPatSegs = numSegs;
     }
 
     //Set the wrapping point for the pattern
     //If the pattern is longer than the number of lines we need to increase the mod amount
-    //so that the whole pattern is cycled accross the segment set
+    //so that the whole pattern is cycled across the segment set
     if(patLineLength > numLines){
         modVal = patLineLength;
     } else {
@@ -56,7 +56,7 @@ void PatternShifterSL::setShiftPattern(shiftPatternPS &newShiftPattern){
 //Sets the repeat value of the effect and calculates how many repeats will fit on the segment set (rounded up)
 void PatternShifterSL::setRepeat(bool newRepeat){
     repeat = newRepeat;
-    numLines = segmentSet.numLines;
+    numLines = SegSet.numLines;
 
     //how many segment lines the pattern takes up
     patLineLength = shiftPattern->patLineLength;
@@ -73,7 +73,7 @@ void PatternShifterSL::setRepeat(bool newRepeat){
 //For info on shiftPatterns, see shiftPatternPS.h
 //The goal of the effect is to move the shiftPattern across the segment set lines.
 //For each update we draw the pattern, offsetting the start and end points by the cycleNum (which is incremented after each update)
-//So the pattern is shifted accross the segment set one line at a time.
+//So the pattern is shifted across the segment set one line at a time.
 //If we're repeating, then we draw the pattern up to repeatCount number of times, 
 //with each new pattern being offset by the patLineLength (how many segment lines the pattern covers)
 //so that the patterns are placed directly one after another, filling the whole segment set.
@@ -92,7 +92,7 @@ void PatternShifterSL::update(){
         //that the pattern was on for the previous cycle (as long as it's in the segment set)
         if(!repeat && prevLine < numLines){
             //fill in background if not repeating
-            segDrawUtils::drawSegLine(segmentSet, prevLine, *bgColor, bgColorMode);
+            segDrawUtils::drawSegLine(SegSet, prevLine, *bgColor, bgColorMode);
         }
 
         //To draw the pattern, we run over each pattern "row", getting the start and end lines, 
@@ -104,7 +104,7 @@ void PatternShifterSL::update(){
             patternRow = mod16PS(i, numPatRows);
 
             //The number of the repeat we're on, ie the "second repeat out of four"
-            crntRepeatNum = i / numPatRows;
+            curRepeatNum = i / numPatRows;
 
             //Get the starting index for the current pattern "row"
             rowStartIndex = shiftPattern->getPatRowStartIndex(patternRow);
@@ -113,10 +113,10 @@ void PatternShifterSL::update(){
             //This moves the pattern over time
             //We also do the same to get the end line
             startLine = shiftPattern->getLineStartOrEnd(patternRow, false);
-            startLine = addMod16PS(startLine, cycleNum + patLineLength * crntRepeatNum, modVal);
+            startLine = addMod16PS(startLine, cycleNum + patLineLength * curRepeatNum, modVal);
            
             endLine = shiftPattern->getLineStartOrEnd(patternRow, true);
-            endLine = addMod16PS(endLine, cycleNum + patLineLength * crntRepeatNum, modVal);
+            endLine = addMod16PS(endLine, cycleNum + patLineLength * curRepeatNum, modVal);
 
             //Draw the pattern row between the start and end lines
             //We draw each line segment by segment, getting each segment pixel color individually
@@ -145,8 +145,8 @@ void PatternShifterSL::update(){
                         modeOut = colorMode;
                     }
                     //get the physical pixel location and output the color and colorMode
-                    pixelNum = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, k, j);
-                    segDrawUtils::setPixelColor(segmentSet, pixelNum, colorOut, modeOut, k, j);
+                    pixelNum = segDrawUtils::getPixelNumFromLineNum(SegSet, numLines, k, j);
+                    segDrawUtils::setPixelColor(SegSet, pixelNum, colorOut, modeOut, k, j);
                 }
             }
         }

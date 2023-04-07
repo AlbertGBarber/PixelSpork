@@ -1,7 +1,7 @@
 #include "RateCtrlPS.h"
 
 RateCtrlPS::RateCtrlPS(uint16_t StartRate, uint16_t EndRate, bool Easing, bool Cycle, uint16_t Rate):
-startRate(StartRate), endRate(EndRate), easing(Easing), cycle(Cycle)
+startRate(StartRate), endRate(EndRate), easing(Easing), looped(Cycle)
 {
     //bind the rate vars since they are inherited from BaseEffectPS
     bindClassRatesPS();
@@ -37,7 +37,7 @@ void RateCtrlPS::reset(uint16_t StartRate, uint16_t EndRate, uint16_t Rate ){
 //If we're cycling, then we'll swap the start/end rates, wait through the pauseTime, then reset
 void RateCtrlPS::update(){
     currentTime = millis();
-    if( rateReached && cycle && ( currentTime - prevTime ) >= pauseTime ){ 
+    if( rateReached && looped && ( currentTime - prevTime ) >= pauseTime ){ 
         reset(); 
     }
 
@@ -73,15 +73,15 @@ void RateCtrlPS::update(){
         }
 
         //we need to modify the update rate of the utility for easing
-        //but we still want to be able to tie rate to an exernal pointer
-        //so we use a caculated rateTemp for the update rate
+        //but we still want to be able to tie rate to an external pointer
+        //so we use a calculated rateTemp for the update rate
         rateTemp = *rate * ease8InOutApprox(ratio)/255;
 
         //if we've reached the end rate based on the direction
-        //we need end the transition, or reverse it if cycle is on
+        //we need end the transition, or reverse it if looped is on
         if( (direct && outputRate >= endRate)  || (!direct && outputRate <= endRate) ){
             rateReached = true;
-            if(cycle == true){
+            if(looped == true){
                 uint16_t tempRate = startRate;
                 startRate = endRate;
                 endRate = tempRate;

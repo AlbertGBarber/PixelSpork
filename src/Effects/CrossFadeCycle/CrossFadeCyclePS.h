@@ -5,7 +5,7 @@
 #include "GeneralUtils/generalUtilsPS.h"
 
 /* 
-Cross fades the entire segmentSet from one solid color to the next
+Cross fades the entire SegmentSet from one solid color to the next
 following either a pattern and palette, a palette alone, or using random colors
 each fade is done in a specified number of steps, at a specified rate
 see constructors below for inputs
@@ -63,15 +63,18 @@ Flags:
 class CrossFadeCyclePS : public EffectBasePS {
     public:
         //Constructor for pattern and palette
-        CrossFadeCyclePS(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, uint8_t Steps, uint16_t Rate);
+        CrossFadeCyclePS(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t Steps, uint16_t Rate);
         
         //Constructor for palette as the pattern
-        CrossFadeCyclePS(SegmentSet &SegmentSet, palettePS &Palette, uint8_t Steps, uint16_t Rate);  
+        CrossFadeCyclePS(SegmentSet &SegSet, palettePS &Palette, uint8_t Steps, uint16_t Rate);  
         
         //Constructor for random colors
-        CrossFadeCyclePS(SegmentSet &SegmentSet, uint8_t Steps, uint16_t Rate);
+        CrossFadeCyclePS(SegmentSet &SegSet, uint8_t Steps, uint16_t Rate);
 
         ~CrossFadeCyclePS();
+
+        SegmentSet 
+            &SegSet; 
 
         uint8_t
             steps, //total steps per fade
@@ -83,17 +86,14 @@ class CrossFadeCyclePS : public EffectBasePS {
         
         bool
             paused = false;
-        
-        SegmentSet 
-            &segmentSet; 
 
         palettePS
             *palette = nullptr,
-            paletteTemp;
+            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
         
         patternPS
             *pattern = nullptr,
-            patternTemp;
+            patternTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
         
         void 
             setPaletteAsPattern(),
@@ -105,15 +105,15 @@ class CrossFadeCyclePS : public EffectBasePS {
             currentTime,
             prevTime = 0;
         
-        CRGB 
-            startColor, //the color we are fading from
-            colorOut,
-            nextColor; //the color we are fading to
-        
         uint8_t
             patternIndex = 0, //What index we're fading to in the pattern
             palIndex = 0, //the index of the pattern that we are currently fading away from, mainly used for shuffle()
             currentStep = 0; //current step of the current fade
+        
+        CRGB 
+            startColor, //the color we are fading from
+            colorOut,
+            nextColor; //the color we are fading to
         
         void
             getNextColor(),

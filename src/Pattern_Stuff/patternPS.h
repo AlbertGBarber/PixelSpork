@@ -10,13 +10,13 @@
 #endif
 
 //a struct for holding a uint8_t array and it's length in one place
-//this makes passing it to effects and functions simplier
-//(and allows you to do shinanigans by changing the length artificially)
+//this makes passing it to effects and functions easier
+//(and allows you to do shenanigans by changing the length artificially)
 //See patternUtils.h for interacting with patterns
 
 //generally a pattern will be paired with a palette in an effect, where the 
-//pattern entrys will be the indecies of the colors in the palette
-//ie pattern of {0, 1, 4} would corrospond to the first, second, and fifth colors in the palette
+//pattern entries will be the indicies of the colors in the palette
+//ie pattern of {0, 1, 4} would correspond to the first, second, and fifth colors in the palette
 
 //note that the patternArr is a pointer to an array of CRGB colors
 //this is b/c structs don't allow you to have variable length arrays
@@ -25,7 +25,7 @@
 //uint8_t pattern_arr[] = {0, 2, 1};
 //patternPS pattern = { pattern_arr, SIZE(pattern_arr) };
 struct patternPS {
-  uint8_t *patternArr = nullptr;
+  uint8_t *patternArr;
   uint16_t length;
 } ;
 

@@ -1,31 +1,31 @@
  #include "StreamerSL.h"
 
 //constructor for using the passed in pattern and palette for the streamer
-StreamerSL::StreamerSL(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate):
-    segmentSet(SegmentSet), pattern(&Pattern), palette(&Palette), fadeSteps(FadeSteps)
+StreamerSL::StreamerSL(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate):
+    SegSet(SegSet), pattern(&Pattern), palette(&Palette), fadeSteps(FadeSteps)
     {    
         init(BgColor, Rate);
 	}
 
 //constructor for building the streamer pattern from the passed in pattern and the palette, using the passed in colorLength and spacing
-StreamerSL::StreamerSL(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate):
-    segmentSet(SegmentSet), palette(&Palette), fadeSteps(FadeSteps)
+StreamerSL::StreamerSL(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate):
+    SegSet(SegSet), palette(&Palette), fadeSteps(FadeSteps)
     {    
         setPatternAsPattern(Pattern, ColorLength, Spacing);
         init(BgColor, Rate);
 	}
 
 //constructor for building a streamer using all the colors in the passed in palette, using the colorLength and spacing for each color
-StreamerSL::StreamerSL(SegmentSet &SegmentSet, palettePS &Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate):
-    segmentSet(SegmentSet), palette(&Palette), fadeSteps(FadeSteps)
+StreamerSL::StreamerSL(SegmentSet &SegSet, palettePS &Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate):
+    SegSet(SegSet), palette(&Palette), fadeSteps(FadeSteps)
     {    
         setPaletteAsPattern(ColorLength, Spacing);
         init(BgColor, Rate);
 	}
 
 //constructor for doing a single colored streamer, using colorLength and spacing
-StreamerSL::StreamerSL(SegmentSet &SegmentSet, CRGB Color, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate):
-    segmentSet(SegmentSet), fadeSteps(FadeSteps)
+StreamerSL::StreamerSL(SegmentSet &SegSet, CRGB Color, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate):
+    SegSet(SegSet), fadeSteps(FadeSteps)
     {    
         paletteTemp = paletteUtilsPS::makeSingleColorPalette(Color);
         palette = &paletteTemp;
@@ -40,9 +40,9 @@ StreamerSL::~StreamerSL(){
     free(prevLineColors);
 }
 
-//intilization of core variables and pointers
+//initialization of core variables and pointers
 void StreamerSL::init(CRGB BgColor, uint16_t Rate){
-    //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
+    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
     bindSegPtrPS();
     bindClassRatesPS();
     //bind background color pointer
@@ -68,7 +68,7 @@ void StreamerSL::setPatternAsPattern(patternPS &inputPattern, uint8_t colorLengt
 
 //sets the current palette to be the streamer pattern (using all colors in the palette)
 //using the passed in colorLength and spacing
-//ex: for palette of lenth 3, and a colorLength of 2, and spacing of 1
+//ex: for palette of length 3, and a colorLength of 2, and spacing of 1
 //the final streamer pattern would be : {0, 0, 255, 1, 1, 255, 2, 2, 255}
 void StreamerSL::setPaletteAsPattern(uint8_t colorLength, uint8_t spacing){
     patternTemp = generalUtilsPS::setPaletteAsPattern(*palette, colorLength, spacing);
@@ -81,7 +81,7 @@ void StreamerSL::reset(){
     blendStep = 0;
     cycleNum = 0;
 
-    numSegs = segmentSet.numSegs;
+    numSegs = SegSet.numSegs;
 
     free(prevLineColors);
     prevLineColors = (CRGB*) malloc(numSegs*sizeof(CRGB));
@@ -97,9 +97,9 @@ void StreamerSL::update(){
 
         //both updateFade() and updateNoFade() need the current segment and pattern lengths,
         //so we'll do them here to reduce repetition
-        numLines = segmentSet.numLines;
+        numLines = SegSet.numLines;
         numLinesLim = numLines - 1; //used for setting the line colors
-        longestSeg = segmentSet.segNumMaxNumLines;
+        longestSeg = SegSet.segNumMaxNumLines;
         patternLength = pattern->length;
 
         if(fadeOn){
@@ -118,12 +118,12 @@ void StreamerSL::update(){
 CRGB StreamerSL::getNextColor(uint16_t lineNum, uint16_t segNum){
 
     //get the current pixel's location in the segment set
-    pixelNum = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, segNum, lineNum);
+    pixelNum = segDrawUtils::getPixelNumFromLineNum(SegSet, numLines, segNum, lineNum);
     if(nextPattern == 255){
-        return segDrawUtils::getPixelColor(segmentSet, pixelNum, *bgColor, bgColorMode, segNum, lineNum);
+        return segDrawUtils::getPixelColor(SegSet, pixelNum, *bgColor, bgColorMode, segNum, lineNum);
     } else {
         nextColor = paletteUtilsPS::getPaletteColor(*palette, nextPattern);
-        return segDrawUtils::getPixelColor(segmentSet, pixelNum, nextColor, colorMode, segNum, lineNum);
+        return segDrawUtils::getPixelColor(SegSet, pixelNum, nextColor, colorMode, segNum, lineNum);
     }
 }
 
@@ -144,7 +144,7 @@ CRGB StreamerSL::getBlendedColor(CRGB nextColor, uint16_t segNum){
 }
 
 //Updates the effect, fading each line forward one step
-//Runs accross all the lines, works out what their current and target colors are, 
+//Runs across all the lines, works out what their current and target colors are, 
 //and fades them one step towards the target
 //In the case of color modes where each pixel in the line is a different color, 
 //each pixel's color is fetched and then faded
@@ -182,7 +182,7 @@ void StreamerSL::updateFade(){
                 colorOut = getBlendedColor(nextColor, longestSeg);
                 //write the color out to all the leds in the segment line
                 //(we used numLinesLim - i in place of just i to make the default line motion positive)
-                segDrawUtils::drawSegLine(segmentSet, numLinesLim - i, colorOut, 0);
+                segDrawUtils::drawSegLine(SegSet, numLinesLim - i, colorOut, 0);
                 break;
             case 1: case 2: case 6: case 7:
                 //For these modes each pixel may be different, so we need to blend each of them individually
@@ -192,7 +192,7 @@ void StreamerSL::updateFade(){
                     //Note that getNextColor() also gets the pixelNum for the lineNum & segNum
                     nextColor = getNextColor(numLinesLim - i, j); 
                     colorOut = getBlendedColor(nextColor, j);
-                    segDrawUtils::setPixelColor(segmentSet, pixelNum, colorOut, 0, j, i);
+                    segDrawUtils::setPixelColor(SegSet, pixelNum, colorOut, 0, j, i);
                 }
                 break;
         }
@@ -214,7 +214,7 @@ void StreamerSL::updateFade(){
 //then advance the cycle by one so all the colors shift forwards
 //(Note that unlike with updateFade() we get the colors for all the pixels in each line regardless of colorMode.
 //This keeps the code more compact, and isn't a big deal b/c we aren't blending, so we don't need to do any 
-//more caculations for each pixel than what the system would already be doing)
+//more calculations for each pixel than what the system would already be doing)
 void StreamerSL::updateNoFade(){
     //For each line, set the pixel colors in it
     for(uint16_t i = 0; i < numLines; i++){
@@ -223,14 +223,14 @@ void StreamerSL::updateNoFade(){
         nextPatternIndex = i + cycleNum;
         nextPattern = patternUtilsPS::getPatternVal(*pattern, nextPatternIndex);
 
-        //For each segment pixel in the line, get its color (accouting for colorModes)
+        //For each segment pixel in the line, get its color (accounting for colorModes)
         //and write it out
         for(uint16_t j = 0; j < numSegs; j++){
             //get the current pixel's color and location
             //(we used numLinesLim - i in place of just i to make the default line motion positive)
             //Note that getNextColor() also gets the pixelNum for the lineNum & segNum
             nextColor = getNextColor(numLinesLim - i, j);
-            segDrawUtils::setPixelColor(segmentSet, pixelNum, nextColor, 0, j, i); 
+            segDrawUtils::setPixelColor(SegSet, pixelNum, nextColor, 0, j, i); 
         }   
     }
     //No blending, so the color change after each step

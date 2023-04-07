@@ -7,8 +7,8 @@
 
 /*
 A classic effect
-Moves repeating rainbows of a set length along a segmentSet
-shifts the rainbows in along the segmentSet in the passed in direction at the passed in rate
+Moves repeating rainbows of a set length along a SegmentSet
+shifts the rainbows in along the SegmentSet in the passed in direction at the passed in rate
 suggested min length is 5 (ie red, yellow, green, blue, indigo/violet)
 
 This is the 1D version of the effect. See RainbowCycleSL.h for a segment line 2D version.
@@ -16,11 +16,11 @@ Comparing the two may help you learn how drawing on segment lines works.
 
 Example call: 
     RainbowCyclePS(mainSegments, 30, true, 80); 
-    Will draw rainbows of length 30, moving towards the end of the segmentSet, at 80ms
+    Will draw rainbows of length 30, moving towards the end of the SegmentSet, at 80ms
 
     RainbowCyclePS(mainSegments, true, 80); 
     Will draw rainbows of length 255 (the length is set to 255 by default b/c it is omitted from the constructor),
-    moving towards the end of the segmentSet, at 80ms
+    moving towards the end of the SegmentSet, at 80ms
 
 Constructor Inputs:
     length (optional) -- The length of each rainbow, if omitted, the rainbow will be set to the default of 255
@@ -40,13 +40,13 @@ Reference Vars:
 */
 class RainbowCyclePS : public EffectBasePS {
     public:
-        RainbowCyclePS(SegmentSet &SegmentSet, uint16_t Length, bool Direction, uint16_t Rate); 
+        RainbowCyclePS(SegmentSet &SegSet, uint16_t Length, bool Direction, uint16_t Rate); 
         
         //Does a rainbow cycle of length 255
-        RainbowCyclePS(SegmentSet &SegmentSet, bool Direction, uint16_t Rate); 
+        RainbowCyclePS(SegmentSet &SegSet, bool Direction, uint16_t Rate); 
 
         SegmentSet 
-            &segmentSet;
+            &SegSet;
     
         uint8_t
             satur = 255,

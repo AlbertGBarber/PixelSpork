@@ -1,5 +1,5 @@
-#ifndef PoliceStrobeSLPS_h
-#define PoliceStrobeSLPS_h
+#ifndef PoliceStrobeSL_h
+#define PoliceStrobeSL_h
 
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
@@ -9,21 +9,21 @@
 An effect to strobe a strip to mimic police lights, with some additional options
 A strobe is a rapid blinking of light.
 
-The base constuctor takes two colors, but you can optionally pass in a pattern and palette, or just a palette instead.
+The base constructor takes two colors, but you can optionally pass in a pattern and palette, or just a palette instead.
 The are a few options for randomly choosing the strobe colors from the pattern.
 
 Strobe Modes:
-    0: Pulse half the segmentSet in each color (alternating halves and colors), then pulse each color on the whole segmentSet
-    1: Pulse half the segmentSet in each color (alternating halves and colors)
-    2: Pulse the whole segmentSet in each color (alternating colors)
+    0: Pulse half the SegmentSet in each color (alternating halves and colors), then pulse each color on the whole SegmentSet
+    1: Pulse half the SegmentSet in each color (alternating halves and colors)
+    2: Pulse the whole SegmentSet in each color (alternating colors)
 
 The strobe of each color will continue for a set number of on/off cycles (ie making the strobe)
 
 If using a pattern, all the pattern indexes will be cycled through before reseting 
-For mode 0, this means all the colors will be strobed in halves, then strobed on the full strip
+For mode 0, this means all the colors will be strobe'd in halves, then strobe'd on the full strip
 
 The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
-passing in a segmentSet with only one segment containing the whole strip.
+passing in a SegmentSet with only one segment containing the whole strip.
 ie depending on the mode, halve the segment lines will be pulsed at a time.
 
 Also see StrobeSeg for a segment based strobe effect. Lets you create more complex strobe patterns.
@@ -34,7 +34,7 @@ Pausing:
     after which, the strobe will restart
 
 Backgrounds:
-    By default the background is filled in after the end of every pulse set and duing a pause
+    By default the background is filled in after the end of every pulse set and during a pause
     Both these can be disabled with the fillBG and fillBGOnPause flags respectively
     This causes the last pulse color to persist after the pulse set is done
 
@@ -97,7 +97,7 @@ Other Settings:
     fillBGOnPause (default true) -- flag to fill the background during each pause
     randMode (default 0) -- Sets how colors are choosen from the palette
                         -- 0: Colors will be choosen from the palette in order (not random)
-                        -- 1: Colors will be choosen completly at random (not using the palette)
+                        -- 1: Colors will be choosen completely at random (not using the palette)
                         -- 2: Colors will be choosen randomly from the palette, same color will not be choosen in a row
 
 Reference Vars:
@@ -110,18 +110,18 @@ class PoliceStrobeSL : public EffectBasePS {
     public:
 
         //Constructor for a traditional two color strobe
-        PoliceStrobeSL(SegmentSet &SegmentSet, CRGB ColorOne, CRGB ColorTwo, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, uint8_t PulseMode, bool SegMode, uint16_t Rate);  
+        PoliceStrobeSL(SegmentSet &SegSet, CRGB ColorOne, CRGB ColorTwo, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, uint8_t PulseMode, bool SegMode, uint16_t Rate);  
 
         //Constructor using both pattern and palette
-        PoliceStrobeSL(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, uint8_t PulseMode, bool SegMode, uint16_t Rate);
+        PoliceStrobeSL(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, uint8_t PulseMode, bool SegMode, uint16_t Rate);
 
         //Constructor for using palette as the pattern
-        PoliceStrobeSL(SegmentSet &SegmentSet, palettePS &Palette, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, uint8_t PulseMode, bool SegMode, uint16_t Rate);
+        PoliceStrobeSL(SegmentSet &SegSet, palettePS &Palette, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, uint8_t PulseMode, bool SegMode, uint16_t Rate);
 
         ~PoliceStrobeSL();
 
         SegmentSet 
-            &segmentSet; 
+            &SegSet; 
 
         bool
             fillBG = true,
@@ -148,12 +148,12 @@ class PoliceStrobeSL : public EffectBasePS {
             *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
         
         palettePS
-            paletteTemp,
-            *palette = nullptr; //the palette used for the strobe colors
+            *palette = nullptr, //the palette used for the strobe colors
+            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
 
-        patternPS 
-            patternTemp,
-            *pattern = nullptr;
+        patternPS
+            *pattern = nullptr, //pattern of strobe colors (taken from the palette)
+            patternTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
         
         void 
             reset(),

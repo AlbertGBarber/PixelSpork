@@ -1,5 +1,5 @@
-#ifndef PlasmaSLPS_h
-#define PlasmaSLPS_h
+#ifndef PlasmaSL_h
+#define PlasmaSL_h
 
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
@@ -17,12 +17,12 @@ which helps prevent the effect from repeating too often.
 
 There are a few issues with this effect at lower brightnesses (<50), where the leds seem to blink. 
 The brightness is controlled by a wave. The blinking happens when the wave frequency is too low
-You can adjust the freqency and the maxium dimming using briFreq and briRange
+You can adjust the frequency and the maximum dimming using briFreq and briRange
 I've pre-set these to a pair of values that seem to work ok at lower brightnesses
 But you may need to adjust them. Andrew Tuline defaults are 9 and 96 respectively
 
 The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
-passing in a segmentSet with only one segment containing the whole strip.
+passing in a SegmentSet with only one segment containing the whole strip.
 
 Shifting Phases with Time:
     To produce a more varied effect you can opt to have the wave phases shift with time
@@ -34,7 +34,7 @@ Shifting Phases with Time:
     A target phase value will be set by adding phase#Base to randomly picked value up to phase#Range: phase#Base + random(phase#Range)
     With a target set, the phase will move towards the target value by one step each update cycle
     This avoids color "jumps" by keeping the transition gradual. 
-    Once the targett is reached, a new target value is picked and the process begins again
+    Once the target is reached, a new target value is picked and the process begins again
     The default is to use the full range of 255 to vary the phases
     Both phase#Bases are set to a default value of 0
     Both phase#Ranges are set to a default value of 2555
@@ -45,7 +45,7 @@ Shifting Phases with Time:
     !!Do NOT set either phases directly after turning on randomize.
     If you do, be sure to adjust phase1 == targetPhase1 and phase2 == targetPhase2
 
-    If randomize is true in the constuctor, the freqencies for the waves,
+    If randomize is true in the constructor, the frequencies for the waves,
     will also be randomized once (between 10 and 30) but they will not be 
     shifted over time because it causes jumps in the effect
 
@@ -82,14 +82,14 @@ Constructor inputs:
                   Between 20 - 100 looks good
     randomize -- Set to true will randomize and shift the phase values over time (and also randomize the freqs once)
     rate -- The update rate (ms) note that this is synced with all the particles.
-vb
+
 Functions:
     randomizeFreq(freqMin, freqMax) -- Sets both wave frequencies to be a random value between the passed in min and max
     update() -- updates the effect 
 
 Other Settings:
-    freq1 (default 23) -- The first frequency used in the wave caculation
-    freq1 (default 15) -- The second frequency used in the wave caculation
+    freq1 (default 23) -- The first frequency used in the wave calculation
+    freq1 (default 15) -- The second frequency used in the wave calculation
     pAdj1 (default 0) -- Random factor for the phaseWave1 calculation
     pAdj2 (default 0) -- Random factor for the phaseWave2 calculation
     phase1Base (default 0) -- The minimum value of phase1 (see Shifting Phases with Time above)
@@ -103,15 +103,15 @@ class PlasmaSL : public EffectBasePS {
     public:
 
         //Constructor for effect with palette
-        PlasmaSL(SegmentSet &SegmentSet, palettePS &Palette, uint16_t BlendSteps, bool Randomize, uint16_t Rate); 
+        PlasmaSL(SegmentSet &SegSet, palettePS &Palette, uint16_t BlendSteps, bool Randomize, uint16_t Rate); 
 
         //Constructor for effect with randomly chosen palette
-        PlasmaSL(SegmentSet &SegmentSet, uint8_t numColors, uint16_t BlendSteps, bool Randomize, uint16_t Rate);
+        PlasmaSL(SegmentSet &SegSet, uint8_t numColors, uint16_t BlendSteps, bool Randomize, uint16_t Rate);
 
         ~PlasmaSL();
 
         SegmentSet 
-            &segmentSet; 
+            &SegSet; 
 
         uint8_t
             freq1 = 23, 
@@ -138,8 +138,8 @@ class PlasmaSL : public EffectBasePS {
             randomize;
         
         palettePS
-            paletteTemp,
-            *palette = nullptr;
+            *palette = nullptr,
+            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
 
         void 
             randomizeFreq(uint8_t freqMin, uint8_t freqMax),

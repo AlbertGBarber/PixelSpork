@@ -1,24 +1,24 @@
 #include "TheaterChaseSL.h"
 
-TheaterChaseSL::TheaterChaseSL(SegmentSet &SegmentSet, CRGB Color, CRGB BgColor, uint8_t LitLength, uint8_t Spacing, uint16_t Rate):
-    segmentSet(SegmentSet)
+TheaterChaseSL::TheaterChaseSL(SegmentSet &SegSet, CRGB Color, CRGB BgColor, uint8_t LitLength, uint8_t Spacing, uint16_t Rate):
+    SegSet(SegSet)
     {    
-        //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
+        //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
         bindSegPtrPS();
         bindClassRatesPS();
         bindBGColorPS();
-        //bind the color varaible since it's a pointer
+        //bind the color variable since it's a pointer
         colorOrig = Color;
         color = &colorOrig;
         //set the litLength and spacing,
-        //we set them using thier functions since they have a min value of 1
+        //we set them using their functions since they have a min value of 1
         setLitLength(LitLength);
         setSpacing(Spacing);
 	}
 
 //sets the litLength (min value 1)
-void TheaterChaseSL::setLitLength(uint8_t newLitlength){
-    litLength = newLitlength;
+void TheaterChaseSL::setLitLength(uint8_t newLitLength){
+    litLength = newLitLength;
     if(litLength < 1) {
         litLength = 1;
     }
@@ -46,12 +46,12 @@ void TheaterChaseSL::update(){
     if( ( currentTime - prevTime ) >= *rate ) {
         prevTime = currentTime;
 
-        numLines = segmentSet.numLines;
+        numLines = SegSet.numLines;
         //recalculate the draw length so you can change spacing or litLength on the fly
         totalDrawLength = spacing + litLength;
 
         //fill the whole strip with bgColor
-        segDrawUtils::fillSegSetColor(segmentSet, *bgColor, bgColorMode);
+        segDrawUtils::fillSegSetColor(SegSet, *bgColor, bgColorMode);
 
         //Re-draw the spots, working with regions of totalDrawLength (sum of litLength and spacing)
         //Each spot loops around it's region, rather than actually moving down the strip
@@ -61,8 +61,8 @@ void TheaterChaseSL::update(){
                 //if the spot size is greater than 1 (litLength), then we will run into the next 
                 //spot region. To prevent this, loop the spot round by modding by totalDrawLength
                 lineNum = i + addMod16PS( j, cycleNum, totalDrawLength ); //i + (j + cycleNum) % totalDrawLength;
-                segDrawUtils::drawSegLine(segmentSet, lineNum, *color, colorMode);
-                //segDrawUtils::setPixelColor(segmentSet, pixelLoc, *color, colorMode);
+                segDrawUtils::drawSegLine(SegSet, lineNum, *color, colorMode);
+                //segDrawUtils::setPixelColor(SegSet, pixelLoc, *color, colorMode);
             }
         }
         

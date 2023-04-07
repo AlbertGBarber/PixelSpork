@@ -1,18 +1,18 @@
 #include "FirefliesSL.h"
 
 //Constructor for effect with palette
-FirefliesSL::FirefliesSL(SegmentSet &SegmentSet, palettePS &Palette, uint8_t MaxNumFireflies, uint8_t SpawnChance, 
+FirefliesSL::FirefliesSL(SegmentSet &SegSet, palettePS &Palette, uint8_t MaxNumFireflies, uint8_t SpawnChance, 
                          uint16_t LifeBase, uint16_t LifeRange, uint16_t SpeedBase, uint16_t SpeedRange, uint16_t Rate):
-    segmentSet(SegmentSet), palette(&Palette), spawnChance(SpawnChance), lifeBase(LifeBase), 
+    SegSet(SegSet), palette(&Palette), spawnChance(SpawnChance), lifeBase(LifeBase), 
     lifeRange(LifeRange), speedBase(SpeedBase), speedRange(SpeedRange)
     {    
         init(MaxNumFireflies, Rate);
 	}
 
 //Constructor for effect with palette of random colors
-FirefliesSL::FirefliesSL(SegmentSet &SegmentSet, uint8_t numColors, uint8_t MaxNumFireflies, uint8_t SpawnChance, 
+FirefliesSL::FirefliesSL(SegmentSet &SegSet, uint8_t numColors, uint8_t MaxNumFireflies, uint8_t SpawnChance, 
                          uint16_t LifeBase, uint16_t LifeRange, uint16_t SpeedBase, uint16_t SpeedRange, uint16_t Rate):
-    segmentSet(SegmentSet), spawnChance(SpawnChance), lifeBase(LifeBase), 
+    SegSet(SegSet), spawnChance(SpawnChance), lifeBase(LifeBase), 
     lifeRange(LifeRange), speedBase(SpeedBase), speedRange(SpeedRange)
     {    
         paletteTemp = paletteUtilsPS::makeRandomPalette(numColors);
@@ -22,9 +22,9 @@ FirefliesSL::FirefliesSL(SegmentSet &SegmentSet, uint8_t numColors, uint8_t MaxN
 
 //constructor for effect with single color
 //!!If using pre-build FastLED colors you need to pass them as CRGB( *color code* )
-FirefliesSL::FirefliesSL(SegmentSet &SegmentSet, CRGB Color, uint8_t MaxNumFireflies, uint8_t SpawnChance, 
+FirefliesSL::FirefliesSL(SegmentSet &SegSet, CRGB Color, uint8_t MaxNumFireflies, uint8_t SpawnChance, 
                          uint16_t LifeBase, uint16_t LifeRange, uint16_t SpeedBase, uint16_t SpeedRange, uint16_t Rate):
-    segmentSet(SegmentSet), spawnChance(SpawnChance), lifeBase(LifeBase), 
+    SegSet(SegSet), spawnChance(SpawnChance), lifeBase(LifeBase), 
     lifeRange(LifeRange), speedBase(SpeedBase), speedRange(SpeedRange)
     {    
         paletteTemp = paletteUtilsPS::makeSingleColorPalette(Color);
@@ -40,20 +40,20 @@ FirefliesSL::~FirefliesSL(){
     free(paletteTemp.paletteArr);
 }
 
-//common initilzation function for core vars
+//common initialization function for core vars
 void FirefliesSL::init(uint8_t maxNumFireflies, uint16_t Rate){
-    //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
+    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
     bindSegPtrPS();
     bindClassRatesPS();
     setupFireflies(maxNumFireflies);
     //do a quick clear of the strip
-    segDrawUtils::fillSegSetColor(segmentSet, *bgColor, bgColorMode);
+    segDrawUtils::fillSegSetColor(SegSet, *bgColor, bgColorMode);
 }
 
 //Create the data structures for a set of Fireflies (particles)
 //You should call this if you ever want to change maxNumFireflies
 //Fireflies need three data structures:
-    //A particleSet with a paricle array of size maxNumFireflies * (maxNumSparks + 1)
+    //A particleSet with a particle array of size maxNumFireflies * (maxNumSparks + 1)
     //A CRGB array of trailEndColors[maxNumFireflies] to store the trail color for each particle
     //A uint16_t array of particlePrevPos[maxNumFireflies] to store the previous particle locations
 void FirefliesSL::setupFireflies(uint8_t newMaxNumFireflies){
@@ -72,7 +72,7 @@ void FirefliesSL::setupFireflies(uint8_t newMaxNumFireflies){
 
     //set the background if we found an active particle to clear the segment set
     if( clearStrip || fillBG || blend ){
-        segDrawUtils::fillSegSetColor(segmentSet, *bgColor, bgColorMode);
+        segDrawUtils::fillSegSetColor(SegSet, *bgColor, bgColorMode);
     }
 
     //must always have at least 1 firefly spawning
@@ -96,7 +96,7 @@ void FirefliesSL::setupFireflies(uint8_t newMaxNumFireflies){
 
         //to allow the effect to work along segment lines, we use the maximum number of lines
         //as the range of the particle's motion
-        numLines = segmentSet.numLines;
+        numLines = SegSet.numLines;
         particleSetTemp = particleUtilsPS::buildParticleSet(maxNumFireflies, numLines, true, speedBase, speedRange, 1, 0, 
                                                             0, 0, 0, false, palette->length, true);
         particleSet = &particleSetTemp;
@@ -122,14 +122,14 @@ void FirefliesSL::update(){
         prevTime = currentTime;
 
         //re-fetch the segment vars in-case they've been modified
-        numLines = segmentSet.numLines;
-        numSegs = segmentSet.numSegs;
-        longestSeg = segmentSet.segNumMaxNumLines;
+        numLines = SegSet.numLines;
+        numSegs = SegSet.numSegs;
+        longestSeg = SegSet.segNumMaxNumLines;
 
         //If the bg is to be filled before the particles start, fill it in
         //(such as if you have a background that's changing with time (alla bgColorMode 6))
         if( fillBG || blend ){
-            segDrawUtils::fillSegSetColor(segmentSet, *bgColor, bgColorMode);
+            segDrawUtils::fillSegSetColor(SegSet, *bgColor, bgColorMode);
         }
 
         //For each firefly (particle) update it if it's life > 0
@@ -160,8 +160,8 @@ void FirefliesSL::update(){
 
                     //get the physical pixel location based on the line and seg numbers
                     //we always get the pixel in the line that's on the longest segment
-                    pixelNum = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, longestSeg, particlePrevPos[i]);
-                    //segDrawUtils::getPixelColor(segmentSet, &pixelInfo, *bgColor, bgColorMode, particlePrevPos[i]);
+                    pixelNum = segDrawUtils::getPixelNumFromLineNum(SegSet, numLines, longestSeg, particlePrevPos[i]);
+                    //segDrawUtils::getPixelColor(SegSet, &pixelInfo, *bgColor, bgColorMode, particlePrevPos[i]);
 
                     //only turn off the line if it hasn't been touched by another particle (or something else)
                     //this prevents background holes from being placed in other particles
@@ -169,9 +169,9 @@ void FirefliesSL::update(){
                     //with the particle position
                     //This helps avoid issues with un-equal segments, where multiple lines can converge on a single pixel
                     //but you still only want to draw the last particle in the set for consistency
-                    if(segmentSet.leds[pixelNum] == trailEndColors[i]){
-                        segDrawUtils::drawSegLine(segmentSet, particlePrevPos[i], *bgColor, bgColorMode);
-                        //segmentSet.leds[pixelInfo.pixelLoc] = pixelInfo.color;
+                    if(SegSet.leds[pixelNum] == trailEndColors[i]){
+                        segDrawUtils::drawSegLine(SegSet, particlePrevPos[i], *bgColor, bgColorMode);
+                        //SegSet.leds[pixelInfo.pixelLoc] = pixelInfo.color;
                     }
                 }
 
@@ -192,13 +192,13 @@ void FirefliesSL::update(){
 //Updates the particle location based on the inoise16() output
 //It's important that each particle has a unique noise position, otherwise they will all move together
 //After some testing, I found the best way to do this was to increment the noise based on the particle's speed
-//and the current time. Unfortunatly the speed range is fairly small (2 - 20) unless you want really fast particles
+//and the current time. Unfortunately the speed range is fairly small (2 - 20) unless you want really fast particles
 //We also offset the particle's location by its start position. 
 //This prevents particles of similar speeds from grouping up
 //The overall result is not perfect, but looks pretty good most of the time
 //We also reduce the particle's life by the elapsed time each time we update it
 //Note, to keep things simple I'm only allowing particles of size 1 with no trails
-//Likewise the motion of the particles is goverened entirely by the noise
+//Likewise the motion of the particles is governed entirely by the noise
 //So overall I'm not using the particle trialType, trailSize, size, direction, bounce, or lastUpdateTime properties
 void FirefliesSL::moveParticle(particlePS *particlePtr, uint16_t partNum) {
 
@@ -272,7 +272,7 @@ void FirefliesSL::drawParticlePixel(particlePS *particlePtr, uint16_t partNum){
     if(flicker){
         //To look smooth, the brightness is based on at noise function
         flickerBri = inoise8(particlePtr->startPosition, partLife * 10); //millis() * 2
-        //to prevent too much flicker, we constrain the bightness
+        //to prevent too much flicker, we constrain the brightness
         flickerBri = 255 - constrain(flickerBri, 50, 200);
     }
 
@@ -282,10 +282,10 @@ void FirefliesSL::drawParticlePixel(particlePS *particlePtr, uint16_t partNum){
     for(uint16_t i = 0; i < numSegs; i++){
         //get the pixel's physical location and adjust for any color modes
         //also fetch the background and particle color at this point 
-        pixelNum = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, i, partPos);
-        //segDrawUtils::getPixelColor(segmentSet, &pixelInfo, colorOut, colorMode, particlePtr->position);
-        bgCol = segDrawUtils::getPixelColor(segmentSet, pixelNum, *bgColor, bgColorMode, i, partPos);
-        colorFinal = segDrawUtils::getPixelColor(segmentSet, pixelNum, colorOut, colorMode, i, partPos);
+        pixelNum = segDrawUtils::getPixelNumFromLineNum(SegSet, numLines, i, partPos);
+        //segDrawUtils::getPixelColor(SegSet, &pixelInfo, colorOut, colorMode, particlePtr->position);
+        bgCol = segDrawUtils::getPixelColor(SegSet, pixelNum, *bgColor, bgColorMode, i, partPos);
+        colorFinal = segDrawUtils::getPixelColor(SegSet, pixelNum, colorOut, colorMode, i, partPos);
         
         //set the color based on if we're fading in or out
         switch(fadeType){
@@ -308,24 +308,24 @@ void FirefliesSL::drawParticlePixel(particlePS *particlePtr, uint16_t partNum){
 
         //output the color
         if(blend){
-            segmentSet.leds[pixelNum] += colorFinal;
+            SegSet.leds[pixelNum] += colorFinal;
         } else {
-            segmentSet.leds[pixelNum] = colorFinal;
+            SegSet.leds[pixelNum] = colorFinal;
         }    
         //Need to check to dim the pixel color manually
         //b/c we're not calling setPixelColor directly
-        segDrawUtils::handleBri(segmentSet, pixelNum);
+        segDrawUtils::handleBri(SegSet, pixelNum);
 
         //if we're writing out the pixel on the longest segment, we need to record the 
         //color, so we can use it for setting the background in update()
         if(i == longestSeg){
             //Record the output color for setting the background in the next update
-            trailEndColors[partNum] = segmentSet.leds[pixelNum];  
+            trailEndColors[partNum] = SegSet.leds[pixelNum];  
         }
     }           
 }
 
-//Spawns a firefly by randomizing an extisting particle
+//Spawns a firefly by randomizing an existing particle
 //The particle is given a new speed, start position and color index
 //The size is locked at one
 void FirefliesSL::spawnFirefly(uint8_t partNum){

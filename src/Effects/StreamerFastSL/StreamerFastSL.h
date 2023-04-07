@@ -15,7 +15,7 @@ This effect has been adapted to use segment lines to allow 2D effects.
 The restrictions when compared to StreamerPS are listed below:
 1: There is no fading to shift the streamers along the strip
 2: Changing the palette on the fly will have a delayed effect on the colors
-  The exisiting colors will shift off the strip before new ones shift on
+  The existing colors will shift off the strip before new ones shift on
   This prevents this effect from playing well with paletteBlend functions
 3: The same restrictions as (2) apply to changing the pattern
 4: Changing the direction of the segments or segment set mid-effect may break it temporarily
@@ -37,10 +37,10 @@ to indicate a background pixel (ie set to the BgColor) we use 255 in the pattern
 This does mean if your palette has 255 colors, you'll lose the final color, but you shouldn't have palettes that large
 
 For example, lets say we wanted to do the first two colors of our palette,
-each as length 4 streamers, with 3 background leds inbetween each
+each as length 4 streamers, with 3 background leds in between each
 we would make a pattern as : {0, 0, 0, 0, 255, 255, 255, 1, 1, 1, 1, 255, 255, 255}
 
-For simple patterns like the previous example, I have writtern a few constructors for the effect
+For simple patterns like the previous example, I have written a few constructors for the effect
 that automate the pattern creation, so you don't have to do it yourself (see constructor notes below)
 
 Note that while each entry in the pattern is a uint8_t,
@@ -64,12 +64,12 @@ Example calls:
     The effect updates at a rate of 120ms
 
     StreamerPS(mainSegments, palette3, 3, 4, CRGB::Red, 120);
-    Will do a streamer using all the colors in palette3, each streamer will be length 3, with 4 spaces inbetween
+    Will do a streamer using all the colors in palette3, each streamer will be length 3, with 4 spaces in between
     The bgColor is red
     The streamers will update at a 120ms rate
 
     StreamerPS(mainSegments, CRGB::Blue, 2, 2, CRGB::Red, 0, 140);
-    Will do a blue streamers with length 2 and 2 spaces inbetween
+    Will do a blue streamers with length 2 and 2 spaces in between
     The bgColor is red
     The effect updates at a rate of 140ms
  
@@ -120,16 +120,16 @@ Notes:
 class StreamerFastSL : public EffectBasePS {
     public:
         //constructor for using the passed in pattern and palette for the streamer
-        StreamerFastSL(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint16_t Rate);
+        StreamerFastSL(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint16_t Rate);
 
         //constructor for building the streamer pattern from the passed in pattern and the palette, using the passed in colorLength and spacing
-        StreamerFastSL(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint16_t Rate);
+        StreamerFastSL(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint16_t Rate);
         
         //constructor for building a streamer using all the colors in the passed in palette, using the colorLength and spacing for each color
-        StreamerFastSL(SegmentSet &SegmentSet, palettePS &Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint16_t Rate);
+        StreamerFastSL(SegmentSet &SegSet, palettePS &Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint16_t Rate);
 
         //constructor for doing a single colored streamer, using colorLength and spacing
-        StreamerFastSL(SegmentSet &SegmentSet, CRGB Color, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint16_t Rate);  
+        StreamerFastSL(SegmentSet &SegSet, CRGB Color, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint16_t Rate);  
     
         ~StreamerFastSL();
 
@@ -147,15 +147,15 @@ class StreamerFastSL : public EffectBasePS {
             *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
 
         SegmentSet 
-            &segmentSet; 
+            &SegSet; 
         
         patternPS
-            patternTemp,
-            *pattern = nullptr;
+            *pattern = nullptr,
+            patternTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
         
         palettePS
-            paletteTemp,
-            *palette = nullptr;
+            *palette = nullptr,
+            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
         
         void 
             setPatternAsPattern(patternPS &inputPattern, uint8_t colorLength, uint8_t spacing),

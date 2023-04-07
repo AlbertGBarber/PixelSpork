@@ -1,7 +1,7 @@
 #include "EffectSetPS.h"
 
 //Basic Constructor
-//Note that if RunTime is passed in as 0, infinite will be set to true, so that effects will run indefinitly
+//Note that if RunTime is passed in as 0, infinite will be set to true, so that effects will run indefinitely
 EffectSetPS::EffectSetPS(EffectBasePS **EffectArr, uint8_t NumEffects, uint16_t RunTime):
     runTime(RunTime), numEffects(NumEffects), effectArr(EffectArr)
     {
@@ -9,16 +9,16 @@ EffectSetPS::EffectSetPS(EffectBasePS **EffectArr, uint8_t NumEffects, uint16_t 
     }
 
 //Constructor with an effect destruct limit, for when you have utility effects you don't want to deconstruct.
-//Note that if RunTime is passed in as 0, infinite will be set to true, so that effects will run indefinitly
+//Note that if RunTime is passed in as 0, infinite will be set to true, so that effects will run indefinitely
 EffectSetPS::EffectSetPS(EffectBasePS **EffectArr, uint8_t NumEffects, uint8_t EffectDestLimit, uint16_t RunTime):
     runTime(RunTime), numEffects(NumEffects), effectArr(EffectArr), effectDestLimit(EffectDestLimit)
     {
         init();
     }
 
-//Initilizes core vars 
-//Note that if the runTime is 0, the inifnite flas is set true
-//so that effects will run indefinitly
+//Initializes core vars 
+//Note that if the runTime is 0, the infinite flag is set true
+//so that effects will run indefinitely
 void EffectSetPS::init(){
     infinite = false;
     if(runTime == 0){
@@ -81,7 +81,7 @@ void EffectSetPS::destructAllEffects(void){
 
 //Calls the destructor for all effects in the effect array AT AND AFTER the current effectDestLimit
 //ie if the effectDestLimit is 2 and the number of effects in the array is 5 -> [0, 1, 2, 3, 4]
-//then effects at indexs 2, 3, and 4 will be destructed, while those at 0 and 1 will not.
+//then effects at indexes 2, 3, and 4 will be destructed, while those at 0 and 1 will not.
 //see destructAllEffects() for more info on destructors
 void EffectSetPS::destructEffsAftLim(void){
     destructEffsAftLim(effectDestLimit);
@@ -89,7 +89,7 @@ void EffectSetPS::destructEffsAftLim(void){
 
 //Calls the destructor for all effects in the effect array AT AND AFTER the passed in limit
 //ie if the passed in limit is 3 and the number of effects in the array is 5 -> [0, 1, 2, 3, 4]
-//then effects at indexs 3 and 4 will be destructed, while those at 0, 1, and 2 will not.
+//then effects at indexes 3 and 4 will be destructed, while those at 0, 1, and 2 will not.
 //see destructAllEffects() for more info on destructors
 void EffectSetPS::destructEffsAftLim(uint8_t limit){
     for (uint8_t i = limit; i < numEffects; i++) {
@@ -121,7 +121,7 @@ void EffectSetPS::update(void){
         //(we calculate this here so if can be referenced by the fader utils)
         timeElapsed = currentTime - startTime;
 
-        //If we've not reached the time limit (or we're running indefinitly), call all the effects' update functions
+        //If we've not reached the time limit (or we're running indefinitely), call all the effects' update functions
         if( infinite || timeElapsed <= runTime ) {
             for(uint8_t i = 0; i < numEffects; i++){
                 updateEffect(i);

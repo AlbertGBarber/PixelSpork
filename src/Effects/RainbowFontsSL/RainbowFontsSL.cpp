@@ -1,9 +1,9 @@
 #include "RainbowFontsSL.h"
 
-RainbowFontsSL::RainbowFontsSL(SegmentSet &SegmentSet, uint8_t WaveFreq, uint16_t Rate):
-    segmentSet(SegmentSet), waveFreq(WaveFreq)
+RainbowFontsSL::RainbowFontsSL(SegmentSet &SegSet, uint8_t WaveFreq, uint16_t Rate):
+    SegSet(SegSet), waveFreq(WaveFreq)
     {    
-        //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
+        //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
         bindSegPtrPS();
         bindClassRatesPS();
         
@@ -24,8 +24,8 @@ void RainbowFontsSL::update(){
 
         //fetch some core vars
         //we re-fetch these in case the segment set or palette has changed
-        numSegs = segmentSet.numSegs;
-        numLines = segmentSet.numLines;
+        numSegs = SegSet.numSegs;
+        numLines = SegSet.numLines;
         
         hl = numLines/2;
 
@@ -40,15 +40,15 @@ void RainbowFontsSL::update(){
 
             colorOut = CHSV(c, 255, 255);
 
-            //reverse the line number so that the effect moves positivly along the strip
+            //reverse the line number so that the effect moves positively along the strip
             lineNum = numLines - i - 1;
 
             for (uint16_t j = 0; j < numSegs; j++) {
                 //get the physical pixel location based on the line and seg numbers
                 //and then write out the color
                 //Note that the actual line written to is offset and wraps
-                pixelNum = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, j,  lineNum);
-                segDrawUtils::setPixelColor(segmentSet, pixelNum, colorOut, 0, 0, 0);
+                pixelNum = segDrawUtils::getPixelNumFromLineNum(SegSet, numLines, j,  lineNum);
+                segDrawUtils::setPixelColor(SegSet, pixelNum, colorOut, 0, 0, 0);
             }
 
         }

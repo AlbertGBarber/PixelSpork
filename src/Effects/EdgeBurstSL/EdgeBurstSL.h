@@ -30,7 +30,7 @@ so we'd use beat8(9) in place of time(0.1);
 /*
 An effect based on the EdgeBurst pattern in PixelBlaze that produces a rainbow burst
 half-way along the strip, that then expands and reflects back.
-The effect is mostly the same as the orignal, but I've made it so that the start point 
+The effect is mostly the same as the original, but I've made it so that the start point 
 of the waves is picked randomly from the number of lines for each wave. 
 This adds some nice variation to the effect.
 I've also added the ability to use a palette for the wave colors. You can have them be choosen randomly for each wave.
@@ -38,7 +38,7 @@ I've also allowed you to adjust the pause time factor between waves.
 I have this set to 2 (the original was 4), which makes the pause time very short.
 
 The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
-passing in a segmentSet with only one segment containing the whole strip.
+passing in a SegmentSet with only one segment containing the whole strip.
 
 Rainbow colors are controlled by rainbowMode, true will do rainbows.
 
@@ -85,7 +85,7 @@ Functions:
     update() -- updates the effect 
 
 Other Settings:
-    burstPause (default 2, orginal code value was 4) -- Adjusts how long there is between bursts
+    burstPause (default 2, original code value was 4) -- Adjusts how long there is between bursts
                                                         Factors of 2 work best.
                                                         2 is almost no time, while 4 is roughly equal time between on and off
                                                         Note that higher values also increase wave speed, 
@@ -100,19 +100,19 @@ Reference vars:
 class EdgeBurstSL : public EffectBasePS {
     public:
         //Constructor for rainbow mode
-        EdgeBurstSL(SegmentSet &SegmentSet, uint8_t BurstFreq, uint16_t Rate);  
+        EdgeBurstSL(SegmentSet &SegSet, uint8_t BurstFreq, uint16_t Rate);  
 
         //Constructor for colors from palette
-        EdgeBurstSL(SegmentSet &SegmentSet, palettePS &Palette, uint8_t BurstFreq, uint16_t Rate);
+        EdgeBurstSL(SegmentSet &SegSet, palettePS &Palette, uint8_t BurstFreq, uint16_t Rate);
 
         //Constructor for a randomly created palette
         //RandomizePal = true will randomize the palette for each wave
-        EdgeBurstSL(SegmentSet &SegmentSet, uint8_t numColors, bool RandomizePal, uint8_t BurstFreq, uint16_t Rate);
+        EdgeBurstSL(SegmentSet &SegSet, uint8_t numColors, bool RandomizePal, uint8_t BurstFreq, uint16_t Rate);
 
         ~EdgeBurstSL();
 
         SegmentSet 
-            &segmentSet; 
+            &SegSet; 
         
         uint8_t
             burstPause = 2,
@@ -126,8 +126,8 @@ class EdgeBurstSL : public EffectBasePS {
             rainbowMode = false;
         
         palettePS
-            paletteTemp,
-            *palette = nullptr;
+            *palette = nullptr,
+            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
 
         void 
             update(void);

@@ -18,10 +18,10 @@ to indicate a background pixel (ie set to the BgColor) we use 255 in the pattern
 This does mean if your palette has 255 colors, you'll lose the final color, but you shouldn't have palettes that large
 
 For example, lets say we wanted to do the first two colors of our palette,
-each as length 4 streamers, with 3 background leds inbetween each
+each as length 4 streamers, with 3 background leds in between each
 we would make a pattern as : {0, 0, 0, 0, 255, 255, 255, 1, 1, 1, 1, 255, 255, 255}
 
-For simple patterns like the previous example, I have writtern a few constructors for the effect
+For simple patterns like the previous example, I have written a few constructors for the effect
 that automate the pattern creation, so you don't have to do it yourself (see constructor notes below)
 
 Note that while each entry in the pattern is a uint8_t,
@@ -65,12 +65,12 @@ Example calls:
     The effect updates at a rate of 120ms
 
     StreamerSL(mainSegments, &palette3, 3, 4, CRGB::Red, 10, 40);
-    Will do a streamer using all the colors in palette3, each streamer will be length 3, with 4 spaces inbetween
+    Will do a streamer using all the colors in palette3, each streamer will be length 3, with 4 spaces in between
     The bgColor is red
     The streamer will blend forward, taking 10 steps, with 40ms between each step
 
     StreamerSL(mainSegments, CRGB::Blue, 2, 2, CRGB::Red, 0, 140);
-    Will do a blue streamers with length 2 and 2 spaces inbetween
+    Will do a blue streamers with length 2 and 2 spaces in between
     The bgColor is red
     The fade steps are set to zero, so there is no blending
     The effect updates at a rate of 140ms
@@ -110,19 +110,22 @@ Reference Vars:
 class StreamerSL : public EffectBasePS {
     public:
         //Constructor for using the passed in pattern and palette for the streamer
-        StreamerSL(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate);  
+        StreamerSL(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate);  
 
         //Constructor for building the streamer pattern from the passed in pattern and the palette, using the passed in colorLength and spacing
-        StreamerSL(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate);
+        StreamerSL(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate);
         
         //Constructor for building a streamer using all the colors in the passed in palette, using the colorLength and spacing for each color
-        StreamerSL(SegmentSet &SegmentSet, palettePS &Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate);
+        StreamerSL(SegmentSet &SegSet, palettePS &Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate);
 
         //Constructor for doing a single colored streamer, using colorLength and spacing
-        StreamerSL(SegmentSet &SegmentSet, CRGB Color, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate);
+        StreamerSL(SegmentSet &SegSet, CRGB Color, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate);
 
         ~StreamerSL();
 
+        SegmentSet 
+            &SegSet;
+            
         uint8_t
             colorMode = 0,
             bgColorMode = 0,
@@ -130,24 +133,21 @@ class StreamerSL : public EffectBasePS {
         
         uint16_t 
             cycleNum = 0; //How many update cycles we've done, for reference
-
-        CRGB 
-            bgColorOrig,
-            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
-
-        SegmentSet 
-            &segmentSet; 
-        
-        patternPS
-            patternTemp,
-            *pattern = nullptr;
-        
-        palettePS
-            paletteTemp,
-            *palette = nullptr;
         
         bool 
             fadeOn = true;
+
+        CRGB 
+            bgColorOrig,
+            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color) 
+        
+        patternPS
+            *pattern = nullptr,
+            patternTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
+        
+        palettePS
+            *palette = nullptr,
+            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
         
         void 
             init(CRGB BgColor, uint16_t Rate),

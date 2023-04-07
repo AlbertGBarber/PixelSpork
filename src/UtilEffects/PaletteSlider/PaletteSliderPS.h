@@ -8,7 +8,7 @@
 Lets say you have a palette that contains a bunch of colors ot match a theme, like christmas, halloween, etc
 You also have an effect that you'd like to use the palette colors in, but may be not all the colors at once
 Like maybe you'd only like to have two colors at a time, such as red/green for christmas, and then cycle through pairs of colors
-That's what this utility is intented to do
+That's what this utility is intended to do
 You feed it a palette with all your colors, a pattern of how you want the colors to blend, and
 the number of colors you want at once, and the utility will creat a palette that cycles through your input palette
 colors according to the pattern.
@@ -34,7 +34,7 @@ You can switch which mode you're using at any time.
 
 You can also set the palette to pause for a time after each transition by setting the pauseTime var (in ms)
 
-The output palette of the utlity is "sliderPalette". Pass it to your effects to use it.
+The output palette of the utility is "sliderPalette". Pass it to your effects to use it.
 
 You cannot change the length of the slider palette without reseting it
 This is because it needs to be reallocated in memory
@@ -78,10 +78,10 @@ Functions:
     update() -- updates the effect
 
 Other Settings:
-    pauseTime (default 0) -- Sets a time (ms) that the sliderPalette will be pause for after finishing a transiton before starting the next
+    pauseTime (default 0) -- Sets a time (ms) that the sliderPalette will be pause for after finishing a transition before starting the next
 
 Reference Vars:
-    patternIndex -- How many full palette blends we've done, resets every time we've finshed the pattern
+    patternIndex -- How many full palette blends we've done, resets every time we've finished the pattern
 
 Flags:
     paused -- Set when the effect is paused after transitioning between palettes indexes
@@ -110,11 +110,11 @@ class PaletteSliderPS : public EffectBasePS {
 
         palettePS
             *paletteTarget = nullptr, //The palette being slid across
-            sliderPalette; //The output palette of the utility
+            sliderPalette = {nullptr, 0}; //The output palette of the utility, is filled in during the inital update cycle
         
         patternPS
             *pattern = nullptr,
-            patternTemp; //used when using the palette as the pattern
+            patternTemp = {nullptr, 0}; //used when using the palette as the pattern, init as empty
  
         void 
             setPaletteAsPattern(),

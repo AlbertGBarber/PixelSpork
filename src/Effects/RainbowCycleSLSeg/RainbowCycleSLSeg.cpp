@@ -1,14 +1,14 @@
 #include "RainbowCycleSLSeg.h"
 
-RainbowCycleSLSeg::RainbowCycleSLSeg(SegmentSet &SegmentSet, uint16_t Length, bool Direction, bool SegMode, uint16_t Rate):
-    segmentSet(SegmentSet), length(Length), direct(Direction), segMode(SegMode)
+RainbowCycleSLSeg::RainbowCycleSLSeg(SegmentSet &SegSet, uint16_t Length, bool Direction, bool SegMode, uint16_t Rate):
+    SegSet(SegSet), length(Length), direct(Direction), segMode(SegMode)
     {    
         init(Rate);
 	}
 
 //Does a rainbow cycle of length 255
-RainbowCycleSLSeg::RainbowCycleSLSeg(SegmentSet &SegmentSet, bool Direction, bool SegMode, uint16_t Rate):
-    segmentSet(SegmentSet), direct(Direction), segMode(SegMode)
+RainbowCycleSLSeg::RainbowCycleSLSeg(SegmentSet &SegSet, bool Direction, bool SegMode, uint16_t Rate):
+    SegSet(SegSet), direct(Direction), segMode(SegMode)
     {
         length = 255;
         init(Rate);
@@ -16,7 +16,7 @@ RainbowCycleSLSeg::RainbowCycleSLSeg(SegmentSet &SegmentSet, bool Direction, boo
 
 //initializes/resets the core counting and direction vars for the effect
 void RainbowCycleSLSeg::init(uint16_t Rate){
-    //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
+    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
     bindSegPtrPS();
     bindClassRatesPS();
     cycleNum = 0;
@@ -27,20 +27,20 @@ void RainbowCycleSLSeg::init(uint16_t Rate){
 void RainbowCycleSLSeg::setLength(uint16_t newLength){
     uint16_t segLength;
     if(segMode){
-        segLength = segmentSet.numSegs;
+        segLength = SegSet.numSegs;
     } else {
-        segLength = segmentSet.numLines;
+        segLength = SegSet.numLines;
     }
     //set the maximum cycle length 
     //ie the total amount of cycles before the effect is back at the start
-    //we allow rainbows that are longer than the segmentSet lines
+    //we allow rainbows that are longer than the SegSet lines
     maxCycleLength = segLength - 1;
     if(length > segLength){
         maxCycleLength = length;
     }
 }
 
-//core update cycle, draws the rainbows along the segmentSet every rate ms
+//core update cycle, draws the rainbows along the SegSet every rate ms
 void RainbowCycleSLSeg::update(){
     currentTime = millis();
 
@@ -67,23 +67,23 @@ void RainbowCycleSLSeg::update(){
 
         //either draw the rainbow along the segments or the segment lines
         if(segMode){
-            numSegs = segmentSet.numSegs;
+            numSegs = SegSet.numSegs;
             //color each segment in a rainbow color
             for (uint16_t i = 0; i < numSegs; i++) {
                 color = getRainbowColor(i);
                 //Color the segment
-                segDrawUtils::fillSegColor(segmentSet, i, color, 0);
+                segDrawUtils::fillSegColor(SegSet, i, color, 0);
             }
         } else {
             //we grab some segment info in case it's changed (It shouldn't have, but this is a safe guard)
-            numLines = segmentSet.numLines;
+            numLines = SegSet.numLines;
             //for each segment line, set each pixel in the line to the appropriate rainbow color
             for (uint16_t i = 0; i < numLines; i++) {
                 color = getRainbowColor(i);
                 //fill the segment line at the line location with color
-                //by default the rainbows would move counter-clockwise across the segmentSet, so we use numLines - i - 1
+                //by default the rainbows would move counter-clockwise across the SegSet, so we use numLines - i - 1
                 //to reverse it
-                segDrawUtils::drawSegLine(segmentSet, numLines - i - 1, color, 0);
+                segDrawUtils::drawSegLine(SegSet, numLines - i - 1, color, 0);
             }
         }
         showCheckPS();
@@ -97,7 +97,7 @@ CRGB RainbowCycleSLSeg::getRainbowColor(uint16_t index){
     //and index is the current line number
     //(stepVal + index) % length offsets our position, while keeping it between 0 and length
     //while * (256 / length) shifts the counter in (256/length) steps
-    //so that we always finsh a rainbow after length # of steps
+    //so that we always finish a rainbow after length # of steps
     color = colorUtilsPS::wheel( ( addMod16PS(stepVal, index, maxCycleLength) * 256 / length ), 0, satur, value);
     return color;
 }

@@ -1,8 +1,8 @@
 #include "NoiseSL.h"
 
-//Constuctor for randomly generated palette
-NoiseSL::NoiseSL(SegmentSet &SegmentSet, uint8_t numColors, uint16_t BlendSteps, uint16_t ScaleBase, uint16_t ScaleRange, uint16_t Speed, uint8_t CMode, uint16_t Rate):
-    segmentSet(SegmentSet), blendSteps(BlendSteps), scaleBase(ScaleBase), scaleRange(ScaleRange), speed(Speed), cMode(CMode)
+//Constructor for randomly generated palette
+NoiseSL::NoiseSL(SegmentSet &SegSet, uint8_t numColors, uint16_t BlendSteps, uint16_t ScaleBase, uint16_t ScaleRange, uint16_t Speed, uint8_t CMode, uint16_t Rate):
+    SegSet(SegSet), blendSteps(BlendSteps), scaleBase(ScaleBase), scaleRange(ScaleRange), speed(Speed), cMode(CMode)
     {    
         init(Rate);    
         paletteTemp = paletteUtilsPS::makeRandomPalette(numColors);
@@ -10,8 +10,8 @@ NoiseSL::NoiseSL(SegmentSet &SegmentSet, uint8_t numColors, uint16_t BlendSteps,
 	}
 
 //Constructor using palette
-NoiseSL::NoiseSL(SegmentSet &SegmentSet, palettePS &Palette, uint16_t BlendSteps, uint16_t ScaleBase, uint16_t ScaleRange, uint16_t Speed, uint8_t CMode, uint16_t Rate):
-    segmentSet(SegmentSet), palette(&Palette), blendSteps(BlendSteps), scaleBase(ScaleBase), scaleRange(ScaleRange), speed(Speed), cMode(CMode)
+NoiseSL::NoiseSL(SegmentSet &SegSet, palettePS &Palette, uint16_t BlendSteps, uint16_t ScaleBase, uint16_t ScaleRange, uint16_t Speed, uint8_t CMode, uint16_t Rate):
+    SegSet(SegSet), palette(&Palette), blendSteps(BlendSteps), scaleBase(ScaleBase), scaleRange(ScaleRange), speed(Speed), cMode(CMode)
     {
         init(Rate);
     }
@@ -23,7 +23,7 @@ NoiseSL::~NoiseSL(){
 
 //Sets up the initial effect values and other key variables
 void NoiseSL::init(uint16_t Rate){
-    //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
+    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
     bindSegPtrPS();
     bindClassRatesPS();
 
@@ -38,13 +38,13 @@ void NoiseSL::init(uint16_t Rate){
     scale = scaleBase;
     scaleTarget = scale;
     //get the first scale target
-    //(we set scaelEnd = scale to force setShiftScale to trigger)
+    //(we set scaleEnd = scale to force setShiftScale to trigger)
     setShiftScale();
 }
 
-//If you ever change the effect's segmentSet call this function
-//Creates a noise array for the segmentSet lines
-//Ideally this would be a 2D array, with each row being a line on the segmentSet
+//If you ever change the effect's SegSet call this function
+//Creates a noise array for the SegSet lines
+//Ideally this would be a 2D array, with each row being a line on the SegSet
 //But it's much easier in C++ to create a 1D array and then offset out starting points
 //when reading/writing values
 //So each segment line is stored consecutively in the array
@@ -53,8 +53,8 @@ void NoiseSL::init(uint16_t Rate){
 //4, 5, 6, 7 for line 1, etc
 void NoiseSL::setupNoiseArray(){
     //fetch some core vars
-    numSegs = segmentSet.numSegs;
-    numLines = segmentSet.numLines;
+    numSegs = SegSet.numSegs;
+    numLines = SegSet.numLines;
     uint16_t numPoints = numLines * numSegs;
     
     free(noise);
@@ -79,7 +79,7 @@ void NoiseSL::update(){
         setShiftScale();
 
         //make some noise!
-        fillnoise8();
+        fillNoise8();
 
         //map the noise to colors and output it
         mapNoiseSegsWithPalette();
@@ -91,8 +91,8 @@ void NoiseSL::update(){
 //Fill the noise array with 8-bit noise values using the inoise8 function.
 //In addition, it includes some fast automatic 'data smoothing' at 
 //lower noise speeds to help produce smoother animations in those cases.
-void NoiseSL::fillnoise8() {
-    //If we're runing at a low "speed", some 8-bit artifacts become visible
+void NoiseSL::fillNoise8() {
+    //If we're running at a low "speed", some 8-bit artifacts become visible
     //from frame-to-frame.  In order to reduce this, we can do some fast data-smoothing.
     //The amount of data smoothing we're doing depends on "speed".
     dataSmoothing = 0;
@@ -102,15 +102,15 @@ void NoiseSL::fillnoise8() {
   
     //For each segment line do the following:
     for (uint16_t i = 0; i < numLines; i++) {
-        ioffset = scale * i;
+        i_offset = scale * i;
         //current segment line's start index in the noise array
         noiseStart = i * numSegs;
         for (uint16_t j = 0; j < numSegs; j++) {
-            joffset = scale * j;
+            j_offset = scale * j;
             //The location of the noise data in the noise array
             noiseIndex = noiseStart + j;
 
-            noiseData = inoise8( x + ioffset, y + joffset, z );
+            noiseData = inoise8( x + i_offset, y + j_offset, z );
 
             // The range of the inoise8 function is roughly 16-238.
             // These two operations expand those values out to roughly 0..255
@@ -159,7 +159,7 @@ void NoiseSL::mapNoiseSegsWithPalette(){
             }
 
             //get the physical pixel location based on the line and seg numbers
-            pixelNum = segDrawUtils::getPixelNumFromLineNum(segmentSet, numLines, j, i);
+            pixelNum = segDrawUtils::getPixelNumFromLineNum(SegSet, numLines, j, i);
 
             //Get the output color based on the noise value
             switch (cMode){
@@ -167,23 +167,23 @@ void NoiseSL::mapNoiseSegsWithPalette(){
                 default:
                     //For mode 0 we set the color from the palette
                     //Scale color index to be somewhere between 0 and totBlendLength to put it somewhere in the blended palette
-                    colorIndex = scale16by8( totBlendLength, colorIndex + ihue ); //colorIndex * totBlendLength /255;   
+                    colorIndex = scale16by8( totBlendLength, colorIndex + iHue ); //colorIndex * totBlendLength /255;   
                     //get the resulting blended color and dim it by bri
                     colorOut = paletteUtilsPS::getPaletteGradColor(*palette, colorIndex, 0, totBlendLength, blendSteps);
                     //get background color info for the current pixel
-                    colorTarget = segDrawUtils::getPixelColor(segmentSet, pixelNum, *bgColor, bgColorMode, j, i);
+                    colorTarget = segDrawUtils::getPixelColor(SegSet, pixelNum, *bgColor, bgColorMode, j, i);
                     //get the color blended towards the background and output it
                     colorOut = colorUtilsPS::getCrossFadeColor(colorOut, colorTarget, 255 - bri);
                     //nscale8x3(colorOut.r, colorOut.g, colorOut.b, bri);
                     break;
                 case 1:
                     //For mode 0 we set the color from the palette, but want to mainly pick from one color at a time
-                    //so we map the colorIndex in the blendSteps, then use ihue to offset what color we're on
+                    //so we map the colorIndex in the blendSteps, then use iHue to offset what color we're on
                     colorIndex = scale16by8( blendSteps, colorIndex ); //colorIndex * blendSteps /255;   
                     //get the resulting blended color and dim it by bri
-                    colorOut = paletteUtilsPS::getPaletteGradColor(*palette, colorIndex, ihue, totBlendLength, blendSteps);
+                    colorOut = paletteUtilsPS::getPaletteGradColor(*palette, colorIndex, iHue, totBlendLength, blendSteps);
                     //get background color info for the current pixel
-                    colorTarget = segDrawUtils::getPixelColor(segmentSet, pixelNum, *bgColor, bgColorMode, j, i);
+                    colorTarget = segDrawUtils::getPixelColor(SegSet, pixelNum, *bgColor, bgColorMode, j, i);
                     //get the color blended towards the background and output it
                     colorOut = colorUtilsPS::getCrossFadeColor(colorOut, colorTarget, 255 - bri);
                     //nscale8x3(colorOut.r, colorOut.g, colorOut.b, bri);
@@ -191,8 +191,8 @@ void NoiseSL::mapNoiseSegsWithPalette(){
                 case 2:
                     //Produces colors of the rainbow mapped to the noise val
                     //Noise tends to "clump up" around the middle of the range
-                    //so we slowly offset the rainbow with ihue to produce all the colors more regularly
-                    colorOut = CHSV( colorIndex + ihue, 255, bri );
+                    //so we slowly offset the rainbow with iHue to produce all the colors more regularly
+                    colorOut = CHSV( colorIndex + iHue, 255, bri );
                     break;
                 case 3: 
                     //An alternative rainbow function that cycles through each color one at a time
@@ -200,10 +200,10 @@ void NoiseSL::mapNoiseSegsWithPalette(){
                     //!!Make sure rotateHue is true!!
                     //Taken from https://github.com/FastLED/FastLED/blob/master/examples/Noise/Noise.ino
                     //We still use the colorIndex for the brightness here b/c I thought it looked better
-                    colorOut = CHSV(ihue + (colorIndex>>2), 255, colorIndex );
+                    colorOut = CHSV(iHue + (colorIndex>>2), 255, colorIndex );
                     break;
             }
-            segDrawUtils::setPixelColor(segmentSet, pixelNum, colorOut, 0, 0, 0); 
+            segDrawUtils::setPixelColor(SegSet, pixelNum, colorOut, 0, 0, 0); 
         }
     }
 
@@ -217,10 +217,10 @@ void NoiseSL::mapNoiseSegsWithPalette(){
             //For case 1, we're using iHue to offset what palette color we're on, 
             //so we want to wrap it once we've gone through all the blended palette colors (totBlendLength)
             case 0: case 2: case 3: default:
-                ihue = addmod8(ihue, 1, 255);
+                iHue = addmod8(iHue, 1, 255);
                 break;
             case 1:
-                ihue = addMod16PS(ihue, 1, totBlendLength);
+                iHue = addMod16PS(iHue, 1, totBlendLength);
                 break;
         }
     }
@@ -237,7 +237,7 @@ void NoiseSL::setShiftScale(){
 
         //set the scale step (+1 or -1)
         //if we happen to have re-rolled the current scale, then 
-        //we want to re-roll. The easist way to do this is to set scaleStep to 0
+        //we want to re-roll. The easiest way to do this is to set scaleStep to 0
         //so scaleTarget will stay equal to scale, triggering a re-roll when setShiftScale is called again
         if(scaleTarget == scale){
             scaleStep = 0;

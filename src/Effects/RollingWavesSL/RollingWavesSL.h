@@ -1,5 +1,5 @@
-#ifndef RollingWavesSLPS_h
-#define RollingWavesSLPS_h
+#ifndef RollingWavesSL_h
+#define RollingWavesSL_h
 
 //TODO: -- Add options for patterning along segment lines?
 
@@ -25,7 +25,7 @@ There is a version of this effect that takes less CPU power (RollingWavesFastSL)
 It has a few restrictions, but should run faster than this effect
 
 The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
-passing in a segmentSet with only one segment containing the whole strip.
+passing in a SegmentSet with only one segment containing the whole strip.
 
 Example calls: 
     uint8_t pattern_arr = {0, 1, 4};
@@ -39,7 +39,7 @@ Example calls:
     RollingWavesSL(mainSegments, palette, 0, 9, 0, 2, 80);
     Will do a set of waves matching the input palette with an blank background
     Each wave will be 9 pixels long, the wave will consist of the trailing portion only
-    There will be two spaces inbetween each wave,
+    There will be two spaces in between each wave,
     The effect will update at 80ms
 
     RollingWavesSL(mainSegments, 1, CRGB::Red, 12, 1, 3, 80);
@@ -53,7 +53,7 @@ Constructor Inputs:
                                           and the length of the array 
                                           (see patternPS.h)   
     palette(optional, see constructors) -- The repository of colors used in the pattern, or can be used as the pattern itself
-    numColors (optional, see contructors) -- The number of randomly choosen colors for the gradients
+    numColors (optional, see constructors) -- The number of randomly choosen colors for the gradients
     BgColor -- The color of the spacing pixels. It is a pointer, so it can be tied to an external variable
     gradLength -- How many steps for each gradient
     trailMode -- They type of waves used (see trailMode section below)
@@ -79,7 +79,7 @@ Functions:
     setPattern(*newPattern) -- Sets the passed in pattern to be the effect pattern
                               Will force setTotalEffectLength() call, so may cause effect to jump
     setPaletteAsPattern() -- Sets the effect pattern to match the current palette (calls setTotalEffectLength())
-    setGradLength(newGradLength) -- Changes the gradlength to the specified value, adjusting the length of the waves (calls setTotalEffectLength())
+    setGradLength(newGradLength) -- Changes the gradLength to the specified value, adjusting the length of the waves (calls setTotalEffectLength())
     setSpacing(newSpacing) -- Changes the spacing to the specified value, (calls setTotalEffectLength())
     setTrailMode(newTrailMode) -- Changes the trail mode used for the waves
     update() -- updates the effect
@@ -103,15 +103,18 @@ Notes:
 class RollingWavesSL : public EffectBasePS {
     public:
         //Constructor with pattern
-        RollingWavesSL(SegmentSet &SegmentSet, patternPS &Pattern, palettePS &Palette, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate); 
+        RollingWavesSL(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate); 
 
-        //Constuctor with palette as pattern
-        RollingWavesSL(SegmentSet &SegmentSet, palettePS &Palette, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate);
+        //Constructor with palette as pattern
+        RollingWavesSL(SegmentSet &SegSet, palettePS &Palette, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate);
 
         //Constructor with random colors
-        RollingWavesSL(SegmentSet &SegmentSet, uint8_t NumColors, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate);
+        RollingWavesSL(SegmentSet &SegSet, uint8_t NumColors, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate);
 
         ~RollingWavesSL();
+
+        SegmentSet 
+            &SegSet;
 
         uint8_t
             dimPow = 120, //120
@@ -129,16 +132,13 @@ class RollingWavesSL : public EffectBasePS {
             bgColorOrig,
             *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
 
-        patternPS
-            patternTemp,
-            *pattern = nullptr;
+        patternPS 
+            *pattern = nullptr,
+            patternTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
 
         palettePS
-            paletteTemp,
-            *palette = nullptr;
-
-        SegmentSet 
-            &segmentSet; 
+            *palette = nullptr,
+            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety 
 
         void 
             setGradLength(uint8_t newGradLength),

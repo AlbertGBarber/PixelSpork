@@ -51,20 +51,20 @@ Reference Vars:
 
 class AddGlitterPS : public EffectBasePS {
     public:
-        AddGlitterPS(SegmentSet &SegmentSet, CRGB GlitterColor, uint16_t GlitterNum, uint8_t GlitterMode, uint16_t GlitterRate, uint16_t Rate);  
+        AddGlitterPS(SegmentSet &SegSet, CRGB GlitterColor, uint16_t GlitterNum, uint8_t GlitterMode, uint16_t GlitterRate, uint16_t Rate);  
 
         ~AddGlitterPS();
 
         SegmentSet 
-            &segmentSet; 
+            &SegSet; 
+        
+        uint8_t    
+            glitterMode;
         
         uint16_t 
             glitterNum, //for reference, use setGlitterNum() to set
             *glitterRate = nullptr,
             glitterRateOrig;
-        
-        uint8_t    
-            glitterMode;
 
         CRGB 
             glitterColorOrig,

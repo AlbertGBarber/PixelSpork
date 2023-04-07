@@ -42,7 +42,7 @@ Destructing Effects:
     and setting new effects. 
 
     However, you probably don't want to destruct and re-create your utils 
-    (since things like faders, palette blending, etc can be used across mulitple effects)
+    (since things like faders, palette blending, etc can be used across multiple effects)
     So, to make it easy to avoid destructing your utils, I've added a effectDestLimit, which limits
     the you to only destructing items AT and above the effectDestLimit index in the array.
     For example:
@@ -67,7 +67,7 @@ Notes:
 
     If you want to create an effect array on the fly do:
     effArray = new EffectBasePS*[<<numEffects>>];
-    You should initlize the array members to nullptr's at first.
+    You should initialize the array members to nullptr's at first.
 
 Creating An Effect Array:
     Say I have one PaletteBlender util and one StreamerSL effect.
@@ -110,7 +110,7 @@ Example calls:
 
     EffectSetPS(effectArr, SIZE(effectArr), 2, 0);
     Creates an effect set using the passed in effectArr, with a destruct limit of 2
-    The passed in run time is 0, this will tell the set to run indefinitly 
+    The passed in run time is 0, this will tell the set to run indefinitely 
     (the "infinite" flag is set true if you pass a 0 as the run time)
 
 Constructor Inputs:
@@ -119,7 +119,7 @@ Constructor Inputs:
     effectDestLimit (optional, default 0) -- The destruct starting index for the effect array 
                                              (see Destructing Effects above)
     runTime (ms) -- How long the effect set should update effects for. 
-                    If 0 is passed in, the infinite flag will be seet true.
+                    If 0 is passed in, the infinite flag will be set true.
                 
 Other Settings:
     infinite (default false) -- If true, the effect set will update forever, regardless of the runTime setting
@@ -170,7 +170,7 @@ class EffectSetPS {
             timeElapsed = 0; //the elapsed time (ms), for reference
 
         bool 
-            infinite = false, //if set, the effect effectArr will run indefinitly
+            infinite = false, //if set, the effect effectArr will run indefinitely
             started = false, //has the effect effectArr started (only relevant if not infinite)
             done = false; //has the effect effectArr finished (if not infinite)
         

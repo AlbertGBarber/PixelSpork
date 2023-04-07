@@ -1,7 +1,7 @@
 #ifndef PaletteBlenderPS_h
 #define PaletteBlenderPS_h
 
-#include "PaletteFiles.h"
+#include "Include_Lists/PaletteFiles.h"
 #include "Effects/EffectBasePS.h"
 #include "MathUtils/mathUtilsPS.h"
 
@@ -36,7 +36,7 @@ Functions:
     update() -- updates the effect
 
 Other Settings:
-    pauseTime (default 0) -- Sets a time (ms) that the blendPalette will be pause at after finishing a transiton before starting the next
+    pauseTime (default 0) -- Sets a time (ms) that the blendPalette will be pause at after finishing a transition before starting the next
                             Only relevant if looped is true
     randomize (default false) --  Randomize will randomize the end palette note that this will permanently modify the end palette
                                   so make sure you aren't using it elsewhere!
@@ -64,7 +64,7 @@ class PaletteBlenderPS : public EffectBasePS {
         ~PaletteBlenderPS();
 
         uint8_t
-            step, //the current step, mainly for refrence, not intended to be manually set
+            step, //the current step, mainly for reference, not intended to be manually set
             totalSteps; //The total number of steps taken to blend between the palettes, you can change this on the fly
         
         uint16_t 
@@ -77,7 +77,7 @@ class PaletteBlenderPS : public EffectBasePS {
             blendEnd = false;
         
         palettePS
-            blendPalette; //the output palette from the blend
+            blendPalette = {nullptr, 0}; //the output palette from the blend (is filled in when the class is constructed)
         
         palettePS
             *startPalette = nullptr,
@@ -103,7 +103,7 @@ class PaletteBlenderPS : public EffectBasePS {
            newColor;
         
         palettePS
-            *palTempPtr;
+            *palTempPtr = nullptr;
         
         uint8_t 
             blendPaletteLength = 0;

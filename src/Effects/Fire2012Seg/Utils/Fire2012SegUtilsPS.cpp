@@ -1,6 +1,6 @@
-#include "Fire2012SegUtilsPS.h"
+#include "fire2012SegUtilsPS.h"
 
-using namespace Fire2012SegUtilsPS;
+using namespace fire2012SegUtilsPS;
 
 //Returns a heat output color using a palette based in the input temperature
 //The colors are blended between palette colors for smoothness
@@ -15,11 +15,11 @@ using namespace Fire2012SegUtilsPS;
 //Palettes scale from coldest to hottest, so the last color in a palette will match the highest temperature
 //We do additional adjustments to include the background color, which is for the coldest temperature (0th palette index)
 //(The background is usually blank, which palettes don't usually include, so 
-//seperating it as a seperate color makes it easier to use pre-made palettes)
+//separating it as a separate color makes it easier to use pre-made palettes)
 //Since blending takes a bit of processing power
 //it can be turned off using the blend flag to speed up the effect
 //this creates a more blocky fire
-CRGB Fire2012SegUtilsPS::getPixelHeatColorPalette(palettePS *palette, uint8_t paletteLength, uint8_t paletteSecLen, CRGB *bgColor, uint8_t temperature,  bool blend) {
+CRGB fire2012SegUtilsPS::getPixelHeatColorPalette(palettePS *palette, uint8_t paletteLength, uint8_t paletteSecLen, CRGB *bgColor, uint8_t temperature,  bool blend) {
 
     //scale the temperature to match it to a palette index
     colorIndex = scale8(temperature, paletteLength);
@@ -30,7 +30,7 @@ CRGB Fire2012SegUtilsPS::getPixelHeatColorPalette(palettePS *palette, uint8_t pa
 
     //if the we're in the background index, we need to set a set of flags
     //the background is always the coldest color, ie the 0th index zone
-    //since the background color is not in the palette and needs to be handled seperately
+    //since the background color is not in the palette and needs to be handled separately
     if(colorIndex == 0){
         doBg = true;
     } else {
@@ -73,7 +73,7 @@ CRGB Fire2012SegUtilsPS::getPixelHeatColorPalette(palettePS *palette, uint8_t pa
 /* 
 //Original implementation of the setPixelHeatColorPalette()
 //Works exactly the same, but the scaling is done manually
-void Fire2012SegUtilsPS::setPixelHeatColorPaletteOrig(uint16_t pixelLoc, uint8_t temperature) {
+void fire2012SegUtilsPS::setPixelHeatColorPaletteOrig(uint16_t pixelLoc, uint8_t temperature) {
 
     // determine which color the heat belongs to and blend it
     for (uint8_t i = 0; i <= paletteLength; i++) {
@@ -112,5 +112,5 @@ void Fire2012SegUtilsPS::setPixelHeatColorPaletteOrig(uint16_t pixelLoc, uint8_t
             break;
         }
     }
-    segDrawUtils::setPixelColor(segmentSet, pixelLoc, colorOut, 0, 0, 0);
+    segDrawUtils::setPixelColor(SegmentSet, pixelLoc, colorOut, 0, 0, 0);
 } */

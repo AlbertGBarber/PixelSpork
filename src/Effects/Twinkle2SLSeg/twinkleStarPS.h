@@ -24,12 +24,12 @@ struct twinkleStarPS {
 
 //a struct for holding an array of twinkles
 //to declare twinklesSet:
-    //twinklePS *twinkleArr[] = { &twinkle1, &twinkle2, etc}; //can leave this blank and fill it in using buildtwinklesSet() below
+    //twinklePS *twinkleArr[] = { &twinkle1, &twinkle2, etc}; //can leave this blank and fill it in using buildTwinklesSet() below
     //twinkleSetPS twinkleSet = {twinkleArr, SIZE(twinkleArr)};
-    //access a twinkle's property via: twinkleSet.twinkeArr[x]->property.
+    //access a twinkle's property via: twinkleSet.twinkleArr[x]->property.
     //See code in Twinkle2PS for more snippets.
 struct twinkleSetPS {
-    twinkleStarPS **twinkleArr = nullptr; //pointer to an array of twinkles pointers
+    twinkleStarPS **twinkleArr; //pointer to an array of twinkles pointers
     uint8_t length; //the size of the twinkle array (num of twinkles)
 
     //sets twinkle in the array to the passed in twinkle at the specified index
