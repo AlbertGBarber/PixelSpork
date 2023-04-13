@@ -41,6 +41,10 @@ Other Settings:
     randomize (default false) --  Randomize will randomize the end palette note that this will permanently modify the end palette
                                   so make sure you aren't using it elsewhere!
                                   Combine this with looped, to produce constantly changing palettes
+    compliment (default false) -- Only relevant when randomizing -
+                                  If true, randomized palettes will only generate complimentary colors, 
+                                  which means they will be equally spaced across the hue spectrum (see the HSV color space). 
+                                  This should generate color sets that are different but "look good" together.
 
 Flags:
     blendEnd -- Set when the blend has ended, causes the pause to start
@@ -73,6 +77,7 @@ class PaletteBlenderPS : public EffectBasePS {
         bool
             looped,
             randomize = false,
+            compliment = false,
             paused = false,
             blendEnd = false;
         

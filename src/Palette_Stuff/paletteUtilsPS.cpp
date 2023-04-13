@@ -23,14 +23,28 @@ CRGB* paletteUtilsPS::getColorPtr(palettePS &palette, uint8_t index){
 }
 
 //randomizes all the colors in a palette
-void paletteUtilsPS::randomize(palettePS &palette){
-    for(uint8_t i = 0; i < palette.length; i++){
-        randomize(palette, i);
+//These can either be totally random,
+//or use a random base hue, and use it to find complementary colors (colors evenly spaced across the HSV spectrum)
+//In the complimentary case, the colors will share a limited random saturation value
+void paletteUtilsPS::randomize(palettePS &palette, bool comp){
+    if(!comp){
+        //make a fully random palette
+        for(uint8_t i = 0; i < palette.length; i++){
+            randomizeCol(palette, i);
+        }
+    } else {
+        //make a complementary palette, with a random base hue, and limited random saturation
+        uint8One = random8();
+        uint8Two = random8(100, 255);
+        for(uint8_t i = 0; i < palette.length; i++){
+            colorOne = colorUtilsPS::getCompColor(uint8One, palette.length, i, uint8Two, 255);
+            setColor(palette, colorOne, i);
+        }
     }
 }
 
 //randomize the color in palette at the specified index
-void paletteUtilsPS::randomize(palettePS &palette, uint8_t index){
+void paletteUtilsPS::randomizeCol(palettePS &palette, uint8_t index){
     setColor(palette, colorUtilsPS::randColor(), index);
 }
 
@@ -148,16 +162,15 @@ palettePS paletteUtilsPS::makeSingleColorPalette(CRGB Color){
 }
 
 //returns a palette of the specified length full of random colors
+//Colors can either be fully random, or made to be complementary with a random base hue (colors evenly spaced across the HSV spectrum)
+//The default is for fully random colors
 //!!Make sure you delete the paletteArr when you're done with the palette
 //since it is created with new
-palettePS paletteUtilsPS::makeRandomPalette(uint8_t length){
+palettePS paletteUtilsPS::makeRandomPalette(uint8_t length, bool comp){
     palettePS newPalette;
-    CRGB *newPalette_arr = (CRGB*) malloc(length*sizeof(CRGB));
-    //CRGB *newPalette_arr = new CRGB[length];
-    for(uint8_t i = 0; i < length; i++){
-        newPalette_arr[i] = colorUtilsPS::randColor();
-    }                                 
+    CRGB *newPalette_arr = (CRGB*) malloc(length*sizeof(CRGB));                            
     newPalette = {newPalette_arr, length};
+    randomize(newPalette, comp); 
     return newPalette;
 }
  

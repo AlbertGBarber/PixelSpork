@@ -44,7 +44,7 @@ void PaletteBlenderPS::reset(){
 
     //if we are randomizing, choose a randomized end palette
     if(randomize){
-        paletteUtilsPS::randomize(*endPalette);
+        paletteUtilsPS::randomize(*endPalette, compliment);
     }
 }
 

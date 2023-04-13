@@ -2,11 +2,24 @@
 
 using namespace colorUtilsPS;
 
-//returns a random color
+//Returns a random color using a random hue and a limited random saturation
+//Seems to produce a good set of random colors, tending towards more pastel type colors
+//We don't randomize the value because doing so mostly just dims the output colors without significantly changing them
 CRGB colorUtilsPS::randColor(){
     return CHSV( random8(), random8(100, 255), 255 );
-    //return CRGB( random(256), random(256), random(256) );
     //return CRGB( random8(), random8(), random8() );
+}
+
+//Returns a complimentary color to the passed in base hue
+//numColors is the type of split, ie complementary is 2, triad is 3, tetrad is 4, etc (can't do split complementary)
+//num is the number of the color in the split you want, ie for a triad you'd ask for colors num 0, 1, 2
+//satur and value are the saturation and value for the color wheel
+//NOTE: you can't extract a hue from a CRGB color, you need to be using CHSV
+CRGB colorUtilsPS::getCompColor(uint8_t baseHue, uint8_t numColors, uint8_t num, uint8_t satur, uint8_t value){
+    //To get a complementary color we get the percent of the color wheel we need to move by
+    //ie (255 / numColors * num) where 255 is the color wheel's total length
+    //Then we add this to the baseHue to shift the color to the correct hue
+    return CRGB(CHSV(baseHue + 255 * num / numColors, satur, value));
 }
 
 //Input a value 0 to 255 to get a rainbow color value.
@@ -14,10 +27,9 @@ CRGB colorUtilsPS::randColor(){
 //satur and value set saturation and value of the FastLed CHSV function
 //Note that the input is a uint16_t for flexibility, but values over 255 will be modded back into range
 CRGB colorUtilsPS::wheel( uint16_t wheelPos, uint16_t offset, uint8_t satur, uint8_t value ){
-    wheelPos = 255 - addMod16PS(wheelPos, offset, 255);
-    //wheelPos = (uint16_t)(255 - wheelPos + offset) % 255;
-    hsv2rgb_rainbow( CHSV(wheelPos, satur, value), colorFinal );
-    return colorFinal;
+    wheelPos = 255 - addMod16PS(wheelPos, offset, 256);
+    //wheelPos = (uint16_t)(255 - wheelPos + offset) % 256;
+    return CHSV(wheelPos, satur, value);
 }
 
 //same as wheel, but the sat and value vars are set to 255

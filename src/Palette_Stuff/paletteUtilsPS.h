@@ -11,8 +11,8 @@
 namespace paletteUtilsPS{
     void //Functions for changing aspects of palettes
         setColor(palettePS &palette, CRGB color, uint8_t index),
-        randomize(palettePS &palette),
-        randomize(palettePS &palette, uint8_t index),
+        randomize(palettePS &palette, bool comp = false),
+        randomizeCol(palettePS &palette, uint8_t index),
         shuffle(palettePS &palette),
         reverse(palettePS &palette);
     
@@ -26,7 +26,7 @@ namespace paletteUtilsPS{
     
     palettePS //Functions for making quick new palettes
         makeSingleColorPalette(CRGB Color),
-        makeRandomPalette(uint8_t length);
+        makeRandomPalette(uint8_t length, bool comp = false);
 
     //Pre-allocated variables
     static uint8_t

@@ -109,7 +109,7 @@ void PaletteCyclePS::update(){
 
                 //If we're randomizing 
                 if(randomizePal){
-                    paletteUtilsPS::randomize( *paletteSet->getPalette(nextIndex) );
+                    paletteUtilsPS::randomize( *paletteSet->getPalette(nextIndex), compliment );
                 }
                 //set the palettes in the PaletteBlendPS instance manually
                 //(we're keeping close control of the length of the blendPalette (see note))

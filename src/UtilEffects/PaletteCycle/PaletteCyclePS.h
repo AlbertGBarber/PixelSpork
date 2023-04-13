@@ -83,6 +83,12 @@ Functions:
     setPauseTime(newPauseTime) -- Changes the pause between blends (set in the PB instance, see PaletteBlenderPS)
     update() -- updates the effect
 
+Other Settings:
+    compliment (default false) -- Only relevant when randomizing -
+                                  If true, randomized palettes will only generate complimentary colors, 
+                                  which means they will be equally spaced across the hue spectrum (see the HSV color space). 
+                                  This should generate color sets that are different but "look good" together.
+                                     
 Reference Vars:
     cycleNum -- How many palette blends have been finished. Must be reset manually by calling reset();
 
@@ -102,6 +108,7 @@ class PaletteCyclePS : public EffectBasePS {
         bool 
             randomizePal,
             shuffle,
+            compliment = false,
             done = false,
             looped;
         

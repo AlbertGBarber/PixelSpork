@@ -11,6 +11,7 @@ namespace colorUtilsPS{
     
     CRGB
         randColor(),
+        getCompColor(uint8_t baseHue, uint8_t numColors, uint8_t num, uint8_t satur, uint8_t value),
         wheel(uint16_t wheelPos, uint16_t offset, uint8_t satur, uint8_t value ),
         wheel(uint16_t wheelPos, uint16_t rainbowOffset),
         getCrossFadeColor(const CRGB &startColor, const CRGB &endColor, uint8_t blendStep, uint8_t totalSteps),
@@ -25,8 +26,7 @@ namespace colorUtilsPS{
         ratio;
     
     static CRGB
-        black = CRGB(0,0,0),
-        colorFinal;
+        black = CRGB(0,0,0);
 
 };
 

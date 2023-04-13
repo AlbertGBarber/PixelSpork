@@ -54,6 +54,7 @@ Effects TODO:
     -- A colorWipe function that does random length wipes?
 
 Utils TODO:
+    -- Noise util that changes the color mode offset lengths of segments -> expanding and contracting rainbows
     -- Function that sets up a synced rainbow across multiple segment sets. 
        Basically it just goes through each segment set and sets various rainbow offsets and lengths.
     -- Copy one section to another?

@@ -28,6 +28,7 @@ PaletteBlenderPS	KEYWORD1
 PaletteCyclePS	KEYWORD1
 PaletteSingleCyclePS	KEYWORD1
 PaletteSliderPS	KEYWORD1
+PaletteNoisePS	KEYWORD1
 RandRateCtrlPS	KEYWORD1
 RateCtrlPS	KEYWORD1
 RateRandomizerPS	KEYWORD1
@@ -58,6 +59,7 @@ GradientCycleSL	KEYWORD1
 LarsonScannerSL	KEYWORD1
 LavaPS	KEYWORD1
 Noise16PS	KEYWORD1  
+NoiseSL	KEYWORD1
 NoiseGradSL	KEYWORD1
 NoiseWavesSL	KEYWORD1
 PacificaPS	KEYWORD1 
