@@ -19,9 +19,8 @@ ie, the first color in the palette will be used for the coldest parts of the fir
 while the last color will be used for the hottest
 
 Palettes can be of any length, although 3 - 4 colors seems to work best for normal fires
-try { CRGB::Red, CRGB{255, 143, 0}, CRGB{255, 255, 100} } for a traditional fire
-{ CRGB{225, 0, 127}, CRGB{123, 7, 197}, CRGB{238, 130, 238} } for a pink/purple fire
-or { CRGB{16, 124, 126 }, CRGB{ 43, 208, 17 }, CRGB{120, 212, 96} } for a green/blue fire
+There are several built-in palettes that work well (see paletteList.h)
+Try firePal for a traditional fire, firePalPink for a pink/purple fire, and firePalBlue for a green/blue fire
 
 To produce a smoother fire, the palette colors can be blended between based on temperature
 This does take more processing power, and can be turned off using the "blend" flag
@@ -41,11 +40,9 @@ Note that the effect stores a uint8_t value for each led in the segment set
 so watch your memory usage
 
 Example calls: 
-    CRGB firePalette_arr[] = { CRGB::Red, CRGB{255, 143, 0}, CRGB{255, 255, 100} };
-    palettePS firePalette = {firePalette_arr, SIZE(firePalette_arr)};
 
-    Fire2012Seg(mainSegments, firePalette, 0, 50, 90, true, 70);
-    Does a blended fire using the firePalette with a blank background
+    Fire2012Seg(mainSegments, firePal, 0, 50, 90, true, 70);
+    Does a blended fire using the built-in firePal (see paletteList.h) with a blank background
     cooling is set to 50 and sparking is set to 90
     The fire updates at 70ms
  

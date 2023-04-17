@@ -122,7 +122,15 @@ particleSetPS		KEYWORD3
 shiftPatternPS		KEYWORD3
 twinkleStarPS		KEYWORD3
 twinkleSetPS		KEYWORD3
+
+#######################################
+# Palettes (Structs)
+#######################################
+
 pacificaPalettePS		KEYWORD3
+firePal		KEYWORD3
+firePalPink		KEYWORD3
+firePalBlue		KEYWORD3
 
 #######################################
 # Methods and Functions
