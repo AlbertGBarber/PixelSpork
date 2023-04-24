@@ -345,8 +345,8 @@ class SegmentSet {
 		//segment set vars
 		uint16_t
 			numSegs,	 		//Total number of segments in the segment set
-			numLines, 		//the length of the longest segment in the set
-			segNumMaxNumLines, //The number of the seg with the maximum length
+			numLines, 			//the length of the longest segment in the set
+			segNumMaxNumLines, 	//The number of the seg with the maximum length
 			ledArrSize, 		//The size of the FastLED array (total number of pixels, including any extras for dummy or duplicate pixels)
 			numLeds, 			//the total number of pixels in the segment set (treating isSingle segments as one pixel)
 			getTotalSegLength(uint16_t segNum),

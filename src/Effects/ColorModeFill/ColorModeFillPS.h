@@ -1,16 +1,14 @@
 #ifndef ColorModeFillPS_h
 #define ColorModeFillPS_h
 
-#include "Include_Lists/SegmentFiles.h"
-#include "Include_Lists/PaletteFiles.h"
-
 #include "Effects/EffectBasePS.h"
+#include "GeneralUtils/generalUtilsPS.h"
 
 /* 
 Not a full effect, but could be used as one
-Fills in the SegmentSet using the specified colorMode (see segDrawUtils::getPixelColor()) at the specified rate
-Useful for filling in a background before drawing an effect 
-or can be combined with a RainbowOffsetCycle to do simple rainbow shifting effects
+Fills in the Segment Set using the specified colorMode (see segDrawUtils::getPixelColor()) at the specified rate
+Useful for drawing simple rainbow shifting effects on the segment set using the color modes 
+or filling in a background before drawing an effect 
 
 Example call: 
     ColorModeFillPS(mainSegments, 7, 70);
@@ -25,7 +23,7 @@ Functions:
 
 Other Settings:
     color (default to 0) -- if you want just a static color, you could use this along with colorMode = 0, but 
-                           effects should already give you this option by themselves 
+                            effects should already give you this option by themselves 
 */
 class ColorModeFillPS : public EffectBasePS {
     public:

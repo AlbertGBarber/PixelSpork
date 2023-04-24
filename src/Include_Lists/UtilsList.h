@@ -6,7 +6,6 @@
 #include "UtilEffects/EffectFader/EffectFaderPS.h"
 #include "UtilEffects/EffectSetFader/EffectSetFaderPS.h"
 #include "UtilEffects/EffectSet/EffectSetPS.h"
-#include "UtilEffects/ColorModeFill/ColorModeFillPS.h"
 #include "UtilEffects/PaletteBlender/PaletteBlenderPS.h"
 #include "UtilEffects/RateRandomizer/RateRandomizerPS.h"
 #include "UtilEffects/RandRateCtrl/RandRateCtrlPS.h"
