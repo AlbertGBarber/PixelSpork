@@ -64,25 +64,25 @@ Inputs guide:
 
 
 Example calls:
-    PrideWPalSL2(mainSegments, true, false, 80);
+    PrideWPalSL2 prideWPal2(mainSegments, true, false, 80);
     Will do a rainbow effect, where colors shift from the outer to the center segment
     The brightness wave values will not be randomized, defaults will be used
     The effect updates at 80ms
 
-    PrideWPalSL2(ringSegments, 4, true, true, 80);
+    PrideWPalSL2 prideWPal2(mainSegments, 4, true, true, 80);
     Will do an effect using 4 random colors (in a randomly generated palette)
     Colors will shift from the center to the outer segment
     The brightness wave values will be randomized, see init() for the ranges
     The effect updates at 80ms
 
-    PrideWPalSL2(ringSegments, palette1, true, true, 80);
-    Will do an effect using colors from palette1
+    PrideWPalSL2 prideWPal2(mainSegments, cybPnkPal, true, true, 80);
+    Will do an effect using colors from cybPnkPal
     Colors will shift from the center to the outer segment
     The brightness wave values will be randomized, see init() for the ranges
     The effect updates at 80ms
 
-    PrideWPalSL2(ringSegments, palette1, true, 20, 120, 250, 350, 20, 40, 3, 7, 60);
-    Will do an effect using colors from palette1
+    PrideWPalSL2 prideWPal2(mainSegments, cybPnkPal, true, 20, 120, 250, 350, 20, 40, 3, 7, 60);
+    Will do an effect using colors from cybPnkPal
     Colors will shift from the center to the outer segment, using 20 steps to blend the colors
     The brightDepth will vary from 120 to 250
     The briThetaInc16 will vary from 20 to 40 with a briThetaFreq of 350

@@ -112,7 +112,7 @@ void StrobeSLSeg::reset(){
     //happen so that all the colors in the pattern showed up
     //If newColor is not set, then the number of full strobe cycles is the pattern length (number of colors)
     //so that the segment is pulsed in each color one time
-    //**The number of cycles is full dependent on the pattern length, even if colors are choosen at random
+    //**The number of cycles is full dependent on the pattern length, even if colors are chosen at random
 //Pausing:
 //We pause for a set time after each full strobe cycle (or after every set of pulses of pauseEvery is set)
 //Ie for mode 0, we'd pause after pulsing each segment once (or after each color if pauseEvery is set)

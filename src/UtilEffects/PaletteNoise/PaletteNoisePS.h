@@ -76,21 +76,21 @@ Overall you have five main settings for adjusting the colors:
 
 Example calls: 
     
-    PaletteNoisePS(4, 160, 60, false, 15, 60);
+    PaletteNoisePS paletteNoise(4, 160, 60, false, 15, 60);
     Will generate a palette with a 4 colors, using a base hue of 160 and a range of 60
     The colors will not be complimentary
     The noise changes with a speed scale of 15
     The hue will not shift over time (hueRate is defaulted to 0)
     The palette colors update at a rate of 60ms
 
-    PaletteNoisePS(2, 0, 40, true, 8, 500, 60);
+    PaletteNoisePS paletteNoise(2, 0, 40, true, 8, 500, 60);
     Will generate a palette with a 2 colors, using a base hue of 0 and a range of 40
     The colors will be complimentary
     The noise changes with a speed scale of 8
     The hue will shift over time at a rate of 500ms
     The palette colors update at a rate of 60ms
 
-    PaletteNoisePS(3, 130, 40, 150, 120, false, 10, 0, 60);
+    PaletteNoisePS paletteNoise(3, 130, 40, 150, 120, false, 10, 0, 60);
     These settings generate a nice ocean-like palette
     Will generate a palette with a 3 colors, using a base hue of 130 and a range of 40
     The saturation min and value min are set to 150 and 120 respectively

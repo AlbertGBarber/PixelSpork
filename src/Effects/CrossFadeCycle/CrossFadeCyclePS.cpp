@@ -75,20 +75,20 @@ void CrossFadeCyclePS::setPaletteAsPattern(){
 //Gets the next fade color based on the pattern, palette, and randMode
 //Also advances the patternIndex to track where we are in the pattern
 //randModes are:
-//  0: Colors will be choosen in order from the pattern (not random)
-//  1: Colors will be choosen completely at random
-//  2: Colors will be choosen randomly from the palette (not allowing repeats)
+//  0: Colors will be chosen in order from the pattern (not random)
+//  1: Colors will be chosen completely at random
+//  2: Colors will be chosen randomly from the palette (not allowing repeats)
 void CrossFadeCyclePS::getNextColor(){
     switch (randMode) {
-        case 0: //Colors will be choosen in order from the pattern (not random)
+        case 0: //Colors will be chosen in order from the pattern (not random)
         default:
             palIndex = patternUtilsPS::getPatternVal( *pattern, patternIndex );
             nextColor = paletteUtilsPS::getPaletteColor( *palette, palIndex );
             break;
-        case 1: //Colors will be choosen completely at random
+        case 1: //Colors will be chosen completely at random
             nextColor = colorUtilsPS::randColor();
             break;
-        case 2: //Colors will be choosen randomly from the palette (not allowing repeats)
+        case 2: //Colors will be chosen randomly from the palette (not allowing repeats)
             palIndex = patternUtilsPS::getShuffleVal( *pattern, palIndex );
             nextColor = paletteUtilsPS::getPaletteColor( *palette, palIndex );
             break;

@@ -45,7 +45,7 @@ void PoliceStrobeSL::reset(){
     colorNum = 0;
     pulseCount = 1;
     paused = false;
-    //Set the flashHalf based on the choosen pulseMode
+    //Set the flashHalf based on the chosen pulseMode
     if(pulseMode == 0 || pulseMode == 1){
         flashHalf = true;
     } else {
@@ -191,7 +191,7 @@ void PoliceStrobeSL::update(){
                 startPause();
             }
 
-            //reset the pulse vars, and toggle firstHalf (so another half is choosen)
+            //reset the pulse vars, and toggle firstHalf (so another half is chosen)
             firstHalf = !firstHalf;
             pulseCount = 1;
             //fill the segment set with the background to clear the strip for the next pulse cycle

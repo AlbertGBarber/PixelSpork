@@ -28,28 +28,29 @@ This would also let you change to different color modes on the fly
 But this is maybe too complicated for learners.
 
 Example call: 
-    RainbowCycleSLSeg(mainSegments, 30, true, false, 80); 
+    RainbowCycleSLSeg rainbowCycleSLSeg(mainSegments, 30, true, false, 80); 
     Will draw rainbows of length 30, moving towards the end of the segment lines, at 80ms
     The rainbows will be drawn along segment lines
 
-    RainbowCycleSLSeg(mainSegments, 50, false, true, 80); 
+    RainbowCycleSLSeg rainbowCycleSLSeg(mainSegments, 50, false, true, 80); 
     Will draw rainbows of length 50, moving from the last to first segment, at 80ms
     The rainbow colors will be drawn on each segment
 
-    RainbowCycleSLSeg(mainSegments, false, true, 80); 
+    RainbowCycleSLSeg rainbowCycleSLSeg(mainSegments, false, true, 80); 
     Will draw rainbows of length 255 (the length is set to 255 by default b/c it is omitted from the constructor), 
     moving from the last to first segment, at 80ms
     The rainbow colors will be drawn on each segment
 
 Constructor Inputs:
     length (optional) -- The length of each rainbow, if omitted, 255 will be used
-    direction -- The direction the rainbows will move in (true is forward)
+    direct -- The direction the rainbows will move in (true is forward)
     segMode -- Sets if the rainbows will be drawn along segment lines or whole segments
                (true will do whole segments)
     Rate -- update rate (ms)
 
 Functions:
     setLength(newLength) -- sets a new rainbow length
+    update() -- updates the effect 
 
 Other Settings:
     satur (default 255) -- rainbow saturation value
@@ -61,10 +62,10 @@ Reference Vars:
 */
 class RainbowCycleSLSeg : public EffectBasePS {
     public:
-        RainbowCycleSLSeg(SegmentSet &SegSet, uint16_t Length, bool Direction, bool SegMode, uint16_t Rate); 
+        RainbowCycleSLSeg(SegmentSet &SegSet, uint16_t Length, bool Direct, bool SegMode, uint16_t Rate); 
 
         //Does a rainbow cycle of length 255
-        RainbowCycleSLSeg(SegmentSet &SegSet, bool Direction, bool SegMode, uint16_t Rate); 
+        RainbowCycleSLSeg(SegmentSet &SegSet, bool Direct, bool SegMode, uint16_t Rate); 
 
         SegmentSet 
             &SegSet;

@@ -3,14 +3,14 @@
 using namespace shiftingSeaUtilsPS;
 //fills in the passed in array with a set of offsets, consecutive array indexes can share the same offset based on the grouping value (is random)
 //Modes:
-    //0: The offsets are choosen from 0 to totalCycleLength
-    //1: The offsets are choosen from 0 to gradLength
+    //0: The offsets are chosen from 0 to totalCycleLength
+    //1: The offsets are chosen from 0 to gradLength
 //Min value fro grouping is 1
 void shiftingSeaUtilsPS::genOffsetArray(uint16_t *offsets, uint16_t numPixels, uint8_t gradLength, uint16_t grouping, uint16_t totalCycleLength, uint8_t mode ){
 
     uint16_t groupSize;
 
-    // grouping must be at least 1 (otherwise no pixels would be choosen)
+    // grouping must be at least 1 (otherwise no pixels would be chosen)
     if (grouping <= 0) {
         grouping = 1;
     }

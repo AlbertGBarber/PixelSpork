@@ -15,6 +15,8 @@ Wipes have a direction. This can be set to alternate with each wipe.
 
 (If you're wipe length is the length of the segment set lines or segments, then you'll just have one wipe)
 
+The effect can also be set to loop, repeating the wipes continuously, with a variety of configuration options.
+
 The effect uses a pattern and palette for colors and various styles to display them:
 Styles:
     0: The colors alternate with each wipe. Ie if you have 4 wipe sections, each will be a different color from the pattern
@@ -63,7 +65,7 @@ Looping:
 
     The loop options give you a lot of flexibility in creating different effects, I encourage you to play with them!
     If you can't setup exactly what you want, you can always create multiple ColorWipes, and invoke them manually, 
-    swapping/reseting them out as they are "done".
+    swapping/resetting them out as they are "done".
 
 The Loop Options: 
     looped -- Sets if the wipes loop or not. Looping wipes automatically restart every time a wipe is finished.
@@ -105,8 +107,8 @@ You can adjust most of the effect variables (wipeDirect, simult, etc) on the fly
 The only restriction are the wipeLength and segMode, which must be set using setWipeLength(), and setSegMode().
 
 Example calls: 
-    ColorWipeSLSeg(mainSegments, palette1, 0, 1, false, false, true, false, 140);
-    Will do a color wipe along mainSegment's lines using colors from palette1
+    ColorWipeSLSeg colorWipeSL(mainSegments, cybPnkPal, 0, 1, false, false, true, false, 140);
+    Will do a color wipe along mainSegment's lines using colors from cybPnkPal
     (A pattern will be generated to match the palette)
     Only one wipe will happen, it is the full length of the segment set
     (passing 0 in as the wipe length automatically sets the wipe length to the number of lines in the segment set)
@@ -114,14 +116,14 @@ Example calls:
     Both simlut and alternate are false (they don't matter for a single wipe)
     The wipe will move in the positive direction, updating at 140ms
 
-    ColorWipeSLSeg(mainSegments, palette1, pattern1, 8, 0, true, false, false, false, 140);
-    Will do a color wipe along mainSegment's lines using colors from palette1, according to pattern1
+    ColorWipeSLSeg colorWipeSL(mainSegments, cybPnkPal, pattern1, 8, 0, true, false, false, false, 140);
+    Will do a color wipe along mainSegment's lines using colors from cybPnkPal, according to pattern1
     The wipe length is 8 (assumed to be shorter than the segment set num lines)
     The style is 0, each wipe will alternate colors according to the pattern.
     The wipes will occur simultaneously with each wipe being in the same direction
     The wipes will move in the negative direction, updating at 140ms
 
-    ColorWipeSLSeg(mainSegments, CRGB(CRGB::Red), 2, 0, true, true, false, true, 140);
+    ColorWipeSLSeg colorWipeSL(mainSegments, CRGB(CRGB::Red), 2, 0, true, true, false, true, 140);
     Will do a color wipe along mainSegment's segments using CRGB::Red as the only color
     The wipe length is 2 (assumed to be shorter than the segment set num segments)
     The style is 0 (doesn't matter b/c we only have one color)
@@ -148,7 +150,8 @@ Functions:
     setWipeLength(newWipeLength) -- Sets the wipe length, does NOT restart the effect
     setSegMode(newSegMode) -- Changes the segMode and changes the wipeLength to either segWipeLen or lineWipeLen (recalculating numWipes) (see segMode notes above)
     resetLoop() -- Resets the current loop, will switch to the next loop, only relevant when looping (you shouldn't need to call this)
-    setUpLoop(nLooped, nShiftPatLoop, nBgLoop, nAltWipeDirLoop, nBgAltLoop, nAltSegDirLoop) 
+    setUpLoop(bool nLooped, uint8_t nBgLoopFreq, bool nBgLoop, uint8_t nLoopFreq, bool nShiftPatLoop,
+              bool nAltWipeDirLoop, bool nBgAltLoop, bool nAltSegDirLoop, bool nAltSegModeLoop) 
              -- A quick way of setting all the loop variables (see intro for notes on loops)
     update() -- updates the effect
 

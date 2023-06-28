@@ -17,4 +17,8 @@ static palettePS firePalPink = {firePalPink_arr, SIZE(firePalPink_arr)};
 static CRGB firePalBlue_arr[] = { CRGB{16, 124, 126 }, CRGB{ 43, 208, 17 }, CRGB{120, 212, 96} };
 static palettePS firePalBlue = {firePalBlue_arr, SIZE(firePalBlue_arr)};
 
+//Classic neon magenta-teal cyber punk palette, uses bright magenta, medium blue, and bright teal
+static CRGB cybPnkPal_arr[] = { CRGB{240, 0, 219}, CRGB{19, 61, 201}, CRGB{11, 196, 207}};
+static palettePS cybPnkPal = {cybPnkPal_arr, SIZE(cybPnkPal_arr)};
+
 #endif

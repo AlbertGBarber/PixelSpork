@@ -52,5 +52,5 @@
 #include "Effects/PatternShifterSL/PatternShifterSL.h"
 #include "Effects/PatternShifterSeg/PatternShifterSeg.h"
 #include "Effects/ColorWipeSLSeg/ColorWipeSLSeg.h"
-#include "Effects/ColorWipeSec/ColorWipeSec.h"
+#include "Effects/ColorWipeSeg/ColorWipeSeg.h"
 #include "Effects/ColorModeFill/ColorModeFillPS.h"

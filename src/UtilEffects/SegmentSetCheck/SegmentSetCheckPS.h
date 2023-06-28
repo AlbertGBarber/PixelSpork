@@ -19,7 +19,7 @@ What modes are run is based on the testMode value:
     2+: Testing both modes, one after another, repeating
 
 Example calls: 
-    SegmentSetCheckPS(mainSegments, 2);
+    SegmentSetCheckPS segmentSetCheck(mainSegments, 2);
     Does both tests 0 and 1 on the mainSegments segment set 
     The default update rate of 500ms will be used
 

@@ -66,7 +66,7 @@ I'd set my range to at least 5 to get a good variation. If you set it too low fi
 
 Example calls: 
 
-    FirefliesSL(mainSegments, CRGB(222, 144, 9), 15, 5, 2000, 3000, 3, 6, 80);
+    FirefliesSL fireflies(mainSegments, CRGB(222, 144, 9), 15, 5, 2000, 3000, 3, 6, 80);
     Will do a set of fireflies using a yellow-orange color
     There are a maximum of 15 fireflies active at one time, and each has a 5 percent chance of spawning per cycle
     The fireflies have a base life of 2000ms, with a range of 3000ms (for a max life of 5000ms)
@@ -76,14 +76,14 @@ Example calls:
     CRGB(*colorCode*), ex CRGB(CRGB::Red)
     Otherwise it will get confused and call the random palette constructor
 
-    FirefliesSL(mainSegments, &palette1, 5, 20, 3000, 4000, 6, 14, 70);
-    Will do a set of fireflies using colors from palette1
+    FirefliesSL fireflies(mainSegments, cybPnkPal, 5, 20, 3000, 4000, 6, 14, 70);
+    Will do a set of fireflies using colors from cybPnkPal
     There are a maximum of 5 fireflies active at one time, and each has a 20 percent chance of spawning per cycle
     The fireflies have a base life of 3000ms, with a range of 4000ms (for a max life of 7000ms)
     The fireflies have a base speed of 6, with a range of 14 (for a max speed of 20)
     The effect updates at 70ms
 
-    FirefliesSL(mainSegments, 2, 20, 5, 3000, 3000, 2, 5, 80);
+    FirefliesSL fireflies(mainSegments, 2, 20, 5, 3000, 3000, 2, 5, 80);
     Will do a set of fireflies using a random palette of 2 colors
     There are a maximum of 20 fireflies active at one time, and each has a 5 percent chance of spawning per cycle
     The fireflies have a base life of 3000ms, with a range of 3000ms (for a max life of 6000ms)
@@ -92,7 +92,7 @@ Example calls:
 
 Constructor Inputs:
     palette(optional, see constructors) -- The set of colors that firefly colors will be picked from
-    numColors (optional, see constructors) -- The number of randomly choosen colors for fireflies
+    numColors (optional, see constructors) -- The number of randomly chosen colors for fireflies
     color (optional, see constructors) -- A single color for all the fireflies
     maxNumFireflies -- The maximum number of simultaneous fireflies  that can be active at one time
     spawnChance -- How likely an inactive firefly is to spawn each update cycle (a percent out of 100)

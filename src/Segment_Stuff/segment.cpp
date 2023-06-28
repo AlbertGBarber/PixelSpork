@@ -1,32 +1,32 @@
 #include "Segment.h"
 
 //Constructor for creating a segment with a normal section
-Segment::Segment(const segmentSecCont *segSectionArr,  uint8_t numSections, bool direction) :
-    secPtr(segSectionArr), numSec(numSections), direct(direction)
+Segment::Segment(const segmentSecCont *segSecContArr,  uint8_t NumSec, bool Direct) :
+    secContPtr(segSecContArr), numSec(NumSec), direct(Direct)
 	{
-		init(numSections);
+		init();
 	}
 
 //Constructor for creating a segment with a mixed section
 //note that the you are limited to one mixed section
 //This is because a mixed section can contain any number of pixels in any order,
 //so you don't need more than one section
-Segment::Segment(const segmentSecMix *segSecMix, uint8_t numSections, bool direction) :
-    secMixPtr(segSecMix), numSec(numSections), direct(direction)
+Segment::Segment(const segmentSecMix *segSecMixArr, uint8_t NumSec, bool direction) :
+    secMixPtr(segSecMixArr), numSec(NumSec), direct(direction)
 	{
-        init(numSections);
+        init();
 	}
 
 //Initializes core variables for the segment
 //and checks if the segment has any single sections
-void Segment::init(uint8_t numSections){
+void Segment::init(){
     totalLength = getSegTotLen();
     
     //check if any of the sections are single, if they are, flag the segment as having a single section
     //(so it gets caught in segDrawUtils::show())
     for(uint8_t i = 0; i < numSec; i++ ){
-        if(secPtr){
-            if(pgm_read_word( &( secPtr + i )->single) ){
+        if(secContPtr){
+            if(pgm_read_word( &( secContPtr + i )->single) ){
                hasSingle = true;
                break;
             } 
@@ -40,6 +40,7 @@ void Segment::init(uint8_t numSections){
 }
 
 //returns the total length of the segment by summing the length of each segment section
+//Treats single sections as length 1
 uint16_t Segment::getSegTotLen(){
     uint16_t totalLength = 0;
     for(int i = 0; i < numSec; i++ ){
@@ -53,7 +54,7 @@ uint16_t Segment::getSegTotLen(){
 //b/c sections are stored in flash, we need to use pgm_read_word to fetch their properties
 //the start pixel is a uint16_t, pgm_read_word reads 16bit words.
 uint16_t Segment::getSecStartPixel( uint8_t secNum ){
-	return pgm_read_word( &( secPtr + secNum )->startPixel);
+	return pgm_read_word( &( secContPtr + secNum )->startPixel);
 }
 
 //!!!!Only works for mixed sections, not continuous sections
@@ -68,8 +69,8 @@ uint16_t Segment::getSecMixPixel( uint8_t secNum, uint16_t pixelNum ){
 //Returns the value of the "single" var for the specified section
 //This indicates if the section is to be treated as a single pixel or not
 bool Segment::getSecIsSingle(uint8_t secNum){
-    if(secPtr){
-        return (pgm_read_word( &( secPtr + secNum )->single));
+    if(secContPtr){
+        return (pgm_read_word( &( secContPtr + secNum )->single));
     } else {
         return (pgm_read_word( &( secMixPtr + secNum )->single));
     }
@@ -80,14 +81,14 @@ bool Segment::getSecIsSingle(uint8_t secNum){
 //the length is a uint16_t, pgm_read_word reads 16bit words.
 //If the segment is being treated as a single pixel, it returns 1 as the sec length
 int16_t Segment::getSecLength( uint8_t secNum ){
-    //Check if the secPtr is not null, if so then we must have normal segment sections
+    //Check if the secContPtr is not null, if so then we must have normal segment sections
     //otherwise we must have a mixed section pointer
     //Then we check if the section is single
-    if(secPtr){
-        if(pgm_read_word( &( secPtr + secNum )->single)){
+    if(secContPtr){
+        if(pgm_read_word( &( secContPtr + secNum )->single)){
             return 1;
         } else {
-            return pgm_read_word( &( secPtr + secNum )->length);
+            return pgm_read_word( &( secContPtr + secNum )->length);
         }
     } else {
         if(pgm_read_word( &( secMixPtr + secNum )->single)){
@@ -101,8 +102,8 @@ int16_t Segment::getSecLength( uint8_t secNum ){
 //returns the length of the section, disregards if the section is being treated as a single pixel
 //(Used to set all the section's pixel colors)
 int16_t Segment::getSecTrueLength( uint8_t secNum ){
-    if(secPtr){
-        return pgm_read_word( &( secPtr + secNum )->length);
+    if(secContPtr){
+        return pgm_read_word( &( secContPtr + secNum )->length);
     } else {
         return pgm_read_word( &( secMixPtr + secNum )->length );
     }

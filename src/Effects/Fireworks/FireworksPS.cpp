@@ -363,8 +363,8 @@ uint16_t FireworksPS::getTrailLedLoc( uint8_t trailPixelNum ) {
     return addMod16PS(partPos, maxPosition - ( directStep * ( trailPixelNum + sizeAdj ) ), maxPosition);
 }
 
-//Spawns a new firework by reseting all of its particles
-//All the particles are given the same random spawn position and have a color choosen at random
+//Spawns a new firework by resetting all of its particles
+//All the particles are given the same random spawn position and have a color chosen at random
 //Their directions are set to alternate for each particle so we always have an even spread in both directions
 //Their speeds are set on a sliding random scale so that we always have a mix of fast and slow particles
 //This helps prevent too many particles from having the same speed, which happens if you just pick randomly

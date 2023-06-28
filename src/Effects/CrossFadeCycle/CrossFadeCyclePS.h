@@ -17,22 +17,22 @@ You can set the effect to pause between between fades for a fixed length of time
 Does not work with color modes from segDrawUtils::setPixelColor()
 
 randModes are: (default 0)
-    0: Colors will be choosen in order from the pattern (not random)
-    1: Colors will be choosen completely at random
-    2: Colors will be choosen randomly from the palette (not allowing repeats)
+    0: Colors will be chosen in order from the pattern (not random)
+    1: Colors will be chosen completely at random
+    2: Colors will be chosen randomly from the palette (not allowing repeats)
 
 Example calls: 
-    uint8_t pattern_arr = {0, 1, 4};
+    uint8_t pattern_arr = {0, 1, 2};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-    CrossFadeCyclePS(mainSegments, pattern, palette, 40, 30);
+    CrossFadeCyclePS crossFadeCycle(mainSegments, pattern, cybPnkPal, 40, 30);
     Will fade from color 0, to color 1, to color 4 of the palette
     taking 40 steps for each fade, with 30ms between steps
 
-    CrossFadeCyclePS(mainSegments, palette, 40, 30);
+    CrossFadeCyclePS crossFadeCycle(mainSegments, cybPnkPal, 40, 30);
     Will fade through the colors of the palette in order
     taking 40 steps for each fade, with 30ms between steps
 
-    CrossFadeCyclePS(mainSegments, 40, 30);
+    CrossFadeCyclePS crossFadeCycle(mainSegments, 40, 30);
     Will fade from one random color to the next
     taking 40 steps for each fade, with 30ms between steps
 

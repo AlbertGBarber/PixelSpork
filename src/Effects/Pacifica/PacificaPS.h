@@ -34,7 +34,7 @@ Technically, I've made the background color a pointer so you can bind it externa
 You probably shouldn't do this tho, b/c it heavily influences the effect
 
 Example calls: 
-    PacificaPS(mainSegments, 40);
+    PacificaPS pacifica(mainSegments, 40);
     That's it, updates at 40ms
 
 Functions:

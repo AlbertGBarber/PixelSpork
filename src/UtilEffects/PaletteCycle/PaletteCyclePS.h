@@ -52,13 +52,14 @@ Example calls:
     To declare palette set, use the paletteSet struct (see palettePS.h):
     palettePS *paletteArr[] = { &palette1, &palette2, etc};
     paletteSetPS paletteSet = {paletteArr, SIZE(paletteArr)};
+    Note you'll have to create your own cybPnkPal and palette2
 
-    PaletteCyclePS(paletteSet, true, false, false, 50, 80);
+    PaletteCyclePS paletteCycle(paletteSet, true, false, false, 50, 80);
     Blends between each palette in the array in order, looping back to the first palette at the end
     The palettes are not randomized or shuffled
     each blend takes 50 steps, with 80ms between each step
 
-    PaletteCyclePS(paletteSet, true, true, false, 50, 80);
+    PaletteCyclePS paletteCycle(paletteSet, true, true, false, 50, 80);
     Blends between each palette in the array in order, looping back to the first palette at the end
     The palettes are randomized, but not shuffled
     each blend takes 50 steps, with 80ms between each step
@@ -69,7 +70,7 @@ Constructor Inputs:
     randomize -- If true, will randomize the next palette in the cycle,
                  note that this will permanently modify palettes, so make sure you aren't using them elsewhere!
                  Combine this with looped, to produce constantly changing palettes.
-    shuffle -- If true, a random palette from the set will be choosen for each blend (will not be the same as the current palette)
+    shuffle -- If true, a random palette from the set will be chosen for each blend (will not be the same as the current palette)
                If looping is false, the number of palettes blended will still be the number of palettes in the set.\
                Works, with randomize, but isn't really useful.
     totalSteps (max 255) -- The total number of steps taken to blend between the palettes

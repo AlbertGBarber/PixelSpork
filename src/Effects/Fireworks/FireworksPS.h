@@ -87,7 +87,7 @@ The settings for this spark all use the "center" in their name
 
 Example calls: 
 
-    FireworksPS(mainSegments, 5, 3, 10, 10, 2000, 10, 40, 300);
+    FireworksPS fireworks(mainSegments, 5, 3, 10, 10, 2000, 10, 40, 300);
     Will do a set of fireworks using colors from a randomly generated palette of 5 colors
     There is a maximum of 3 fireworks active at one time.
     Each firework has 10 sparks
@@ -96,8 +96,8 @@ Example calls:
     The spark's speed decays at 10 percent per update
     The fastest particles will update at 40ms, while the slowest will be 40 + 300ms
 
-    FireworksPS(mainSegments, palette1, 3, 20, 10, 4000, 5, 40, 500);
-    Will do a set of fireworks using colors from a palette1
+    FireworksPS fireworks(mainSegments, cybPnkPal, 3, 20, 10, 4000, 5, 40, 500);
+    Will do a set of fireworks using colors from a cybPnkPal
     There is a maximum of 3 fireworks active at one time.
     Each firework has 20 sparks
     There is a 10% chance a new firework spawns during an update
@@ -105,10 +105,10 @@ Example calls:
     The spark's speed decays at 5 percent per update
     The fastest particles will update at 40ms, while the slowest will be 40 + 500ms
 
-    FireworksPS(mainSegments, CRGB(CRGB::White), 5, 4, 50, 2000, 10, 80, 80);
+    FireworksPS fireworks(mainSegments, CRGB(CRGB::White), 5, 4, 50, 2000, 10, 80, 80);
     Small, but fast fireworks on a shifting background
-    bgColorMode = 6;
-    fillBG = true;
+    fireworks.bgColorMode = 6; //Put in Arduino setup()
+    fireworks.fillBG = true; //Put in Arduino setup()
     Will do a set of fireworks using white as the color
     There is a maximum of 5 fireworks active at one time.
     Each firework has 4 sparks
@@ -120,7 +120,7 @@ Example calls:
 
 Constructor Inputs:
     palette(optional, see constructors) -- The set of colors that firework colors will be picked from
-    numColors (optional, see constructors) -- The number of randomly choosen colors for fireworks
+    numColors (optional, see constructors) -- The number of randomly chosen colors for fireworks
     color (optional, see constructors) -- A single color for all the fireworks
     maxNumFireworks -- The maximum number of simultaneous fireworks that can be active at one time
     maxNumSparks -- The number of sparks spawned per firework

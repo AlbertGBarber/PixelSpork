@@ -20,7 +20,7 @@ ShimmerSL::ShimmerSL(SegmentSet &SegSet, CRGB ShimmerColor, uint8_t ShimmerMin, 
         init(Rate);
 	}
 
-//Constructor for colors randomly choosen from palette
+//Constructor for colors randomly chosen from palette
 ShimmerSL::ShimmerSL(SegmentSet &SegSet, palettePS &Palette, uint8_t ShimmerMin, uint8_t ShimmerMax, uint16_t Rate):
     SegSet(SegSet), palette(&Palette), shimmerMin(ShimmerMin), shimmerMax(ShimmerMax)
     {    

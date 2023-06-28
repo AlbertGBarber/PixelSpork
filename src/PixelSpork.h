@@ -48,7 +48,11 @@ Effects TODO:
     -- Running dual or phased noise (see WLED)
     -- A multiple version of breath eye (like twinkle, but you do breath eyes in place of twinkles)
     -- Multipath snake. Snake runs across segments, when segments meet it chooses which segment to switch to.
-       Needs way to define segment connection points and directions. Snake tracks all the pixels it's on in array. 
+       Snake tracks all the pixels it's on in its own in array.
+       For each segment, have a connection points array (probs a struct w/ length), each array entry has 3 points:
+       The pixel number of the connection, what segment it connects to, and what the connection number it is for the new segment (ie connection point 2)
+       When moving, as long as you know what connection index you started at and your direction, you only have to check for the next index pixel.
+       You might need a marker for dead ends in the connection array.
     -- A function that cycles through an array of patterns
     -- A stacking pattern I guess
     -- A colorWipe function that does random length wipes?

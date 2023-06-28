@@ -34,12 +34,12 @@ For any of the constructors with a waveThickness input, just pass in 0, and a si
 Likewise I've added a rainbow constructor, which will create a smooth rainbow transition wave.
 
 The effect also has a random mode (set using randMode, not in the constructors),
-where the pattern color are choosen at random as they enter the segments
+where the pattern color are chosen at random as they enter the segments
 The modes are: 
-    0 (dfault): Colors will be choosen in order from the pattern (not random)
-    1: Colors will be choosen completely at random
-    2: Colors will be choosen randomly from the palette (allowing repeats)
-    3: Colors will be choosen at random from the palette,
+    0 (dfault): Colors will be chosen in order from the pattern (not random)
+    1: Colors will be chosen completely at random
+    2: Colors will be chosen randomly from the palette (allowing repeats)
+    3: Colors will be chosen at random from the palette,
        but the same color won't be repeated in a row
 
 Note that switching from random modes to the fixed pattern mode (randMode 0) will cause a jump in colors
@@ -61,7 +61,7 @@ The bgColor is a pointer, so you can bind it to an external color variable.
 Example calls: 
     uint8_t pattern_arr = {0, 255, 255, 255, 1, 1, 255, 255};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-    SegWaves(mainSegments, pattern, palette3, 0, 30, true, 20);
+    SegWaves segWaves(mainSegments, pattern, cybPnkPal, 0, 30, true, 20);
     Will do a set of waves using the first two colors in the palette
     The wave will begin with 1 pixel of color 0, with three spaces after, followed by 2 pixels of color 1, followed by 2 spaces
     The bgColor is zero (off)
@@ -70,29 +70,29 @@ Example calls:
 
     uint8_t pattern_arr = {1, 2, 3};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-    SegWaves(mainSegments, pattern, palette3, 3, 4, 0, 0, false, 120);
+    SegWaves segWaves(mainSegments, pattern, cybPnkPal, 3, 4, 0, 0, false, 120);
     Will do a wave using the first three colors of the palette (taken from the pattern)
     Each wave will be length 3, followed by 4 spaces, bgColor is 0 (off)
     The fade steps are set to zero, so there is no blending.
     The waves will move from the first to last segment.
     The effect updates at a rate of 120ms
 
-    SegWaves(mainSegments, palette3, 0, 0, CRGB::Red, 10, true, 40);
-    Will do a wave using all the colors in palette3,
+    SegWaves segWaves(mainSegments, cybPnkPal, 0, 0, CRGB::Red, 10, true, 40);
+    Will do a wave using all the colors in cybPnkPal,
     because the passed in waveThickness is 0, the effect will be configured as to create a pattern of single waves
     (wave thickness of 1, with spacing such that there's only one wave on the segment sets at one time)
     The bgColor is red
     The waves will blend forward, taking 10 steps, with 40ms between each step
     The waves will move from the last segment to the first
 
-    SegWaves(mainSegments, CRGB::Blue, 2, 2, CRGB::Red, 0, true, 140);
+    SegWaves segWaves(mainSegments, CRGB::Blue, 2, 2, CRGB::Red, 0, true, 140);
     Will do a blue waves with length 2 and 2 spaces in between
     The bgColor is red
     The fade steps are set to zero, so there is no blending
     The effect updates at a rate of 140ms
     The waves will move from the last segment to the first
 
-    SegWaves(mainSegments, 10, false, 80);
+    SegWaves segWaves(mainSegments, 10, false, 80);
     Will do a rainbow wave set, with 10 blend steps for the rainbow
     The waves will move from the first to last segment.
     The effect updates at a rate of 80ms
@@ -131,12 +131,12 @@ Other Settings:
     fadeOn (default true) -- If false, the wave will jump directly to the next color instead of fading
                              Note that if 1 or 0 are passed in as the FadeSteps in the constructor, 
                              fadeOn will be set to false automatically
-    randMode (default 0) -- Sets the type of how colors are choosen:
-                         -- 0: Colors will be choosen in order from the pattern (not random)
-                         -- 1: Colors will be choosen completely at random
-                         -- 2: Colors will be choosen at random from the palette,
+    randMode (default 0) -- Sets the type of how colors are chosen:
+                         -- 0: Colors will be chosen in order from the pattern (not random)
+                         -- 1: Colors will be chosen completely at random
+                         -- 2: Colors will be chosen at random from the palette,
                                but the same color won't be repeated in a row
-                         -- 3: Colors will be choosen randomly from the palette (allowing repeats)
+                         -- 3: Colors will be chosen randomly from the palette (allowing repeats)
 
 Reference vars:
     cycleNum -- Tracks what how many patterns we've gone through, 

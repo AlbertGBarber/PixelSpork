@@ -20,7 +20,7 @@ have the same properties (speed, trails, etc), but can switch colors as part of 
 Particles can be set to:
     *Either bounce or wrap at each segment set end
     *Either change colors every time they bounce/wrap, every other time they bounce, or not at all.
-    *You can also set the colors to be choosen at random from the pattern using randMode
+    *You can also set the colors to be chosen at random from the pattern using randMode
 
 The particle colors are set according to a passed in color pattern (or be set to copy the palette)
 
@@ -45,25 +45,25 @@ Three scanner types are built in:
         (note that this mode uses blend, see ParticlesPS.h for details)
     
 randModes:
-    0: Colors will be choosen in order from the pattern (not random)
-    1: Colors will be choosen randomly from the pattern
-    2: Colors will be choosen at random from the pattern,
+    0: Colors will be chosen in order from the pattern (not random)
+    1: Colors will be chosen randomly from the pattern
+    2: Colors will be chosen at random from the pattern,
        but the same color won't be repeated in a row
-    3: new colors will not be choosen, the particle colors will be locked to whatever they currently are.
+    3: new colors will not be chosen, the particle colors will be locked to whatever they currently are.
 
 Example calls: 
-    ScannerSL(mainSegments, palette3, 0, 2, 3, 1, false, true, 80);
-    Will do a scanner in mode 3 (Kit) using colors from palette3.
+    ScannerSL scanner(mainSegments, cybPnkPal, 0, 2, 3, 1, false, true, 80);
+    Will do a scanner in mode 3 (Kit) using colors from cybPnkPal.
     The background is blank.
     The scan particles will have a trails of length 3, a body size of 1
     The particles will wrap (not bounce), changing colors as they wrap
     (bounceChange is true, but this doesn't effect particles that are wrapping)
     The particles move at 80ms
 
-    ScannerSL(mainSegments, palette3, 0, 2, 1, 5, 2, true, false, true, true, false, 80);
+    ScannerSL scanner(mainSegments, cybPnkPal, 0, 2, 1, 5, 2, true, false, true, true, false, 80);
     Will do a scanner, automatically creating a set of evenly spaced scanner particles
     There will be two particles spaced evenly on the segment set
-    The particles will take their colors from palette3, with a blank background.
+    The particles will take their colors from cybPnkPal, with a blank background.
     Each particle will have 1 trail of length 5, with a body size of 2
     The particles will start in the forward direction (not set to alternate)
     The particles will bounce at each end of the segment set, changing their colors each time
@@ -118,7 +118,7 @@ Other Settings:
     bounceChange -- Sets if the particles change colors every time they bounce (or every other time)
     fillBG (default false) -- If true, the segment set will be filled with the background every update cycle
     particleSet -- The particleSet used to store the scan particles (and passed to the ParticlePS instance)
-    randMode -- Sets how colors are choosen (see randMode notes above)
+    randMode -- Sets how colors are chosen (see randMode notes above)
 */
 class ScannerSL : public EffectBasePS {
     public:

@@ -19,7 +19,7 @@ Strobe Modes:
 
 The strobe of each color will continue for a set number of on/off cycles (ie making the strobe)
 
-If using a pattern, all the pattern indexes will be cycled through before reseting 
+If using a pattern, all the pattern indexes will be cycled through before resetting 
 For mode 0, this means all the colors will be strobe'd in halves, then strobe'd on the full strip
 
 The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
@@ -52,22 +52,22 @@ Notes:
     and stored in patternTemp.
 
 Example calls: 
-    PoliceStrobeSL(mainSegments, CRGB::Red, CRGB::Blue, 0, 1, 0, 1, 200);
+    PoliceStrobeSL policeStrobe(mainSegments, CRGB::Red, CRGB::Blue, 0, 1, 0, 1, 200);
     Does a classic police set of lights
     Blinks each half of the strip for one pulse between red and blue, at a rate 0f 200ms
     The background is blank
     There is no pause between the cycles
 
-    PoliceStrobeSL(mainSegments, palette1, CRGB:Purple, 4, 500, 0, 50);
+    PoliceStrobeSL policeStrobe(mainSegments, cybPnkPal, CRGB:Purple, 4, 500, 0, 50);
     A more dynamic strobe
-    Will strobe all the colors in the palette1, with 4 pulses at 50ms each
+    Will strobe all the colors in the cybPnkPal, with 4 pulses at 50ms each
     strobe mode 0 is used, so the strobe will alternate between strobing halfs of the strip and the whole strip
     There is a 500ms pause between cycles
     The background color is purple
 
     uint8_t pattern_arr = {0, 1, 4};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-    PoliceStrobeSL(mainSegments, pattern, palette1, CRGB:green, 6, 300, 0, 50);
+    PoliceStrobeSL policeStrobe(mainSegments, pattern, cybPnkPal, CRGB:green, 6, 300, 0, 50);
     Will strobe colors from the palette based on the pattern (ie colors 0, 1, and 4 in order), with 6 pulses at 50ms each
     strobe mode 0 is used, so the strobe will alternate between strobing halfs of the strip and the whole strip
     There is a 300ms pause between cycles
@@ -95,10 +95,10 @@ Other Settings:
     pauseEvery (default false) -- If true, the effect will pause after every set of pulses, rather than after a whole strobe cycle
     fillBG (default true) -- flag to fill the background after each set of pulses
     fillBGOnPause (default true) -- flag to fill the background during each pause
-    randMode (default 0) -- Sets how colors are choosen from the palette
-                        -- 0: Colors will be choosen from the palette in order (not random)
-                        -- 1: Colors will be choosen completely at random (not using the palette)
-                        -- 2: Colors will be choosen randomly from the palette, same color will not be choosen in a row
+    randMode (default 0) -- Sets how colors are chosen from the palette
+                        -- 0: Colors will be chosen from the palette in order (not random)
+                        -- 1: Colors will be chosen completely at random (not using the palette)
+                        -- 2: Colors will be chosen randomly from the palette, same color will not be chosen in a row
 
 Reference Vars:
     colorNum -- The pattern index of the color currently being pulsed (resets once every step in the pattern has been pulsed)

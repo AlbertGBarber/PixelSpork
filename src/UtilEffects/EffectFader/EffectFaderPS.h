@@ -18,7 +18,7 @@ useful for smoothly transitioning between effects.
 (although blending directly to the next effect(s) would be better, it is far more complicated
 and would probably require a whole frame buffer for each effect, taking far too much memory)
 
-Note that this util will only fade the effects either in or out, and needs manual reseting
+Note that this util will only fade the effects either in or out, and needs manual resetting
 for a more automated version, see EffectSetFaderPS
 
 Setup:
@@ -54,7 +54,7 @@ Notes:
 
 Example Calls:
     (see setup guide above, but for reference)
-    EffectSetFaderPS(effectSet, false, 2000)
+    EffectFaderPS effectFader(effectSet, false, 2000)
     Will create a fader to fade the effects in the effect set out (direction is false), 
     taking 2000ms for the fades.
 

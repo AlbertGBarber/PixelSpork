@@ -19,24 +19,24 @@ The effect is adapted to work on segment lines for 2D use, but you can keep it 1
 passing in a SegmentSet with only one segment containing the whole strip.
 
 Example calls: 
-    uint8_t pattern_arr = {0, 1, 4};
+    uint8_t pattern_arr = {0, 1, 2};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-    GradientCycleSL(mainSegments, pattern, palette, 10, 100);
+    GradientCycleSL gradientCycle(mainSegments, pattern, cybPnkPal, 10, 100);
     Will do a gradient cycle from color 0, to color 1, to color 4, of the palette
     with 10 steps to each gradient, and a 100ms update rate
 
-    GradientCycleSL(mainSegments, palette, 10, 100);
+    GradientCycleSL gradientCycle(mainSegments, cybPnkPal, 10, 100);
     Will do a gradient cycle using the colors in the palette, with 10 steps to each gradient,and a 100ms update rate
 
-    GradientCycleSL(mainSegments, 3, 15, 80);
-    Will do a gradient cycle using 3 randomly choosen colors, with 15 steps to each gradient,and an 80ms update rate
+    GradientCycleSL gradientCycle(mainSegments, 3, 15, 80);
+    Will do a gradient cycle using 3 randomly chosen colors, with 15 steps to each gradient,and an 80ms update rate
  
 Constructor Inputs:
     pattern(optional, see constructors) -- A pattern is struct made from a 1-d array of palette indexes ie {0, 1, 3, 6, 7} 
                                           and the length of the array 
                                           (see patternPS.h)   
     palette(optional, see constructors) -- The repository of colors used in the pattern, or can be used as the pattern itself
-    numColors (optional, see constructors) -- The number of randomly choosen colors for the gradients
+    numColors (optional, see constructors) -- The number of randomly chosen colors for the gradients
     gradLength -- How many steps for each gradient
     rate -- The update rate (ms)
 

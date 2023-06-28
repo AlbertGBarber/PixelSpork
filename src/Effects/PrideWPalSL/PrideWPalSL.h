@@ -71,26 +71,26 @@ Inputs guide:
     variables, but the effects will be more subtle
 
 Example calls:
-    PrideWPalSL(mainSegments, true, false, 80);
+    PrideWPalSL prideWPal(mainSegments, true, false, 80);
     Will do a rainbow effect, where the brightness waves move with the colors
     The brightness wave values will not be randomized, defaults will be used
     The effect updates at 80ms
     (the original effect by Mark)
 
-    PrideWPalSL(ringSegments, 4, false, true, 80);
+    PrideWPalSL prideWPal(mainSegments, 4, false, true, 80);
     Will do an effect using 4 random colors (in a randomly generated palette)
     The brightness waves will move opposite to the colors
     The brightness wave values will be randomized, see init() for the ranges
     The effect updates at 80ms
 
-    PrideWPalSL(ringSegments, palette1, true, true, 80);
-    Will do an effect using colors from palette1
+    PrideWPalSL prideWPal(mainSegments, cybPnkPal, true, true, 80);
+    Will do an effect using colors from cybPnkPal
     The brightness waves will move with the colors
     The brightness wave values will be randomized, see init() for the ranges
     The effect updates at 80ms
 
-    PrideWPalSL(ringSegments, palette1, true, 20, 120, 250, 350, 20, 40, 3, 7, 60);
-    Will do an effect using colors from palette1
+    PrideWPalSL prideWPal(mainSegments, cybPnkPal, true, 20, 120, 250, 350, 20, 40, 3, 7, 60);
+    Will do an effect using colors from cybPnkPal
     The brightness waves will move with the colors
     Colors will shift using 20 steps to blend the colors
     The brightnessThetaInc16 will vary from 120 to 250

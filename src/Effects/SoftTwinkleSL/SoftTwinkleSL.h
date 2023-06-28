@@ -73,7 +73,7 @@ surprised at how little actual code was needed to make it work.
 
 Example Call:
 
-    SoftTwinklePS(mainSegments, 150, 20);
+    SoftTwinklePS softTwinkle(mainSegments, 150, 20);
     soft twinkles with density of 150, updating at a rate of 20ms
 
 Functions:

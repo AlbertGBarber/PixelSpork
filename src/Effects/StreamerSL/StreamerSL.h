@@ -50,7 +50,7 @@ Notes:
 Example calls: 
     uint8_t pattern_arr = {0, 255, 255, 255, 1, 1, 255, 255};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-    StreamerSL(mainSegments, pattern, palette3, 0, 30, 20);
+    StreamerSL streamer(mainSegments, pattern, cybPnkPal, 0, 30, 20);
     Will do a set of streamers using the first two colors in the palette
     The streamer will begin with 1 pixel of color 0, with three spaces after, followed by 2 pixels of color 1, followed by 2 spaces
     The bgColor is zero (off)
@@ -58,18 +58,18 @@ Example calls:
 
     uint8_t pattern_arr = {1, 2, 3};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-    StreamerSL(mainSegments, pattern, palette3, 3, 4, 0, 0, 120);
+    StreamerSL streamer(mainSegments, pattern, cybPnkPal, 3, 4, 0, 0, 120);
     Will do a streamer using the first three colors of the palette (taken from the pattern)
     Each streamer will be length 3, followed by 4 spaces, bgColor is 0 (off)
     The fade steps are set to zero, so there is no blending, 
     The effect updates at a rate of 120ms
 
-    StreamerSL(mainSegments, &palette3, 3, 4, CRGB::Red, 10, 40);
-    Will do a streamer using all the colors in palette3, each streamer will be length 3, with 4 spaces in between
+    StreamerSL streamer(mainSegments, cybPnkPal, 3, 4, CRGB::Red, 10, 40);
+    Will do a streamer using all the colors in cybPnkPal, each streamer will be length 3, with 4 spaces in between
     The bgColor is red
     The streamer will blend forward, taking 10 steps, with 40ms between each step
 
-    StreamerSL(mainSegments, CRGB::Blue, 2, 2, CRGB::Red, 0, 140);
+    StreamerSL streamer(mainSegments, CRGB::Blue, 2, 2, CRGB::Red, 0, 140);
     Will do a blue streamers with length 2 and 2 spaces in between
     The bgColor is red
     The fade steps are set to zero, so there is no blending

@@ -65,7 +65,7 @@ CRGB colorUtilsPS::getCrossFadeColor(const CRGB &startColor, const CRGB &endColo
     } else {
        colorFinal.r = startColor.r + ( (int16_t)( endColor.r - startColor.r ) * ratio) / 255;
        colorFinal.g = startColor.g + ( (int16_t)( endColor.g - startColor.g ) * ratio) / 255;
-       colorFinal.g = startColor.b + ( (int16_t)( endColor.b - startColor.b ) * ratio) / 255;;
+       colorFinal.g = startColor.b + ( (int16_t)( endColor.b - startColor.b ) * ratio) / 255;
        return colorFinal;
     }
     */

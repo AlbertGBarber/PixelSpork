@@ -10,7 +10,7 @@ An effect to strobe segment sets in various patterns, while switching between pa
 A strobe is a rapid blinking of light.
 
 The strobe colors will be taken from a passed in pattern or palette.
-There are constructor options for single or randomly choosen colored strobes
+There are constructor options for single or randomly chosen colored strobes
 The are a few options for randomly choosing the strobe colors from the palette or pattern.
 
 Not matter the configuration, the strobe follows a color pattern, taking colors from a palette.
@@ -55,7 +55,7 @@ Color options and Strobe cycle behavior (set with newColor flag)
     If you have a pattern of multiple colors, and want to multiple strobe modes, but go through all the colors before switching colors
     It's best to have a single color palette and pattern, and switch the colors depending on totalCycles.
 
-!!The number of cycles is full dependent on the pattern length, even if colors are choosen at random
+!!The number of cycles is full dependent on the pattern length, even if colors are chosen at random
 
 See the code of setCycleCountMax() to work out how many strobe cycles will happen based on your pattern
 cycleCountMax is the value you want.
@@ -78,47 +78,47 @@ to an external color variable (see segDrawUtils::setPixelColor)
 There are quite a lot of extra configuration options to help make more dynamic strobes
 
 Example calls: 
-    uint8_t pattern_arr = {0, 1, 4};
+    uint8_t pattern_arr = {0, 1, 2};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-    StrobeSLSeg(ringSegments, pattern, palette1, 0, 4, 0, true, true, false, false, false, 50);
-    setNewColorBool(true); (sets newColor flag)
-    Will do a set of strobes using palette1 and strobe modes 0 and 1.
+    StrobeSLSeg strobe(mainSegments, pattern, cybPnkPal, 0, 4, 0, true, true, false, false, false, 50);
+    setNewColorBool(true); //put in Arduino Setup() (sets newColor flag)
+    Will do a set of strobes using cybPnkPal and strobe modes 0 and 1.
     The background is blank, there are 4 pulses per strobe with 50ms between each
     The pause time is 0
     The effect has been set to do a new color for each set of pulses
 
-    StrobeSLSeg(ringSegments, palette1, 0, 4, 0, true, true, false, false, false, 50);
-    setNewColorBool(true); (sets newColor flag)
-    Will do a set of strobes using palette1 and strobe modes 0 and 1.
+    StrobeSLSeg strobe(mainSegments, cybPnkPal, 0, 4, 0, true, true, false, false, false, 50);
+    setNewColorBool(true); //put in Arduino Setup() (sets newColor flag)
+    Will do a set of strobes using cybPnkPal and strobe modes 0 and 1.
     The background is blank, there are 4 pulses per strobe with 50ms between each
     The pause time is 0
     The effect has been set to do a new color for each set of pulses
 
-    StrobeSLSeg(ringSegments, palette1, CRGB::Red, 2, 500, true, false, false, false, true, 100);
-    alternate = true;
-    fillBG = false;
-    fillBGOnPause = false;
-    Will do a set of strobes using palette1 and strobe modes 0 and 4.
+    StrobeSLSeg strobe(mainSegments, cybPnkPal, CRGB::Red, 2, 500, true, false, false, false, true, 100);
+    alternate = true; //put in Arduino Setup()
+    fillBG = false; //put in Arduino Setup()
+    fillBGOnPause = false; //put in Arduino Setup()
+    Will do a set of strobes using cybPnkPal and strobe modes 0 and 4.
     The background is red, there are 2 pulses per strobe with 100ms between each
     The pause time is 500
     The effect has been set to alternate segment fill directions after each cycle (this only affects mode 0)
     The total number of strobe cycles will be equal to the palette length (because newColor was not set)
     The background will not be filled after each pulse cycle
 
-    StrobeSLSeg(ringSegments, CRGB(CRGB:Blue), CRGB(CRGB::Red), 5, 0, false, true, false, true, false, 40);
+    StrobeSLSeg strobe(mainSegments, CRGB(CRGB:Blue), CRGB(CRGB::Red), 5, 0, false, true, false, true, false, 40);
     Will do a set of strobes in blue and strobe modes 1 and 3.
     The background is red, there are 5 pulses per strobe with 40ms between each
     The pause time is 0
     !!If using pre-build FastLED colors you need to pass them as CRGB( *color code* )
 
-    StrobeSLSeg(ringSegments, 4, 0, 3, 0, false, true, false, false, false, 100);
-    setNewColorBool(true); (sets newColor flag)
-    randMode = 2; 
+    StrobeSLSeg strobe(mainSegments, 4, 0, 3, 0, false, true, false, false, false, 100);
+    setNewColorBool(true); //put in Arduino Setup() (sets newColor flag)
+    randMode = 2; //put in Arduino Setup()
     Will do a set of strobes in using a palette of 4 random colors and strobe mode 1.
     The background is blank, there are 3 pulses per strobe with 60ms between each
     The pause time is 0
     Since the newColor flag has been set and randMode has been set to 2, 
-    a new color from the pattern will be choosen for each pulse cycle
+    a new color from the pattern will be chosen for each pulse cycle
  
 Constructor Inputs:
     pattern(optional, see constructors) -- Used to strobe a specific pattern of colors from a palette
@@ -139,7 +139,7 @@ Functions:
     reset() -- Restarts the strobe using the first mode
     setPaletteAsPattern() -- Sets the effect pattern to match the current palette
     setNewColorBool(newColorBool) -- Changes the newColor flag
-                                     The newColor flag determines if a new color is choosen every set of pulses
+                                     The newColor flag determines if a new color is chosen every set of pulses
                                      or after every strobe cycle
     setPattern(&newPattern) -- Changes the pattern, also re-calculates the number of strobe cycles to do
     setPulseMode() -- Advances the pulse mode to the next mode (only call this if you manually want to change the mode)
@@ -154,10 +154,10 @@ Other Settings:
     pauseEvery (default false) -- pause after every set of pulses rather than after every full strobe cycle
     direct (default true) -- The direction of the pulses for modes 0 and 2 (true starts at segment 0)
     alternate (default false) -- Set this to alternate the direction of pulses after each strobe cycle for modes 0 and 2
-    randMode (default 0) -- Sets how colors are choosen from the palette
-                        -- 0: Colors will be choosen from the palette in order (not random)
-                        -- 1: Colors will be choosen completely at random (not using the palette)
-                        -- 2: Colors will be choosen randomly from the palette, same color will not be choosen in a row
+    randMode (default 0) -- Sets how colors are chosen from the palette
+                        -- 0: Colors will be chosen from the palette in order (not random)
+                        -- 1: Colors will be chosen completely at random (not using the palette)
+                        -- 2: Colors will be chosen randomly from the palette, same color will not be chosen in a row
 
 Reference Vars:
     newColor (default false) -- see Color options notes above, set using setNewColorBool()

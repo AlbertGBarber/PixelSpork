@@ -450,11 +450,11 @@ void ScannerSL::moveParticle(particlePS *particlePtr) {
 //The current color is stored in the particle's colorIndex property
 //The next color is stored in the particle's maxLife property
 //randModes:
-//  0: Colors will be choosen in order from the pattern (not random)
-//  1: Colors will be choosen randomly from the pattern
-//  2: Colors will be choosen at random from the pattern,
+//  0: Colors will be chosen in order from the pattern (not random)
+//  1: Colors will be chosen randomly from the pattern
+//  2: Colors will be chosen at random from the pattern,
 //     but the same color won't be repeated in a row
-//  3: new colors will not be choosen, the particle colors will be locked to whatever they currently are
+//  3: new colors will not be chosen, the particle colors will be locked to whatever they currently are
 void ScannerSL::setPartColor(particlePS *particlePtr){
     particlePtr->life = particlePtr->colorIndex;
 

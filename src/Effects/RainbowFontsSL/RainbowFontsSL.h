@@ -36,7 +36,7 @@ passing in a SegmentSet with only one segment containing the whole strip.
 
 Example calls: 
 
-    RainbowFontsSL(ringSegments, 15, 80);
+    RainbowFontsSL rainbowFonts(mainSegments, 15, 80);
     Will do the effect with a wave freq of 15
     The effect updates at 80ms
 

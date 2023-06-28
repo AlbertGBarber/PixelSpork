@@ -15,7 +15,7 @@ DissolveSL::DissolveSL(SegmentSet &SegSet, palettePS &Palette, uint8_t RandMode,
         init(Rate);
     }
 
-//constructor for randomly choosen colors (should only use randMode 1 or 3 with this constructor)
+//constructor for randomly chosen colors (should only use randMode 1 or 3 with this constructor)
 DissolveSL::DissolveSL(SegmentSet &SegSet, uint8_t RandMode, uint16_t SpawnRateInc, uint16_t Rate):
     SegSet(SegSet), randMode(RandMode), spawnRateInc(SpawnRateInc)
     {
@@ -94,10 +94,10 @@ void DissolveSL::resetPixelArray(){
 //see effect description for pattern info
 //randModes:
     //0: Each dissolve is a solid color following the pattern
-    //1: Each dissolve is a set of randomly choosen colors
-    //2: Each dissolve is a set of random colors choosen from the pattern
-    //3: Each dissolve is a solid color choosen at random
-    //4: Each dissolve is a solid color choosen randomly from the pattern
+    //1: Each dissolve is a set of randomly chosen colors
+    //2: Each dissolve is a set of random colors chosen from the pattern
+    //3: Each dissolve is a solid color chosen at random
+    //4: Each dissolve is a solid color chosen randomly from the pattern
 CRGB DissolveSL::pickColor(){
     if(randMode == 0){
         //cycle through the pattern
@@ -112,7 +112,7 @@ CRGB DissolveSL::pickColor(){
         //choose colors randomly from the pattern
         color = paletteUtilsPS::getPaletteColor(*palette, patternUtilsPS::getRandVal(*pattern) );
     } else {
-        //for modes 3 and 4, the colors must only be picked once, since they are choosen randomly
+        //for modes 3 and 4, the colors must only be picked once, since they are chosen randomly
         //hence the ranColorPicked flag
         //(This could also apply to mode 0, but we want to check the color each time for paletteBlending)
         if( !randColorPicked ){

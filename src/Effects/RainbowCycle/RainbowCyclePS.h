@@ -15,20 +15,21 @@ This is the 1D version of the effect. See RainbowCycleSL.h for a segment line 2D
 Comparing the two may help you learn how drawing on segment lines works.
 
 Example call: 
-    RainbowCyclePS(mainSegments, 30, true, 80); 
+    RainbowCyclePS rainbowCycle(mainSegments, 30, true, 80); 
     Will draw rainbows of length 30, moving towards the end of the SegmentSet, at 80ms
 
-    RainbowCyclePS(mainSegments, true, 80); 
+    RainbowCyclePS rainbowCycle(mainSegments, true, 80); 
     Will draw rainbows of length 255 (the length is set to 255 by default b/c it is omitted from the constructor),
     moving towards the end of the SegmentSet, at 80ms
 
 Constructor Inputs:
     length (optional) -- The length of each rainbow, if omitted, the rainbow will be set to the default of 255
-    direction -- The direction the rainbows will move in (true is forward)
+    direct -- The direction the rainbows will move in (true is forward)
     rate -- update rate (ms)
 
 Functions:
     setLength(newLength) -- sets a new rainbow length
+    update() -- updates the effect 
 
 Other Settings:
     satur (default 255) -- rainbow saturation value
@@ -40,10 +41,10 @@ Reference Vars:
 */
 class RainbowCyclePS : public EffectBasePS {
     public:
-        RainbowCyclePS(SegmentSet &SegSet, uint16_t Length, bool Direction, uint16_t Rate); 
+        RainbowCyclePS(SegmentSet &SegSet, uint16_t Length, bool Direct, uint16_t Rate); 
         
         //Does a rainbow cycle of length 255
-        RainbowCyclePS(SegmentSet &SegSet, bool Direction, uint16_t Rate); 
+        RainbowCyclePS(SegmentSet &SegSet, bool Direct, uint16_t Rate); 
 
         SegmentSet 
             &SegSet;
@@ -56,7 +57,7 @@ class RainbowCyclePS : public EffectBasePS {
             length;
         
         bool 
-            direct; //reference only, call setDirect() to change the rainbow direction
+            direct;
         
         void 
             setLength(uint16_t newLength),

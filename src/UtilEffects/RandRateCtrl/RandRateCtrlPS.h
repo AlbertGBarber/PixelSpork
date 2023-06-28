@@ -26,8 +26,8 @@ The randomized rate is stored in outputRate. Use outputRate to bind it to an eff
 The RandRateCtrlPS update rate is a pointer, and can be bound externally, like in other effects
 
 Example calls: 
-    RandRateCtrlPS(80, -20, 20, true, 160);
-    Produces a rate choosen randomly using base of 80, and upper and lower bounds of +/- 20
+    RandRateCtrlPS randRateCtrl(80, -20, 20, true, 160);
+    Produces a rate chosen randomly using base of 80, and upper and lower bounds of +/- 20
     so the output will be vary from 60 to 100, transitioning smoothly, with easing turned on
     the output rate will change every 160ms
 

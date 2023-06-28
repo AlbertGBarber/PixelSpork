@@ -14,14 +14,14 @@ The pattern colors are taken from passed in palette. There are constructor optio
 (in which case a pattern will be created that matches the palette)
 
 There are two modes: 
-    0: Where the offsets are choosen randomly from any point of fading between any 
+    0: Where the offsets are chosen randomly from any point of fading between any 
        two consecutive colors of the pattern (so the overall output is a mix of the pattern colors)
-    1: Where the offsets are choosen randomly from the fade between the first and second colors
+    1: Where the offsets are chosen randomly from the fade between the first and second colors
        in mode 1, the lines will all generally shift from color to color, 
        but some will be ahead of others, creating a varied look.
 
 You can specify a grouping for the lines, this will set the offsets of consecutive pixels to be the same
-the number of lines grouped together is choosen randomly (up to the grouping amount).
+the number of lines grouped together is chosen randomly (up to the grouping amount).
 This makes the effect more uniform, and may look better with larger patterns or segments sets
 
 By default, once the offsets are set, they do not change. This can make the effect look a bit repetitive
@@ -54,22 +54,22 @@ Example call:
 
     uint8_t pattern_arr = {0, 2, 1};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-    ShiftingSeaSL(mainSegments, pattern, palette1, 20, 0, 3, 40);
-    Will shift through the colors of palette1 according to the pattern (color 0, then 2, then 1),
+    ShiftingSeaSL shiftingSea(mainSegments, pattern, cybPnkPal, 20, 0, 3, 40);
+    Will shift through the colors of cybPnkPal according to the pattern (color 0, then 2, then 1),
     with 20 steps between each shift, using mode 0
     grouping pixels by 3, at a rate of 40ms
 
-    ShiftingSeaSL(mainSegments, palette1, 20, 0, 3, 40);
-    Will shift through the colors of palette1, with 20 steps between each shift, using mode 0
+    ShiftingSeaSL shiftingSea(mainSegments, cybPnkPal, 20, 0, 3, 40);
+    Will shift through the colors of cybPnkPal, with 20 steps between each shift, using mode 0
     grouping pixels by 3, at a rate of 40ms
 
-    ShiftingSeaSL(mainSegments, 4, 15, 1, 1, 60);
+    ShiftingSeaSL shiftingSea(mainSegments, 4, 15, 1, 1, 60);
     Will shift a random set of 4 colors, with 15 steps between each shift, using mode 1
     grouping pixels by 1, at a rate of 60ms
 
 Inputs:
     pattern(optional, see constructors) -- Used for making a strobe that follows a specific pattern (using colors from a palette) (see patternPS.h) 
-    palette (optional, see constructors) -- The palette from which colors will be choosen
+    palette (optional, see constructors) -- The palette from which colors will be chosen
     numColors (optional, see constructors) -- The length of the randomly created palette used for the effect
     gradLength -- (max 255) the number of steps to fade from one color to the next
     sMode -- The mode of the effect, either 0, or 1: 0 for the offsets to be picked between any two colors
@@ -91,7 +91,7 @@ Other Settings:
     randomShift (default false) -- Turns on/off the random shift for the pixel offsets (see effect description above)
     shiftThreshold (default 15) -- Sets the threshold for if a pixel offset will increment, out of 100, with higher values being more likly
                                    15 seemed to look good in my tests
-    shiftStep (default 1, min 1) -- The maximum value (is choosen randomly) of the offset increment if the shiftThreshold is met
+    shiftStep (default 1, min 1) -- The maximum value (is chosen randomly) of the offset increment if the shiftThreshold is met
 
 Reference Vars:
     grouping -- (see notes above) set this using setGrouping()

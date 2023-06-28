@@ -102,6 +102,7 @@ void EffectSetPS::destructEffsAftLim(uint8_t limit){
 void EffectSetPS::destructEffect(uint8_t effectNum){
     if(effectArr[effectNum]){ //don't try to delete an effect that doesn't exist (its pointer is nullptr)
         effectArr[effectNum]->~EffectBasePS();
+        effectArr[effectNum] = nullptr; //once the effect is deleted, set its pointer to null
     }
 };
 

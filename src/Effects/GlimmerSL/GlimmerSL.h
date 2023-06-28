@@ -15,7 +15,8 @@ Note that the effect needs one uint16_t and one uint8_t array in order to work
 With one set of leds, the array lengths are the number of fading leds
 With two sets, the length is doubled
 
-Both glimmerColor and bgColor are pointers, so you can bind them to external color vars
+Both glimmerColor and bgColor are pointers, so you can bind them to external color vars.
+By default, they are bound to colorOrig and bgColorOrig during construction.
 
 The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
 passing in a SegmentSet with only one segment containing the whole strip.
@@ -27,18 +28,19 @@ TwoPixelSets setting:
     False: Only one set of leds with be driven at a time, with the set being fully faded in then out before a new set is picked
 
 Example calls: 
-    GlimmerSL(mainSegments, 8, CRGB::Blue, 0, true, 10, 50);
+    GlimmerSL glimmer(mainSegments, 8, CRGB::Blue, 0, true, 10, 50);
     Will choose 8 pixels to cycle to/from off to CRGB::Blue 
     Two sets of pixels will be faded in/out at one time, going through 10 fade steps, with 50ms between each step
 
-    GlimmerSL(mainSegments, 10, CRGB::Blue, CRGB::Red, false, 20, 100, 255, 60);
+    GlimmerSL glimmer(mainSegments, 10, CRGB::Blue, CRGB::Red, false, 20, 100, 255, 60);
     Will choose 10 pixels to to cycle to/from CRGB::Red to CRGB::Blue 
-    One set of pixels will be faded in then out before a new set is choosen
+    One set of pixels will be faded in then out before a new set is chosen
     The range of the fades will be between 100 and 255, with 20 fade steps, with 60ms between each step
 
 Constructor Inputs:
-    numGlims -- The amount of random pixels choosen for fading
+    numGlims -- The amount of random pixels chosen for fading
     glimmerColor -- The color the pixels will be faded towards
+                    Note that the effect's glimmerColor is a pointer, by default it's bound to colorOrig
     BgColor -- The color of the background, this is the color that not-fading pixels will be
     twoPixelSets -- (bool) sets if one or two sets of pixels will be fading in/out at once (true for two sets)
     fadeMin (optional, max 255, default 50) -- The minimum amount that a pixel will fade by

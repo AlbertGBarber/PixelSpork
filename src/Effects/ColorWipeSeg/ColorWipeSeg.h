@@ -1,5 +1,5 @@
-#ifndef ColorWipeSec_h
-#define ColorWipeSec_h
+#ifndef ColorWipeSeg_h
+#define ColorWipeSeg_h
 
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
@@ -30,7 +30,7 @@ This prevents wipes from being the same for different wipe directions.
 The effect is compatible with colorModes. They will override the style setting.
 
 Once all the wipes are finished, the "done" flag will be set, and the effect is is over until it is reset.
-Or the effect can be set to loop, automatically reseting, see below for more info.
+Or the effect can be set to loop, automatically resetting, see below for more info.
 
 Looping:
     To keep wiping continuously, you can set the wipes to loop, which will automatically reset the effect repeatedly.
@@ -42,7 +42,7 @@ Looping:
 
     The loop options give you a lot of flexibility in creating different effects, I encourage you to play with them!
     If you can't setup exactly what you want, you can always create multiple ColorWipes, and invoke them manually, 
-    swapping/reseting them out as they are "done".
+    swapping/resetting them out as they are "done".
 
 The Loop Options: 
     looped -- Sets if the wipes loop or not. Looping wipes automatically restart every time a wipe is finished.
@@ -70,8 +70,8 @@ By default it is bound to bgColorOrig, which is set to 0 (blank color).
 You can adjust most of the effect variables on the fly, but changing the segWipeDir will only take effect once a wipe loops.
 
 Example calls: 
-    ColorWipeSLSeg(mainSegments, palette1, 0, false, false, true, 60);
-    Will do a color wipe along mainSegment's segments using colors from palette1
+    ColorWipeSeg colorWipeSeg(mainSegments, cybPnkPal, 0, false, false, true, 60);
+    Will do a color wipe along mainSegment's segments using colors from cybPnkPal
     (A pattern will be generated to match the palette)
     The style is 0, each segment will alternate colors according to the pattern.
     Alternate is false, so the wipes will all wipe in the same direction.
@@ -79,8 +79,8 @@ Example calls:
     so wipes will go from the first to last segment, starting at the end of each segment
     The effect updates at 60ms
 
-    ColorWipeSLSeg(mainSegments, palette1, pattern1, 1, true, true, true, 60);
-    Will do a color wipe along mainSegment's segments using colors from palette1 according to pattern1
+    ColorWipeSeg colorWipeSeg(mainSegments, cybPnkPal, pattern1, 1, true, true, true, 60);
+    Will do a color wipe along mainSegment's segments using colors from cybPnkPal according to pattern1
     The style is 1, each segment pixel will alternate colors according to the pattern.
     Alternate is true, so the wipes will alternate wipe directions for each segment.
     Both the wipe direction and segWipeDir are true.
@@ -88,7 +88,7 @@ Example calls:
     and then alternating starting points after that.
     The effect updates at 60ms
 
-    ColorWipeSLSeg(mainSegments, CRGB(CRGB::Red), 2, false, false, false, 60);
+    ColorWipeSeg colorWipeSeg(mainSegments, CRGB(CRGB::Red), 2, false, false, false, 60);
     Will do a color wipe along mainSegment's segments using CRGB::Red as the only color
     The style is 2, each segment line will alternate colors according to the pattern.
     (although this doesn't matter since the color is just red)
@@ -140,21 +140,21 @@ Reference Vars:
 Flags:
     done -- Set true when the wipe cycle is finished. Not set if we're looping.
 */
-class ColorWipeSec : public EffectBasePS {
+class ColorWipeSeg : public EffectBasePS {
     public:
         //Constructor using pattern and palette
-        ColorWipeSec(SegmentSet &SegSet, palettePS &Palette, patternPS &Pattern, uint8_t Style,
+        ColorWipeSeg(SegmentSet &SegSet, palettePS &Palette, patternPS &Pattern, uint8_t Style,
                       bool Alternate, bool WipeDirect, bool SegWipeDir, uint16_t Rate);
 
         //Constructor using palette alone
-        ColorWipeSec(SegmentSet &SegSet, palettePS &Palette, uint8_t Style, bool Alternate, bool WipeDirect, 
+        ColorWipeSeg(SegmentSet &SegSet, palettePS &Palette, uint8_t Style, bool Alternate, bool WipeDirect, 
                      bool SegWipeDir, uint16_t Rate);
 
         //Constructor for a single color wipe           
-        ColorWipeSec(SegmentSet &SegSet, CRGB WipeColor, uint8_t Style, bool Alternate, bool WipeDirect, 
+        ColorWipeSeg(SegmentSet &SegSet, CRGB WipeColor, uint8_t Style, bool Alternate, bool WipeDirect, 
                      bool SegWipeDir, uint16_t Rate);
     
-        ~ColorWipeSec();
+        ~ColorWipeSeg();
 
         SegmentSet 
             &SegSet; 

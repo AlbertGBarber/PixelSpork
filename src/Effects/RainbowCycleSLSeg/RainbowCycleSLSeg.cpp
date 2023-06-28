@@ -1,14 +1,14 @@
 #include "RainbowCycleSLSeg.h"
 
-RainbowCycleSLSeg::RainbowCycleSLSeg(SegmentSet &SegSet, uint16_t Length, bool Direction, bool SegMode, uint16_t Rate):
-    SegSet(SegSet), length(Length), direct(Direction), segMode(SegMode)
+RainbowCycleSLSeg::RainbowCycleSLSeg(SegmentSet &SegSet, uint16_t Length, bool Direct, bool SegMode, uint16_t Rate):
+    SegSet(SegSet), length(Length), direct(Direct), segMode(SegMode)
     {    
         init(Rate);
 	}
 
 //Does a rainbow cycle of length 255
-RainbowCycleSLSeg::RainbowCycleSLSeg(SegmentSet &SegSet, bool Direction, bool SegMode, uint16_t Rate):
-    SegSet(SegSet), direct(Direction), segMode(SegMode)
+RainbowCycleSLSeg::RainbowCycleSLSeg(SegmentSet &SegSet, bool Direct, bool SegMode, uint16_t Rate):
+    SegSet(SegSet), direct(Direct), segMode(SegMode)
     {
         length = 255;
         init(Rate);

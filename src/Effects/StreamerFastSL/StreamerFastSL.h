@@ -26,7 +26,7 @@ then for each subsequent pixel, it copies the color of the next pixel in line
 So any changes you make to colors will only show up at the first pixel, and will be shifted along the strip
 
 However, as a bonus, this effect supports random colored streamer
-where the colors for the streamers are choosen at random as the enter the strip
+where the colors for the streamers are chosen at random as the enter the strip
 This is controlled by the randMode setting
 
 Otherwise, all the settings are/functions are the same as StreamerPS
@@ -50,7 +50,7 @@ so watch your memory usage
 Example calls: 
     uint8_t pattern_arr = {0, 255, 255, 255, 1, 1, 255, 255};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-    StreamerPS(mainSegments, pattern, palette3, 0, 120);
+    StreamerPS streamerFast(mainSegments, pattern, cybPnkPal, 0, 120);
     Will do a set of streamers using the first two colors in the palette
     The streamer will begin with 1 pixel of color 0, with three spaces after, followed by 2 pixels of color 1, followed by 2 spaces
     The bgColor is zero (off)
@@ -58,17 +58,17 @@ Example calls:
 
     uint8_t pattern_arr = {1, 2, 3};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-    StreamerPS(mainSegments, pattern, palette3, 3, 4, 0, 120);
+    StreamerPS streamerFast(mainSegments, pattern, cybPnkPal, 3, 4, 0, 120);
     Will do a streamer using the first three colors of the palette (taken from the pattern)
     Each streamer will be length 3, followed by 4 spaces, bgColor is 0 (off)
     The effect updates at a rate of 120ms
 
-    StreamerPS(mainSegments, palette3, 3, 4, CRGB::Red, 120);
-    Will do a streamer using all the colors in palette3, each streamer will be length 3, with 4 spaces in between
+    StreamerPS streamerFast(mainSegments, cybPnkPal, 3, 4, CRGB::Red, 120);
+    Will do a streamer using all the colors in cybPnkPal, each streamer will be length 3, with 4 spaces in between
     The bgColor is red
     The streamers will update at a 120ms rate
 
-    StreamerPS(mainSegments, CRGB::Blue, 2, 2, CRGB::Red, 0, 140);
+    StreamerPS streamerFast(mainSegments, CRGB::Blue, 2, 2, CRGB::Red, 0, 140);
     Will do a blue streamers with length 2 and 2 spaces in between
     The bgColor is red
     The effect updates at a rate of 140ms
@@ -94,13 +94,13 @@ Functions:
     update() -- updates the effect
 
 Other Settings:
-    randMode (default 0) -- Sets the type of how colors are choosen:
-                         -- 0: Colors will be choosen in order from the pattern (not random)
-                         -- 1: Colors will be choosen completely at random
-                         -- 2: Colors will be choosen at random from the !!palette!!, 
+    randMode (default 0) -- Sets the type of how colors are chosen:
+                         -- 0: Colors will be chosen in order from the pattern (not random)
+                         -- 1: Colors will be chosen completely at random
+                         -- 2: Colors will be chosen at random from the !!palette!!, 
                                but the same color won't be repeated in a row
-                         -- 3: Colors will be choosen randomly from the pattern
-                         -- 4: Colors will be choosen randomly from the !!palette!!
+                         -- 3: Colors will be chosen randomly from the pattern
+                         -- 4: Colors will be chosen randomly from the !!palette!!
                                (option included b/c the pattern may have a lot of spaces, 
                                 so choosing from it may be very biased)
 

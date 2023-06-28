@@ -29,22 +29,22 @@ Rainbow Mode:
     However, you can set the hueOffset manually, or set the hueRate to 65535, which will increase the hue once every 65 sec (very slow).
 
 Example calls: 
-    LavaPS(mainSegments, 10);
+    LavaPS lava(mainSegments, 10);
     Will do a lava effect, updating at 10ms
 
-    LavaPS(mainSegments, 40, 20, 10);
+    LavaPS lava(mainSegments, 40, 20, 10);
     Will do a lava effect, with 40 blendSteps
     and a blendScale of 20 (see inputs for info below)
     at an update rate of 10ms
 
-    LavaPS(mainSegments, palette1, 40, 80, 10);
-    Will do a lava effect using palette1 for colors, 
+    LavaPS lava(mainSegments, cybPnkPal, 40, 80, 10);
+    Will do a lava effect using cybPnkPal for colors, 
     with 40 blendSteps
     and a blendScale of 80
     at an update rate of 10ms
 
-    LavaPS(mainSegments, 3, 40, 80, 10);
-    Will do a lava effect with a palette of 3 randomly choosen colors
+    LavaPS lava(mainSegments, 3, 40, 80, 10);
+    Will do a lava effect with a palette of 3 randomly chosen colors
     with 40 blendSteps
     and a blendScale of 80
     at an update rate of 10ms

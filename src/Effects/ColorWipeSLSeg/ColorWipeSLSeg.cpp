@@ -224,7 +224,7 @@ void ColorWipeSLSeg::resetLoop(){
 //The wipes can either happen in sequence, one wipe of 6, then the next wipe of 6, etc
 //Or they can happen all at once -- the first line of each wipe is colored, then the second, etc
 //Wipes have a direction, with the option to alternate the direction for each wipe.
-//Once all the wipes are done, we set a flag, ending the wipes, or reseting them if we're looping.
+//Once all the wipes are done, we set a flag, ending the wipes, or resetting them if we're looping.
 //Getting all this to work is more finicky than complicated, with most conditions being created to separate
 //between simultaneous and sequential wiping or line and segment wiping. 
 //At the core, for each update, we go over each wipe, pick the next line to color based on the wipe direction

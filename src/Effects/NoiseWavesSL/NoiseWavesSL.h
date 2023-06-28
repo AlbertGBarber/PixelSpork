@@ -48,7 +48,7 @@ Inputs guide:
 
 Example calls: 
 
-    NoiseWavesSL(ringSegments, 3, 0, 30, 10, 3, 80);
+    NoiseWavesSL noiseWaves(mainSegments, 3, 0, 30, 10, 3, 80);
     Will produce an effect using 3 random colors
     The background is blank
     The blend scale is 5, while the phaseScale is 2 and the freqScale is 3
@@ -56,8 +56,8 @@ Example calls:
     (even at the slowest the waves still move pretty quick)
     The effect updates at 80ms
     
-    NoiseWavesSL(ringSegments, palette1, 0, 10, 2, 10, 80);
-    Will produce an effect using colors from palette1
+    NoiseWavesSL noiseWaves(mainSegments, cybPnkPal, 0, 10, 2, 10, 80);
+    Will produce an effect using colors from cybPnkPal
     The background is blank
     The blend scale is 30, while the phaseScale is 5 and the freqScale is 7
     The produces large waves that shift quickly

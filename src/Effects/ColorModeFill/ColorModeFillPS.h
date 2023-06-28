@@ -11,10 +11,10 @@ Useful for drawing simple rainbow shifting effects on the segment set using the 
 or filling in a background before drawing an effect 
 
 Example call: 
-    ColorModeFillPS(mainSegments, 7, 70);
+    ColorModeFillPS colorModeFill(mainSegments, 7, 70);
     Will fill the segment using color mode 7 every 70ms
 
-Inputs:
+Constructor Inputs:
     colorMode -- the colorMode that will be used in segDrawUtils::getPixelColor()
     rate -- The update rate
 

@@ -28,22 +28,22 @@ The effect is adapted to work on segment lines for 2D use, but you can keep it 1
 passing in a SegmentSet with only one segment containing the whole strip.
 
 Example calls: 
-    uint8_t pattern_arr = {0, 1, 4};
+    uint8_t pattern_arr = {0, 1, 2};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-    RollingWavesSL(mainSegments, pattern, palette, 0, 7, 1, 0, 100);
+    RollingWavesSL rollingWaves(mainSegments, pattern, cybPnkPal, 0, 7, 1, 0, 100);
     Will do a set of waves according to the pattern, with a blank background
     each wave will be 7 pixels long, using both types of trails
     there will be zero spacing between the waves
     The effect will update at a 100ms update rate
 
-    RollingWavesSL(mainSegments, palette, 0, 9, 0, 2, 80);
+    RollingWavesSL rollingWaves(mainSegments, cybPnkPal, 0, 9, 0, 2, 80);
     Will do a set of waves matching the input palette with an blank background
     Each wave will be 9 pixels long, the wave will consist of the trailing portion only
     There will be two spaces in between each wave,
     The effect will update at 80ms
 
-    RollingWavesSL(mainSegments, 1, CRGB::Red, 12, 1, 3, 80);
-    Will do a set of waves of a single color choosen at random, with a red background
+    RollingWavesSL rollingWaves(mainSegments, 1, CRGB::Red, 12, 1, 3, 80);
+    Will do a set of waves of a single color chosen at random, with a red background
     Each wave will a length of 12, and will contain only the leading portion of the wave
     There will be 3 background spaces between each wave
     The effect will update at 80ms
@@ -53,7 +53,7 @@ Constructor Inputs:
                                           and the length of the array 
                                           (see patternPS.h)   
     palette(optional, see constructors) -- The repository of colors used in the pattern, or can be used as the pattern itself
-    numColors (optional, see constructors) -- The number of randomly choosen colors for the gradients
+    numColors (optional, see constructors) -- The number of randomly chosen colors for the gradients
     BgColor -- The color of the spacing pixels. It is a pointer, so it can be tied to an external variable
     gradLength -- How many steps for each gradient
     trailMode -- They type of waves used (see trailMode section below)

@@ -8,10 +8,10 @@ class Segment {
 	
 	public:
 		//Constructor for creating a segment with a continuous section
-		Segment(const segmentSecCont *segSectionsArr, uint8_t numSections, bool direction = true);
+		Segment(const segmentSecCont *segSecContArr, uint8_t NumSec, bool Direct = true);
 
 		//Constructor for creating a segment with a mixed section
-		Segment(const segmentSecMix *segSecMix, uint8_t numSections, bool direction = true);
+		Segment(const segmentSecMix *segSecMixArr, uint8_t NumSec, bool Direct = true);
 		
 	  	uint8_t
 			numSec;
@@ -24,7 +24,7 @@ class Segment {
 	  	uint16_t
 	    	getSecStartPixel( uint8_t secNum ), //only works with continuous sections!!
 			getSecMixPixel( uint8_t secNum, uint16_t pixelNum ), //only works with mixed sections!!
-			totalLength;
+			totalLength; //Total length of all sections, treating "single" sections as length 1
 		
 		int16_t
 			getSecLength( uint8_t secNum ), //Returns the length of the section, "single" sections will be returned as 1
@@ -34,7 +34,7 @@ class Segment {
 		//We can only have one type of section per segment, which is set in the constructor
 		//so one of these will always be null (this is important to checking what type of section is in the segment)
 	  	const segmentSecCont 
-			*secPtr = nullptr;
+			*secContPtr = nullptr;
 	
 		const segmentSecMix 
 			*secMixPtr = nullptr;
@@ -45,7 +45,7 @@ class Segment {
 	    	getSegTotLen();
 		
 		void
-			init(uint8_t numSections);
+			init();
 };
 
 #endif

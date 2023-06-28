@@ -57,12 +57,12 @@ Inputs guide:
 Example calls: 
     uint8_t numColors = 3;
     uint8_t minBase = 3;
-    uint8_t maxBase = ringSegments.numLines / numColors - minBase;
-    NoiseGradSL(ringSegments, numColors, 0, minBase, maxBase, 10, 20, 30, 5000, 80);
+    uint8_t maxBase = mainSegments.numLines / numColors - minBase;
+    NoiseGradSL noiseGrad(mainSegments, numColors, 0, minBase, maxBase, 10, 20, 30, 5000, 80);
     For this example, I'm showing you how to set the blendStepsRange so that you have one complete palette gradient 
     fit into the segment set. This tends to look good because you always have all the colors showing, and they'll
     either spread out into one full wave, or make multiple smaller waves as the blendSteps shifts.
-    In my instance the ringSegments have a maximum length of 24, so maxBase is 5.
+    In my instance the mainSegments have a maximum length of 24, so maxBase is 5.
     Will produce an effect using a palette of 3 random colors
     The background is blank.
     There are a minimum of 3 blendSteps and range of 5 for a maximum blendSteps of 8
@@ -70,9 +70,9 @@ Example calls:
     The blendSteps will be shifted every 5000ms (5 sec).
     The effect updates at 80ms.
     
-    NoiseGradSL(ringSegments, palette1, 0, 8, 16, 5, 20, 10, 3000, 80);
-    NoiseGradSL.bgColorMode = 6;
-    Will produce an effect using colors from palette1
+    NoiseGradSL noiseGrad(mainSegments, cybPnkPal, 0, 8, 16, 5, 20, 10, 3000, 80);
+    NoiseGradSL.bgColorMode = 6; //put in Arduino Setup()
+    Will produce an effect using colors from cybPnkPal
     The background is blank (but using bgColorMode of 6, ie a shifting rainbow)
     There are a minimum of 8 blendSteps and range of 16 for a maximum blendSteps of 24
     The phaseScale is 5, the freqScale is 20, and the briScale is 10.

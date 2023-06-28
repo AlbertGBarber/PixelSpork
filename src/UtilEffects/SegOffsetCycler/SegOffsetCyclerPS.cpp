@@ -86,26 +86,17 @@ void SegOffsetCyclerPS::setOffsetActive(bool newRunOffset){
 
 //updates a cycle, if it's turned on, and enough time has passed
 //The offsetMax values should match those in segDrawUtils::getPixelColor()
-//basically 255 for all rainbow modes, then the SegmentSet vars for all others
+//basically 255 for all rainbow modes, then the SegmentSet gradOffsetMax for all others
 void SegOffsetCyclerPS::update(){
 
     if( ( currentTime - prevTime ) >= *rate ) {
         prevTime = currentTime;
 
         for(uint8_t i = 0; i < numSegSets; i++){
-            switch(*colorMode) { 
-                case 6: // colors each line according to a rainbow or gradient spread across whole strip
-                    offsetMax = segGroup[i]->gradLenVal;
-                    break;
-                case 7: // colors each line according to a rainbow or gradient spread across all segments
-                    offsetMax = segGroup[i]->gradSegVal;
-                    break;
-                case 8: // colors each line according to a rainbow or gradient mapped to the longest segment
-                    offsetMax = segGroup[i]->gradLineVal;
-                    break;
-                default:
-                    offsetMax = 255;
-                    break;
+            if( *colorMode < 6){
+                offsetMax = 255;
+            } else {
+                offsetMax = segGroup[i]->gradOffsetMax;
             }
             segDrawUtils::setGradOffset(*segGroup[i], offsetMax);
         }

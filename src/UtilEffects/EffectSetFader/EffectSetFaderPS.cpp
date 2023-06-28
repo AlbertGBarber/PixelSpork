@@ -82,7 +82,7 @@ void EffectSetFaderPS::update(void){
         prevTime = currentTime;
         firstUpdate = false;
 
-        //If we've not started a fade in, do so by reseting the effectFader, and setting it to fade in
+        //If we've not started a fade in, do so by resetting the effectFader, and setting it to fade in
         if(!fadeInStarted){
             if(!fadeIn){ //If we don't want to fade in, just the end the fader before it can start
                 effectFader->done = true;

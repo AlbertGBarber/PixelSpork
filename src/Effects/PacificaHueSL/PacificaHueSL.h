@@ -60,14 +60,14 @@ Note that the hueRate is a pointer (like the overall effect Rate), so you can bi
 The rate passed into the constructors is hueRateOrig
 
 Example calls: 
-    PacificaHueSL(ringSegments, 40);
+    PacificaHueSL pacificaHue(mainSegments, 40);
     That's it, updates at 40ms
     (addWhiteCaps is default false, and the hue will default to 130 to match the original pacifica colors)
 
-    PacificaHueSL(ringSegments, true, 130, 40);
+    PacificaHueSL pacificaHue(mainSegments, true, 130, 40);
     Sets addWhiteCaps to true and the hue to 130, updates at 40ms
 
-    PacificaHueSL(ringSegments, true, 50, 500, 40);
+    PacificaHueSL pacificaHue(mainSegments, true, 50, 500, 40);
     Sets addWhiteCaps to true, with the hue starting at 50 and incrementing every 500ms
     The effect updates at 40ms
 

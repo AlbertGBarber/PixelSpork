@@ -35,32 +35,32 @@ Note that you can change variables freely while the effect is running.
 Does not work with color modes from segDrawUtils::setPixelColor().
 
 randModes:
-    0: Colors will be choosen in order from the pattern (not random)
-    1: Colors will be choosen completely at random
-    2: Colors will be choosen randomly from the palette (not allowing repeats)
-    3: Colors will be choosen randomly from the palette (allowing repeats)
-    4: Colors will be from the rainbow (the hue is offset by rainbowRate each time a color is choosen)
+    0: Colors will be chosen in order from the pattern (not random)
+    1: Colors will be chosen completely at random
+    2: Colors will be chosen randomly from the palette (not allowing repeats)
+    3: Colors will be chosen randomly from the palette (allowing repeats)
+    4: Colors will be from the rainbow (the hue is offset by rainbowRate each time a color is chosen)
 
 Example calls: 
     uint8_t pattern_arr = {0, 1, 4};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-    BreathPS(mainSegments, pattern, palette3, 0, 10, 50);
-    Does a breathing cycle using the colors from palette3, following the pattern above
+    BreathPS breath(mainSegments, pattern, cybPnkPal, 0, 10, 50);
+    Does a breathing cycle using the colors from cybPnkPal, following the pattern above
     The background is blank
     The breathFreq is 10, the effect updates at 50ms
 
-    BreathPS(mainSegments, palette3, 0, 5, 50);
-    Does a breathing cycle using the colors from palette3 in order
+    BreathPS breath(mainSegments, cybPnkPal, 0, 5, 50);
+    Does a breathing cycle using the colors from cybPnkPal in order
     The background is blank
     The breathFreq is 5, the effect updates at 50ms
 
-    BreathPS(mainSegments, CRGB::Red, CRGB::Blue, 200, 5, 50);
+    BreathPS breath(mainSegments, CRGB::Red, CRGB::Blue, 200, 5, 50);
     Does a breathing cycle in red only
     The background is blue
     The maximum fade amount is capped at 200
     The breathFreq is 5, the effect updates at 50ms
 
-    BreathPS(mainSegments, 0, 25, 10, 50);
+    BreathPS breath(mainSegments, 0, 25, 10, 50);
     Does a breathing cycle using a rainbow
     The background is blank
     The rainbow hue advances 25 steps with each breath
@@ -87,11 +87,13 @@ Constructor Inputs
 
 Functions:
     setPaletteAsPattern() -- Sets the effect pattern to match the current palette
-    reset() -- restarts the effect
-               Note that the effect may start mid breath after reseting.
+    reset() -- Restarts the effect
+               Note that the effect may start mid breath after resetting.
     update() -- updates the effect
 
 Other Settings:
+    bgColorOrig -- The default target of the effect's bgColor pointer variable.
+                   Will be set to the passed in bgColor from the constructor. 
     randMode (default 0, unless set by a constructor) -- see mode notes above
     minBreath (default 60, min 0) -- The minimum breath fade amount. Should be less than maxBreath (see constructors above)
                                      60 was taken from the original code by ldirko.
@@ -131,7 +133,7 @@ class BreathPS : public EffectBasePS {
             *breathFreq = nullptr, //pointer to the breath frequency (dby default it's bound to the the Rate)
             minBreath = 60, //The minimum breath fade amount (0 is min, should be less than maxBreath)
             maxBreath = 255, //How far the breath color will fade towards the background (255 is max)
-            breathEndOffset = 5, //The offset from maxBreath after which a new color is choosen (see comments in update() code)
+            breathEndOffset = 5, //The offset from maxBreath after which a new color is chosen (see comments in update() code)
             rainbowSat = 255,
             rainbowVal = 255,
             rainbowRate = 20,

@@ -1,7 +1,7 @@
-#include "ColorWipeSec.h"
+#include "ColorWipeSeg.h"
 
 //Constructor using pattern and palette
-ColorWipeSec::ColorWipeSec(SegmentSet &SegSet, palettePS &Palette, patternPS &Pattern, uint8_t Style,
+ColorWipeSeg::ColorWipeSeg(SegmentSet &SegSet, palettePS &Palette, patternPS &Pattern, uint8_t Style,
                           bool Alternate, bool WipeDirect, bool SegWipeDir, uint16_t Rate):
     SegSet(SegSet), palette(&Palette), pattern(&Pattern), style(Style), alternate(Alternate), wipeDirect(WipeDirect), segWipeDir(SegWipeDir)
     {    
@@ -9,7 +9,7 @@ ColorWipeSec::ColorWipeSec(SegmentSet &SegSet, palettePS &Palette, patternPS &Pa
 	}
 
 //Constructor using palette alone 
-ColorWipeSec::ColorWipeSec(SegmentSet &SegSet, palettePS &Palette, uint8_t Style, bool Alternate, bool WipeDirect, bool SegWipeDir, uint16_t Rate):
+ColorWipeSeg::ColorWipeSeg(SegmentSet &SegSet, palettePS &Palette, uint8_t Style, bool Alternate, bool WipeDirect, bool SegWipeDir, uint16_t Rate):
     SegSet(SegSet), palette(&Palette), style(Style), alternate(Alternate), wipeDirect(WipeDirect), segWipeDir(SegWipeDir)
     {    
         setPaletteAsPattern();
@@ -17,7 +17,7 @@ ColorWipeSec::ColorWipeSec(SegmentSet &SegSet, palettePS &Palette, uint8_t Style
 	}
 
 //Constructor for a single color wipe
-ColorWipeSec::ColorWipeSec(SegmentSet &SegSet, CRGB WipeColor, uint8_t Style, bool Alternate, bool WipeDirect, bool SegWipeDir, uint16_t Rate):
+ColorWipeSeg::ColorWipeSeg(SegmentSet &SegSet, CRGB WipeColor, uint8_t Style, bool Alternate, bool WipeDirect, bool SegWipeDir, uint16_t Rate):
     SegSet(SegSet), style(Style), alternate(Alternate), wipeDirect(WipeDirect), segWipeDir(SegWipeDir)
     {    
         paletteTemp = paletteUtilsPS::makeSingleColorPalette(WipeColor);
@@ -27,13 +27,13 @@ ColorWipeSec::ColorWipeSec(SegmentSet &SegSet, CRGB WipeColor, uint8_t Style, bo
 	}
 
 //destructor
-ColorWipeSec::~ColorWipeSec(){
+ColorWipeSeg::~ColorWipeSeg(){
     free(paletteTemp.paletteArr);
     free(patternTemp.patternArr);
 }
 
 //Setup core variables for the effect
-void ColorWipeSec::init(uint16_t Rate){
+void ColorWipeSeg::init(uint16_t Rate){
     //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
     bindSegPtrPS();
     bindClassRatesPS();
@@ -44,13 +44,13 @@ void ColorWipeSec::init(uint16_t Rate){
 //sets the pattern to match the current palette
 //ie for a palette length 5, the pattern would be 
 //{0, 1, 2, 3, 4}
-void ColorWipeSec::setPaletteAsPattern(){
+void ColorWipeSeg::setPaletteAsPattern(){
     patternTemp = generalUtilsPS::setPaletteAsPattern(*palette);
     pattern = &patternTemp;
 }
 
 //Resets the core wipe variables, restarting the wipe
-void ColorWipeSec::reset(){
+void ColorWipeSeg::reset(){
     segWipeCount = 0;
     pixelCount = 0;
     bgWipe = false;
@@ -62,7 +62,7 @@ void ColorWipeSec::reset(){
 
 //Resets variables to loop the color wipe
 //The various looping variables are explained in setUpLoop()
-void ColorWipeSec::resetLoop(){
+void ColorWipeSeg::resetLoop(){
     //set the basic wipe variables so we start a new wipe
     done = false;
     segWipeCount = 0;
@@ -126,7 +126,7 @@ void ColorWipeSec::resetLoop(){
 //  altSegWipeDirLoop -- If true, then the segment set direction will be flipped every loop
 //                       This is different than flipping the wipe direction, since it makes the first wipe 
 //                       start at the opposite end of the segment set, rather than having the wipe just move in the opposite direction    
-void ColorWipeSec::setUpLoop(bool nLooped, bool nBgLoop, bool nShiftPatLoop, bool nPatShiftDir, bool nAltWipeDirLoop, 
+void ColorWipeSeg::setUpLoop(bool nLooped, bool nBgLoop, bool nShiftPatLoop, bool nPatShiftDir, bool nAltWipeDirLoop, 
                              bool nBgAltLoop, bool nAltSegWipeDirLoop){
     looped = nLooped;
     altSegWipeDirLoop = nAltSegWipeDirLoop;
@@ -139,7 +139,7 @@ void ColorWipeSec::setUpLoop(bool nLooped, bool nBgLoop, bool nShiftPatLoop, boo
 
 //Sets the order the segment are wiped in, either starting with the first of last segment depending on segWipeDir
 //Also sets up the first wipe for the set
-void ColorWipeSec::setUpWipeOrder(){
+void ColorWipeSeg::setUpWipeOrder(){
     numSegs = SegSet.numSegs;
 
     //Get the step we increment the currentSeg by, either 1 or -1
@@ -159,7 +159,7 @@ void ColorWipeSec::setUpWipeOrder(){
 }
 
 //Sets the start and end pixels for wiping the current segment, depending on the wipeDirect
-void ColorWipeSec::setupSegWipe(){
+void ColorWipeSeg::setupSegWipe(){
     //Get the step we increment the currentPixel by, either 1 or -1
     wipeStep = wipeDirect - !wipeDirect;
     
@@ -185,7 +185,7 @@ void ColorWipeSec::setupSegWipe(){
 //If we're at the last segment and last pixel, then we're "done", and we either stop or loop and reset.
 //Note that when choosing colors, we use a count of the pixels and segments (pixelCount and segWipeCount) rather than using the pixel or segment number directly
 //This prevents the effect from looking the same in both wipe directions.
-void ColorWipeSec::update(){
+void ColorWipeSeg::update(){
     currentTime = millis();
 
     if( !done && ( currentTime - prevTime ) >= *rate ) {

@@ -43,7 +43,7 @@ namespace particleUtilsPS{
                           uint16_t speedRange, uint16_t size, uint16_t sizeRange, uint8_t trailType, uint8_t trailSize, 
                           uint8_t trailRange, uint8_t bounce, uint8_t colorIndex, bool randColor);
 
-    //functions for deleting or reseting particles
+    //functions for deleting or resetting particles
     void 
         resetParticle(particlePS *particle),
         resetParticleSet(particleSetPS &particleSet),

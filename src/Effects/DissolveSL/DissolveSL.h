@@ -11,7 +11,7 @@
 /* 
 Morphs the segment set from one color to the next by setting each segment line one at a time at random
 Includes various options for color selection (see modes) 
-Colors can be choosen using a palette and pattern, or selected randomly
+Colors can be chosen using a palette and pattern, or selected randomly
 The effect can be accelerated to set more lines at once by adjusting spawnRateInc
 By default we start by spawning one segment line at a time, increasing the number every spawnRateInc ms
 so the spawning steadily accelerates. This helps keep the spawning consistent, since we're picking at random
@@ -28,27 +28,27 @@ passing in a SegmentSet with only one segment containing the whole strip.
 Each segment line will be filled in, rather than each pixel.
 
 Example calls: 
-    uint8_t pattern_arr = {0, 1, 4};
+    uint8_t pattern_arr = {0, 1, 2};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-    DissolveSL(mainSegments, pattern, palette, 0, 150, 70);
+    DissolveSL dissolve(mainSegments, pattern, cybPnkPal, 0, 150, 70);
     Will dissolve from color 0 in the palette to color 1, to color 4, etc using randMode 0 (see below) 
     with the number of leds set on one cycle increasing every 150ms with the effect updating every 70ms
 
-    DissolveSL(mainSegments, palette, 4, 100, 100);
+    DissolveSL dissolve(mainSegments, cybPnkPal, 4, 100, 100);
     Will dissolve from one palette color to the next using randMode 4 (see below) 
     with the number of leds set on one cycle increasing every 100ms with the effect updating every 100ms
 
-    DissolveSL(mainSegments, 3, 150, 70);
+    DissolveSL dissolve(mainSegments, 3, 150, 70);
     Will dissolve using random colors set according to randMode 3
     (use randMode 2 or 3 with this constructor)
     with the number of leds set on one cycle increasing every 150ms with the effect updating every 70ms
 
 randModes:
     0: Each dissolve is a solid color following the pattern
-    1: Each dissolve is a set of randomly choosen colors
-    2: Each dissolve is a set of random colors choosen from the pattern
-    3: Each dissolve is a solid color choosen at random
-    4: Each dissolve is a solid color choosen randomly from the pattern
+    1: Each dissolve is a set of randomly chosen colors
+    2: Each dissolve is a set of random colors chosen from the pattern
+    3: Each dissolve is a solid color chosen at random
+    4: Each dissolve is a solid color chosen randomly from the pattern
 
 You should be able switch freely between randModes on the fly (the random modes will set up a random palette/pattern as a fallback)
 
@@ -82,13 +82,13 @@ Other Settings:
     colorMode (default 0) -- sets the color mode for the random pixels (see segDrawUtils::setPixelColor)
     maxNumSpawnBase (default 1) -- The starting value of the number of pixels set in one cycle
                                    Higher numbers may work better for longer pixel lengths
-    lineMode (default true) -- If false, pixels will be dissolved individually (rather than in segment lines)
-                               Only really useful if you want multi-segment color modes, but want individual dissolves
-                               !!FOR reference only, set using setLineMode();
 
 Reference vars:
     dissolveCount -- The number of dissolves we've done (note this is not reset by any function, so you'll have to manually reset it if needed)
     numCycles -- How many update cycles we've been through (resets when we've gone through the whole pattern)
+    lineMode (default true) -- If false, pixels will be dissolved individually (rather than in segment lines)
+                               Only really useful if you want multi-segment color modes, but want individual dissolves
+                               !!FOR reference only, set using setLineMode();
 
 Flags:
     paused -- If true, then the effect is paused. Note that the effect is not re-draw while paused.
@@ -105,7 +105,7 @@ class DissolveSL : public EffectBasePS {
         //constructor for palette as pattern
         DissolveSL(SegmentSet &SegSet, palettePS &Palette, uint8_t RandMode, uint16_t SpawnRateInc, uint16_t Rate); 
         
-        //constructor for randomly choosen colors (should only use randMode 2 or 3 with this constructor)
+        //constructor for randomly chosen colors (should only use randMode 2 or 3 with this constructor)
         DissolveSL(SegmentSet &SegSet, uint8_t RandMode, uint16_t SpawnRateInc, uint16_t Rate);
     
         ~DissolveSL();

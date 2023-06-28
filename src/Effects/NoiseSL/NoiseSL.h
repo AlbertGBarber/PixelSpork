@@ -89,16 +89,16 @@ Inputs guide:
             rotateHue is on (true) by default, since it looks good with all modes.
 
 Example calls: 
-    NoiseSL(mainSegments, 4, 20, 20, 60, 10, 0, 80);
-    Will produce a noise effect with a palette of 4 randomly choosen colors
+    NoiseSL noiseSL(mainSegments, 4, 20, 20, 60, 10, 0, 80);
+    Will produce a noise effect with a palette of 4 randomly chosen colors
     There are 20 blend steps between each color
     A base scaling value of 20 will be applied with a range of 60 (max scale is 80)
     The speed is 10
     cMode is 0
     The effect updates at 80ms
     
-    NoiseSL(mainSegments, palette1, 40, 5, 95, 20, 0, 80);
-    Will produce a noise effect with using colors from palette1
+    NoiseSL noiseSL(mainSegments, cybPnkPal, 40, 5, 95, 20, 0, 80);
+    Will produce a noise effect with using colors from cybPnkPal
     There are 40 blend steps between each color
     A base scaling value of 5 will be applied with a range of 95 (max scale is 100)
     The speed is 20

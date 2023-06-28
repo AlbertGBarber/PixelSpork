@@ -70,7 +70,7 @@ void GlimmerSL::setupPixelArray(){
 }
 
 //fills in the pixel arrays with random locations and fade values
-//Note that the locations are choosen from the line or pixel numbers in the segment set, depending on lineMode
+//Note that the locations are chosen from the line or pixel numbers in the segment set, depending on lineMode
 //Only fills the arrays up to numGlims since if we're working with two pixel sets, 
 //the second numGlims length of the array is used for the fading out set, 
 //which should already be set, and we don't want to overwrite it
@@ -104,7 +104,7 @@ void GlimmerSL::advancePixelArray(){
     }
 }
 
-//sets the number of random pixels choosen per cycle
+//sets the number of random pixels chosen per cycle
 //If the number of pixels is different than the current numGlims,
 //the glimmer arrays will be re-created, and the effect will be reset
 //(otherwise, nothing will happen)

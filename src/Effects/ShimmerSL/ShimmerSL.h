@@ -22,22 +22,22 @@ passing in a SegmentSet with only one segment containing the whole strip.
 Or you can set lineMode to false, which means each pixel always gets it's own shimmer value.
 
 Example calls: 
-    ShimmerSL(SegmentSet &SegSet, 0, 180, 80);
+    ShimmerSL shimmer(mainSegments, 0, 180, 80);
     Each pixel will be set to a random color, refreshing at 80ms
     The dim range will be 0 to 180.
     (note this sets randMode = 1)
 
-    ShimmerSL(mainSegments, CRGB::Red, 0, 230, 100);
+    ShimmerSL shimmer(mainSegments, CRGB::Red, 0, 230, 100);
     The dim range will be 0 to 230.
     Each pixel will be set to red, and dimmed randomly, refreshing at 100ms
 
-    ShimmerSL(mainSegments, palette, 0, 180, 80);
+    ShimmerSL shimmer(mainSegments, cybPnkPal, 0, 180, 80);
     The dim range will be 0 to 180.
     Each pixel will be set to a color from the palette, dimmed randomly, refreshing at 80ms
 
 Constructor Inputs:
-    palette(optional, see constructors) -- the palette from which colors will be choosen randomly
-    color(optional, see constructors) -- the color that the randomly choosen pixels will be set to
+    palette(optional, see constructors) -- the palette from which colors will be chosen randomly
+    color(optional, see constructors) -- the color that the randomly chosen pixels will be set to
     shimmerSLMin (min 0, max 255) -- The minimum amount of dim that will be applied to a pixel 
     shimmerSLMax (min 0, max 255) -- The maximum amount of dim that will be applied to a pixel
     rate -- The update rate (ms)
@@ -64,7 +64,7 @@ class ShimmerSL : public EffectBasePS {
         //Constructor using a set shimmer color
         ShimmerSL(SegmentSet &SegSet, CRGB ShimmerColor, uint8_t ShimmerMin, uint8_t ShimmerMax, uint16_t Rate);  
 
-        //Constructor for colors randomly choosen from palette
+        //Constructor for colors randomly chosen from palette
         ShimmerSL(SegmentSet &SegSet, palettePS &Palette, uint8_t ShimmerMin, uint8_t ShimmerMax, uint16_t Rate);
 
         ~ShimmerSL();

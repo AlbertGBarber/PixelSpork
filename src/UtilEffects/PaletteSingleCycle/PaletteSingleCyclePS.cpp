@@ -105,7 +105,7 @@ void PaletteSingleCyclePS::switchPalette(){
     //4 -- Makes the palette length 1, cycles through each color of the palette
     //     ie for direct = true and palette {blue, red, green} it will be {blue} => {red} => {green} => {blue}, etc
     //5 -- Same as previous mode, but chooses the next color randomly from the palette (will not be the current color)
-    //6 -- Same as mode 3, but the next color is choosen completely randomly (not from the palette)
+    //6 -- Same as mode 3, but the next color is chosen completely randomly (not from the palette)
     switch (blendMode){
         case 0: default: {
             //copy the next palette into the current palette
@@ -187,8 +187,8 @@ void PaletteSingleCyclePS::switchPalette(){
             break;
         }
         case 5: {
-            //like case 4, but the next color is choosen randomly from the input palette
-            //(if the choosen color is the same as the current one, we'll just choose the next one along)
+            //like case 4, but the next color is chosen randomly from the input palette
+            //(if the chosen color is the same as the current one, we'll just choose the next one along)
             uint8_t nextIndex = random(paletteLength); 
             if(nextIndex == currentIndex){
                 nextIndex = addmod8(currentIndex, 1, paletteLength);
@@ -199,7 +199,7 @@ void PaletteSingleCyclePS::switchPalette(){
             break;
         }
         case 6:
-            //a single color palette where the color is choosen randomly,
+            //a single color palette where the color is chosen randomly,
             //doesn't use the input palette at all
             paletteColorArr1[0] = paletteUtilsPS::getPaletteColor(nextPalette, 0);
             paletteUtilsPS::randomize(nextPalette, 0);

@@ -9,12 +9,12 @@
 /*
 Cycles each line of a segment set through a rainbow. Each line is given an random 
 offset to place it somewhere mid-rainbow, so the result is a shifting sea of rainbow colors. 
-There are two modes: 0, where the offsets are choosen randomly from any point of the rainbow
-or mode 1, where the offsets are choosen randomly up to a set value (gradLength, max 255)
+There are two modes: 0, where the offsets are chosen randomly from any point of the rainbow
+or mode 1, where the offsets are chosen randomly up to a set value (gradLength, max 255)
 in mode 1, the lines will all generally shift from color to color, but some will be ahead of others
 creating a varied look, whereas in mode 0 it is more random.
 You can specify a grouping for the pixels, this will set the offsets of consecutive lines to be the same
-the number of lines grouped together is choosen randomly (up to the grouping amount)
+the number of lines grouped together is chosen randomly (up to the grouping amount)
 This makes the effect more uniform, and may look better with longer segment sets
 By default, once the offsets are set, they do not change. This can make the effect look a bit repetitive
 to counter this, you can turn on random shifting, which will increment the offset of a pixel
@@ -34,13 +34,13 @@ Also note that the class needs a uint16_t array the length of the number of pixe
 So if you are short on ram, you might not be able to run this!
 
 Example calls: 
-    ShiftingRainbowSeaSL(mainSegments, 0, 3, 30);
+    ShiftingRainbowSeaSL shiftingRainSea(mainSegments, 0, 3, 30);
     Will shift through the rainbow, using mode 0 (offsets can be anything between 0 and 255), 
     Note that passing 0 as the gradLength automatically sets the mode to 0
     grouping pixels by 3, at a rate of 20ms
 
-    ShiftingRainbowSeaSL(mainSegments, 10, 3, 30);
-    Will shift through the rainbow, using mode 1, where the offsets are choosen to be in a range of 0 to 10
+    ShiftingRainbowSeaSL shiftingRainSea(mainSegments, 10, 3, 30);
+    Will shift through the rainbow, using mode 1, where the offsets are chosen to be in a range of 0 to 10
     grouping pixels by 3, at a rate of 20ms
 
 Inputs:
@@ -66,7 +66,7 @@ Other Settings:
     randomShift (default false) -- Turns on/off the random shift for the pixel offsets (see effect description above)
     shiftThreshold (default 15) -- Sets the threshold for if a pixel offset will increment, out of 100, with higher values being more likely
                                    15 seemed to look good in my tests
-    shiftStep (default 1, min 1) -- The maximum value (is choosen randomly) of the offset increment if the shiftThreshold is met
+    shiftStep (default 1, min 1) -- The maximum value (is chosen randomly) of the offset increment if the shiftThreshold is met
 
 Reference Vars:
     grouping -- (see notes above) set this using setGrouping()

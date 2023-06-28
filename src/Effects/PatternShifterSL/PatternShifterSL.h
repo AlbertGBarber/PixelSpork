@@ -60,8 +60,8 @@ Example calls:
     };
     shiftPatternPS basicPattern(basicPattern_arr, SIZE(basicPattern_arr), patternSegs);
 
-    PatternShifterSL(mainSegments, basicPattern, palette1, 0, false, 100);
-    Will shift the "basicPattern" across the segment set using colors from palette1
+    PatternShifterSL patternShifterSL(mainSegments, basicPattern, cybPnkPal, 0, false, 100);
+    Will shift the "basicPattern" across the segment set using colors from cybPnkPal
     The background is blank
     The pattern is not repeated
     The effect updates at 100ms

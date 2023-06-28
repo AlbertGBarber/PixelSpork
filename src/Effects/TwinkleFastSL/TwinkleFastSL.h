@@ -19,13 +19,13 @@ This effect is fully compatible with color modes, and the bgColor is a pointer, 
 to an external color variable
 
 Example call: 
-    TwinkleFastSL(mainSegments, CRGB::Red, 5, 0, true, 50, 70);
+    TwinkleFastSL twinkleFast(mainSegments, CRGB::Red, 5, 0, true, 50, 70);
     Will choose 5 segment lines to fade from red at 50 rate every cycle
 
 Inputs:
-    palette(optional, see constructors) -- the palette from which colors will be choosen randomly
-    color(optional, see constructors) -- the color that the randomly choosen pixels will be set to
-    numTwinkles -- The amount of random pixels choosen each cycle 
+    palette(optional, see constructors) -- the palette from which colors will be chosen randomly
+    color(optional, see constructors) -- the color that the randomly chosen pixels will be set to
+    numTwinkles -- The amount of random pixels chosen each cycle 
     bgColor -- The color of the background, this is what pixels will fade to and from
     sparkle -- Turns the fading on and off (on will produce a blank background)
     fadeOutRate -- The number of steps taken to fade pixels out, if turned on (min 1, max 255), higher = fasted fade

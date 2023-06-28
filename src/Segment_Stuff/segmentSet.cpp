@@ -17,7 +17,6 @@ SegmentSet::SegmentSet(struct CRGB *Leds, uint16_t LedArrSize, Segment **SegArr,
         paletteTemp = {newPalette_arr, 2};
         gradPalette = &paletteTemp;
 
-		offsetRate = &offsetRateOrig;
 	}
 
 //resets the gradient vars to their defaults
@@ -113,8 +112,8 @@ bool SegmentSet::getSecIsSingle(uint16_t segNum, uint8_t secNum){
 }
 
 //returns the pointer to the specified segment's section array
-const segmentSecCont* SegmentSet::getSecArrPtr(uint16_t segNum){
-	return getSegPtr(segNum)->secPtr;
+const segmentSecCont* SegmentSet::getSecContArrPtr(uint16_t segNum){
+	return getSegPtr(segNum)->secContPtr;
 }
 
 //returns the pointer to the specified segment's section mixed array

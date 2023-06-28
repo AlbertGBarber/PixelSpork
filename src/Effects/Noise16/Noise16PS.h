@@ -42,8 +42,8 @@ combinations of x and y values tend to produce some flicker. I've not been able 
 It's something to do with the oscillations of the two timing effects lining up I think
 
 Example calls: 
-    Noise16PS(mainSegments, 4, 40, 500, 2, 1, 0, 2, 100, 0, 40);
-    Will produce a noise effect with a palette of 4 randomly choosen colors
+    Noise16PS noise16PS(mainSegments, 4, 40, 500, 2, 1, 0, 2, 100, 0, 40);
+    Will produce a noise effect with a palette of 4 randomly chosen colors
     There are 20 blend steps between each color
     An overall scaling value of 500 is applied to the noise
     The noise has the following inputs:
@@ -52,8 +52,8 @@ Example calls:
         z is mode 0, so is static at 0;
     The effect updates at 40ms
     
-    Noise16PS(mainSegments, palette1, 20, 600, 1, 0, 2, 40, 10, 5, 60);
-    Will produce a noise effect using colors from palette1
+    Noise16PS noise16PS(mainSegments, cybPnkPal, 20, 600, 1, 0, 2, 40, 10, 5, 60);
+    Will produce a noise effect using colors from cybPnkPal
     There are 40 blend steps between each color
     An overall scaling value of 600 is applied to the noise
     The noise has the following inputs:

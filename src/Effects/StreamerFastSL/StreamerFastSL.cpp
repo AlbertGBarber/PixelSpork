@@ -75,13 +75,13 @@ void StreamerFastSL::init(CRGB BgColor, uint16_t Rate){
 
 //returns the color of the next streamer based on the passed in pattern index
 //if the index is 255, this notes a spacing pixel, so the bgColor is returned
-//otherwise the color is choosen either from the palette, or randomly
+//otherwise the color is chosen either from the palette, or randomly
 //according to the randMode:
-//  0: Colors will be choosen in order from the pattern (not random)
-//  1: Colors will be choosen completely at random
-//  2: Colors will be choosen at random from the !!palette!!, but the same color won't be repeated in a row
-//  3: Colors will be choosen randomly from the pattern
-//  4: Colors will be choosen randomly from the !!palette!! 
+//  0: Colors will be chosen in order from the pattern (not random)
+//  1: Colors will be chosen completely at random
+//  2: Colors will be chosen at random from the !!palette!!, but the same color won't be repeated in a row
+//  3: Colors will be chosen randomly from the pattern
+//  4: Colors will be chosen randomly from the !!palette!! 
 //     (option included b/c the pattern may have a lot of spaces, so choosing from it may be very biased)
 CRGB StreamerFastSL::pickStreamerColor(uint8_t nextPattern){
     if(nextPattern == 255){

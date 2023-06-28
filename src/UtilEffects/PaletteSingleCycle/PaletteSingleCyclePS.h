@@ -47,10 +47,10 @@ Examples below use a palette of  {blue, red, green}
     4 -- Makes the palette length 1, cycles through each color of the palette
          ie for direct = true and palette {blue, red, green} it will be {blue} => {red} => {green} => {blue}, etc
     5 -- Same as mode 3, but chooses the next color randomly from the palette (will not be the current color)
-    6 -- Same as mode 3, but the next color is choosen completely randomly (not from the palette)
+    6 -- Same as mode 3, but the next color is chosen completely randomly (not from the palette)
 
 Example calls: 
-    PaletteSingleCyclePS(palette, 0, 50, true, 80);
+    PaletteSingleCyclePS palSingleCycle(cybPnkPal, 0, 50, true, 80);
     Blends the palette using blend mode 0
     Each blend takes 50 steps, with 80ms between each step
     The palette will be blended forward.
@@ -73,7 +73,7 @@ Functions:
 Other Settings:
    *inputPalette -- The pointer to the input palette (as supplied when you created the class instance)
                    You can change it by calling setPalette(), but this resets the cycle
-                   To avoid reseting, you can change it manually, but you may need to call switchPalette()
+                   To avoid resetting, you can change it manually, but you may need to call switchPalette()
    cyclePalette -- The output palette for the blend, length is set depending on mode (see notes below for more)
    *PB -- The PaletteBlendPS instance, public for reference 
 

@@ -21,8 +21,8 @@ Note that the effect uses segment lines, so the eye will be 2d for a set with mu
 The eye is made of a center point and two "arms" sprouting from each side.
 The two arms fade to the background as towards their ends, while the center eye is fully bright (up to the current breath value)
 The you can set the center point with eyePos, the center point size with eyeCenterSize (the actual center size will be double the value),
-and the arm length with eyeHalfSize. The eyePos can be set to be choosen randomly after every fade, making the eye jump around.
-If it's not choosen randomly, the eyePos will be defaulted to the center point of the longest segment.
+and the arm length with eyeHalfSize. The eyePos can be set to be chosen randomly after every fade, making the eye jump around.
+If it's not chosen randomly, the eyePos will be defaulted to the center point of the longest segment.
 The centerEyeSize will be defaulted to 1/8 the eyeHalfSize (see init()), which seemed to look good in my tests.
 Note that the total size of the eye is eyeHalfSize * 2 
 (the arms always start from the eye center pos, so they will be overlapped if the eyeCenterSize is > 0)
@@ -56,36 +56,36 @@ Note that you can change variables freely while the effect is running.
 Does not work with color modes from segDrawUtils::setPixelColor().
 
 randModes:
-    0: Colors will be choosen in order from the pattern (not random)
-    1: Colors will be choosen completely at random
-    2: Colors will be choosen randomly from the palette (not allowing repeats)
-    3: Colors will be choosen randomly from the palette (allowing repeats)
-    4: Colors will be from the rainbow (the hue is offset by rainbowRate each time a color is choosen)
+    0: Colors will be chosen in order from the pattern (not random)
+    1: Colors will be chosen completely at random
+    2: Colors will be chosen randomly from the palette (not allowing repeats)
+    3: Colors will be chosen randomly from the palette (allowing repeats)
+    4: Colors will be from the rainbow (the hue is offset by rainbowRate each time a color is chosen)
 
 Example calls: 
     uint8_t pattern_arr = {0, 1, 4};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-    BreathPS(mainSegments, pattern, palette3, 0, 10, true, true, 10, 50);
-    Does a breathing cycle using the colors from palette3, following the pattern above
+    BreathEyeSL breathEye(mainSegments, pattern, cybPnkPal, 0, 10, true, true, 10, 50);
+    Does a breathing cycle using the colors from cybPnkPal, following the pattern above
     The background is blank
     The eyeHalfSize is 10, the eye wraps, and the eye position will be set randomly for each cycle.
     The breathFreq is 10, the effect updates at 50ms
 
-    BreathPS(mainSegments, palette3, 0, 8, true, false, 5, 50);
-    Does a breathing cycle using the colors from palette3 in order
+    BreathEyeSL breathEye(mainSegments, cybPnkPal, 0, 8, true, false, 5, 50);
+    Does a breathing cycle using the colors from cybPnkPal in order
     The background is blank
     The eyeHalfSize is 8, the eye wraps,
     The eye position will be fixed (defaulting to the center point of the longest segment),
     The breathFreq is 5, the effect updates at 50ms
 
-    BreathPS(mainSegments, CRGB::Red, CRGB::Blue, 200, 10, false, true, 5, 50);
+    BreathEyeSL breathEye(mainSegments, CRGB::Red, CRGB::Blue, 200, 10, false, true, 5, 50);
     Does a breathing cycle in red only
     The background is blue
     The maximum fade amount is capped at 200
     The eyeHalfSize is 10, the eye does not wrap, and the eye position will be set randomly for each cycle.
     The breathFreq is 5, the effect updates at 50ms
 
-    BreathPS(mainSegments, 0, 25, 5, true, true, 10, 50);
+    BreathEyeSL breathEye(mainSegments, 0, 25, 5, true, true, 10, 50);
     Does a breathing cycle using a rainbow
     The background is blank
     The rainbow hue advances 25 steps with each breath
@@ -110,14 +110,14 @@ Constructor Inputs
     bgColor -- The color that the breaths will fade to (usually blank).
     eyeHalfSize -- How long each arm of the eye is (see effect description above)
     wrap -- If the eye wraps or is cut off at either end of the segment set
-    randEyePos -- If the eye position is choosen randomly each cycle (if not, it will default to the center point of the longest segment)
+    randEyePos -- If the eye position is chosen randomly each cycle (if not, it will default to the center point of the longest segment)
     breathFreq -- The speed of the breathing, between 5 and 20 works well.
     Rate -- update rate (ms)
 
 Functions:
     setPaletteAsPattern() -- Sets the effect pattern to match the current palette
     reset() -- restarts the effect
-               Note that the effect may start mid breath after reseting.
+               Note that the effect may start mid breath after resetting.
     update() -- updates the effect
 
 Other Settings:
@@ -169,7 +169,7 @@ class BreathEyeSL : public EffectBasePS {
             *breathFreq = nullptr, //pointer to the breath frequency (dby default it's bound to the the Rate)
             minBreath = 60, //The minimum breath fade amount (0 is min, should be less than maxBreath)
             maxBreath = 255, //How far the breath color will fade towards the background (255 is max)
-            breathEndOffset = 5, //The offset from maxBreath after which a new color is choosen (see comments in update() code)
+            breathEndOffset = 5, //The offset from maxBreath after which a new color is chosen (see comments in update() code)
             rainbowSat = 255,
             rainbowVal = 255,
             rainbowRate = 20,

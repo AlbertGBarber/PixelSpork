@@ -15,7 +15,7 @@ GradientCycleFastSL::GradientCycleFastSL(SegmentSet &SegSet, palettePS &Palette,
         init(Rate);
 	}
 
-//constructor with palette of randomly choosen colors
+//constructor with palette of randomly chosen colors
 //(does not set randColors or randColor mode)
 GradientCycleFastSL::GradientCycleFastSL(SegmentSet &SegSet, uint8_t NumColors, uint8_t GradLength, uint16_t Rate):
     SegSet(SegSet), gradLength(GradLength)

@@ -24,7 +24,7 @@ then for each subsequent segment, it copies the color of the next segment in lin
 So any changes you make to colors will only show up at the first segment, and will be shifted along the segments
 
 However, as a bonus, this effect supports random colored waves
-where the colors for the waves are choosen at random as the enter the segments
+where the colors for the waves are chosen at random as the enter the segments
 This is controlled by the randMode setting
 
 Otherwise, all the settings are/functions are the same as SegWavesFast
@@ -51,7 +51,7 @@ so watch your memory usage
 Example calls: 
     uint8_t pattern_arr = {0, 255, 255, 255, 1, 1, 255, 255};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-    SegWavesFast(mainSegments, pattern, palette3, 0, true, 120);
+    SegWavesFast segWavesFast(mainSegments, pattern, cybPnkPal, 0, true, 120);
     Will do a set of waves using the first two colors in the palette
     The wave will begin with 1 segment of color 0, with three spaces after, followed by 2 pixels of color 1, followed by 2 spaces
     The bgColor is zero (off)
@@ -60,19 +60,19 @@ Example calls:
 
     uint8_t pattern_arr = {1, 2, 3};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-    SegWavesFast(mainSegments, pattern, palette3, 3, 4, 0, false, 120);
+    SegWavesFast segWavesFast(mainSegments, pattern, cybPnkPal, 3, 4, 0, false, 120);
     Will do a wave using the first three colors of the palette (taken from the pattern)
     Each wave will be length 3, followed by 4 spaces, bgColor is 0 (off)
     The waves will move from the first to last segment.
     The effect updates at a rate of 120ms
 
-    SegWavesFast(mainSegments, palette3, 3, 4, CRGB::Red, true, 120);
-    Will do a wave using all the colors in palette3, each wave will be length 3, with 4 spaces in between
+    SegWavesFast segWavesFast(mainSegments, cybPnkPal, 3, 4, CRGB::Red, true, 120);
+    Will do a wave using all the colors in palette, each wave will be length 3, with 4 spaces in between
     The bgColor is red
     The waves will move from the last segment to the first
     The waves will update at a 120ms rate
 
-    SegWavesFast(mainSegments, CRGB::Blue, 2, 2, CRGB::Red, 0, true, 140);
+    SegWavesFast segWavesFast(mainSegments, CRGB::Blue, 2, 2, CRGB::Red, 0, true, 140);
     Will do a blue waves with length 2 and 2 spaces in between
     The bgColor is red
     The waves will move from the last segment to the first
@@ -102,13 +102,13 @@ Functions:
     update() -- updates the effect
 
 Other Settings:
-    randMode (default 0) -- Sets the type of how colors are choosen:
-                         -- 0: Colors will be choosen in order from the pattern (not random)
-                         -- 1: Colors will be choosen completely at random
-                         -- 2: Colors will be choosen at random from the !!palette!!, 
+    randMode (default 0) -- Sets the type of how colors are chosen:
+                         -- 0: Colors will be chosen in order from the pattern (not random)
+                         -- 1: Colors will be chosen completely at random
+                         -- 2: Colors will be chosen at random from the !!palette!!, 
                                but the same color won't be repeated in a row
-                         -- 3: Colors will be choosen randomly from the pattern
-                         -- 4: Colors will be choosen randomly from the !!palette!!
+                         -- 3: Colors will be chosen randomly from the pattern
+                         -- 4: Colors will be chosen randomly from the !!palette!!
                                (option included b/c the pattern may have a lot of spaces, 
                                 so choosing from it may be very biased)
 

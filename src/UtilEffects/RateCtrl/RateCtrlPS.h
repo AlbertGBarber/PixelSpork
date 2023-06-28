@@ -21,7 +21,7 @@ The transition rate is stored in outputRate. Use &outputRate to bind it to an ef
 The RateCtrlPS update rate is a pointer, and can be bound externally, like in other effects
 
 Example calls: 
-    RateCtrlPS(90, 20, false, true, 100);
+    RateCtrlPS rateCtrl(90, 20, false, true, 100);
     Transitions between a rate of 90ms to 20ms and back again (looped is on)
     easing is turned off, the utility updates every 100ms
 

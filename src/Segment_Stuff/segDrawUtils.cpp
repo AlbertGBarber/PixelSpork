@@ -92,9 +92,9 @@ uint16_t segDrawUtils::getSegmentPixel(SegmentSet &SegSet, uint16_t segNum, uint
             //Switch how we output to match the two possible segment section types
             //If the first if statement is true, then the segment has continuous sections, with starting pixels and lengths
             //Otherwise the segment will have a single mixed section, with an array of physical pixel locations and a length
-            //( SegSet.getSecArrPtr(segNum) returns false if the segment has a null section array pointer,
+            //( SegSet.getSecContArrPtr(segNum) returns false if the segment has a null section array pointer,
             //it should have a real mixed section pointer instead )
-            if(SegSet.getSecArrPtr(segNum)){
+            if(SegSet.getSecContArrPtr(segNum)){
                 //for continuous sections we get the starting pixel, and then count from it
                 secStartPixel = SegSet.getSecStartPixel(segNum, i);
                 if (secLength == 1) {
@@ -166,9 +166,9 @@ void segDrawUtils::fillSegSecColor(SegmentSet &SegSet, uint16_t segNum, uint16_t
     //Switch how we output to match the two possible segment section types
     //If the first if statement is true, then the segment has default sections, with starting pixels and lengths
     //Otherwise the segment will have a single mixed section, with an array of physical pixel locations and a length
-    //(SegSet.getSecArrPtr(segNum) returns false if the segment has a null section array pointer,
+    //(SegSet.getSecContArrPtr(segNum) returns false if the segment has a null section array pointer,
     //it should have a real mixed section pointer instead )
-    if(SegSet.getSecArrPtr(segNum)){
+    if(SegSet.getSecContArrPtr(segNum)){
         secStartPixel = SegSet.getSecStartPixel(segNum, secNum);
         step = (secLength > 0) - (secLength < 0); // account for negative lengths
         for (uint16_t i = secStartPixel; i != (secStartPixel + secLength); i += step) {
@@ -196,7 +196,7 @@ void segDrawUtils::fillSegLengthColor(SegmentSet &SegSet, uint16_t segNum, uint1
     //there's no point in trying to split the length into partially and completely filled segment sections
     //because in the end you need to call getSegmentPixel() for each pixel anyway
     for(uint16_t i = startSegPixel; i <= endPixel; i++){
-        setPixelColor(SegSet, i, segNum, color, colorMode);
+        setPixelColor(SegSet, i, color, colorMode, segNum );
     }
 }
 
@@ -348,7 +348,7 @@ void segDrawUtils::getPixelColor(SegmentSet &SegSet, uint16_t segPixelNum, pixel
 //      mode 4 & 9: Produces a single color that cycles through the rainbow or gradient at the SegSet's offsetRate
 //                  Used to color a whole effect as a single color that cycles through the rainbow or gradient
 //                  Note that 256 steps are used for the gradient/rainbow
-//      mode 5 & 10:  Same as mode 8, but the direction of the cycle is reversed
+//      mode 5 & 10:  Same as mode 4, but the direction of the cycle is reversed
 //The total number of gradient steps are based on the SegSet values:
 //Each mode uses a different value so you can switch between modes more easily  
 //      mode 1 & 6: SegSet.gradLenVal (defaulted to the number of leds in the segment set)
@@ -356,7 +356,9 @@ void segDrawUtils::getPixelColor(SegmentSet &SegSet, uint16_t segPixelNum, pixel
 //      mode 3 & 9: SegSet.gradLineVal (defaulted to the length of the longest segment (numLines) )
 //      mode 4 & 9 and 5 & 10: 256 (not user chargeable)
 //By changing these values you can create shorter or longer rainbows/gradients
-//(note that rainbows will repeat every 255 steps, while gradients will be stretched over them)
+//Note that rainbows are limited to 255 steps, any longer and they will stretch out
+//Custom gradients can have any number of steps (default 255), set with gradOffsetMax.
+//If gradOffsetMax / (num colors in grad palette) > 255, the colors will be stretched.
 //You can the use SegSet's gradOffset to shift the gradient across the pixels
 CRGB segDrawUtils::getPixelColor(SegmentSet &SegSet, uint16_t pixelNum, const CRGB &color, uint8_t colorMode, uint16_t segNum, uint16_t lineNum){
     //if( pixelNum == D_LED ){
@@ -386,14 +388,14 @@ CRGB segDrawUtils::getPixelColor(SegmentSet &SegSet, uint16_t pixelNum, const CR
             break;
         case 4:  //produces a single color that cycles through the rainbow or gradient at the SegSet's offsetRate
         case 9: //used to color a whole effect as a single color that cycles through the rainbow or gradient
-            colorModeDom = 255; //The number of gradient steps are capped at 256
-            colorModeNum = mod16PS( millis() / (*SegSet.offsetRate), 255 ); //gets the step we're on
+            colorModeDom = 256; //The number of gradient steps are capped at 256
+            colorModeNum = mod16PS( millis() / (*SegSet.offsetRate), 256 ); //gets the step we're on
             //colorFinal = colorUtilsPS::wheel( colorModeNum & 255, 0 );
             break;
-        case 5:  //Same as case 5 & 11, but the cycle direction is reversed
-        case 10: //(useful for effects where the main pixels are case 5 or 11, while the background is case 6 or 12)
-            colorModeDom = 255;
-            colorModeNum = 255 - mod16PS( millis() / (*SegSet.offsetRate), 255 );
+        case 5:  //Same as case 4 & 9, but the cycle direction is reversed
+        case 10: //(useful for effects where the main pixels are case 4 or 9, while the background is case 5 or 10)
+            colorModeDom = 256;
+            colorModeNum = 255 - mod16PS( millis() / (*SegSet.offsetRate), 256 );
             //colorFinal = colorUtilsPS::wheel( 255 - (colorModeNum & 255), 0 );
             break;
     }
@@ -404,14 +406,17 @@ CRGB segDrawUtils::getPixelColor(SegmentSet &SegSet, uint16_t pixelNum, const CR
     //get either a rainbow or gradient color
     //(see colorUtils::wheel() and paletteUtilsPS::getPaletteGradColor() for info)
     //we also set offsetMax for the offset cycle here
-    //because for all rainbow gradients it needs to be 255, 
-    //while for all palette gradients it's whatever colorModeDom is
+    //because for all rainbow gradients it needs to be 256, 
+    //Custom gradient lengths are capped at the segment set's gradOffsetMax
     if(colorMode < 6){
-        offsetMax = 255;
-        colorFinal = colorUtilsPS::wheel( (colorModeNum * 255) / colorModeDom, SegSet.gradOffset, SegSet.rainbowSatur, SegSet.rainbowVal );
-    } else{
-        offsetMax = colorModeDom;
-        colorFinal = paletteUtilsPS::getPaletteGradColor(*SegSet.gradPalette, colorModeNum, SegSet.gradOffset, colorModeDom);      
+        offsetMax = 256;
+        colorFinal = colorUtilsPS::wheel( (colorModeNum * offsetMax) / colorModeDom, SegSet.gradOffset, SegSet.rainbowSatur, SegSet.rainbowVal );
+    } else{ 
+        offsetMax = SegSet.gradOffsetMax;
+        colorFinal = paletteUtilsPS::getPaletteGradColor(*SegSet.gradPalette, (colorModeNum * offsetMax) / colorModeDom, SegSet.gradOffset, offsetMax);        
+        //Old code, uses the segment set grad lengths for gradOffsetMax
+        //offsetMax = colorModeDom;
+        //colorFinal = paletteUtilsPS::getPaletteGradColor(*SegSet.gradPalette, colorModeNum, SegSet.gradOffset, offsetMax);  
     }
 
     //updates the gradient offset value
@@ -436,7 +441,7 @@ void segDrawUtils::show(SegmentSet &SegSet, bool showNow){
         if(SegSet.getSegHasSingle(i)){
 
             //Check the type of sections the segment has (continuous or mixed)
-            hasContSec = SegSet.getSecArrPtr(i);
+            hasContSec = SegSet.getSecContArrPtr(i);
 
             //For each segment section, if the section is single,
             //copy the color from the first section pixel into all the other section pixels
@@ -449,7 +454,7 @@ void segDrawUtils::show(SegmentSet &SegSet, bool showNow){
                     //Switch how we output to match the two possible segment section types
                     //If the first if statement is true, then the segment has default sections, with starting pixels and lengths
                     //Otherwise the segment will have a single mixed section, with an array of physical pixel locations and a length
-                    //( SegSet.getSecArrPtr(segNum) returns false if the segment has a null section array pointer,
+                    //( SegSet.getSecContArrPtr(segNum) returns false if the segment has a null section array pointer,
                     //it should have a real mixed section pointer instead )
                     if(hasContSec){
                         secStartPixel = SegSet.getSecStartPixel(i, j);
@@ -528,9 +533,9 @@ void segDrawUtils::fadeSegSecToBlackBy(SegmentSet &SegSet, uint16_t segNum, uint
     //Switch how we output to match the two possible segment section types
     //If the first if statement is true, then the segment has default sections, with starting pixels and lengths
     //Otherwise the segment will have a single mixed section, with an array of physical pixel locations and a length
-    //( SegSet.getSecArrPtr(segNum) returns false if the segment has a null section array pointer,
+    //( SegSet.getSecContArrPtr(segNum) returns false if the segment has a null section array pointer,
     //it should have a real mixed section pointer instead )
-    if(SegSet.getSecArrPtr(segNum)){
+    if(SegSet.getSecContArrPtr(segNum)){
         secStartPixel = SegSet.getSecStartPixel(segNum, secNum);
 
         step = (secLength > 0) - (secLength < 0); // account for negative lengths

@@ -126,7 +126,7 @@ CRGB paletteUtilsPS::getPaletteGradColor(palettePS &palette, uint16_t num, uint1
 //returns a gradient color between palette colors based on several inputs:
 //  num: The value of what you want to apply the gradient to (generally a pixel or segment number)
 //  offset: Any offset of num (see SegmentSet gradOffset)
-//  totalLength: The length the entire palette gradient is spread across (usually the length of a SegmentSet or similar
+//  totalLength: The length the entire palette gradient is spread across (usually the length of a SegmentSet or similar)
 //  gradLength: The length of the gradient between the palette colors (ie totalLength/paletteLength)
 CRGB paletteUtilsPS::getPaletteGradColor(palettePS &palette, uint16_t num, uint16_t offset, uint16_t totalLength, uint16_t gradLength){
     //the actual gradient number we need based on the offset

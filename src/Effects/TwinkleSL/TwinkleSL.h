@@ -17,26 +17,26 @@ passing in a SegmentSet with only one segment containing the whole strip.
 This effect is fully compatible with color modes, and the bgColor is a pointer, so you can bind it
 to an external color variable
 
-Note that you cannot change most of the effect variables on the fly without reseting the effect.
+Note that you cannot change most of the effect variables on the fly without resetting the effect.
 
 Example call: 
-    TwinkleSL(mainSegments, CRGB::Red, CRGB::Blue, 2, 4, 4, 70);
+    TwinkleSL twinkle(mainSegments, CRGB::Red, CRGB::Blue, 2, 4, 4, 70);
     Will choose 2 lines each cycle to fade to/from red each cycle, using a blue background, 
     with 4 fade in and out steps, at a rate of 70ms
 
-    TwinkleSL(mainSegments, palette1, 0, 3, 1, 6, 60);
-    Will choose 3 lines each cycle to fade to/from colors choosen from the palette, using a blank background,
+    TwinkleSL twinkle(mainSegments, cybPnkPal, 0, 3, 1, 6, 60);
+    Will choose 3 lines each cycle to fade to/from colors chosen from the palette, using a blank background,
     with 1 fade in and 6 fade out steps, at a rate of 60ms
 
-    TwinkleSL(mainSegments, 0, 4, 2, 2, 80);
+    TwinkleSL twinkle(mainSegments, 0, 4, 2, 2, 80);
     Will choose 4 lines each cycle to fade to/from random colors, using a blank background, 
     (note this sets randMode = 1)
     with 2 fade in and 2 fade out steps, at a rate of 80ms
 
 Constructor Inputs:
-    palette(optional, see constructors) -- the palette from which colors will be choosen randomly
-    color(optional, see constructors) -- the color that the randomly choosen pixels will be set to
-    numTwinkles -- The amount of random pixels choosen each cycle 
+    palette(optional, see constructors) -- the palette from which colors will be chosen randomly
+    color(optional, see constructors) -- the color that the randomly chosen pixels will be set to
+    numTwinkles -- The amount of random pixels chosen each cycle 
     bgColor -- The color of the background, this is what pixels will fade to and from
     fadeInSteps and FadeOutSteps -- The number of steps taken to fade pixels in and out (min value of 1, max of 255)
     rate -- The update rate (ms)
@@ -47,7 +47,7 @@ Functions:
                                                  is different than the current number)
     setSingleColor(Color) -- Sets the effect to use a single color for the pixels, will restart the effect
     reset() -- Resets the startup variables, you probably don't need to ever call this
-    setNumTwinkles(newNumTwinkles) -- sets an new number of pixels to be choosen each cycle, 
+    setNumTwinkles(newNumTwinkles) -- sets an new number of pixels to be chosen each cycle, 
                                       (Will reset the effect if the new number of pixels is different than the current number)
     update() -- updates the effect
 
@@ -60,7 +60,7 @@ Other Settings:
     fillBG (default false) -- sets the background to be redrawn every cycle, useful for bgColorModes that are dynamic
 
 reference Vars:
-    numTwinkles -- How many random pixels are choosen each cycle, set with setNumTwinkles()
+    numTwinkles -- How many random pixels are chosen each cycle, set with setNumTwinkles()
     fadeInSteps and fadeOutSteps -- The number of steps taken to fade pixels in and out (min value of 1, max of 255)
                                     Both are set at the same time using setSteps();
 

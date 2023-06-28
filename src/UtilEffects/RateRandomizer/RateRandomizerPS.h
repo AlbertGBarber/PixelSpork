@@ -17,8 +17,8 @@ ie baseRate = &yourRate
 The randomized rate is stored in outputRate. Use &outputRate to bind it to an effect rate.
 
 Example calls: 
-    RateRandomizerPS(80, -10, 10, 300);
-    Produces a rate choosen randomly using base of 80, and upper and lower bounds of +/- 10 
+    RateRandomizerPS rateRand(80, -10, 10, 300);
+    Produces a rate chosen randomly using base of 80, and upper and lower bounds of +/- 10 
     so the output will be vary from 70 to 90
     the output rate will change every 300ms
 

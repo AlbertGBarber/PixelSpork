@@ -29,7 +29,7 @@ The glitterColor, glitterRate, and rate are all pointers, so you can bind them e
 (The passed in glitterColor, glitterRate, and Rate, are stored in glitterColorOrig, glitterRateOrig, and rateOrig)
 
 Example call: 
-    AddGlitterPS(mainSegments, CRGB::White, 10, 1, 1000, 100);
+    AddGlitterPS addGlitter(mainSegments, CRGB::White, 10, 1, 1000, 100);
     Will drawn 10 white glitter particles on the mainSegment set every 100ms.
     Glitter mode 1 is used.
     New particle locations will be set every 1000ms.

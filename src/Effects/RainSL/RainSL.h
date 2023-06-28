@@ -17,7 +17,7 @@ This effect uses particles as the drops. See particlePS.h and particleUtilsPS.h 
 There are numerous options for the drops: trail type, speed, size, etc
 There are also more general settings for how often drops spawn, how the background is drawn,
 and if the drops should blend together if they pass over each other.
-You can also configure each drop's properties to be choosen at random from ranges.
+You can also configure each drop's properties to be chosen at random from ranges.
 
 Drop colors can either be a static color or picked randomly from a palette
 
@@ -44,8 +44,8 @@ Example calls:
     There is a similar constructor for using a single color, just replace the palette with a color in th
     constructor
 
-    RainSL(mainSegments, palette3, CRGB::Red, true, 10, 4, 1, 1, 5, 80, true);
-    Will spawn drops on the mainSegment set, picking colors from palette3
+    RainSL rainSL(mainSegments, cybPnkPal, CRGB::Red, true, 10, 4, 1, 1, 5, 80, true);
+    Will spawn drops on the mainSegment set, picking colors from cybPnkPal
     The background is red, and it will be pre-filled before the drops spawn
     The drops have a spawn chance of 10/100 (10% chance of spawning each update cycle)
     There is a maximum of 4 drops running concurrently on each segment
@@ -57,7 +57,7 @@ Example calls:
     A more extensive constructor will all the options for drops
     Also comes as a palette variant; replace the color with a palette in the constructor
 
-    RainSL(mainSegments, CRGB::Green, 0, false, 10, 4, 1, 3, 2, 4, true, true, false, false, false, 60, 40, false);
+    RainSL rainSL(mainSegments, CRGB::Green, 0, false, 10, 4, 1, 3, 2, 4, true, true, false, false, false, 60, 40, false);
     Will spawn green drops on the mainSegment set
     The background is off, and it will not be pre-filled before the drops spawn
     The drops have a spawn chance of 10/100 (10% chance of spawning each update cycle)
@@ -129,7 +129,7 @@ Functions:
     setupDrops(newMaxNumDrops) -- Changes the maximum number of drops, but will also clear any active drops
                                   If you want to increase the number of drops without clearing, set the
                                   maxNumDrops to your maximum in the constructor. Then lower it before running the
-                                  effect. You can safely raise it again without reseting (set maxNumDrops manually)
+                                  effect. You can safely raise it again without resetting (set maxNumDrops manually)
                                   !!If you lower the maximum number of drops, some active drops may be left on the segments
     update() -- updates the effect 
 

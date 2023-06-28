@@ -87,34 +87,34 @@ void BreathPS::setPaletteAsPattern(){
 //Gets the next breath color based on the pattern, palette, and randMode
 //Also advances the patternIndex to track where we are in the pattern
 //randModes are:
-//  0: Colors will be choosen in order from the pattern (not random)
-//  1: Colors will be choosen completely at random
-//  2: Colors will be choosen randomly from the palette (not allowing repeats)
-//  3: Colors will be choosen randomly from the palette (allowing repeats)
-//  4: Colors will be from the rainbow (the hue is offset by rainbowRate each time a color is choosen)
+//  0: Colors will be chosen in order from the pattern (not random)
+//  1: Colors will be chosen completely at random
+//  2: Colors will be chosen randomly from the palette (not allowing repeats)
+//  3: Colors will be chosen randomly from the palette (allowing repeats)
+//  4: Colors will be from the rainbow (the hue is offset by rainbowRate each time a color is chosen)
 void BreathPS::getNextColor(){   
     //set the next color depending on the mode
     switch (randMode) {
-        case 0: //Colors will be choosen in order from the pattern (not random)
+        case 0: //Colors will be chosen in order from the pattern (not random)
         default:
             palIndex = patternUtilsPS::getPatternVal( *pattern, patternIndex );
             breathColor = paletteUtilsPS::getPaletteColor( *palette, palIndex );
             break;
-        case 1: //Colors will be choosen completely at random
+        case 1: //Colors will be chosen completely at random
             breathColor = colorUtilsPS::randColor();
             break;
-        case 2: //Colors will be choosen randomly from the palette (not allowing repeats)
+        case 2: //Colors will be chosen randomly from the palette (not allowing repeats)
             //Note that we use the palIndex to keep track of what palette color we're doing
             //So that we don't choose it twice
             palIndex = patternUtilsPS::getShuffleVal( *pattern, palIndex );
             breathColor = paletteUtilsPS::getPaletteColor( *palette, palIndex );
             break;
-        case 3://Colors will be choosen randomly from the palette (allowing repeats)
+        case 3://Colors will be chosen randomly from the palette (allowing repeats)
             patternIndex = random16(pattern->length);
             palIndex = patternUtilsPS::getPatternVal( *pattern, patternIndex );
             breathColor = paletteUtilsPS::getPaletteColor( *palette, palIndex );
             break;
-        case 4: //Colors will be from the rainbow (the hue is offset by rainbowRate each time a color is choosen)
+        case 4: //Colors will be from the rainbow (the hue is offset by rainbowRate each time a color is chosen)
             hue += rainbowRate;
             breathColor = CHSV(hue, rainbowSat, rainbowVal);
             break;
@@ -145,7 +145,7 @@ void BreathPS::update(){
         //If we've reached the end of the current fade we need to choose the next color to fade to
         //To do this we check the fade brightness. Since we are sampling the brightness from a wave
         //output, we don't know the exact top value of the wave (it will skip values depending on frequency)
-        //So we check that it's past a certain point, pick a color and then prevent any new colors from being choosen
+        //So we check that it's past a certain point, pick a color and then prevent any new colors from being chosen
         //(we want the point to be close to the peak, so that we choose a new color when the fade is almost finished)
         //From experimentation a difference of 5 from the peak (maxBreath) seems to work well. The highest possible peak is 255.
         //We lock the color because the wave may stay above the difference for multiple cycles, but we only want to set the color once.

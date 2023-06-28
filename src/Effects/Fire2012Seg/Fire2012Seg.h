@@ -41,7 +41,7 @@ so watch your memory usage
 
 Example calls: 
 
-    Fire2012Seg(mainSegments, firePal, 0, 50, 90, true, 70);
+    Fire2012Seg fire2012Seg(mainSegments, firePal, 0, 50, 90, true, 70);
     Does a blended fire using the built-in firePal (see paletteList.h) with a blank background
     cooling is set to 50 and sparking is set to 90
     The fire updates at 70ms

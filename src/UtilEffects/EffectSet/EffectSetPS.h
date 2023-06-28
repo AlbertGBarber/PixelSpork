@@ -75,7 +75,7 @@ Creating An Effect Array:
 
     The palette blender was created with a direct variable like:
     <Before Arduino setup()>
-        PaletteBlenderPS PB(palette1, palette2, true, 30, 100);
+        PaletteBlenderPS PB(cybPnkPal, palette2, true, 30, 100);
 
     While the StreamerSL was created with a pointer using new:
     <Before Arduino setup()>
@@ -97,18 +97,19 @@ Creating An Effect Array:
     Note that we use & for the PaletteBlender, because all the effArray elements must be pointers (using & puts a pointer to PB in the array).
     strem is already a pointer, so we can just set it directly.
 
-    For a full example of this in code see  <EffectGroup example in the library>
+    For a full example of this in code see <EffectGroup example in the library>
 
     To manage the effect and util, you'd probably want to put the array into an EffectGroup.
     Examples of setting one up are shown below:
 
 Example calls:
-
-    EffectSetPS(effectArr, SIZE(effectArr), 10000);
+    EffectBasePS *effArray[2] = {nullptr, nullptr};
+    EffectSetPS effectSet(effectArr, SIZE(effectArr), 10000);
     Creates an effect set using the passed in effectArr
     The run time for the set is 10000ms
-
-    EffectSetPS(effectArr, SIZE(effectArr), 2, 0);
+    
+    EffectBasePS *effArray[2] = {nullptr, nullptr};
+    EffectSetPS effectSet(effectArr, SIZE(effectArr), 2, 0);
     Creates an effect set using the passed in effectArr, with a destruct limit of 2
     The passed in run time is 0, this will tell the set to run indefinitely 
     (the "infinite" flag is set true if you pass a 0 as the run time)

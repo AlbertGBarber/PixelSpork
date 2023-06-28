@@ -61,14 +61,14 @@ Shifting Phases with Time:
     
 Example calls: 
 
-    PlasmaSL(mainSegments, 2, 50, true, 80);
-    Will do a PlasmaSL effect using 3 randomly choosen colors
+    PlasmaSL plasma(mainSegments, 2, 50, true, 80);
+    Will do a PlasmaSL effect using 3 randomly chosen colors
     with 50 blend steps between each color
     and the freqs and phases being randomized 
     It will update every 80ms
 
-    PlasmaSL(mainSegments, palette1, 80, false, 40);
-    Will do a PlasmaSL effect using colors from palette1
+    PlasmaSL plasma(mainSegments, cybPnkPal, 80, false, 40);
+    Will do a PlasmaSL effect using colors from cybPnkPal
     with 80 blend steps between each color
     and the freqs and phases are not randomized
     It will update every 40ms

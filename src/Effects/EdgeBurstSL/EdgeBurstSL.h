@@ -33,7 +33,7 @@ half-way along the strip, that then expands and reflects back.
 The effect is mostly the same as the original, but I've made it so that the start point 
 of the waves is picked randomly from the number of lines for each wave. 
 This adds some nice variation to the effect.
-I've also added the ability to use a palette for the wave colors. You can have them be choosen randomly for each wave.
+I've also added the ability to use a palette for the wave colors. You can have them be chosen randomly for each wave.
 I've also allowed you to adjust the pause time factor between waves.
 I have this set to 2 (the original was 4), which makes the pause time very short.
 
@@ -58,15 +58,15 @@ Randomize Notes:
 
 Example calls: 
 
-    EdgeBurstSL(ringSegments, 15, 80);
+    EdgeBurstSL edgeBurst(mainSegments, 15, 80);
     Will do a a rainbow edge burst with a burst freq of 15
     The effect updates at 80ms
 
-    EdgeBurstSL(ringSegments, palette1, 10, 80);
-    Will do a an edge burst using colors from palette1 with a burst freq of 10
+    EdgeBurstSL edgeBurst(mainSegments, cybPnkPal, 10, 80);
+    Will do a an edge burst using colors from cybPnkPal with a burst freq of 10
     The effect updates at 80ms
 
-    EdgeBurstSL(ringSegments, 3, true, 10, 80);
+    EdgeBurstSL edgeBurst(mainSegments, 3, true, 10, 80);
     Will do a an edge burst using a palette of 3 random colors with a burst freq of 10
     The palette colors will be randomly picked for each wave
     The effect updates at 80ms
@@ -75,7 +75,7 @@ Constructor inputs:
     palette (optional, see constructors) -- A custom palette passed to the effect for colors
     numColors (optional, see constructors) -- How many colors will be in the randomly created palette
     randomizePal (optional, see constructors) -- Only for the random color constructor. If true, random palette colors
-                                                 will be choosen for each wave
+                                                 will be chosen for each wave
                                                  (see randomize note on this setting above)
     burstFreq (min value 1) -- How fast the bursts happen and move, recommend value of 5 - 30
                                Higher -> faster

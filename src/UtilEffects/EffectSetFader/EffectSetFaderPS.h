@@ -51,7 +51,7 @@ Setup, Running, and Resetting:
 
 Example Calls:
     (see setup guide above, but for reference)
-    EffectSetFaderPS(effectSet, 2000)
+    EffectSetFaderPS effectSetFader(effectSet, 2000)
     Will create a fader to fade the effects in the effect set in and out, 
     taking 2000ms for the fades.
     

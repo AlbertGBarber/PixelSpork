@@ -46,20 +46,20 @@ passing in a SegmentSet with only one segment containing the whole strip.
 
 Example calls: 
 
-    ColorMeltSL(mainSegments, 15, 3, true, 80);
+    ColorMeltSL colorMelt(mainSegments, 15, 3, true, 80);
     Will do a melt with a meltFreq of 15 and a phaseFreq of 3
     Rainbow colors will be used
     The brightness waves will be inverted for more color
     The effect updates at 80ms
 
-    ColorMeltSL(mainSegments, palette1, 9, 0, true, 80);
+    ColorMeltSL colorMelt(mainSegments, cybPnkPal, 9, 0, true, 80);
     Will do a melt with a meltFreq of 9 and a phaseFreq of 0
-    Colors from palette1 will be used
+    Colors from cybPnkPal will be used
     Because the phaseFreq is 0, phaseEnable will be set false as part of the constructor
     The brightness waves will be inverted for more color
     The effect updates at 80ms
 
-    ColorMeltSL(mainSegments, 3, 9, 1, false 80);
+    ColorMeltSL colorMelt(mainSegments, 3, 9, 1, false 80);
     Will do a melt with a meltFreq of 9 and a phaseFreq of 1
     A palette of 3 random colors will be used
     The brightness waves will NOT be inverted

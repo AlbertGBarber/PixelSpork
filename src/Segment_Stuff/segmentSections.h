@@ -49,24 +49,27 @@ struct segmentSecCont {
     int16_t length;
     //used to mark if the segment should be treated as a single pixel in effects
     bool single; //Will be default initialized to 0 if omitted from the section definition in your code
+                 //I've looked it up, it seems to be true, although some sources say it will be undefined
+                 //But so far it's worked in all my code....
+                 //You can't add a default value (ie single = false) b/c the base Arduino compiler doesn't like it (ok for ESP boards tho)
+
     //support for direction of segment section, not implemented elsewhere
-    //avoid using due to large increase in memory usage
-    //instead, if you have a section facing the wrong way, define each pixel as a section, placing them in the order you want
+    //avoid using due to increase in memory usage
+    //instead, if you have a section facing the wrong way, use a negative section length, with the final pixel as the start pixel
     //bool direct;
-    //segmentSection(uint16_t sp, uint16_t l): startPixel(sp), length(l), direct(true){}
-    //segmentSection(uint16_t sp, uint16_t l, boolean d): startPixel(sp), length(l), direct(d){}
 } ;
 
 //A section containing an array of pixel addresses. These do not have to be continuous.
 //example definition:
 //const PROGMEM uint16_t pixel_arr[] = {0, 2, 1};
-//segmentSecMix segmentSec = { pixel_arr, SIZE(pixel_arr) };
+//const PROGMEM segmentSecMix segmentSec = { pixel_arr, SIZE(pixel_arr) };
 //Segment segment0 = { segmentSec, true };
 struct segmentSecMix {
-    uint16_t *pixArr = nullptr;
+    uint16_t *pixArr;
     uint16_t length;
     //used to mark if the segment should be treated as a single pixel in effects
     bool single; //Will be default initialized to 0 if omitted from the section definition in your code
+                 //(see comment in segmentSecCont above)
 } ;
 
 #endif

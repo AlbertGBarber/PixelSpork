@@ -51,7 +51,7 @@ void RandRateCtrlPS::setRandomizer(uint16_t newBaseRate, int16_t newRangeMin, in
     setBaseRate(newBaseRate);
 }
 
-//End the current transition, effectively reseting the effect
+//End the current transition, effectively resetting the effect
 void RandRateCtrlPS::reset(){
     RC->rateReached = true;
 }

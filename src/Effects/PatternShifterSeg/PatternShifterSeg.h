@@ -69,8 +69,8 @@ Example calls:
     };
     shiftPatternPS basicPattern(basicPattern_arr, SIZE(basicPattern_arr), patternSegs);
 
-    PatternShifterSeg(mainSegments, basicPattern, palette1, 0, false, false, true, 100);
-    Will shift the "basicPattern" across the segment set using colors from palette1
+    PatternShifterSeg patternShifterSeg(mainSegments, basicPattern, cybPnkPal, 0, false, false, true, 100);
+    Will shift the "basicPattern" across the segment set using colors from cybPnkPal
     The background is blank
     The pattern is not repeated across segment lines or segments
     The segment shift direction is true (from first to last segment)

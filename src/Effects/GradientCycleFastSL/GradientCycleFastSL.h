@@ -32,21 +32,21 @@ it copies the color of the next line.
 So any changes you make to colors will only show up at the first line, and will be shifted along the segment set
 
 However, as a bonus, this effect supports random colored gradients
-where the colors for the gradients are choosen at random as the enter the strip
+where the colors for the gradients are chosen at random as the enter the strip
 This is controlled by the randMode setting
 
 Example calls: 
-    uint8_t pattern_arr = {0, 1, 4};
+    uint8_t pattern_arr = {0, 1, 2};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
-    GradientCycleFastSL(mainSegments, pattern, palette, 10, 100);
+    GradientCycleFastSL gradientCycleFast(mainSegments, pattern, cybPnkPal, 10, 100);
     Will do a gradient cycle from color 0, to color 1, to color 4, of the palette
     with 10 steps to each gradient, and a 100ms update rate
 
-    GradientCycleFastSL(mainSegments, palette, 10, 100);
+    GradientCycleFastSL gradientCycleFast(mainSegments, cybPnkPal, 10, 100);
     Will do a gradient cycle using the colors in the palette, with 10 steps to each gradient,and a 100ms update rate
 
-    GradientCycleFastSL(mainSegments, 3, 15, 80);
-    Will do a gradient cycle using 3 randomly choosen colors, with 15 steps to each gradient,and an 80ms update rate
+    GradientCycleFastSL gradientCycleFast(mainSegments, 3, 15, 80);
+    Will do a gradient cycle using 3 randomly chosen colors, with 15 steps to each gradient,and an 80ms update rate
     note this is not the same as setting randMode, it just makes a random palette
  
 Constructor Inputs:
@@ -54,7 +54,7 @@ Constructor Inputs:
                                           and the length of the array 
                                           (see patternPS.h)   
     palette(optional, see constructors) -- The repository of colors used in the pattern, or can be used as the pattern itself
-    numColors (optional, see constructors) -- The number of randomly choosen colors for the gradients
+    numColors (optional, see constructors) -- The number of randomly chosen colors for the gradients
     gradLength -- How many steps for each gradient
     rate -- The update rate (ms)
 
@@ -64,10 +64,10 @@ Functions:
     update() -- updates the effect
 
 Other Settings:
-    randMode (default 0) -- Sets the type of how colors are choosen:
-                         -- 0: Colors will be choosen in order from the pattern (not random)
-                         -- 1: Colors will be choosen completely at random
-                         -- 2: Colors will be choosen randomly from the pattern (will not repeat the same color in a row)
+    randMode (default 0) -- Sets the type of how colors are chosen:
+                         -- 0: Colors will be chosen in order from the pattern (not random)
+                         -- 1: Colors will be chosen completely at random
+                         -- 2: Colors will be chosen randomly from the pattern (will not repeat the same color in a row)
                          --                                                     (unless your pattern has the same color in a row, like { 2, 2, 3})
 
 Reference Vars:

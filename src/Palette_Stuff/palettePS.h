@@ -25,7 +25,7 @@ Contains a pointer to the array and the length of the array (number of palettes)
 
 Example declaration:
     (assuming you've already declared palette 1 and 2, etc)
-    palettePS *paletteArr[] = { &palette1, &palette2, etc};
+    palettePS *paletteArr[] = { &cybPnkPal, &palette2, etc};
     paletteSetPS paletteSet = {paletteArr, SIZE(paletteArr)};
 */
 struct paletteSetPS {
@@ -36,6 +36,11 @@ struct paletteSetPS {
     //Most palette functions take a palette pointer.
     palettePS *getPalette(uint8_t index){
         return paletteArr[ mod8(index, length) ];
+    };
+
+    //Sets the palette at the passed in array index (wraps so you always add the palette somewhere)
+    void setPalette(palettePS &palette, uint8_t index){
+        paletteArr[ mod8(index, length) ] = &palette;
     };
 };
 

@@ -18,7 +18,8 @@ Used to change the rainbow/gradient offset of a segment set (or group of segment
 The offset is changed at the passed in rate (ms), in the specified direction (true is positive)
 Note that by default effects update the offset by themselves, but the offset rate is limited to that of
 the effect (you can't update it faster than the effect updates)
-This utility is only needed if you need to update the offset at a faster rate.
+This utility is only needed if you need to update the offset at a faster rate, 
+and don't want just increase offsetStep in your segment set
 
 Note that because the offset is specific to a color mode ( see segDrawUtils::getPixelColor() )
 you need to specify a color mode for this Util. This should match the mode of whatever effect you want to run
@@ -41,12 +42,12 @@ ie use setDirect(), setRate(), setOffsetActive() instead of just changing direct
 (you can change colorMode directly since this is independent of the segmentSets)
 
 Example calls: 
-    SegOffsetCyclerPS(SegmentSet, 1, true, 30);
+    SegOffsetCyclerPS segOffsetCycler(mainSegments, 1, true, 30);
     Sets the offset using colorMode 1 in the forward direction at a rate of 30ms
     for a single segmentSet
 
-    SegmentSet *setArray[] = {&segmentSet1, &segmentSet2}
-    SegOffsetCyclerPS(setArray, SIZE(setArray), 4, false, 50);
+    SegmentSet *setArray[] = {&segmentSet1, &segmentSet2} //You'd have to define segmentSets 1 and 2 separately
+    SegOffsetCyclerPS SegOffsetCycler(setArray, SIZE(setArray), 4, false, 50);
     Sets the offset using colorMode 4 in the backwards direction at a rate of 50ms
     for an array of segmentSets (containing segmentSet1 and segmentSet2)
 

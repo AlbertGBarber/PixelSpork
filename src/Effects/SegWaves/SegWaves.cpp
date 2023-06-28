@@ -255,11 +255,11 @@ CRGB SegWaves::getNextColor(uint16_t segNum, uint16_t segNumRaw){
 //We then pick a new color to enter the segment set, which is stored in segColors[numSegs]
 //(one off the end of the segment set) This allows the color to transition onto the segments.
 //Random colors use the following modes:
-//    0: Colors will be choosen in order from the pattern (not random)
-//    1: Colors will be choosen completely at random
-//    2: Colors will be choosen at random from the palette,
+//    0: Colors will be chosen in order from the pattern (not random)
+//    1: Colors will be chosen completely at random
+//    2: Colors will be chosen at random from the palette,
 //       but the same color won't be repeated in a row
-//    3: Colors will be choosen randomly from the palette (allowing repeats)
+//    3: Colors will be chosen randomly from the palette (allowing repeats)
 //Color modes are supported, but the color is only set when it enters the segment set
 //So they won't change as they shift across the segments
 //If you want then to do that, don't use a random mode

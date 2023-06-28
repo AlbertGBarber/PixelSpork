@@ -73,19 +73,19 @@ An extra note: You technically cannot change the numTwinkles on the fly, since i
               youEffectName.twinkleSet->length = x;
 
 Example call: 
-    Twinkle2SLSeg(mainSegments, CRGB::Red, CRGB::Blue, 12, 50, 3, 2, 4, 5, 0, 70);
+    Twinkle2SLSeg twinkle2(mainSegments, CRGB::Red, CRGB::Blue, 12, 50, 3, 2, 4, 5, 0, 70);
     Will choose 12 segment lines (segMode 0) to fade to/from red each cycle, using a blue background, 
     There is a 50% chance an inactive line will become active each cycle
     There are 3 fade in and 4 fade out steps with ranges of 2 and 5 respectively
     The effect updates at a rate of 70ms
 
-    Twinkle2SLSeg(mainSegments, palette1, 0, 8, 100, 2, 0, 6, 0, 1, 60);
-    Will choose 8 segments (segMode 1) each cycle to fade to/from colors from palette1, using a blank background, 
+    Twinkle2SLSeg twinkle2(mainSegments, cybPnkPal, 0, 8, 100, 2, 0, 6, 0, 1, 60);
+    Will choose 8 segments (segMode 1) each cycle to fade to/from colors from cybPnkPal, using a blank background, 
     There is a 100% chance an inactive segment will become active each cycle
     There are 2 fade in and 6 fade out steps with ranges of 0 and 0 respectively
     The effect updates at a rate of 60ms
 
-    Twinkle2SLSeg(mainSegments, 0, 12, 20, 2, 0, 2, 0, 3, 80);
+    Twinkle2SLSeg twinkle2(mainSegments, 0, 12, 20, 2, 0, 2, 0, 3, 80);
     Will choose 12 individual pixels (segMode 2) to fade to/from random colors, using a blank background, 
     (note this sets randMode = 1)
     There is a 20% chance an inactive line will become active each cycle
@@ -93,7 +93,7 @@ Example call:
     The effect updates at a rate of 80ms
 
 Constructor Inputs:
-    palette(optional, see constructors) -- The palette from which colors will be choosen randomly
+    palette(optional, see constructors) -- The palette from which colors will be chosen randomly
     color(optional, see constructors) -- The color that the twinkles will be set to
     numTwinkles -- The maximum amount of random twinkles that can be active at one time
     bgColor -- The color of the background, this is what twinkles will fade to and from

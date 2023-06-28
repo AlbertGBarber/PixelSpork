@@ -18,8 +18,9 @@ pass blendPalette to your effects to use the blended palette
 The PaletteBlenderPS update rate is a pointer, and can be bound externally, like in other effects
 
 Example calls: 
-    PaletteBlenderPS(startPalette, endPalette, false, 50, 100);
+    PaletteBlenderPS PaletteBlender(startPalette, endPalette, false, 50, 100);
     Blends from the start palette to the end palette once (no looping), using 50 steps, with 100ms between each step
+    Note, you'll have to create your own start and end palettes
 
 Constructor Inputs:
     startPalette -- The palette the blendPalette will start as

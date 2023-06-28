@@ -141,7 +141,7 @@ void particleUtilsPS::setParticleSetProp(particleSetPS &particleSet, uint8_t pro
 }
 
 //Sets a particle's startPosition to the passed in value
-//if rand is true, it will be choosen randomly up to the passed in position
+//if rand is true, it will be chosen randomly up to the passed in position
 //(generally use the SegmentSet length as the position for rand)
 void particleUtilsPS::setParticleSetPosition(particleSetPS &particleSet, uint8_t partNum, uint16_t position, bool rand){
     if(rand){
@@ -177,9 +177,9 @@ void particleUtilsPS::setParticleSetSize(particleSetPS &particleSet, uint8_t par
 }
 
 //sets the type of a particle's trail (see particle.h for trail types)
-//if you pass in a trailType > 4 (the highest trail type) the trails will be choosen randomly from the 
+//if you pass in a trailType > 4 (the highest trail type) the trails will be chosen randomly from the 
 //first three trail types (0, 1, 2)
-//If you want a specific set of trail types choosen randomly, use setParticleSetTrailRand()
+//If you want a specific set of trail types chosen randomly, use setParticleSetTrailRand()
 void particleUtilsPS::setParticleSetTrailType(particleSetPS &particleSet, uint8_t partNum, uint8_t trailType){
     if(trailType > 4){
         trailType = random8(3);
@@ -197,7 +197,7 @@ void particleUtilsPS::setAllTrailRand(particleSetPS &particleSet, bool noTrails,
 }
 
 //sets the type of a particle's trail (see particle.h for trail types) randomly according to the passed in flags
-//each flag allows a trail type to be choosen randomly
+//each flag allows a trail type to be chosen randomly
 //Flags:
 //noTrails -- trail type 0
 //oneTrail -- trail type 1
@@ -210,7 +210,7 @@ void particleUtilsPS::setTrailRand(particleSetPS &particleSet, uint8_t partNum, 
     //booleans = 1 for true and 0 for false, so we will randomly pick from as many true flags as we have
     uint8_t randVal = random8(noTrails + oneTrail + twoTrail + revTrail + infTrail) + 1;
 
-    //with the random value choosen, we need to match it to a trail
+    //with the random value chosen, we need to match it to a trail
     //we go over each trail flag in order, reducing the randVal at each flag if it's set
     //once randVal is 0, we've reached the trail type that matches the randVal
     //Think of it like an extended while loop, where we searching for the randVal, but only incrementing if the trail flag is set

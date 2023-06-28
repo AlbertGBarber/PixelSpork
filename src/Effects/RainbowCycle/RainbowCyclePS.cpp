@@ -1,14 +1,14 @@
 #include "RainbowCyclePS.h"
 
-RainbowCyclePS::RainbowCyclePS(SegmentSet &SegSet, uint16_t Length, bool Direction, uint16_t Rate):
-    length(Length), direct(Direction), SegSet(SegSet)
+RainbowCyclePS::RainbowCyclePS(SegmentSet &SegSet, uint16_t Length, bool Direct, uint16_t Rate):
+    length(Length), direct(Direct), SegSet(SegSet)
     {    
         init(Rate);
 	}
 
 //Does a rainbow cycle of length 255
-RainbowCyclePS::RainbowCyclePS(SegmentSet &SegSet, bool Direction, uint16_t Rate):
-    direct(Direction), SegSet(SegSet)
+RainbowCyclePS::RainbowCyclePS(SegmentSet &SegSet, bool Direct, uint16_t Rate):
+    direct(Direct), SegSet(SegSet)
     {    
         length = 255;
         init(Rate);

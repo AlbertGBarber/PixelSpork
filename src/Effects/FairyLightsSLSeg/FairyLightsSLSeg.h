@@ -5,7 +5,7 @@
 #include "GeneralUtils/generalUtilsPS.h"
 
 /* 
-Colors a number of segment lines (or segments) on at a time, turning them off depending on the mode choosen
+Colors a number of segment lines (or segments) on at a time, turning them off depending on the mode chosen
 Meant to be similar to classic twinkling fairy lights
 The color of the lines (twinkles) be set to a single color, chosen randomly, of picked from a palette 
 Just run an example and you'll see what I mean
@@ -32,24 +32,24 @@ Requires an uint16_t array and CRGB array of length NumTwinkles to work, make su
 If you turn fillBG on the off, make sure to also turn off reDrawAll
 
 Example calls: 
-    FairyLightsSLSeg(mainSegments, palette, 5, 0, 0, 1, 150);
-    Will choose 5 segments (segMode 1) to cycle to/from colors choosen from the palette, using a blank background, 
-    Each segment will be turned on one at a time, before reseting them all at once (mode 0), with 150ms between each cycle
+    FairyLightsSLSeg fairyLights(mainSegments, palette, 5, 0, 0, 1, 150);
+    Will choose 5 segments (segMode 1) to cycle to/from colors chosen from the palette, using a blank background, 
+    Each segment will be turned on one at a time, before resetting them all at once (mode 0), with 150ms between each cycle
     (segments are used over segment lines because segMode is true)
 
-    FairyLightsSLSeg(mainSegments, CRGB::Red, 10, CRGB::Blue, 1, 0, 100);
-    Will choose 10 lines (segMode 0) to set to red before reseting, using a blue background, 
+    FairyLightsSLSeg fairyLights(mainSegments, CRGB::Red, 10, CRGB::Blue, 1, 0, 100);
+    Will choose 10 lines (segMode 0) to set to red before resetting, using a blue background, 
     The lines will be turned on one at a time, and then off one at a time (mode 1), with 100ms between each cycle
 
-    FairyLightsSLSeg(mainSegments, 20, 0, 2, 3, 80);
+    FairyLightsSLSeg fairyLights(mainSegments, 20, 0, 2, 3, 80);
     Will choose 20 pixels (segMode 2) each cycle to set to random colors, using a blank background, 
     (note this sets randMode = 1)
     Each cycle, a new line will be turned on, while an old is turned off (mode 2), with 80ms in between each cycle
 
 Constructor Inputs:
-    palette(optional, see constructors) -- the palette from which colors will be choosen randomly
-    color(optional, see constructors) -- the color that the randomly choosen twinkles will be set to
-    numTwinkles -- The amount of random twinkles choosen for twinkling
+    palette(optional, see constructors) -- the palette from which colors will be chosen randomly
+    color(optional, see constructors) -- the color that the randomly chosen twinkles will be set to
+    numTwinkles -- The amount of random twinkles chosen for twinkling
     bgColor -- The color of the background, this is what twinkles will fade to and from
     tMode -- The twinkling mode for the effect (see above for descriptions)
     segMode -- Sets if twinkles will be drawn on segment lines, whole segments or individual pixels
@@ -59,7 +59,7 @@ Constructor Inputs:
 Functions:
     setSingleColor(Color) -- Sets the effect to use a single color for the twinkles, will restart the effect
     reset() -- Resets the startup variables, you probably don't need to ever call this
-    setNumTwinkles(newNumTwinkles) -- sets an new number of twinkles to be choosen each cycle, will reset the current set of twinkles
+    setNumTwinkles(newNumTwinkles) -- sets an new number of twinkles to be chosen each cycle, will reset the current set of twinkles
     setSegMode(newSegMode) -- Sets if twinkles will be drawn on segment lines, whole segments or individual pixels
                               (See segMode notes above) (will reset the current set of twinkles)
     genPixelSet() -- creates a new group of twinkles for twinkling (you shouldn't need to call this)
@@ -80,7 +80,7 @@ Flags:
 
 Reference Vars:
     segMode -- (see constructor notes above) set using setSegMode()
-    numTwinkles -- The amount of random twinkles choosen for twinkling, set using setNumTwinkles()
+    numTwinkles -- The amount of random twinkles chosen for twinkling, set using setNumTwinkles()
     cycleNum -- How many twinkles have been drawn (resets once numTwinkles updates have been done)
 */
 class FairyLightsSLSeg : public EffectBasePS {

@@ -43,66 +43,66 @@ of those earlier in the set. This means that when two particles pass each other,
 over the earlier one.
 You can adjust this behavior by turning on "blend", which will add particle colors together as they pass by each other
 However this does have two draw backs:
-1: Due to the way particle trails are drawn, this forces the background to be re-drawn each update cycle,
-  which may have a performance impact depending on your strip length, update rate, etc
-2: For colored backgrounds, the particles colors are added to the background colors.
-  This will in most cases significantly change the particle colors 
-  For example, blue particles running on a red background will appear purple (blue +  red = purple)
-  This can be used to create some nice effects, (like ocean-ish of lava-ish looking things),
-  But overall I do not recommend using blend for colored backgrounds
-3: Using blend on segment sets with lines of un-equal length may look weird, because
-  pixels may be added to many times where multiple lines converge/overlap
+    1: Due to the way particle trails are drawn, this forces the background to be re-drawn each update cycle,
+    which may have a performance impact depending on your strip length, update rate, etc
+    2: For colored backgrounds, the particles colors are added to the background colors.
+    This will in most cases significantly change the particle colors 
+    For example, blue particles running on a red background will appear purple (blue +  red = purple)
+    This can be used to create some nice effects, (like ocean-ish of lava-ish looking things),
+    But overall I do not recommend using blend for colored backgrounds
+    3: Using blend on segment sets with lines of un-equal length may look weird, because
+    pixels may be added to many times where multiple lines converge/overlap
 
 Making a particle set:
-A particle set is a struct consisting of an array of particles (technically pointers to particles)
-and a length (the number of particles in the array)
+    A particle set is a struct consisting of an array of particles (technically pointers to particles)
+    and a length (the number of particles in the array)
 
-For example lets make a particle: particlePS particle1 = {0, true, 80, 1, 1, 5, true, 0}
-Based on particlePS.h: this is a particle that starts at pixel 0, is moving forward along the strip at a rate of 80ms,
-has a size of 1 and a single trail behind the particle of length 5. It will bounce at each end of the strip.
-It will be colored using the 0th element in whatever palette it is matched with
+    For example lets make a particle: particlePS particle1 = {0, true, 80, 1, 1, 5, true, 0}
+    Based on particlePS.h: this is a particle that starts at pixel 0, is moving forward along the strip at a rate of 80ms,
+    has a size of 1 and a single trail behind the particle of length 5. It will bounce at each end of the strip.
+    It will be colored using the 0th element in whatever palette it is matched with
 
-Now we stick it in a set: 
-particlePS *particleArr[] = { &particle1 };
-particleSetPS particleSet = {particleArr, SIZE(particleArr)};
+    Now we stick it in a set: 
+    particlePS *particleArr[] = { &particle1 };
+    particleSetPS particleSet = {particleArr, SIZE(particleArr)};
 
-we could then pass this particleSet to this effect and it would animate the particle.
+    we could then pass this particleSet to this effect and it would animate the particle.
 
-You can have any number of particles, each with their own properties running on the strip.
-The functions in particleUtilsPS.h let you manipulate particle properties easily 
+    You can have any number of particles, each with their own properties running on the strip.
+    The functions in particleUtilsPS.h let you manipulate particle properties easily 
 
-Because making particles manually is tedious, this effect features a constructor for automatically making a set of particles
-including choosing properties at random. I break this down in the constructor inputs below.
-The created particle set will be bound to the particleSet pointer in the effect, so you can manipulate it from outside
+    Because making particles manually is tedious, this effect features a constructor for automatically making a set of particles
+    including choosing properties at random. I break this down in the constructor inputs below.
+    The created particle set will be bound to the particleSet pointer in the effect, so you can manipulate it from outside
 
-Please note the following bounce behavior of particles:
-For a particle to bounce, it must reverse it's direction once it hits either end of the SegmentSet
-However, how/when it bounces is a matter of opinion. I have opted for the following:
-The particle only bounces when it's main body (not trail) reaches an end point.
-Both the front and rear trails wrap back on themselves as the particle bounces
-Ie the head of the trail moves back down the strip, opposite the direction of the particle
-The rear trail is always drawn last.
-In practice this means that particles with two trails mimics the classic "cylon" scanner look, where the front of the 
-trail moves disappears off the strip (it is actually wrapping back, but is over written by the rear trail, which is drawn after)
-While for particles with only a rear trail, it naturally fades as like it would for a physical streamer/flame/etc
-Finally, for particles with only a front trail the trail also wraps back, but under the particle,
-this does look a little weird, but there's not a good real world approximation to this kind of particle, so w/e.
-For particles where the body size is larger than one, when bounce happens, the entire body reverses direction at once
-This is not visually noticeable, and makes coding easier. But it does mean there's no "center" of a particle
+    Please note the following bounce behavior of particles:
+    For a particle to bounce, it must reverse it's direction once it hits either end of the SegmentSet
+    However, how/when it bounces is a matter of opinion. I have opted for the following:
+    The particle only bounces when it's main body (not trail) reaches an end point.
+    Both the front and rear trails wrap back on themselves as the particle bounces
+    Ie the head of the trail moves back down the strip, opposite the direction of the particle
+    The rear trail is always drawn last.
+    In practice this means that particles with two trails mimics the classic "cylon" scanner look, where the front of the 
+    trail moves disappears off the strip (it is actually wrapping back, but is over written by the rear trail, which is drawn after)
+    While for particles with only a rear trail, it naturally fades as like it would for a physical streamer/flame/etc
+    Finally, for particles with only a front trail the trail also wraps back, but under the particle,
+    this does look a little weird, but there's not a good real world approximation to this kind of particle, so w/e.
+    For particles where the body size is larger than one, when bounce happens, the entire body reverses direction at once
+    This is not visually noticeable, and makes coding easier. But it does mean there's no "center" of a particle
 
 Example calls: 
     using the particleSet defined above:
-    ParticlesSL(mainSegments, particleSet, palette, CRGB::Red);
+    ParticlesSL particles(mainSegments, particleSet, cybPnkPal, CRGB::Red);
     Will animate the single particle as described above, placing it on a red background
 
-    ParticlesSL(mainSegments, palette3, 0, 3, 2, 60, 50, 1, 3, 2, 3, 0, 2, palette3.length, true);
+    ParticlesSL particles(mainSegments, cybPnkPal, 0, 3, 2, 60, 50, 1, 3, 2, 3, 0, 2, cybPnkPal.length, true);
     Creates a set of three particles that will run on a blank background with the following properties:
-    The particle directions will be choosen at random
+    The particle directions will be chosen at random
     They will have a maximum speed of 60ms, up to 110ms (60 + 50)
     The will have a minimum size of 1, up to 4 (1 + 3)
     They will have two trails of length 3 and no variations in length
-    Their bounce properties will be choosen at random
-    Their colors will be choosen at random from palette3
+    Their bounce properties will be chosen at random
+    Their colors will be chosen at random from cybPnkPal
 
 Constructor inputs for creating a particle set:
     palette -- The palette than will be used for the particle colors 
@@ -122,7 +122,7 @@ Constructor inputs for creating a particle set:
              pass in any number > 1 to set this randomly
     colorIndex -- The index of the color in the palette the particles will be
                  If setting randomly, pass in the length of the palette
-    randColor -- If the colors are to be choosen randomly from the palette (up to the value passed in for colorIndex)
+    randColor -- If the colors are to be chosen randomly from the palette (up to the value passed in for colorIndex)
 
 Trail Modes:
     Taken from particlePS.h:
