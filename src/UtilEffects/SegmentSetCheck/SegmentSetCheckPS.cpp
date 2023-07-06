@@ -34,6 +34,12 @@ void SegmentSetCheckPS::update(){
     if( ( currentTime - prevTime ) >= *rate ) {
         prevTime = currentTime;
         
+        //If we're starting a new test we need to clear the segment set
+        if(testStart){
+            segDrawUtils::turnSegSetOff(SegSet);
+            testStart = false;
+        }
+        
         if(mode == 0 && testMode != 1){
             numSegs = SegSet.numSegs;
             totSegLen = SegSet.getTotalSegLength(segNum);
@@ -101,7 +107,8 @@ void SegmentSetCheckPS::nextStage(){
         //wrapping back to 0 as we advance
         mode = addmod8(mode, 1, 2);
     }
+    //Reset test variables to begin a new test stage
     pixelCount = 1;
     segNum = 0;
-    segDrawUtils::turnSegSetOff(SegSet);
+    testStart = true;
 }

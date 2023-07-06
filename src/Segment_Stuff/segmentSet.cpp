@@ -205,23 +205,3 @@ bool SegmentSet::checkSegFreq(uint8_t freq, uint16_t segNum, bool startAtFirst){
 	//testNum % freq
 	return (mod16PS(testNum, freq) == 0 && segNum < numSegs);
 }
-
-//attempts to adjust the current brightness to the passed in brightness
-//FastLed only allows you to dim/brighten leds by a certain percent (out of 255) from their current color
-//so to get to the new brightness level, we need to adjust the brightness relative to the current brightness
-//since all brightness values are a value out of 255, the adjustment should be the difference between the 
-//current and new brightness
-//we then dim/brighten based on the sign of the difference
-void SegmentSet::setBrightness(uint8_t newBrightness){
-	if( newBrightness == brightness){
-		return;
-	}
-	//abs((int16_t)(255 - (int16_t)(newBrightness * 255)/ brightness)) ?
-	uint8_t percentDiff = abs(newBrightness - brightness);
-	if(newBrightness < brightness){
-		fadeToBlackBy(leds, ledArrSize, percentDiff);
-	} else {
-		fadeLightBy(leds, ledArrSize, percentDiff);
-	}
-	brightness = newBrightness;
-}

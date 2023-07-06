@@ -332,7 +332,8 @@ This should not be common. And in the case you'd like to do this, just use two s
 
 //Brightness:
 //"brightness" sets the brightness of the SegmentSet (relative to the overall strip brightness) 
-//255 -> same brightness as all the global FastLED brightness setting
+//255 -> same brightness as all the global FastLED brightness setting 
+(so a segment set brightness setting of 127 would be 1/2 as bright as the rest of the strip)
 //DO NOT use this in effects, it is meant as a set-up once type of control
 //Note that effectFader will change this value during fades (but should reset to the original once done)
 */
@@ -344,7 +345,7 @@ class SegmentSet {
 	    uint8_t
 			rainbowVal = 255, 	//HSV style value for the rainbows drawn on the SegmentSet
 			rainbowSatur = 255, //HSV style saturation for the rainbows drawn on the SegmentSet
-	  		brightness = 255, 	//brightness of the segment (relative to the overall strip brightness) 
+	  		brightness = 255, 	//brightness of the segment (**relative** to the overall strip brightness) 
 		  				  		//255 = same brightness as strip
 						  		//DO NOT use this in effects, it is meant as a set-up once type of control
 						  		//Note that effectFader will change this value during fades (but should reset to the original once done)
@@ -421,8 +422,7 @@ class SegmentSet {
 			setAllSegDirection(bool direction),
 			setSegDirection(uint16_t segNum, bool direct),
 			flipSegDirectionEvery(uint8_t freq, bool startAtFirst),
-			setSegDirectionEvery(uint8_t freq, bool direction, bool startAtFirst),
-			setBrightness(uint8_t newBrightness);
+			setSegDirectionEvery(uint8_t freq, bool direction, bool startAtFirst);
 	  
 	private:		
 		bool

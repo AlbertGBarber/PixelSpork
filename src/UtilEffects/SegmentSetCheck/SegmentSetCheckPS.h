@@ -66,6 +66,9 @@ class SegmentSetCheckPS : public EffectBasePS {
             pixelCount = 1,
             totSegLen;
         
+        bool
+            testStart = true;
+        
         void 
             nextStage();
 };

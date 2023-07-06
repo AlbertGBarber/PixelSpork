@@ -34,7 +34,7 @@ Setup, Running, and Resetting:
         EffectSetFaderPS setFader(&effectSet, 3000); //(run time 3000ms)
     
     Finally, in the Arduino setup() function, you'll want to add the setFader to the effArray in the first index:
-        effArray[0] = &setFader;
+        effectSet.setEffect(&setFader, 0);
     This adds the setFader to the effectSet, so that the fader will be updated at the same time as the other effects.
 
     !!!It's IMPORTANT that the fader is placed in the array before any effects, otherwise, you'll see a flash when the 
