@@ -165,7 +165,7 @@ class EffectSetPS {
                         //so that you only use the bit you need
             effectDestLimit = 0; //The destruct limit for the effect array (see notes above)
 
-        uint16_t 
+        unsigned long
             runTime, //run time of the effect effectArr (ms), passing 0 will set it as infinite
             startTime = 0, //The time (ms) the first update() was called, for reference
             timeElapsed = 0; //the elapsed time (ms), for reference

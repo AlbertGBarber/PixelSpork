@@ -117,9 +117,7 @@ class EffectSetFaderPS : public EffectBasePS {
     private:
         unsigned long
             currentTime,
-            prevTime = 0;
-        
-        uint16_t
+            prevTime = 0,
             *runTime = nullptr,
             *setTimeElap;
         

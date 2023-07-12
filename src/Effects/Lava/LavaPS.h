@@ -50,8 +50,8 @@ Example calls:
     at an update rate of 10ms
 
 Constructor inputs: 
-    palette (optional, see constructors) -- A custom palette passed to the effect, the default is the 
-                                            lava colors palette encoded below
+    palette (optional, see constructors) -- A custom palette passed to the effect, is a pointer. 
+                                            Will be bound to the lavaPalette if omitted.
     numColors (optional, see constructors) -- How many colors will be in the randomly created palette
     blendSteps (optional, see constructors) -- Sets how many steps are used to blend between each color
                                                Basically changes how fast the colors blend
@@ -72,6 +72,8 @@ Other Settings:
     rainVal (default 255) -- "value" value for rainbow mode
     hueRateOrig (default 235) -- Default hue shifting time (ms), does a complete hue cycle ~every min (only relevant for rainbow mode)
     *hueRate (default bound to hueRateOrig) -- The hue shifting time (ms). It's a pointer so you can bind it externally (only relevant for rainbow mode)
+    paletteTemp -- Storage for any randomly created palettes 
+                   (will be bound to the effect palette if the random color constructor was used)
 
 Reference vars:
     hueOffset -- The amount of offset during rainbow mode (resets at 255) (see rainbow mode notes above)
@@ -116,6 +118,7 @@ class LavaPS : public EffectBasePS {
             lavalPalette_arr[5] = { CRGB::DarkRed, CRGB::Maroon, CRGB::Red, CRGB::Orange, CRGB(245, 202, 10) };
         
         palettePS
+            lavaPalette = {lavalPalette_arr, SIZE(lavalPalette_arr)}, //the default lava palette for the effect
             *palette = nullptr,
             paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
             
@@ -138,9 +141,6 @@ class LavaPS : public EffectBasePS {
             totSegLen,
             numSegs,
             pixelNum;
-        
-        bool
-            randPaletteCreated;
         
         CRGB 
             colorOut;

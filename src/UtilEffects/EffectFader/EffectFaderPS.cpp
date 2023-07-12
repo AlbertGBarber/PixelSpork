@@ -112,7 +112,7 @@ void EffectFaderPS::resetBrightness() {
 //     Then, we adjust the brightness of each segment set by the total brighness change so far
 //     capping the change to the max or min value if needed
 //     This means that if the effect set has multiple effects sharing the same segment set,
-//     the segment set's brighness is always set to one value,
+//     the segment set's brightness is always set to one value,
 //     rather than being changed for every effect in the set.
 void EffectFaderPS::update() {
     if (!done) {

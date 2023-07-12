@@ -4,10 +4,11 @@
 LavaPS::LavaPS(SegmentSet &SegSet, uint16_t Rate):
     SegSet(SegSet)
     {    
-        paletteTemp = {lavalPalette_arr, SIZE(lavalPalette_arr)};
-        palette = &paletteTemp;
+        palette = &lavaPalette; //set the effect palette to the lava palette
         blendSteps = 150;
         blendScale = 80;
+        //Fill in the temp palette in case the use switches to it
+        paletteTemp = paletteUtilsPS::makeRandomPalette(3);
         init(Rate);
 	}
 
@@ -15,8 +16,9 @@ LavaPS::LavaPS(SegmentSet &SegSet, uint16_t Rate):
 LavaPS::LavaPS(SegmentSet &SegSet, uint16_t BlendSteps, uint16_t BlendScale, uint16_t Rate):
     SegSet(SegSet), blendSteps(BlendSteps), blendScale(BlendScale)
     {    
-        paletteTemp = {lavalPalette_arr, SIZE(lavalPalette_arr)};
-        palette = &paletteTemp;
+        palette = &lavaPalette; //set the effect palette to the lava palette
+        //Fill in the temp palette in case the use switches to it
+        paletteTemp = paletteUtilsPS::makeRandomPalette(3);
         init(Rate);
 	}
 
@@ -24,28 +26,22 @@ LavaPS::LavaPS(SegmentSet &SegSet, uint16_t BlendSteps, uint16_t BlendScale, uin
 LavaPS::LavaPS(SegmentSet &SegSet, palettePS &Palette, uint16_t BlendSteps, uint16_t BlendScale, uint16_t Rate):
     SegSet(SegSet), palette(&Palette), blendSteps(BlendSteps), blendScale(BlendScale)
     {    
-        paletteTemp = {lavalPalette_arr, SIZE(lavalPalette_arr)};
+        //Fill in the temp palette in case the use switches to it
+        paletteTemp = paletteUtilsPS::makeRandomPalette(3);
         init(Rate);
 	}
 
-//constructor for a custom palette
+//constructor for a random palette
 LavaPS::LavaPS(SegmentSet &SegSet, uint8_t numColors, uint16_t BlendSteps, uint16_t BlendScale, uint16_t Rate):
     SegSet(SegSet), blendSteps(BlendSteps), blendScale(BlendScale)
     {    
         paletteTemp = paletteUtilsPS::makeRandomPalette(numColors);
         palette = &paletteTemp;
-        //since we're created a random palette using new, we'll need to flag it for
-        //deletion at in the destructor
-        randPaletteCreated = true;
         init(Rate);
 	}
 
 LavaPS::~LavaPS(){
-    //Only delete the temp palette color array if it was created randomly
-    //otherwise we'd be deleting the lava colors array
-    if(randPaletteCreated){
-        free(paletteTemp.paletteArr);
-    }
+    free(paletteTemp.paletteArr);
 }
 
 void LavaPS::init(uint16_t Rate){

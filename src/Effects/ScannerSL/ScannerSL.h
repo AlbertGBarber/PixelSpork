@@ -187,6 +187,10 @@ class ScannerSL : public EffectBasePS {
             update(void);
     
     private:
+        unsigned long
+            currentTime,
+            prevTime = 0;
+
         int8_t
             trailDirectionAdj,
             directStep;
@@ -208,10 +212,6 @@ class ScannerSL : public EffectBasePS {
             numSegs,
             pixelNum,
             getTrailLedLoc(bool trailDirect, uint8_t trailPixelNum, uint16_t maxPosition);
-
-        unsigned long
-            currentTime,
-            prevTime = 0;
         
         bool
             direction,
