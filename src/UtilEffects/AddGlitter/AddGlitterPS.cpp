@@ -71,19 +71,20 @@ void AddGlitterPS::advanceGlitterArr(){
 void AddGlitterPS::update(){
     currentTime = millis();
 
+    //Every glitterRate period we get new glitter locations
+    if( ( currentTime - prevGlitterTime ) >= *glitterRate){
+        prevGlitterTime = currentTime;
+        if(glitterMode == 0){
+            fillGlitterArr();
+        } else {
+            advanceGlitterArr();
+        }
+    }
+
+    //Drawn the glitter on the strip at the effect's rate    
     if( ( currentTime - prevTime ) >= *rate ) {
         prevTime = currentTime;
 
-        //Every glitterRate period we get new glitter locations
-        if( ( currentTime - prevGlitterTime ) >= *glitterRate ){
-            prevGlitterTime = currentTime;
-            if(glitterMode == 0){
-                fillGlitterArr();
-            } else {
-                advanceGlitterArr();
-            }
-        }
-        
         //Drawn the glitter on the strip
         for(uint16_t i  = 0; i < glitterNum; i++){
             segDrawUtils::setPixelColor(SegSet, glitterLocs[i], *glitterColor, 0, 0, 0);

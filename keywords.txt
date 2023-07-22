@@ -20,10 +20,10 @@ pixelInfoPS		KEYWORD3
 #######################################
 
 AddGlitterPS	KEYWORD1
-ColorModeFillPS	KEYWORD1
 EffectFaderPS	KEYWORD1
 EffectSetPS	KEYWORD1
 EffectSetFaderPS	KEYWORD1
+JustShowPS	KEYWORD1
 PaletteBlenderPS	KEYWORD1
 PaletteCyclePS	KEYWORD1
 PaletteSingleCyclePS	KEYWORD1
@@ -43,6 +43,7 @@ PacificaHuePalPS	KEYWORD1
 BreathPS	KEYWORD1
 BreathEyeSL	KEYWORD1
 ColorMeltSL	KEYWORD1
+ColorModeFillPS	KEYWORD1
 ColorWipeSec	KEYWORD1
 ColorWipeSLSeg	KEYWORD1
 CrossFadeCyclePS	KEYWORD1
