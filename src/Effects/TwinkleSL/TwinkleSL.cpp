@@ -38,7 +38,10 @@ void TwinkleSL::init(uint8_t FadeInSteps, uint8_t FadeOutSteps, CRGB BgColor, ui
     bindSegPtrPS();
     bindClassRatesPS();
     bindBGColorPS();
+    //Set the steps, this will also create the twinkle color and location arrays
     setSteps(FadeInSteps, FadeOutSteps);
+    //Since the twinkle color and location arrays have been created, we need to record their size as the current maximum
+    numTwinklesMax = numTwinkles;
     reset();
 }
 
@@ -100,29 +103,47 @@ void TwinkleSL::reset(){
 }
 
 //sets the number of fade in and out steps (min value of 1)
-//it's easier to set the both together since we need to recreate the location and color arrays whenever we set either of them
-//(only resets the arrays if the either of the new step numbers are different than the current number)
+//Will re-create the twinkle arrays if the new total number of steps (fadeInSteps + fadeOutSteps) is greater than the current number of steps
+//This also resets the effect
 void TwinkleSL::setSteps(uint8_t newFadeInSteps, uint8_t newFadeOutSteps){
-    if(fadeInSteps != newFadeInSteps || fadeOutSteps != newFadeOutSteps){
-        fadeInSteps = newFadeInSteps;
-        if(fadeInSteps < 1){
+    
+    //set the number of fade in/out steps (min of 1 each)
+    fadeInSteps = newFadeInSteps;
+    if(fadeInSteps < 1){
         fadeOutSteps = 1; 
-        }
+    }
 
-        fadeOutSteps = newFadeOutSteps;
-        if(fadeOutSteps < 1){
+    fadeOutSteps = newFadeOutSteps;
+    if(fadeOutSteps < 1){
         fadeOutSteps = 1; 
-        }
+    }
+    
+    //We only need to make new twinkle arrays if the current ones aren't large enough
+    //This helps prevent memory fragmentation by limiting the number of heap allocations
+    //but this may use up more memory overall.
+    totFadeSteps = fadeInSteps + fadeOutSteps;
+    if(totFadeSteps > totFadeStepsMax){
+        totFadeStepsMax = totFadeSteps;
         initTwinkleArrays();
     }
 }
 
 //sets the number of random pixels
-//(Will reset the effect if the new number of pixels is different than the current number)
+//Will reset the effect if the new number of twinkles is different than the current number
 void TwinkleSL::setNumTwinkles(uint16_t newNumTwinkles){
-    if(numTwinkles != newNumTwinkles){
+    
+    //We only need to make new twinkle arrays if the current ones aren't large enough
+    //This helps prevent memory fragmentation by limiting the number of heap allocations
+    //but this may use up more memory overall.
+    if( alwaysResizeObjPS || (newNumTwinkles > numTwinklesMax) ){
+        numTwinklesMax = newNumTwinkles;
         numTwinkles = newNumTwinkles;
         initTwinkleArrays();
+    } else if(numTwinkles != newNumTwinkles){
+        //If the new number of twinkles is different than the current number, 
+        //we have to reset() to clear any that may no longer be updated
+        numTwinkles = newNumTwinkles;
+        reset();
     }
 }
 

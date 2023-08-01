@@ -133,6 +133,7 @@ Constructor Inputs:
 Functions:
     setupFireworks(maxFireworks, maxSparks) -- Create the data structures for a set of fireworks
                                                You should call this if you ever want to change maxNumFireworks or maxNumSparks
+                                               Will also clear any active fireworks from the segment set by filling in the background
     update() -- updates the effect
 
 Other Settings:

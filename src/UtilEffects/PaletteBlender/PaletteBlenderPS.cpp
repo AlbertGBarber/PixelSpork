@@ -50,15 +50,20 @@ void PaletteBlenderPS::reset(){
 
 //creates the blend palette and the color storage arrays
 void PaletteBlenderPS::setupBlendPalette(uint8_t newBlendPaletteLength){
-    //if the new blend palette will be the same length as the current blend palette we don't need to make a new one
-    if(newBlendPaletteLength != blendPaletteLength){
+    //We only need to make a new blend palette if the current one isn't large enough
+    //This helps prevent memory fragmentation by limiting the number of heap allocations
+    //but this may use up more memory overall.
+    if( alwaysResizeObjPS || (newBlendPaletteLength > blendPaletteMaxLen) ){
+        blendPaletteMaxLen = newBlendPaletteLength;
         //delete the current blendPalette array of colors to free up memory
         //then create a new one, and pass that to a palette
-        //this has to be done this way so that the blendPalette array doesn't vanish after this function is finished
-        blendPaletteLength = newBlendPaletteLength;
         free(blendPalette_arr);
-        blendPalette_arr = (CRGB*) malloc(blendPaletteLength * sizeof(CRGB));
-        blendPalette = {blendPalette_arr, blendPaletteLength};
+        blendPalette_arr = (CRGB*) malloc( blendPaletteMaxLen * sizeof(CRGB) );
+        blendPalette = {blendPalette_arr, blendPaletteMaxLen};
+    } else {
+        //if the new blend palette length is less than the current length,
+        //we can adjust the length of the palette to "hide" the extra colors
+        blendPalette.length = newBlendPaletteLength;
     }
     update(); //update once to fill in the blendPalette
 }

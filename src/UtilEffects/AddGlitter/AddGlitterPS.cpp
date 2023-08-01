@@ -23,10 +23,18 @@ AddGlitterPS::~AddGlitterPS(){
 }
 
 //creates an array of glitter locations of length newNum
-void AddGlitterPS::setGlitterNum(uint16_t newNum){
-    glitterNum = newNum;
-    free(glitterLocs);
-    glitterLocs = (uint16_t*) malloc(glitterNum * sizeof(uint16_t));
+void AddGlitterPS::setGlitterNum(uint16_t newGlitterNum){
+    glitterNum = newGlitterNum;
+
+    //We only need to make a new glitter array if the current one isn't large enough
+    //This helps prevent memory fragmentation by limiting the number of heap allocations
+    //but this may use up more memory overall.
+    if( alwaysResizeObjPS || (newGlitterNum > glitterNumMax) ){
+        glitterNumMax = newGlitterNum;
+        free(glitterLocs);
+        glitterLocs = (uint16_t*) malloc(glitterNumMax * sizeof(uint16_t));
+    }
+
     fillGlitterArr();
 }
 

@@ -69,7 +69,7 @@ void RollingWavesSL2::setPattern(patternPS *newPattern){
 //ie for a palette length 5, the pattern would be 
 //{0, 1, 2, 3, 4}
 void RollingWavesSL2::setPaletteAsPattern(){
-    patternTemp = generalUtilsPS::setPaletteAsPattern(*palette);
+    generalUtilsPS::setPaletteAsPattern(patternTemp, *palette);
     pattern = &patternTemp;
     setTotalEffectLength();
 }
@@ -89,8 +89,15 @@ void RollingWavesSL2::setTotalEffectLength(){
 //!!! You should call this if you ever change the segment set
 void RollingWavesSL2::buildLineArr(){
     numSegs = SegSet.numSegs;
-    free(nextLine);
-    nextLine = (uint16_t*) malloc(numSegs * sizeof(uint16_t));
+    
+    //We only need to make a new nextLine array if the current one isn't large enough
+    //This helps prevent memory fragmentation by limiting the number of heap allocations
+    //but this may use up more memory overall.
+    if( alwaysResizeObjPS || (numSegs > numSegsMax) ){
+        numSegsMax = numSegs;
+        free(nextLine);
+        nextLine = (uint16_t*) malloc(numSegs * sizeof(uint16_t));
+    }
 
     //fetch some core vars
     numLines = SegSet.numLines;

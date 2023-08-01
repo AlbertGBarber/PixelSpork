@@ -54,11 +54,19 @@ struct particlePS {
 //most of the time you are manipulating these rather than individual particles directly
 //most of the utility functions in particleUtilsPS.h focus on working with particles in particleSets
 //to declare particleSet:
+    //I highly recommend using the particleUtils buildParticleSet() function to create particle sets.
+    //Just remember you must free the set's memory using freeParticleSet() once you are finished with it.
+
+    //To create a set manually:
     //particlePS *particleArr[] = { &particle1, &particle2, etc}; //can leave this blank and fill it in using buildParticleSet() below
-    //particleSetPS particleSet = {particleArr, SIZE(particleArr)};
+    //particleSetPS particleSet = {particleArr, SIZE(particleArr), SIZE(particleArr)};
+    //The second SIZE() is used to record the maximum size of the particle array for memory management.
+    //It should always be the same as the actual size of the array. 
 struct particleSetPS {
     particlePS **particleArr; //pointer to an array of particle pointers
     uint8_t length; //the size of the particle array (num of particles)
+
+    uint8_t maxLength; //the maximum length of the particle array set (used for memory management)
 
     //returns the pointer to a particle at the specified index
     particlePS *getParticle(uint8_t index){

@@ -102,6 +102,7 @@ class Fire2012Seg : public EffectBasePS {
         
         uint16_t
             *heatSegStarts = nullptr,
+            maxNumLeds = 0, //used for tracking the memory size of the heat arrays
             heatSecStart,
             heatIndex,
             segLength,

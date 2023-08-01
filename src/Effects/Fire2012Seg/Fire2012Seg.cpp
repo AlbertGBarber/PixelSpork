@@ -19,29 +19,38 @@ Fire2012Seg::~Fire2012Seg(){
 //resets the effect and creates new heat arrays
 //call this if you change segment sets or sections
 void Fire2012Seg::reset(){
-    free(heat);
-    free(heatSegStarts);
-
     numSegs = SegSet.numSegs;
     numLeds = SegSet.numLeds;
     
-    //create the heat array to store temperatures
-    heat = (uint8_t*) malloc(numLeds * sizeof(uint8_t));
-    for(uint16_t i = 0; i < numLeds; i++){
-        heat[i] = 0;
+    //create the heat array to store temperatures of each line point
+    //We only need to make a new heat array if the current one isn't large enough
+    //This helps prevent memory fragmentation by limiting the number of heap allocations
+    //but this may use up more memory overall.
+    if( alwaysResizeObjPS || (numLeds > maxNumLeds) ){
+        maxNumLeds = numLeds;
+        free(heat);
+        heat = (uint8_t*) malloc(numLeds * sizeof(uint8_t));
+        
+        //For storing the local starting points for each segment's heat
+        //(see comments below)
+        free(heatSegStarts);
+        heatSegStarts = (uint16_t*) malloc(numSegs * sizeof(uint16_t));
     }
 
     //The heat array works by storing heat values at points on the strip
-    //For speed, the heat values for the whole SegSet
-    //are stored in one array, using offsets to ensure we only work on the section that
-    //corresponds to the current segment
+    //For speed, the heat values for the whole SegSet are stored in one array, 
+    //using offsets to ensure we only work on the section that corresponds to the current segment
     //the offsets are stored in the heatSegStarts in order of the segments
     uint16_t segmentSetLength = 0;
-    heatSegStarts = (uint16_t*) malloc(numSegs * sizeof(uint16_t));
     // get the total SegSet length, and set the starting offsets
     for (uint16_t i = 0; i < numSegs; i++) {
         heatSegStarts[i] = segmentSetLength; // the start offsets are just the lengths of each segment
         segmentSetLength += SegSet.getTotalSegLength(i);
+    }
+    
+    //Reset the heats in the heat array
+    for(uint16_t i = 0; i < numLeds; i++){
+        heat[i] = 0;
     }
 }
 

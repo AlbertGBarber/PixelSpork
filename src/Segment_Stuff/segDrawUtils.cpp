@@ -123,7 +123,7 @@ uint16_t segDrawUtils::getSegmentPixel(SegmentSet &SegSet, uint16_t segNum, uint
 
 //turns all pixel in a segment set off
 void segDrawUtils::turnSegSetOff(SegmentSet &SegSet){
-    fillSegSetColor(SegSet, colorUtilsPS::black, 0);
+    fillSegSetColor(SegSet, 0, 0);
 }
 
 //fills and entire segment set with a color

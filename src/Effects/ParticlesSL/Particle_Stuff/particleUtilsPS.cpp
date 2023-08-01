@@ -36,7 +36,7 @@ particleSetPS particleUtilsPS::buildParticleSet(uint8_t numParticles, uint16_t m
 
     //particlePS **particleArr = new particlePS*[numParticles];
     particlePS **particleArr = (particlePS**) malloc(numParticles * sizeof(particlePS*));
-    particleSetPS newParticleSet = { particleArr, numParticles };
+    particleSetPS newParticleSet = { particleArr, numParticles, numParticles };
 
     //create a new set of particles
     for(uint8_t i = 0; i < numParticles; i++ ){
@@ -280,9 +280,11 @@ void particleUtilsPS::freeParticleSet(particleSetPS &particleSet){
 }
 
 //Frees all the particles pointers in a particleSet, should only be used if the particles were generated using malloc()
+//Note that this frees all particles up to the maxLength of the set's particle array. 
+//This should be the actual memory size of the array.
 //!!!DO NOT call this if the particle set was not created using malloc() or buildParticleSet()
 void particleUtilsPS::freeAllParticles(particleSetPS &particleSet){
-    for(uint8_t i = 0; i < particleSet.length; i++ ){
+    for(uint8_t i = 0; i < particleSet.maxLength; i++ ){
         freeParticle(particleSet, i);
     }
 }

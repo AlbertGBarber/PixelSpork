@@ -37,7 +37,7 @@ This is controlled by the randMode setting
 
 Example calls: 
     uint8_t pattern_arr = {0, 1, 2};
-    patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
+    patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
     GradientCycleFastSL gradientCycleFast(mainSegments, pattern, cybPnkPal, 10, 100);
     Will do a gradient cycle from color 0, to color 1, to color 4, of the palette
     with 10 steps to each gradient, and a 100ms update rate

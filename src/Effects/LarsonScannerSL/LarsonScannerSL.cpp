@@ -19,8 +19,8 @@ LarsonScannerSL::LarsonScannerSL(SegmentSet &SegSet, uint8_t ScanType, CRGB scan
 LarsonScannerSL::~LarsonScannerSL(){
     scannerInst->~ParticlesSL();
     //Free all particles and the particle array pointer
+    particleSet.length = 2; //set the particle set to it's maximum length (see setScanType())
     particleUtilsPS::freeParticleSet(particleSet);
-    free(particleSet.particleArr);
 }
 
 //changes the color mode of the scanner
@@ -57,13 +57,20 @@ void LarsonScannerSL::setScanType(uint8_t newScanType){
     scanType = newScanType;
 
     //Free all particles and the particle array pointer
+    //(we will immediately create a new set of the same size)
     particleUtilsPS::freeParticleSet(particleSet);
-
+     
+    //Create a particle for the scanner particles.
+    //Note that we always create a set with 2 particles (the max used by any of the modes)
+    //and then "hide" any extra particles by changing the set's length.
+    //This helps prevent memory fragmentation by always storing the same sized set.
     scannerInst->blend = false;
     if(scanType == 0){
-        particleSet = particleUtilsPS::buildParticleSet(1, numLines, true, *rate, 0, eyeSize, 0, 2, trailLength, 0, bounce, 0, false);
+        particleSet = particleUtilsPS::buildParticleSet(2, numLines, true, *rate, 0, eyeSize, 0, 2, trailLength, 0, bounce, 0, false);
+        particleSet.length = 1; //We only use 1 particle in this mode, so limit the particle set to 1.
     } else if(scanType == 1){
-        particleSet = particleUtilsPS::buildParticleSet(1, numLines, true, *rate, 0, eyeSize, 0, 1, trailLength, 0, bounce, 0, false);
+        particleSet = particleUtilsPS::buildParticleSet(2, numLines, true, *rate, 0, eyeSize, 0, 1, trailLength, 0, bounce, 0, false);
+        particleSet.length = 1; //We only use 1 particle in this mode, so limit the particle set to 1.
     } else if(scanType == 2){
         particleSet = particleUtilsPS::buildParticleSet(2, numLines, true, *rate, 0, eyeSize, 0, 1, trailLength, 0, bounce, 0, false);
         particleUtilsPS::setParticleSetPosition(particleSet, 0, 0, false);
@@ -75,6 +82,8 @@ void LarsonScannerSL::setScanType(uint8_t newScanType){
     if(trailLength == 0){
         particleUtilsPS::setParticleSetProp(particleSet, 4, 0, 0, 0);
     }
+
+    scannerInst->setParticleSet(particleSet);
     scannerInst->reset();
 }
 

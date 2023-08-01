@@ -29,7 +29,7 @@ passing in a SegmentSet with only one segment containing the whole strip.
 
 Example calls: 
     uint8_t pattern_arr = {0, 1, 2};
-    patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
+    patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
     RollingWavesSL rollingWaves(mainSegments, pattern, cybPnkPal, 0, 7, 1, 0, 100);
     Will do a set of waves according to the pattern, with a blank background
     each wave will be 7 pixels long, using both types of trails
@@ -134,7 +134,7 @@ class RollingWavesSL : public EffectBasePS {
 
         patternPS 
             *pattern = nullptr,
-            patternTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
+            patternTemp = {nullptr, 0, 0}; //Must init structs w/ pointers set to null for safety
 
         palettePS
             *palette = nullptr,

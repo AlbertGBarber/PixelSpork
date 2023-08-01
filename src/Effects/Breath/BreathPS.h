@@ -42,8 +42,8 @@ randModes:
     4: Colors will be from the rainbow (the hue is offset by rainbowRate each time a color is chosen)
 
 Example calls: 
-    uint8_t pattern_arr = {0, 1, 4};
-    patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
+    uint8_t pattern_arr = {0, 1, 2};
+    patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
     BreathPS breath(mainSegments, pattern, cybPnkPal, 0, 10, 50);
     Does a breathing cycle using the colors from cybPnkPal, following the pattern above
     The background is blank
@@ -152,7 +152,7 @@ class BreathPS : public EffectBasePS {
         
         patternPS
             *pattern = nullptr,
-            patternTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety;
+            patternTemp = {nullptr, 0, 0}; //Must init structs w/ pointers set to null for safety;
         
         void 
             setPaletteAsPattern(),

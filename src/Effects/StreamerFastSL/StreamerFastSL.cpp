@@ -44,7 +44,7 @@ StreamerFastSL::~StreamerFastSL(){
 //ex : inputPattern is {1, 2, 4} with color length 2, and 1 spacing
 //the streamer pattern would be: {1, 1, 255, 2, 2, 255, 4, 4, 255}
 void StreamerFastSL::setPatternAsPattern(patternPS &inputPattern, uint8_t colorLength, uint8_t spacing){
-    patternTemp = generalUtilsPS::setPatternAsPattern(inputPattern, colorLength, spacing);
+    generalUtilsPS::setPatternAsPattern(patternTemp, inputPattern, colorLength, spacing);
     pattern = &patternTemp;
 }
 
@@ -53,7 +53,7 @@ void StreamerFastSL::setPatternAsPattern(patternPS &inputPattern, uint8_t colorL
 //ex: for palette of length 3, and a colorLength of 2, and spacing of 1
 //the final streamer pattern would be : {0, 0, 255, 1, 1, 255, 2, 2, 255}
 void StreamerFastSL::setPaletteAsPattern(uint8_t colorLength, uint8_t spacing){
-    patternTemp = generalUtilsPS::setPaletteAsPattern(*palette, colorLength, spacing);
+    generalUtilsPS::setPaletteAsPattern(patternTemp, *palette, colorLength, spacing);
     pattern = &patternTemp;
 }
 

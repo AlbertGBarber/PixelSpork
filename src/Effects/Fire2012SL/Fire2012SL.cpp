@@ -18,15 +18,23 @@ Fire2012SL::~Fire2012SL(){
 //resets the effect and creates new heat arrays
 //call this if you change segment sets or sections
 void Fire2012SL::reset(){
-    free(heat);
 
     //fetch some core vars
     numSegs = SegSet.numSegs;
     numLines = SegSet.numLines;
     uint16_t numPoints = numLines * numSegs;
-    
+
     //create the heat array to store temperatures of each line point
-    heat = (uint8_t*) malloc(numPoints * sizeof(uint8_t));
+    //We only need to make a new heat array if the current one isn't large enough
+    //This helps prevent memory fragmentation by limiting the number of heap allocations
+    //but this may use up more memory overall.
+    if( alwaysResizeObjPS || (numPoints > maxNumPoints) ){
+        maxNumPoints = numPoints;
+        free(heat);
+        heat = (uint8_t*) malloc(numPoints * sizeof(uint8_t));
+    }
+
+    //Reset the heats in the heat array
     for(uint16_t i = 0; i < numPoints; i++){
         heat[i] = 0;
     }

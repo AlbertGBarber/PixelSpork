@@ -53,7 +53,7 @@ For a similar effects you could try Lava or NoiseSL.
 Example call: 
 
     uint8_t pattern_arr = {0, 2, 1};
-    patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
+    patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
     ShiftingSeaSL shiftingSea(mainSegments, pattern, cybPnkPal, 20, 0, 3, 40);
     Will shift through the colors of cybPnkPal according to the pattern (color 0, then 2, then 1),
     with 20 steps between each shift, using mode 0
@@ -142,7 +142,7 @@ class ShiftingSeaSL : public EffectBasePS {
         
         patternPS
             *pattern = nullptr,
-            patternTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
+            patternTemp = {nullptr, 0, 0}; //Must init structs w/ pointers set to null for safety
         
         void
             setMode(uint8_t newMode),
@@ -164,6 +164,7 @@ class ShiftingSeaSL : public EffectBasePS {
 
         uint16_t
             numLines,
+            numLinesMax = 0, //used for tracking the memory size of the offset array
             curPatIndex,
             *offsets = nullptr,
             step = 0;

@@ -30,6 +30,7 @@ FireworksPS::FireworksPS(SegmentSet &SegSet, CRGB Color, uint8_t MaxNumFireworks
 	}
 
 FireworksPS::~FireworksPS(){
+    //Free all the dynamic arrays and the firework particle set
     particleUtilsPS::freeParticleSet(particleSetTemp);
     free(fireWorkActive);
     free(trailEndColors);
@@ -52,6 +53,7 @@ void FireworksPS::init(uint8_t maxNumFireworks, uint8_t maxNumSparks, uint16_t R
 
 //Create the data structures for a set of fireworks
 //You should call this if you ever want to change maxNumFireworks or maxNumSparks
+//Will reset all fireworks, and clear the segment set of any lingering particles by re-filling the background
 //Fireworks need three data structures:
     //A bool array fireworks[maxNumFireworks] that stores if a firework is active or not
     //A particleSet with a particle array of size maxNumFireworks * (maxNumSparks + 1)
@@ -62,52 +64,47 @@ void FireworksPS::init(uint8_t maxNumFireworks, uint8_t maxNumSparks, uint16_t R
 //To get the particles in a specific firework, we use fireworkNum * maxNumSparks + i where 0 -> i -> maxNumSparks
 //The minimum number of fireworks and sparks is 1
 void FireworksPS::setupFireworks(uint8_t newMaxNumFireworks, uint8_t newMaxNumSparks){
-    
-    //check for any active particles on the segment set
-    //we need to clear them before we make a new set of particles
-    bool clearStrip = false;
-    if(fireWorkActive){ //if we actually have a set of fireworks (the array is not a nullptr)
-        for (uint8_t i = 0; i < maxNumFireworks; i++) {
-            if( fireWorkActive && fireWorkActive[i] ){
-                clearStrip = true;
-                break;
-            }
-        }
-    }
 
-    //set the background if we found an active particle to clear the segment set
-    if( clearStrip || fillBG || blend ){
-        segDrawUtils::fillSegSetColor(SegSet, *bgColor, bgColorMode);
-    }
+    //Set the background to clear any lingering particles from the segment set
+    segDrawUtils::fillSegSetColor(SegSet, *bgColor, bgColorMode);
 
-    //must always have at least 1 firework spawning
+    //must always have at least 1 spark spawning
     if(newMaxNumSparks == 0){
         newMaxNumSparks = 1;
     }
 
-    //must always have at least 1 spark spawning
+    //must always have at least 1 firework spawning
     if(newMaxNumFireworks == 0){
         newMaxNumFireworks = 1;
     }
 
-    //delete and re-create all the arrays and the particle set
+    //Get how many firework particles we may have active
     maxNumFireworks = newMaxNumFireworks;
-    maxNumSparks = newMaxNumSparks + 1;
+    maxNumSparks = newMaxNumSparks + 1; //+1 for the center spark
     uint16_t numParticles = maxNumFireworks * maxNumSparks;
 
-    free(trailEndColors);
-    trailEndColors = (CRGB*) malloc(numParticles * sizeof(CRGB));
+    //We only need to make a new particle set and accompanying arrays if the current ones aren't large enough
+    //This helps prevent memory fragmentation by limiting the number of heap allocations
+    //but this may use up more memory overall.
+    if( alwaysResizeObjPS || (numParticles > particleSet->maxLength) ){
 
-    free(fireWorkActive);
-    fireWorkActive = (bool*) malloc(maxNumFireworks * sizeof(bool));
+        free(trailEndColors);
+        trailEndColors = (CRGB*) malloc(numParticles * sizeof(CRGB));
 
-    //Free all particles and the particle array pointer
-    particleUtilsPS::freeParticleSet(particleSetTemp);
+        free(fireWorkActive);
+        fireWorkActive = (bool*) malloc(maxNumFireworks * sizeof(bool));
 
-    //create a new particle set
-    particleSetTemp = particleUtilsPS::buildParticleSet(numParticles, 0, true, *rate, speedRange, size, sizeRange, 
-                                                        0, 0, 0, false, palette->length, true);
-    particleSet = &particleSetTemp;
+        //Free all particles and the particle array pointer
+        particleUtilsPS::freeParticleSet(particleSetTemp);
+
+        //create a new particle set
+        particleSetTemp = particleUtilsPS::buildParticleSet(numParticles, 0, true, *rate, speedRange, size, sizeRange, 
+                                                            0, 0, 0, false, palette->length, true);
+        particleSet = &particleSetTemp;
+    }
+    //Set the particle set length to match the number of particles
+    //This "hides" any unused particles from the rest of the effect
+    particleSet->length = numParticles;
 
     //set all the fireworks to inactive, ready to be spawned
     for (uint8_t i = 0; i < maxNumFireworks; i++) {

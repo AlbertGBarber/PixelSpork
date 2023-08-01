@@ -51,8 +51,8 @@ Notes:
 Example calls: 
     To declare palette set, use the paletteSet struct (see palettePS.h):
     palettePS *paletteArr[] = { &palette1, &palette2, etc};
-    paletteSetPS paletteSet = {paletteArr, SIZE(paletteArr)};
-    Note you'll have to create your own cybPnkPal and palette2
+    paletteSetPS paletteSet = {paletteArr, SIZE(paletteArr), SIZE(paletteArr)};
+    Note you'll have to create your own palette1 and palette2
 
     PaletteCyclePS paletteCycle(paletteSet, true, false, false, 50, 80);
     Blends between each palette in the array in order, looping back to the first palette at the end

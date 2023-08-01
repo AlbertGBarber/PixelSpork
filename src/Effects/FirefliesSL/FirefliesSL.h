@@ -107,6 +107,7 @@ Constructor Inputs:
 Functions:
     setupFireflies(maxNumFireflies) -- Create the data structures for a set of fireflies
                                        You should call this if you ever want to change maxNumFireflies
+                                       Will also clear any active fireflies from the segment set by filling in the background
     update() -- updates the effect
 
 Other Settings:

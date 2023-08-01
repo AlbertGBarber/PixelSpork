@@ -78,9 +78,11 @@ Example calls:
     The wipe direction is false, while the segWipeDir is true
     so wipes will go from the first to last segment, starting at the end of each segment
     The effect updates at 60ms
-
-    ColorWipeSeg colorWipeSeg(mainSegments, cybPnkPal, pattern1, 1, true, true, true, 60);
-    Will do a color wipe along mainSegment's segments using colors from cybPnkPal according to pattern1
+    
+    uint8_t pattern_arr = {0, 1, 2};
+    patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
+    ColorWipeSeg colorWipeSeg(mainSegments, cybPnkPal, pattern, 1, true, true, true, 60);
+    Will do a color wipe along mainSegment's segments using colors from cybPnkPal according to pattern
     The style is 1, each segment pixel will alternate colors according to the pattern.
     Alternate is true, so the wipes will alternate wipe directions for each segment.
     Both the wipe direction and segWipeDir are true.
@@ -197,7 +199,7 @@ class ColorWipeSeg : public EffectBasePS {
         
         patternPS
             *pattern = nullptr,
-            patternTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
+            patternTemp = {nullptr, 0, 0}; //Must init structs w/ pointers set to null for safety
 
         void 
             reset(),

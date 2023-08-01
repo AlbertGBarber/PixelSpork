@@ -66,11 +66,12 @@ Inputs Guide:
                                          can be active at one time because if you take 10 cycles to fade in-out total, then only 10 
                                          new twinkles can spawn before the first pixel is up again. 
 
-An extra note: You technically cannot change the numTwinkles on the fly, since it requires re-sizing an array, but you 
-              can set the inital number of twinkles higher than you need, and then adjust the length of the twinkleSetTemp
-              to be lower. The effect will only draw twinkles from the set up to it's length. You should turn on
-              filBG, so that if you reduce the number of twinkles you don't have any that are left in mid-fade on the strip.
-              youEffectName.twinkleSet->length = x;
+An extra note: You technically cannot change the numTwinkles on the fly, since it may require re-sizing the twinkleSet storage struct. 
+               However, the struct is only re-sized and reset if it needs to be bigger (ie numTwinkles is bigger than it's been for the effect before)
+               So you can set the inital number of twinkles higher than you need, and then adjust numTwinkles to be lower.
+              The effect will only draw twinkles from the set up to numTwinkles, but the twinkleSet always stays at its maximum size.
+              So you can increase or decrease numTwinkles with no ill effects.
+              However, you should turn on filBG, so that if you reduce the number of twinkles you don't have any that are left in mid-fade on the strip.
 
 Example call: 
     Twinkle2SLSeg twinkle2(mainSegments, CRGB::Red, CRGB::Blue, 12, 50, 3, 2, 4, 5, 0, 70);
@@ -109,8 +110,8 @@ Functions:
     setSingleColor(Color) -- Sets the effect to use a single color for the twinkles
     reset() -- Sets all twinkles to inactive and fills in the background
     setNumTwinkles(newNumTwinkles) -- Sets the maximum amount of random twinkles that can be active at one time,
-                                      will restart the effect if the new number is different from the current number
-                                      You can avoid calling this if you do the trick from my extra note in the inputs guide
+                                      will restart the effect if the new number is different from the current number.
+                                      You can avoid calling this if you do the trick from my extra note in the inputs guide above.
     setSegMode(newSegMode) -- Sets if twinkles will be drawn on segment lines, whole segments or individual pixels
                               (See segMode notes above) (will reset the effect if value is different from current value)
     update() -- updates the effect
@@ -129,10 +130,10 @@ Reference Vars:
     segMode -- (see notes above) set using setSegMode()
     
 Notes:
-    The twinkles are stored in a twinkleSet as part of the effect. The set is public to 
-    allow editing of its length (see note at end of inputs guide). 
+    The twinkles are stored in a twinkleSet as part of the effect. The set is public 
+    incase you need access to the individual twinkles for some reason.
     The more twinkles you have, the larger the twinkleSet is, so watch your memory usage.
-    For more on twinkle sets see twinkleStart.h
+    For more on twinkle sets see twinkleStarPS.h
 */
 class Twinkle2SLSeg : public EffectBasePS {
     public:

@@ -34,6 +34,7 @@ FirefliesSL::FirefliesSL(SegmentSet &SegSet, CRGB Color, uint8_t MaxNumFireflies
 
 
 FirefliesSL::~FirefliesSL(){
+    //Free all the dynamic arrays and the firefly particle set
     particleUtilsPS::freeParticleSet(particleSetTemp);
     free(trailEndColors);
     free(particlePrevPos);
@@ -52,37 +53,27 @@ void FirefliesSL::init(uint8_t maxNumFireflies, uint16_t Rate){
 
 //Create the data structures for a set of Fireflies (particles)
 //You should call this if you ever want to change maxNumFireflies
+//Will reset all fireflies, and clear the segment set of any lingering particles by re-filling the background
 //Fireflies need three data structures:
     //A particleSet with a particle array of size maxNumFireflies * (maxNumSparks + 1)
     //A CRGB array of trailEndColors[maxNumFireflies] to store the trail color for each particle
     //A uint16_t array of particlePrevPos[maxNumFireflies] to store the previous particle locations
 void FirefliesSL::setupFireflies(uint8_t newMaxNumFireflies){
 
-    //check for any active particles on the segment set
-    //we need to clear them before we make a new set of particles
-    bool clearStrip = false;
-    if(particleSet){ //if we already have a set of firefly particles (particleSet is not a nullptr)
-        for (uint8_t i = 0; i < maxNumFireflies; i++) {
-            if( particleSet->particleArr[i]->life > 0){
-                clearStrip = true;
-                break;
-            }
-        }
-    }
-
-    //set the background if we found an active particle to clear the segment set
-    if( clearStrip || fillBG || blend ){
-        segDrawUtils::fillSegSetColor(SegSet, *bgColor, bgColorMode);
-    }
+    //Set the background to clear any lingering particles from the segment set
+    segDrawUtils::fillSegSetColor(SegSet, *bgColor, bgColorMode);
+    
 
     //must always have at least 1 firefly spawning
     if(newMaxNumFireflies == 0){
         newMaxNumFireflies = 1;
     }
+    maxNumFireflies = newMaxNumFireflies;
 
-    //Only need to generate a new arrays for fireflies if the new number of flies is different from the current number 
-    if(maxNumFireflies != newMaxNumFireflies){
-        maxNumFireflies = newMaxNumFireflies;
+    //We only need to make a new particle set and accompanying arrays if the current ones aren't large enough
+    //This helps prevent memory fragmentation by limiting the number of heap allocations
+    //but this may use up more memory overall.
+    if( alwaysResizeObjPS || (maxNumFireflies > particleSet->maxLength) ){
 
         //delete and re-create all the arrays and the particle set
         free(trailEndColors);
@@ -101,6 +92,9 @@ void FirefliesSL::setupFireflies(uint8_t newMaxNumFireflies){
                                                             0, 0, 0, false, palette->length, true);
         particleSet = &particleSetTemp;
     }
+    //Set the particle set length to match the number of particles
+    //This "hides" any unused particles from the rest of the effect
+    particleSet->length = maxNumFireflies;
 
     //set all the Fireflies to inactive, ready to be spawned
     for (uint8_t i = 0; i < maxNumFireflies; i++) {

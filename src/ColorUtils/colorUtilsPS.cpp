@@ -2,6 +2,8 @@
 
 using namespace colorUtilsPS;
 
+uint8_t ratio = 0;
+
 //Returns a random color using a random hue and a limited random saturation
 //Seems to produce a good set of random colors, tending towards more pastel type colors
 //We don't randomize the value because doing so mostly just dims the output colors without significantly changing them
@@ -40,7 +42,7 @@ CRGB colorUtilsPS::wheel( uint16_t wheelPos, uint16_t rainbowOffset) {
 //returns a color that is dimmed by the ratio
 //the ratio is between 0 and 255, 255 being the total black
 CRGB colorUtilsPS::dimColor(const CRGB &startColor, uint8_t ratio){
-    return getCrossFadeColor(startColor, black, ratio);
+    return getCrossFadeColor(startColor, 0, ratio);
 }
 
 //returns a color that is blended/cross-faded between a start and end color according to the ratio of step/totalSteps

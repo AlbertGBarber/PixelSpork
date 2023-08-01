@@ -61,8 +61,16 @@ void ShiftingRainbowSeaSL::setGrouping(uint16_t newGrouping) {
 //re-builds the offset array with new values
 void ShiftingRainbowSeaSL::resetOffsets() {
     numLines = SegSet.numLines;
-    free(offsets);
-    offsets = (uint16_t*) malloc(numLines * sizeof(uint16_t));
+
+    //We only need to make a new offsets array if the current one isn't large enough
+    //This helps prevent memory fragmentation by limiting the number of heap allocations
+    //but this may use up more memory overall.
+    if( alwaysResizeObjPS || (numLines > numLinesMax) ){
+        numLinesMax = numLines;
+        free(offsets);
+        offsets = (uint16_t*) malloc(numLines * sizeof(uint16_t));
+    }
+    
     //255 is the maximum length of the rainbow
     uint8_t gradLengthTemp = gradLength;
     if(sMode == 0){

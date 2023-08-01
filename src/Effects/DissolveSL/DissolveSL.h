@@ -29,7 +29,7 @@ Each segment line will be filled in, rather than each pixel.
 
 Example calls: 
     uint8_t pattern_arr = {0, 1, 2};
-    patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
+    patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
     DissolveSL dissolve(mainSegments, pattern, cybPnkPal, 0, 150, 70);
     Will dissolve from color 0 in the palette to color 1, to color 4, etc using randMode 0 (see below) 
     with the number of leds set on one cycle increasing every 150ms with the effect updating every 70ms
@@ -131,7 +131,7 @@ class DissolveSL : public EffectBasePS {
         
         patternPS
             *pattern = nullptr,
-            patternTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety 
+            patternTemp = {nullptr, 0, 0}; //Must init structs w/ pointers set to null for safety 
 
         palettePS
             *palette = nullptr,
@@ -156,7 +156,7 @@ class DissolveSL : public EffectBasePS {
         uint16_t
             thresStartPoint = 0,
             numLines,
-            prevNumLines = 0,
+            maxNumLines = 0, //used for tracking the memory size of the pixelArray
             lineNum,
             numSpawned = 0,
             pixelNum;

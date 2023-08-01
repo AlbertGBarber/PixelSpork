@@ -43,8 +43,8 @@ Constructor Inputs:
 
 Functions:
     setSteps(newFadeInSteps, newFadeOutSteps) -- Sets the number of fade in and out steps
-                                                (Will reset the effect if the either of the number of steps 
-                                                 is different than the current number)
+                                                 (Will reset the effect if the new total number of steps (fadeInSteps + fadeOutSteps) 
+                                                 is greater than the current number of steps)
     setSingleColor(Color) -- Sets the effect to use a single color for the pixels, will restart the effect
     reset() -- Resets the startup variables, you probably don't need to ever call this
     setNumTwinkles(newNumTwinkles) -- sets an new number of pixels to be chosen each cycle, 
@@ -66,10 +66,11 @@ reference Vars:
 
 Notes:
     In order for the effect to work, it needs to keep track of all the active random pixels until they fade out
-    To do this it uses a pair of 2D uint16_t and CRGB arrays of size numTwinkles by (FadeInSteps + FadeOutSteps)
+    To do this it uses a pair of 2D uint16_t and CRGB arrays of size numTwinklesMax by (FadeInSteps + FadeOutSteps)
+    (numTwinklesMax is the maximum numTwinkles ever used, if you don't change numTwinkles, it will be numTwinkles)
     This takes up a good amount of ram, so try to limit your pixel number and fade lengths
     In practice, fewer pixels with longer fades will keep ram minimal, while also looking good
-    If you don;t have enough ram, check the TwinkleLowRam version of this effect
+    If you don't have enough ram, check the TwinkleLowRam version of this effect
     
     You cannot dynamically change the fade lengths or number of random pixels without restarting the effect
     It would be very complicated to allow this due to having to resize/copy the arrays, while also fading away
@@ -136,6 +137,7 @@ class TwinkleSL : public EffectBasePS {
             paletteLength,
             step,
             totalSteps = 0,
+            totFadeStepsMax = 0, //used for tracking the memory size of the led and color index arrays
             totFadeSteps;
 
         uint16_t
@@ -143,6 +145,7 @@ class TwinkleSL : public EffectBasePS {
             numLines,
             lineNum,
             pixelNum,
+            numTwinklesMax = 0, //used for tracking the memory size of the led and color index arrays
             **ledArray = nullptr;
 
         bool

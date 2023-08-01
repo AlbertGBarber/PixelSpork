@@ -173,6 +173,7 @@ class PaletteNoisePS : public EffectBasePS {
             prevHueTime = 0;
         
         uint8_t
+            paletteLenMax = 0,
             compStep,
             noiseData,
             noiseData2,

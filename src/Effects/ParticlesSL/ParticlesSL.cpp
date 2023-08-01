@@ -48,12 +48,20 @@ void ParticlesSL::init(CRGB BgColor){
 }
 
 //sets the effect to use a new particle set
-//we need to remake the trail end color array for the new particles
+//we need to remake the trail end color array if there are more particles than previously
 //to avoid having left over trails, we'll redraw the background
 void ParticlesSL::setParticleSet(particleSetPS &newParticleSet){
+    
+    //We only need to make a new trail end color array if the current one isn't large enough
+    //This helps prevent memory fragmentation by limiting the number of heap allocations
+    //but this may use up more memory overall.
+    if( alwaysResizeObjPS || (newParticleSet.maxLength > particleSet->maxLength) ){
+        free(trailEndColors);
+        trailEndColors = (CRGB*) malloc( (newParticleSet.maxLength) * sizeof(CRGB) );
+    }
+
     particleSet = &newParticleSet;
-    free(trailEndColors);
-    trailEndColors = (CRGB*) malloc( (particleSet->length) * sizeof(CRGB) );
+
     segDrawUtils::fillSegSetColor(SegSet, *bgColor, bgColorMode);
 }
 

@@ -1,9 +1,9 @@
 #ifndef EffectBasePS_h
 #define EffectBasePS_h
 
-#include "Include_Lists/SegmentFiles.h"
-
 //TODO: Add virtual reset() function (also add it to EffectSet), not all effects have reset()'s
+
+#include "Include_Lists/SegmentFiles.h"
 
 //macros
 

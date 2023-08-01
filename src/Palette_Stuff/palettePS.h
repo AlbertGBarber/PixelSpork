@@ -26,11 +26,16 @@ Contains a pointer to the array and the length of the array (number of palettes)
 Example declaration:
     (assuming you've already declared palette 1 and 2, etc)
     palettePS *paletteArr[] = { &cybPnkPal, &palette2, etc};
-    paletteSetPS paletteSet = {paletteArr, SIZE(paletteArr)};
+    paletteSetPS paletteSet = {paletteArr, SIZE(paletteArr), SIZE(paletteArr)};
+
+    The second SIZE() is used to record the maximum size of the palette array for memory management.
+    It should always be the same as the actual size of the array. 
 */
 struct paletteSetPS {
     palettePS **paletteArr;
     uint8_t length;
+
+    uint8_t maxLength; //the maximum length of the palette array (used for memory management)
 
     //Returns the pointer to a palette at the index in the palette set (wraps so you always get a palette)
     //Most palette functions take a palette pointer.

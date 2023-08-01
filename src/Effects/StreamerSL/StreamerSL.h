@@ -26,7 +26,8 @@ that automate the pattern creation, so you don't have to do it yourself (see con
 
 Note that while each entry in the pattern is a uint8_t,
 if you have a lot of colors, with long streamers, your patterns may be quite large
-so watch your memory usage.
+so watch your memory usage. Likewise, if you re-size the waves, the pattern may also be dynamically re-sized.
+(see alwaysResizeObjPS in Include_Lists -> GlobalVars, and the Effects Advanced Wiki Page -> Managing Memory Fragmentation)
 
 This effect has been adapted to use segment lines to allow 2D effects. 
 Note that this requires an array for storing some colors, so if you change the number of segments
@@ -49,7 +50,7 @@ Notes:
 
 Example calls: 
     uint8_t pattern_arr = {0, 255, 255, 255, 1, 1, 255, 255};
-    patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
+    patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
     StreamerSL streamer(mainSegments, pattern, cybPnkPal, 0, 30, 20);
     Will do a set of streamers using the first two colors in the palette
     The streamer will begin with 1 pixel of color 0, with three spaces after, followed by 2 pixels of color 1, followed by 2 spaces
@@ -57,7 +58,7 @@ Example calls:
     The streamers will blend forward, taking 30 steps, with 20ms between each step
 
     uint8_t pattern_arr = {1, 2, 3};
-    patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
+    patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
     StreamerSL streamer(mainSegments, pattern, cybPnkPal, 3, 4, 0, 0, 120);
     Will do a streamer using the first three colors of the palette (taken from the pattern)
     Each streamer will be length 3, followed by 4 spaces, bgColor is 0 (off)
@@ -89,7 +90,7 @@ Functions:
     reset() -- Restarts the streamer pattern, you should call this if you change segment sets as well.
     setPatternAsPattern(&inputPattern, colorLength, spacing) -- Takes an input pattern and creates a streamer pattern from it using the current palette
                                                                 Ex: uint8_t pattern_arr = {1, 2, 3};
-                                                                    patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
+                                                                    patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
                                                                     setPatternAsPattern(pattern, 3, 4) 
                                                                     Will do a streamer using the first three colors of the palette (taken from the pattern)
                                                                     Each streamer will be length 3, followed by 4 spaces
@@ -143,7 +144,7 @@ class StreamerSL : public EffectBasePS {
         
         patternPS
             *pattern = nullptr,
-            patternTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
+            patternTemp = {nullptr, 0, 0}; //Must init structs w/ pointers set to null for safety
         
         palettePS
             *palette = nullptr,
@@ -169,6 +170,7 @@ class StreamerSL : public EffectBasePS {
             patternLength,
             nextPatternIndex,
             numSegs,
+            numSegsMax = 0, ////used for tracking the memory size of the prevLineColors array
             numLines,
             numLinesLim,
             longestSeg,

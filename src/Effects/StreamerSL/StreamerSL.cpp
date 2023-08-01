@@ -62,7 +62,7 @@ void StreamerSL::init(CRGB BgColor, uint16_t Rate){
 //the streamer pattern would be: {1, 1, 255, 2, 2, 255, 4, 4, 255}
 //(255 will be set to the background color)
 void StreamerSL::setPatternAsPattern(patternPS &inputPattern, uint8_t colorLength, uint8_t spacing){
-    patternTemp = generalUtilsPS::setPatternAsPattern(inputPattern, colorLength, spacing);
+    generalUtilsPS::setPatternAsPattern(patternTemp, inputPattern, colorLength, spacing);
     pattern = &patternTemp;
 }
 
@@ -71,20 +71,26 @@ void StreamerSL::setPatternAsPattern(patternPS &inputPattern, uint8_t colorLengt
 //ex: for palette of length 3, and a colorLength of 2, and spacing of 1
 //the final streamer pattern would be : {0, 0, 255, 1, 1, 255, 2, 2, 255}
 void StreamerSL::setPaletteAsPattern(uint8_t colorLength, uint8_t spacing){
-    patternTemp = generalUtilsPS::setPaletteAsPattern(*palette, colorLength, spacing);
+    generalUtilsPS::setPaletteAsPattern(patternTemp, *palette, colorLength, spacing);
     pattern = &patternTemp;
 }
 
 //resets the streamer to it's original starting point
-//Also re-creates the prevLineColors array
+//Also re-creates the prevLineColors array if needed
 void StreamerSL::reset(){
     blendStep = 0;
     cycleNum = 0;
 
     numSegs = SegSet.numSegs;
-
-    free(prevLineColors);
-    prevLineColors = (CRGB*) malloc(numSegs*sizeof(CRGB));
+     
+    //We only need to make a new array if the current one isn't large enough
+    //This helps prevent memory fragmentation by limiting the number of heap allocations
+    //but this may use up more memory overall.
+    if( alwaysResizeObjPS || (numSegs > numSegsMax) ){
+        numSegsMax = numSegs;
+        free(prevLineColors);
+        prevLineColors = (CRGB*) malloc(numSegs*sizeof(CRGB));
+    }
 }
 
 //the main update function

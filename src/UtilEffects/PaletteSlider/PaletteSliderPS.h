@@ -52,7 +52,7 @@ Example calls:
     The blend will update at 80ms
 
     uint8_t pattern_arr = {0, 1, 3, 2};
-    patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
+    patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
     PaletteSliderPS paletteSlider(cybPnkPal, pattern, 2, 20, false, 80);
     Creates a slider palette of length 2, using cybPnkPal as the target palette
     The pattern will match the pattern above.
@@ -114,7 +114,7 @@ class PaletteSliderPS : public EffectBasePS {
         
         patternPS
             *pattern = nullptr,
-            patternTemp = {nullptr, 0}; //used when using the palette as the pattern, init as empty
+            patternTemp = {nullptr, 0, 0}; //used when using the palette as the pattern, init as empty
  
         void 
             setPaletteAsPattern(),
@@ -129,13 +129,14 @@ class PaletteSliderPS : public EffectBasePS {
             pauseStartTime;
         
         uint8_t 
+            sliderPalLenMax = 0,
+            sliderPalLen,
             ratio,
             startIndex,
             endIndex;
         
         uint16_t
             patternStep,
-            sliderPalLen,
             blendStep = 0;
         
         CRGB 

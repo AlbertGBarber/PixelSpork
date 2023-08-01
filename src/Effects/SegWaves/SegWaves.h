@@ -48,7 +48,8 @@ Also if you change the number of segments in your segment set, you'll need to re
 
 Note that while each entry in the pattern is a uint8_t,
 if you have a lot of colors, with long waves, your patterns may be quite large
-so watch your memory usage
+so watch your memory usage. Likewise, if you re-size the waves, the pattern may also be dynamically re-sized.
+(see alwaysResizeObjPS in Include_Lists -> GlobalVars, and the Effects Advanced Wiki Page -> Managing Memory Fragmentation)
 
 Likewise, the effect needs to store a CRGB array of size numSegs + 1 for random modes.
 
@@ -60,7 +61,7 @@ The bgColor is a pointer, so you can bind it to an external color variable.
 
 Example calls: 
     uint8_t pattern_arr = {0, 255, 255, 255, 1, 1, 255, 255};
-    patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
+    patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
     SegWaves segWaves(mainSegments, pattern, cybPnkPal, 0, 30, true, 20);
     Will do a set of waves using the first two colors in the palette
     The wave will begin with 1 pixel of color 0, with three spaces after, followed by 2 pixels of color 1, followed by 2 spaces
@@ -69,7 +70,7 @@ Example calls:
     The waves will move from the last segment to the first
 
     uint8_t pattern_arr = {1, 2, 3};
-    patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
+    patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
     SegWaves segWaves(mainSegments, pattern, cybPnkPal, 3, 4, 0, 0, false, 120);
     Will do a wave using the first three colors of the palette (taken from the pattern)
     Each wave will be length 3, followed by 4 spaces, bgColor is 0 (off)
@@ -117,7 +118,7 @@ Functions:
                         Re-creates the segColors array, as used by random modes
     setPatternAsPattern(&inputPattern, colorLength, spacing) -- Takes an input pattern and creates a wave pattern from it using the current palette
                                                                 Ex: uint8_t pattern_arr = {1, 2, 3};
-                                                                   patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
+                                                                   patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
                                                                    setPatternAsPattern(pattern, 3, 4) 
                                                                    Will do a wave using the first three colors of the palette (taken from the pattern)
                                                                    Each wave will be length 3, followed by 4 spaces
@@ -198,7 +199,7 @@ class SegWaves : public EffectBasePS {
         
         patternPS
             *pattern = nullptr,
-            patternTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety 
+            patternTemp = {nullptr, 0, 0}; //Must init structs w/ pointers set to null for safety 
         
         palettePS
             *palette = nullptr,
@@ -229,6 +230,7 @@ class SegWaves : public EffectBasePS {
             segNum,
             numSegs,
             numSegsLim,
+            numSegsMax = 0, //used for tracking the memory size of the segColors array
             handleDirect(uint16_t segNum);
         
         bool

@@ -131,6 +131,7 @@ class GlimmerSL : public EffectBasePS {
         uint16_t
             *fadePixelLocs = nullptr,
             glimArrLen,
+            glimArrLenMax = 0, //used for tracking the memory size of the glimmer arrays
             numLines,
             numSegs,
             pixelNum;

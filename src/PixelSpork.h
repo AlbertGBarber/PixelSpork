@@ -28,6 +28,8 @@
 #include "pins_arduino.h"
 #endif
 
+#include "./Include_Lists/GlobalVars/GlobalVars.h"
+
 #include "./Include_Lists/SegmentFiles.h"
 
 #include "./Include_Lists/PaletteFiles.h"

@@ -59,10 +59,10 @@ Constructor Inputs:
 Functions:
     setSingleColor(Color) -- Sets the effect to use a single color for the twinkles, will restart the effect
     reset() -- Resets the startup variables, you probably don't need to ever call this
-    setNumTwinkles(newNumTwinkles) -- sets an new number of twinkles to be chosen each cycle, will reset the current set of twinkles
+    setNumTwinkles(newNumTwinkles) -- Changes the number of twinkles, re-spawns them, and clears out any old twinkles by filling in the background
     setSegMode(newSegMode) -- Sets if twinkles will be drawn on segment lines, whole segments or individual pixels
                               (See segMode notes above) (will reset the current set of twinkles)
-    genPixelSet() -- creates a new group of twinkles for twinkling (you shouldn't need to call this)
+    spawnTwinkles() -- Creates a set of randomly placed twinkles based on the segMode (you shouldn't need to call this)
     update() -- updates the effect
 
 Other Settings:
@@ -72,7 +72,8 @@ Other Settings:
                            0: Picks colors from the palette
                            1: Picks colors at random
     fillBG (default false) -- sets the background to be redrawn every cycle, useful for bgColorModes that are dynamic
-    reDrawAll (default false) -- Will re-draw all the twinkles each cycle, is slower than default, but you need this if you want to layer this effect with another
+    reDrawAll (default false) -- Will re-draw all the twinkles each cycle, is slower than default,
+                                 but you need this if you want change the number of twinkles during runtime
                                 (is set true if fillBG is true)
 
 Flags:
@@ -109,9 +110,6 @@ class FairyLightsSLSeg : public EffectBasePS {
             colorMode = 0,
             bgColorMode = 0;
         
-        uint16_t
-            *twinkleSet = nullptr;
-        
         CRGB
             bgColorOrig,
             *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
@@ -129,7 +127,7 @@ class FairyLightsSLSeg : public EffectBasePS {
             setSingleColor(CRGB Color),
             setNumTwinkles(uint8_t newNumTwinkles),
             setSegMode(uint8_t newSegMode),
-            genPixelSet(),
+            spawnTwinkles(),
             update(void);
     
     private:
@@ -138,13 +136,14 @@ class FairyLightsSLSeg : public EffectBasePS {
             prevTime = 0;
         
         uint8_t
-            prevNumTwinkles = 0,
+            maxNumTwinkles = 0, //used for tracking the memory size of the twinkle arrays
             paletteLength,
             cycleLimit,
             loopStart,
             loopEnd;
         
         uint16_t
+            *twinkleSet = nullptr,
             twinkleRange;
         
         CRGB 

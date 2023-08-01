@@ -54,7 +54,7 @@ void ShiftingSeaSL::init(uint16_t Rate){
 //ie for a palette length 5, the pattern would be 
 //{0, 1, 2, 3, 4}
 void ShiftingSeaSL::setPaletteAsPattern(){
-    patternTemp = generalUtilsPS::setPaletteAsPattern(*palette);
+    generalUtilsPS::setPaletteAsPattern(patternTemp, *palette);
     pattern = &patternTemp;
     setTotalCycleLen();
 }
@@ -73,11 +73,21 @@ void ShiftingSeaSL::setGrouping(uint16_t newGrouping) {
     resetOffsets();
 }
 
-// re-builds the offset array with new values
+//Re-builds the offset array with new values
+//Will only re-size the array if it needs more room, 
+//so the can stay larger than needed if you switch to a smaller segment set
 void ShiftingSeaSL::resetOffsets() {
     numLines = SegSet.numLines;
-    free(offsets);
-    offsets = (uint16_t*) malloc(numLines * sizeof(uint16_t));
+
+    //We only need to make a new offsets array if the current one isn't large enough
+    //This helps prevent memory fragmentation by limiting the number of heap allocations
+    //but this may use up more memory overall.
+    if( alwaysResizeObjPS || (numLines > numLinesMax) ){
+        numLinesMax = numLines;
+        free(offsets);
+        offsets = (uint16_t*) malloc(numLines * sizeof(uint16_t));
+    }
+
     setTotalCycleLen();
     shiftingSeaUtilsPS::genOffsetArray(offsets, numLines, gradLength, grouping, totalCycleLength, sMode);
 }

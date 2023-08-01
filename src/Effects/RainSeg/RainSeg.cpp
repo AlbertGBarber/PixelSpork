@@ -73,39 +73,27 @@ void RainSeg::init(uint16_t Rate, uint8_t MaxNumDrops, CRGB BgColor){
     setupDrops(MaxNumDrops);
 }
 
-//Creates a new set of particles for the effect based on the passed in value 
-//for the max number of concurrent drops
-//If there are existing active particles they will be deleted and the background of the SegSet will be filled
+//Creates a new set of particles for the effect based on the passed in value for the max number of concurrent drops
+//You should call this if you want to change the number of drops or if you change the segment set
+//Note that all particles will be reset, and if bgPrefill is true, the background will be filled in to clear any active particles
 void RainSeg::setupDrops(uint8_t newMaxNumDrops){
 
     //must always have at least 1 drop spawning
     if(newMaxNumDrops == 0){
         newMaxNumDrops = 1;
     }
-
-    //check for any active particles on the segment set
-    //we need to clear them before we make a new set of particles
-    uint16_t numParticles = numSegs * maxNumDrops;
-    if(partActive){ //if the partActive array exists (isn't a nullptr)
-        for (uint8_t i = 0; i < numParticles; i++) {
-            if( partActive[i] ){
-                spawnOkTest = false;
-                break;
-            }
-        }
-    }
-
-    //set the background if we found an active particle
-    //to clear the segment set
-    if(!spawnOkTest || bgPrefill || fillBG){
-        segDrawUtils::fillSegSetColor(SegSet, *bgColor, bgColorMode);
-    }
+    maxNumDrops = newMaxNumDrops;
     
-    //delete and re-create all the arrays and the particle set (if needed)
-    if(maxNumDrops != newMaxNumDrops){
-        maxNumDrops = newMaxNumDrops;
-        numSegs = SegSet.numSegs;
-        numParticles = numSegs * maxNumDrops;
+    //Record the dimensions of the segment set
+    numSegs = SegSet.numSegs;
+    
+    //We need to know how many particles we need to store all the possible active drops for each segment
+    uint16_t numParticles = numSegs * newMaxNumDrops;
+    
+    //We only need to make a new particle set and accompanying arrays if the current ones aren't large enough
+    //This helps prevent memory fragmentation by limiting the number of heap allocations
+    //but this may use up more memory overall.
+    if( alwaysResizeObjPS || (numParticles > particleSet->maxLength) ){
 
         free(trailEndColors);
         trailEndColors = (CRGB*) malloc(numParticles * sizeof(CRGB));
@@ -120,10 +108,14 @@ void RainSeg::setupDrops(uint8_t newMaxNumDrops){
         particleSetTemp = particleUtilsPS::buildParticleSet(numParticles, 0, true, *rate, speedRange, size, sizeRange, 
                                                             trailType, trailSize, trailRange, false, palette->length, true);
         particleSet = &particleSetTemp;
-        //for trailType 6, we'll set the particle trails randomly based on the trail flags
-        if(trailType == 6){
-            particleUtilsPS::setAllTrailRand(*particleSet, noTrails, oneTrail, twoTrail, revTrail, infTrail);
-        }
+    }
+    //Set the particle set length to match the number of particles
+    //This "hides" any unused particles from the rest of the effect
+    particleSet->length = numParticles;
+
+    //for trailType 6, we'll set the particle trails randomly based on the trail flags
+    if(trailType == 6){
+        particleUtilsPS::setAllTrailRand(*particleSet, noTrails, oneTrail, twoTrail, revTrail, infTrail);
     }
 
     //set all the particles to inactive
@@ -136,7 +128,10 @@ void RainSeg::setupDrops(uint8_t newMaxNumDrops){
             setDropSpawnPos(particlePtr, i);
         }
     }
-    spawnOkTest = true;
+
+    //Flag the background to be filled to clear any leftover active particles
+    //This will only trigger the background to fill if bgPrefill is true.
+    bgFilled = false;
 }
 
 //sets the inital spawn position of a particle

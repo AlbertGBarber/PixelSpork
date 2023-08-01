@@ -123,7 +123,8 @@ class ShiftingRainbowSeaSL : public EffectBasePS {
         
         uint16_t
             *offsets = nullptr,
-            numLines;
+            numLines,
+            numLinesMax = 0; //used for tracking the memory size of the offset array
         
         void
             init(uint16_t Rate);

@@ -152,7 +152,7 @@ DimPow:
 
 Functions:
     reset() -- resets all particles to the starting locations
-    setParticleSet(particleSetPS *newParticleSet) -- sets the effect to use a new particle set
+    setParticleSet(particleSetPS *newParticleSet) -- Sets the effect to use a new particle set
     update() -- updates the effect 
 
 More functions for adjusting the particles on the fly can be found in particleUtilsPS.h/particleUtilsPS.cpp

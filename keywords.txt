@@ -125,16 +125,6 @@ twinkleStarPS		KEYWORD3
 twinkleSetPS		KEYWORD3
 
 #######################################
-# Palettes (Structs)
-#######################################
-
-pacificaPalettePS		KEYWORD3
-firePal		KEYWORD3
-firePalPink		KEYWORD3
-firePalBlue		KEYWORD3
-cybPnkPal		KEYWORD3
-
-#######################################
 # Methods and Functions
 #######################################	
 
@@ -147,7 +137,23 @@ qsubd			KEYWORD2
 qsuba			KEYWORD2
 
 #######################################
-# Constants
+# Constants (in GlobalVars.h)
 #######################################
 
 D_LED			LITERAL1
+
+#######################################
+# Global Variables and Constants (in GlobalVars.h)
+#######################################
+
+alwaysResizeObjPS	LITERAL1
+
+#######################################
+# Palettes (Structs) (in paletteListPS.h)
+#######################################
+
+pacificaPalettePS		KEYWORD3
+firePal		KEYWORD3
+firePalPink		KEYWORD3
+firePalBlue		KEYWORD3
+cybPnkPal		KEYWORD3

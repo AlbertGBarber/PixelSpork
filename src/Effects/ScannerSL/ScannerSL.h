@@ -9,136 +9,167 @@
 /* 
 This effect is similar to larson scanner, but gives you the option to use multiple colors and 
 automatically build more complex waves. 
-Basically the goal of this effect is to create "sonar" or "scanner" waves that travel across the segment set
+Basically the goal of this effect is to create "sonar" or "scanner" waves that travel across the segment set.
 Like with particles you can set the trail type, trail size, particle size, speed, etc 
-(see particlePS.h for more info on particles)
-You can set these properties on the fly, but all the particles share the same values.
+(see particlePS.h for more info on particles) but all the waves share the same values.
 
-Much of the code follows the same principles as ParticlesSL.h, but with the restriction that all particles
-have the same properties (speed, trails, etc), but can switch colors as part of the effect
-
-Particles can be set to:
-    *Either bounce or wrap at each segment set end
-    *Either change colors every time they bounce/wrap, every other time they bounce, or not at all.
-    *You can also set the colors to be chosen at random from the pattern using randMode
-
-The particle colors are set according to a passed in color pattern (or be set to copy the palette)
-
-Like larson scanner, there are constructor short cuts for creating classic scan types, 
-but in addition, I've included constructors for automatically creating sets of evenly spaced waves.
-All you need to do is set the number of waves and the constructor does the rest.
-
-Overall this lets you create a lot of neat "scanner' type effects.
-
-You can also use custom particle configurations be setting the particleSet directly.
+(See Inputs Guide below for more)
 
 The effect is fully compatible with colorModes.
 The background color is a pointer, so you can bind it externally as needed.
 
 The effect is setup to work using segment lines, so creating 2D effects is easy.
 
-Three scanner types are built in:
-    0: Like the classic cylon scanner, one particle with two trails moving back and forth
-    1: Like the cylon scanner, but only using one trail
-    2: Like one of the Kit Knight Rider scanners: two particles with single trails
-        That move back and forth, intersecting in the center of the strip
-        (note that this mode uses blend, see ParticlesPS.h for details)
+Inputs Guide:
+    The code is designed to pre-build a set of scanner waves for you. This allows you to create
+    classic scanner types, like the Cylon and Kitt scanners, but also gives you access to more complex scanning patterns.
+    
+    The makeWaveSet() Function:
+        The makeWaveSet() function both creates and positions a set of waves evenly across the segment set.
+        The function is automatically called as part of the constructors, so you only need to call it manually if you want to
+        make a new wave set. The inputs to the function are also used as inputs to the constructors:
+
+        numWaves -- How many scan waves will be created.
+
+        direction -- The starting direction for the waves (true = forward). The first wave will always use this direction.
+
+        alternate -- If true, the the wave starting directions will alternate with each wave
+                     ie, if direction is true, then the first wave will go forward, the next in reverse, etc
+
+        makeEndWave -- Sets how the waves are spaced:
+                       The first wave always starts at 0 + (it size)
+                       If you have a single wave, this has no effect. The wave always starts at 0.
+                       For multiple waves, if makeEndWave is true, then the waves will be spaced
+                       such that one wave starts at the end of the segment set.
+                       (note that if makeEndWave is true, you should also set alternate true, otherwise the end/start waves will overlap)
+                       If makeEndWave is false, then the waves will be spaced evenly across the segment set, starting from 0.
+                        
+                       For example, lets say I have 9 leds, and want three waves with size 1, no trails:
+
+                       start -- -- -- -- -- -- -- -- -- (each -- is an LED)
+
+                       If we set makeEndWave true, then the initial setup will look like:
+
+                       start ** -- -- -- ** -- -- -- ** (each ** is an wave)
+                       Evenly spaced, but making sure that one wave starts at the end (doing numLines / (numWaves - 1) for spacing)
+
+                       If makeEndWave is false, then the initial setup will look like:
+
+                       start ** -- -- ** -- -- ** -- -- (each ** is an wave)
+                       Evenly spaced (doing numLines / numWaves for spacing)
+        
+        Note that makeWaveSet() only sets where the waves start and their directions. 
+        
+        There are more settings for controlling how the waves bounce, change color, their size, etc.
+        These are also constructor inputs, but you are free to change them while the effect is running.
+        Note that all waves share these settings, if you want unique waves, you'll need to use the ParticlesPS effect.
+
+    Wave Settings:
+    
+        trailType -- The trail type of the waves (see particlePS.h) (1 for one trail, 2 for two trails, etc).
+
+        trailSize -- The length of the trails. Using 0 will turn off the trails for the waves, 
+                     and you'd need to turn them back on manually by setting the trailType for all the waves.
+
+        size -- The size of the main body of the waves (not the trails) (min value 1)
+
+        bounce -- If true, the waves will bounce back at the end of the segment set.
+                  If false the waves will wrap back to the start at each segment set end.
+    
+    Wave Colors:
+
+        *Wave colors are tied to the effect palette and pattern (you can set the palette as the pattern).
+        *Waves will either alternate colors every time they bounce/wrap or every other time they bounce, or never.
+        *Colors can be set to be chosen at random (see randModes below)
+
+        bounceChange -- If bounce is true:
+                            If true, the waves will change colors every time they bounce.
+                            If false then they will change every other time.
+                        If bounce is false:
+                            The waves will change colors every time they wrap to 0.
+                            (To lock wave colors use randMode 3)
+        
+        blend -- If true, then waves' colors will be blended together when they pass each other.
+
+You can also use custom wave configurations by setting the particleSet directly,
+but remember, the effect size and trail settings apply to all waves.
     
 randModes:
     0: Colors will be chosen in order from the pattern (not random)
     1: Colors will be chosen randomly from the pattern
-    2: Colors will be chosen at random from the pattern,
-       but the same color won't be repeated in a row
-    3: new colors will not be chosen, the particle colors will be locked to whatever they currently are.
+    2: Colors will be chosen at random from the pattern, but the same color won't be repeated in a row
+    3: New colors will not be chosen, the particle colors will be locked to whatever they currently are.
 
 Example calls: 
-    ScannerSL scanner(mainSegments, cybPnkPal, 0, 2, 3, 1, false, true, 80);
-    Will do a scanner in mode 3 (Kit) using colors from cybPnkPal.
+    ScannerSL scanner(mainSegments, CRGB::Red, 0, 2, 1, 5, 1, true, true, true, true, true, 80);
+    Will do a classic "Kitt" scanner, with 2 red particles moving back and forth, meeting in the middle of the segment set
     The background is blank.
-    The scan particles will have a trails of length 3, a body size of 1
-    The particles will wrap (not bounce), changing colors as they wrap
-    (bounceChange is true, but this doesn't effect particles that are wrapping)
+    The scan particles will have 1 trail of length 5, a body size of 1
+    The particles will start with alternating directions, one particle will start at each end of the segment set
+    they will bounce at each segment set end, and blend together when they meet
     The particles move at 80ms
 
-    ScannerSL scanner(mainSegments, cybPnkPal, 0, 2, 1, 5, 2, true, false, true, true, false, 80);
-    Will do a scanner, automatically creating a set of evenly spaced scanner particles
-    There will be two particles spaced evenly on the segment set
+    ScannerSL scanner(mainSegments, cybPnkPal, 0, 3, 2, 4, 2, true, false, false, false, true, false, 80);
+    Will do a scanner, automatically creating a set of 3 evenly spaced scanner particles
+    There will be 3 particles spaced evenly on the segment set (makeEndWave is false)
     The particles will take their colors from cybPnkPal, with a blank background.
-    Each particle will have 1 trail of length 5, with a body size of 2
+    Each particle will have 2 trails of length 4, with a body size of 2
     The particles will start in the forward direction (not set to alternate)
-    The particles will bounce at each end of the segment set, changing their colors each time
+    The particles will not bounce at each end of the segment set, and will wrap instead
+    (bounceChange is true, but doesn't matter for wrapping particles)
     Blending is turned off
     The particles move at 80ms
 
-    (note that there are two additional constructor types that use a pattern, these are 
-    the same as the above constructors, but a patternPS is included before the palette)
+    (note that there is an additional constructor that uses a pattern. This is 
+    the same as the above constructor, but a patternPS is included before the palette)
 
-Constructor inputs for using a default scan type:
-    pattern(optional, see constructors) -- The pattern used for the streamers, made up of palette indexes 
+Constructor inputs:
+    color(optional, see constructors) -- if used, the scan waves will all be a single color
+    pattern(optional, see constructors) -- The pattern used for the waves, made up of palette indexes 
     palette(optional, see constructors) -- The repository of colors used in the pattern
     bgColor -- The background color used for the effect.
-    scanType -- The type of scan type (see above)
-    trailSize -- The length of the trails. Using 0 will turn off the trails for the scanner.
-    size -- The size of the particles (min value 1)
-    bounce -- Sets if the particles will bounce or wrap at each segment set end
-    bounceChange -- Sets if the particles change colors every time they bounce (or every other time)
-    rate -- The update rate (ms) note that this is synced with all the particles.
-
-Constructor inputs for using the automated evenly spaced waves:
-    pattern(optional, see constructors) -- The pattern used for the streamers, made up of palette indexes 
-    palette(optional, see constructors) -- The repository of colors used in the pattern
-    bgColor -- The background color used for the effect.
-    numWaves -- How many particles will be created
-    trailType -- The trail type of the particles
-    trailSize -- The length of the trails. Using 0 will turn off the trails for the scanner.
-    size -- The size of the particles (min value 1)
-    direction -- The starting direction for the particles
-    alternate -- Sets if every other particle will have its starting direction swapped
-    bounce -- Sets if the particles will bounce or wrap at each segment set end
-    bounceChange -- Sets if the particles change colors every time they bounce (or every other time)
-    blend -- Sets if the particles will be blended together as they pass over one another
+    numWaves -- (See Inputs Guide above)
+    trailType -- (See Inputs Guide above)
+    trailSize -- (See Inputs Guide above)
+    size -- (See Inputs Guide above)
+    direction -- (See Inputs Guide above)
+    alternate -- (See Inputs Guide above)
+    makeEndWave -- (See Inputs Guide above)
+    bounce -- (See Inputs Guide above)
+    bounceChange(set false for the single color constructor) -- (See Inputs Guide above)
+    blend -- (See Inputs Guide above)
     rate -- The update rate (ms) note that this is synced with all the particles.
 
 Functions:
     setPaletteAsPattern() -- Sets the palette to be the pattern (each color in the palette, in order)
-    setScanType(newType) -- sets the scan mode (note this re-creates all the particles from scratch)
-    makeWaveSet(numWaves, direction, alternate) -- Creates a set of evenly space repeating particles
-                                                   (note this re-creates all the particles from scratch)
+    makeWaveSet(numWaves, direction, alternate, makeEndWave) -- Creates a set of evenly space repeating waves
+                                                                (see Inputs Guide above)
     update() -- updates the effect 
 
 Other Settings:
-    colorMode (default 0) -- sets the color mode for the streamer pixels (see segDrawUtils::setPixelColor)
-    bgColorMode (default 0) -- sets the color mode for the spacing pixels (see segDrawUtils::setPixelColor)
+    colorMode (default 0) -- sets the color mode for the wave pixels (see segDrawUtils::setPixelColor)
+    bgColorMode (default 0) -- sets the color mode for the background pixels (see segDrawUtils::setPixelColor)
     dimPow (default 80, min -127, max 127) -- Adjusts the rate of dimming for the trails (see particleUtilsPS.h)
-    trailSize -- The The length of the trails (min value of 1)
-    trailType -- The type of trails for the particles (see particlePS.h)
-    size -- The length of the scan particle's body (not trail) (min value of 1)
-    bounce -- The bounce property of the particles.
-    blend -- Sets if the particles will be blended together as they pass over one another
-    bounceChange -- Sets if the particles change colors every time they bounce (or every other time)
     fillBG (default false) -- If true, the segment set will be filled with the background every update cycle
-    particleSet -- The particleSet used to store the scan particles (and passed to the ParticlePS instance)
+    particleSet -- The particleSet used to store the scan particles (you can use it to directly customize the waves)
     randMode -- Sets how colors are chosen (see randMode notes above)
 */
 class ScannerSL : public EffectBasePS {
     public:
-        //Constructor for using a pattern with one of the default scan types
-        ScannerSL(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BGColor, uint8_t ScanType,
-                  uint16_t TrailSize, uint16_t Size, bool Bounce, bool BounceChange, uint16_t Rate);
-
-        //Constructor for using the palette as the pattern with one of the default scan types
-        ScannerSL(SegmentSet &SegSet, palettePS &Palette, CRGB BGColor, uint8_t ScanType, uint16_t TrailSize, 
-                  uint16_t Size, bool Bounce, bool BounceChange, uint16_t Rate);
+        
+        ScannerSL(SegmentSet &SegSet, CRGB Color, CRGB BGColor, uint16_t numWaves, uint8_t TrailType, uint16_t TrailSize, 
+                    uint16_t Size, bool direction, bool alternate, bool makeEndWave, bool Bounce,
+                    bool Blend, uint16_t Rate);
 
         //Constructor for using a pattern with a custom set of repeating waves
         ScannerSL(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BGColor, uint16_t numWaves,
-                  uint8_t TrailType, uint16_t TrailSize, uint16_t Size, bool direction, bool alternate, bool Bounce, 
-                  bool BounceChange, bool Blend, uint16_t Rate);
+                  uint8_t TrailType, uint16_t TrailSize, uint16_t Size, bool direction, bool alternate, bool makeEndWave, 
+                  bool Bounce, bool BounceChange, bool Blend, uint16_t Rate);
 
         //Constructor for using the palette as the pattern with a custom set of repeating waves
         ScannerSL(SegmentSet &SegSet, palettePS &Palette, CRGB BGColor, uint16_t numWaves, uint8_t TrailType,   
-                  uint16_t TrailSize, uint16_t Size,  bool direction, bool alternate, bool Bounce, bool BounceChange, 
-                  bool Blend, uint16_t Rate);
+                  uint16_t TrailSize, uint16_t Size, bool direction, bool alternate, bool makeEndWave, 
+                  bool Bounce, bool BounceChange, bool Blend, uint16_t Rate);
         
         ~ScannerSL();
         
@@ -174,7 +205,7 @@ class ScannerSL : public EffectBasePS {
         
         patternPS
             *pattern = nullptr,
-            patternTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety 
+            patternTemp = {nullptr, 0, 0}; //Must init structs w/ pointers set to null for safety 
 
         particleSetPS 
             particleSet = {nullptr, 0}; //Must init structs w/ pointers set to null for safety 
@@ -182,8 +213,7 @@ class ScannerSL : public EffectBasePS {
         void 
             reset(),
             setPaletteAsPattern(),
-            setScanType(uint8_t newScanType),
-            makeWaveSet(uint16_t numWaves, bool direction, bool alternate),
+            makeWaveSet(uint16_t numWaves, bool direction, bool alternate, bool makeEndWave),
             update(void);
     
     private:
@@ -211,7 +241,7 @@ class ScannerSL : public EffectBasePS {
             numLines,
             numSegs,
             pixelNum,
-            getTrailLedLoc(bool trailDirect, uint8_t trailPixelNum, uint16_t maxPosition);
+            getTrailLocAndColor(bool trailDirect, uint8_t trailPixelNum, uint16_t maxPosition);
         
         bool
             direction,
@@ -226,6 +256,7 @@ class ScannerSL : public EffectBasePS {
             partColor,
             nextColor,
             prevColor,
+            trailBgColor,
             colorFinal,
             getPartPixelColor(uint16_t partPixelLoc, bool trailDirect);
         
@@ -233,7 +264,7 @@ class ScannerSL : public EffectBasePS {
             init(CRGB BgColor, uint16_t Rate),
             moveParticle(particlePS *particlePtr),
             setPartColor(particlePS *particlePtr),
-            setTrailColor(const CRGB &trailColor, uint16_t trailLineNum, uint8_t segNum, uint8_t trailPixelNum);
+            setTrailColor(uint16_t trailLineNum, uint8_t segNum, uint8_t trailPixelNum);
 };
 
 #endif

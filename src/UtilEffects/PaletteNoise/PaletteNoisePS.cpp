@@ -41,8 +41,20 @@ void PaletteNoisePS::init(uint16_t numColors, uint16_t HueRate, uint16_t Rate){
 //Allocates memory for the noisePalette
 //will also call update() to fill in the noise palette initially
 void PaletteNoisePS::setupPalette(uint8_t numColors){
-    free(noisePalette.paletteArr);
-    noisePalette = paletteUtilsPS::makeRandomPalette(numColors);
+    //We only need to make a new palette if the current one isn't large enough
+    //This helps prevent memory fragmentation by limiting the number of heap allocations
+    //but this may use up more memory overall.
+    if( alwaysResizeObjPS || (numColors > paletteLenMax) ){
+        paletteLenMax = numColors;
+        //delete the current palette to free up memory
+        //then create a new one
+        free(noisePalette.paletteArr);
+        noisePalette = paletteUtilsPS::makeRandomPalette(numColors);
+    } else {
+        //if the new number of palette colors is less than the current length,
+        //we can adjust the length of the palette to "hide" the extra colors
+        noisePalette.length = numColors;
+    }
     prevTime = 0;
     update();
 }

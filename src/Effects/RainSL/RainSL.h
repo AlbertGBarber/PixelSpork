@@ -126,11 +126,13 @@ DimPow:
     Slowing the dimming down is useful for colored backgrounds, as it makes the particles stand out more
 
 Functions:
-    setupDrops(newMaxNumDrops) -- Changes the maximum number of drops, but will also clear any active drops
+    setupDrops(newMaxNumDrops) -- Changes the maximum number of drops, but any currently active drops will stop.
+                                  If bgPrefill is true, then the background will be re-filled in the next update.
                                   If you want to increase the number of drops without clearing, set the
                                   maxNumDrops to your maximum in the constructor. Then lower it before running the
                                   effect. You can safely raise it again without resetting (set maxNumDrops manually)
                                   !!If you lower the maximum number of drops, some active drops may be left on the segments
+                                  !!If you change the segment set, you should re-call this function!!
     update() -- updates the effect 
 
 Other Settings:
@@ -138,9 +140,9 @@ Other Settings:
     bgColorMode (default 0) -- sets the color mode for the spacing pixels (see segDrawUtils::setPixelColor)
     dimPow (default 80, min -127, max 127) -- Adjusts the rate of dimming for the trails (see dimPow above)
     blend (default false) -- Causes particles to add their colors to the strip, rather than set them
-                            See explanation of this in more detail above in effect intro
+                             See explanation of this in more detail above in effect intro
     fillBG (default false) -- Sets the background to be redrawn every update, useful for bgColorModes that are dynamic
-                             Warning!: Not compatible with infinite trails (mode 4). They will be drawn over.
+                              Warning!: Not compatible with infinite trails (mode 4). They will be drawn over.
 
 Reference Vars: 
     maxNumDrops -- (see notes above) set using setupDrops();

@@ -82,7 +82,7 @@ void SegWavesFast::makeSingleWave(){
 //ex : inputPattern is {1, 2, 4} with color length 2, and 1 spacing
 //the wave pattern would be: {1, 1, 255, 2, 2, 255, 4, 4, 255}
 void SegWavesFast::setPatternAsPattern(patternPS &inputPattern, uint8_t waveThickness, uint8_t spacing){
-    patternTemp = generalUtilsPS::setPatternAsPattern(inputPattern, waveThickness, spacing);
+    generalUtilsPS::setPatternAsPattern(patternTemp, inputPattern, waveThickness, spacing);
     pattern = &patternTemp;
 }
 
@@ -91,7 +91,7 @@ void SegWavesFast::setPatternAsPattern(patternPS &inputPattern, uint8_t waveThic
 //ex: for palette of length 3, and a waveThickness of 2, and spacing of 1
 //the final wave pattern would be : {0, 0, 255, 1, 1, 255, 2, 2, 255}
 void SegWavesFast::setPaletteAsPattern(uint8_t waveThickness, uint8_t spacing){
-    patternTemp = generalUtilsPS::setPaletteAsPattern(*palette, waveThickness, spacing);
+    generalUtilsPS::setPaletteAsPattern(patternTemp, *palette, waveThickness, spacing);
     pattern = &patternTemp;
 }
 

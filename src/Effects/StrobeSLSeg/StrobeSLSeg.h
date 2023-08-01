@@ -79,7 +79,7 @@ There are quite a lot of extra configuration options to help make more dynamic s
 
 Example calls: 
     uint8_t pattern_arr = {0, 1, 2};
-    patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
+    patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
     StrobeSLSeg strobe(mainSegments, pattern, cybPnkPal, 0, 4, 0, true, true, false, false, false, 50);
     setNewColorBool(true); //put in Arduino Setup() (sets newColor flag)
     Will do a set of strobes using cybPnkPal and strobe modes 0 and 1.
@@ -229,7 +229,7 @@ class StrobeSLSeg : public EffectBasePS {
         
         patternPS
             *pattern = nullptr, //the strobe color pattern (using colors from the palette)
-            patternTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
+            patternTemp = {nullptr, 0, 0}; //Must init structs w/ pointers set to null for safety
 
         CRGB 
             bgColorOrig,

@@ -24,9 +24,6 @@ namespace colorUtilsPS{
     //pre-allocated variables
     static uint8_t
         ratio;
-    
-    static CRGB
-        black = CRGB(0,0,0);
 
 };
 

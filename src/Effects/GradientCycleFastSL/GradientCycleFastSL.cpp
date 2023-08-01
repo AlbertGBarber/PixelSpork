@@ -47,7 +47,7 @@ void GradientCycleFastSL::reset(){
 //ie for a palette length 5, the pattern would be 
 //{0, 1, 2, 3, 4}
 void GradientCycleFastSL::setPaletteAsPattern(){
-    patternTemp = generalUtilsPS::setPaletteAsPattern(*palette);
+    generalUtilsPS::setPaletteAsPattern(patternTemp, *palette);
     pattern = &patternTemp;
 }
 

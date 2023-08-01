@@ -65,8 +65,8 @@ Example calls:
     There is a 500ms pause between cycles
     The background color is purple
 
-    uint8_t pattern_arr = {0, 1, 4};
-    patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
+    uint8_t pattern_arr = {0, 1, 2};
+    patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
     PoliceStrobeSL policeStrobe(mainSegments, pattern, cybPnkPal, CRGB:green, 6, 300, 0, 50);
     Will strobe colors from the palette based on the pattern (ie colors 0, 1, and 4 in order), with 6 pulses at 50ms each
     strobe mode 0 is used, so the strobe will alternate between strobing halfs of the strip and the whole strip
@@ -153,7 +153,7 @@ class PoliceStrobeSL : public EffectBasePS {
 
         patternPS
             *pattern = nullptr, //pattern of strobe colors (taken from the palette)
-            patternTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
+            patternTemp = {nullptr, 0, 0}; //Must init structs w/ pointers set to null for safety
         
         void 
             reset(),

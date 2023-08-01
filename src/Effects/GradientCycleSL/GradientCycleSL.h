@@ -20,7 +20,7 @@ passing in a SegmentSet with only one segment containing the whole strip.
 
 Example calls: 
     uint8_t pattern_arr = {0, 1, 2};
-    patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
+    patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
     GradientCycleSL gradientCycle(mainSegments, pattern, cybPnkPal, 10, 100);
     Will do a gradient cycle from color 0, to color 1, to color 4, of the palette
     with 10 steps to each gradient, and a 100ms update rate
@@ -83,7 +83,7 @@ class GradientCycleSL : public EffectBasePS {
 
         patternPS
             *pattern = nullptr,
-            patternTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
+            patternTemp = {nullptr, 0, 0}; //Must init structs w/ pointers set to null for safety
 
         palettePS
             *palette = nullptr,

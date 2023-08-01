@@ -46,7 +46,7 @@ void DissolveSL::init(uint16_t Rate){
 //ie for a palette length 5, the pattern would be 
 //{0, 1, 2, 3, 4}
 void DissolveSL::setPaletteAsPattern(){
-    patternTemp = generalUtilsPS::setPaletteAsPattern(*palette);
+    generalUtilsPS::setPaletteAsPattern(patternTemp, *palette);
     pattern = &patternTemp;
 }
 
@@ -60,6 +60,7 @@ void DissolveSL::setLineMode(bool newLineMode){
 
 //resets the pixel array to false, restarting the dissolve
 //also resets the core effect variables as needed
+//This is called automatically as part of the effect, but if you change the segment set, you should call this
 void DissolveSL::resetPixelArray(){
     //if we're in line mode, then we'll be setting whole lines at once
     //otherwise we'll be setting each pixel individually, so we need to set the numLines to match
@@ -71,11 +72,13 @@ void DissolveSL::resetPixelArray(){
     }
 
     //To record if a line has been switched or not, we need to create an array of bools
-    //(but only if we don't already have an array of the right size)
-    if(prevNumLines != numLines){
+    //We only need to make a new array if the current one isn't large enough
+    //This helps prevent memory fragmentation by limiting the number of heap allocations
+    //but this may use up more memory overall.
+    if( alwaysResizeObjPS || (numLines > maxNumLines) ){
+        maxNumLines = numLines;
         free(pixelArray);
         pixelArray = (bool*) malloc(numLines * sizeof(bool));
-        prevNumLines = numLines;
     }
 
     //reset the bool array, indicating that all the lines need to be spawned

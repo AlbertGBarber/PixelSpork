@@ -115,6 +115,7 @@ class Fire2012SL : public EffectBasePS {
             segNum,
             heatSecStart,
             heatIndex,
+            maxNumPoints = 0, //used for tracking the memory size of the heat array
             ledLoc;
         
         CRGB 

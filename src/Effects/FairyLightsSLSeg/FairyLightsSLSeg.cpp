@@ -41,23 +41,24 @@ void FairyLightsSLSeg::init(CRGB BgColor, uint16_t Rate){
     bindSegPtrPS();
     bindClassRatesPS();
     bindBGColorPS();
-    paletteTemp.paletteArr = nullptr;
-    genPixelSet();
+    setNumTwinkles(numTwinkles);
 }
 
-//makes new twinkleSet and colorSet arrays to store the twinkle locations and colors
-void FairyLightsSLSeg::genPixelSet(){
-
+//changes the number of twinkles, re-spawns them, and clears out any old twinkles by filling in the background
+//also resets the twinkleSet storage if needed
+void FairyLightsSLSeg::setNumTwinkles(uint8_t newNumTwinkles){
+    numTwinkles = newNumTwinkles;
+    
     //must have at least one twinkle
     if(numTwinkles < 1){
         numTwinkles = 1;
     }
 
-    //we only need to re-create new twinkle arrays, and set twinkle vars if the number of twinkles has changed
-    if(prevNumTwinkles != numTwinkles){
-        prevNumTwinkles = numTwinkles;    
-   
-        cycleLimit = numTwinkles - 1; //the number of cycles to go through the whole array
+    //We only need to make a new twinkle set if the current one isn't large enough
+    //This helps prevent memory fragmentation by limiting the number of heap allocations
+    //but this may use up more memory overall.
+    if( alwaysResizeObjPS || (numTwinkles > maxNumTwinkles) ){
+        maxNumTwinkles = numTwinkles;    
 
         free(twinkleSet);
         twinkleSet = (uint16_t*) malloc(numTwinkles * sizeof(uint16_t));
@@ -65,32 +66,10 @@ void FairyLightsSLSeg::genPixelSet(){
         free(colorSet);
         colorSet = (CRGB*) malloc(numTwinkles * sizeof(CRGB));
     }
-
-    //set the how many twinkle locations there are depending on the segMode
-    //(segmentLines, whole segments, or individual pixels)
-    switch(segMode){
-        case 0:
-        default:
-            twinkleRange = SegSet.numLines;
-            break;
-        case 1:
-            twinkleRange = SegSet.numSegs;
-            break;
-        case 2:
-            twinkleRange = SegSet.numLeds;
-            break;
-    }
-
-    //pick locations for the twinkles (local to the segment set)
-    for (uint8_t i = 0; i < numTwinkles; i++) {
-        twinkleSet[i] = random16(twinkleRange);
-    }
-}
-
-//changes the number of twinkles, also resets the twinkleSet
-void FairyLightsSLSeg::setNumTwinkles(uint8_t newNumTwinkles){
-    numTwinkles = newNumTwinkles;
-    genPixelSet();
+    
+    //clear out any old twinkles and spawn a new set
+    segDrawUtils::fillSegSetColor(SegSet, *bgColor, bgColorMode);
+    spawnTwinkles();
 }
 
 //creates an palette of length 1 containing the passed in color
@@ -101,11 +80,14 @@ void FairyLightsSLSeg::setSingleColor(CRGB Color){
     palette = &paletteTemp;
 }
 
-//changes the segMode, will re-gen the pixel set if the new segMode is different
+//changes the segMode, will re-spawn the twinkles if the segMode is different (also clearing out any old twinkles)
+//(prevents us from trying to write to a location off a segment)
 void FairyLightsSLSeg::setSegMode(uint8_t newSegMode){
     if(segMode != newSegMode){
         segMode = newSegMode;
-        genPixelSet();
+        //clear out any old twinkles and spawn a new set
+        segDrawUtils::fillSegSetColor(SegSet, *bgColor, bgColorMode);
+        spawnTwinkles();
     }
 }
 
@@ -124,11 +106,16 @@ void FairyLightsSLSeg::update(){
     if( ( currentTime - prevTime ) >= *rate ) {
         prevTime = currentTime;
         paletteLength = palette->length;
+
+        //the number of cycles to go through the whole array
+        //we set this here to allow you to possibly change the numTwinkles on the fly
+        cycleLimit = numTwinkles - 1; 
+
         //by default, we only touch the twinkle at the current cycleNum
         //but for rainbow or gradient backgrounds that a cycling
         //you want to redraw the whole thing
         if(fillBG){
-            reDrawAll = true;
+            reDrawAll = true; //if fillBG is true, reDrawAll must be set true as well
             segDrawUtils::fillSegSetColor(SegSet, *bgColor, bgColorMode);
         }
         switch (tMode) {
@@ -160,6 +147,29 @@ CRGB FairyLightsSLSeg::pickColor(){
             break;
     }
     return color;
+}
+
+//Creates a set of randomly placed twinkles based on the segMode
+void FairyLightsSLSeg::spawnTwinkles(){
+    //set the how many twinkle locations there are depending on the segMode
+    //(segmentLines, whole segments, or individual pixels)
+    switch(segMode){
+        case 0:
+        default:
+            twinkleRange = SegSet.numLines;
+            break;
+        case 1:
+            twinkleRange = SegSet.numSegs;
+            break;
+        case 2:
+            twinkleRange = SegSet.numLeds;
+            break;
+    }
+
+    //pick locations for the twinkles (local to the segment set)
+    for (uint8_t i = 0; i < numTwinkles; i++) {
+        twinkleSet[i] = random16(twinkleRange);
+    }
 }
 
 //Draws the twinkle, either along the whole segment, segment line, or an individual pixel depending on segMode
@@ -227,7 +237,7 @@ void FairyLightsSLSeg::modeZeroSet(){
         for(uint8_t i = 0; i <= cycleLimit; i++){
             drawTwinkle(i, *bgColor, bgColorMode);
         }
-        genPixelSet();
+        spawnTwinkles();
         turnOff = false;
     }
 
@@ -279,7 +289,7 @@ void FairyLightsSLSeg::modeOneSet(){
         drawTwinkle(cycleNum, *bgColor, bgColorMode);
         //once we've finished turning all the twinkles off, we need make a new twinkleSet and start again
         if(cycleNum == cycleLimit){
-            genPixelSet();
+            spawnTwinkles();
             turnOff = false;
         }
     }

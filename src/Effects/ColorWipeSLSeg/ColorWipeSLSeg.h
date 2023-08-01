@@ -115,8 +115,10 @@ Example calls:
     The style is 1, each line will alternate colors according to the pattern.
     Both simlut and alternate are false (they don't matter for a single wipe)
     The wipe will move in the positive direction, updating at 140ms
-
-    ColorWipeSLSeg colorWipeSL(mainSegments, cybPnkPal, pattern1, 8, 0, true, false, false, false, 140);
+   
+    uint8_t pattern_arr = {0, 1, 2};
+    patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
+    ColorWipeSLSeg colorWipeSL(mainSegments, cybPnkPal, pattern, 8, 0, true, false, false, false, 140);
     Will do a color wipe along mainSegment's lines using colors from cybPnkPal, according to pattern1
     The wipe length is 8 (assumed to be shorter than the segment set num lines)
     The style is 0, each wipe will alternate colors according to the pattern.
@@ -254,7 +256,7 @@ class ColorWipeSLSeg : public EffectBasePS {
         
         patternPS
             *pattern = nullptr,
-            patternTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
+            patternTemp = {nullptr, 0, 0}; //Must init structs w/ pointers set to null for safety
         
         void 
             reset(),

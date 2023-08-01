@@ -51,12 +51,13 @@ void PaletteSingleCyclePS::setPauseTime(uint16_t newPauseTime){
 //the cycle num varies from 0 to the input palette's length -1
 void PaletteSingleCyclePS::switchPalette(){
     //create and allocate memory for the next/current palettes to be used in the blends
-    //we only need to do this if the basis palette (inputPalette) has changed and if the it's length is different than the previous palette
-    //otherwise we can keep using the existing next/current palettes
-    //if the palette's are created, set them both to match the input palette
-    paletteLengthTemp = inputPalette->length;
-    if(paletteLength != paletteLengthTemp){
-        paletteLength = paletteLengthTemp;
+    //We only need to make a new palette pair if the current ones aren't large enough
+    //This helps prevent memory fragmentation by limiting the number of heap allocations
+    //but this may use up more memory overall.
+    //If new palette's are created, set them both to match the input palette
+    paletteLength = inputPalette->length;
+    if( alwaysResizeObjPS || (paletteLength > paletteLenMax) ){
+        paletteLenMax = paletteLength;
 
         //Create two new palettes the same length as inputPalette
         free(paletteColorArr2);
@@ -72,19 +73,16 @@ void PaletteSingleCyclePS::switchPalette(){
         }
     }
 
-    //set the current/next palette lengths (if not already set)
+    //set the current/next palette lengths
     //some blend modes need different palette lengths
     //we can adjust the current/next palette's length without actually changing their color array size
     //this keeps things simple, and makes it easier to switch modes
-    if(prevMode != blendMode){
-        prevMode = blendMode;
-        if(blendMode <= 3){ //for blend modes 0-3
-            currentPalette.length = paletteLength;
-            nextPalette.length = paletteLength;
-        } else { //for blend modes 4 and up
-            currentPalette.length = 1;
-            nextPalette.length = 1;
-        }
+    if(blendMode <= 3){ //for blend modes 0-3
+        currentPalette.length = paletteLength;
+        nextPalette.length = paletteLength;
+    } else { //for blend modes 4 and up
+        currentPalette.length = 1;
+        nextPalette.length = 1;
     }
 
     //some blend modes allow for a direction setting

@@ -38,7 +38,7 @@ Functions:
 
 Other Settings:
     pauseTime (default 0) -- Sets a time (ms) that the blendPalette will be pause at after finishing a transition before starting the next
-                            Only relevant if looped is true
+                             Only relevant if looped is true
     randomize (default false) --  Randomize will randomize the end palette note that this will permanently modify the end palette
                                   so make sure you aren't using it elsewhere!
                                   Combine this with looped, to produce constantly changing palettes
@@ -102,6 +102,9 @@ class PaletteBlenderPS : public EffectBasePS {
             pauseStartTime = 0,
             prevTime = 0;
 
+        uint8_t 
+            blendPaletteMaxLen = 0;
+
         CRGB
            *blendPalette_arr = nullptr,
            startColor,
@@ -110,9 +113,6 @@ class PaletteBlenderPS : public EffectBasePS {
         
         palettePS
             *palTempPtr = nullptr;
-        
-        uint8_t 
-            blendPaletteLength = 0;
 };
 
 #endif

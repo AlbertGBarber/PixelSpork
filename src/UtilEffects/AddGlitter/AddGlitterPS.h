@@ -96,6 +96,7 @@ class AddGlitterPS : public EffectBasePS {
             prevTime = 0;
         
         uint16_t
+            glitterNumMax = 0,
             pixelNum,
             numLeds,
             *glitterLocs = nullptr;

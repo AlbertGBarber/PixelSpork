@@ -111,8 +111,15 @@ void SegWaves::reset(){
 //Only needs to be used if you change the number of segments in your segment set
 void SegWaves::resetSegColors(){
     numSegs = SegSet.numSegs;
-    free(segColors); 
-    segColors = (CRGB*) malloc( (numSegs + 1) * sizeof(CRGB) );
+
+    //We only need to make a new array if the current one isn't large enough
+    //This helps prevent memory fragmentation by limiting the number of heap allocations
+    //but this may use up more memory overall.
+    if( alwaysResizeObjPS || (numSegs > numSegsMax) ){
+        numSegsMax = numSegs;
+        free(segColors); 
+        segColors = (CRGB*) malloc( (numSegs + 1) * sizeof(CRGB) );
+    }
 }
 
 //creates a pattern so that there's only a single segment wave on the segment set at one time
@@ -129,7 +136,7 @@ void SegWaves::makeSingleWave(){
 //the wave pattern would be: {1, 1, 255, 2, 2, 255, 4, 4, 255}
 //(255 will be set to the background color)
 void SegWaves::setPatternAsPattern(patternPS &inputPattern, uint8_t waveThickness, uint8_t spacing){
-    patternTemp = generalUtilsPS::setPatternAsPattern(inputPattern, waveThickness, spacing);
+    generalUtilsPS::setPatternAsPattern(patternTemp, inputPattern, waveThickness, spacing);
     pattern = &patternTemp;
 }
 
@@ -138,7 +145,7 @@ void SegWaves::setPatternAsPattern(patternPS &inputPattern, uint8_t waveThicknes
 //ex: for palette of length 3, and a waveThickness of 2, and spacing of 1
 //the final wave pattern would be : {0, 0, 255, 1, 1, 255, 2, 2, 255}
 void SegWaves::setPaletteAsPattern(uint8_t waveThickness, uint8_t spacing){
-    patternTemp = generalUtilsPS::setPaletteAsPattern(*palette, waveThickness, spacing);
+    generalUtilsPS::setPaletteAsPattern(patternTemp, *palette, waveThickness, spacing);
     pattern = &patternTemp;
 }
 

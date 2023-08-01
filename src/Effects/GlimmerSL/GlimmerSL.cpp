@@ -53,12 +53,19 @@ void GlimmerSL::setupPixelArray(){
     if(twoPixelSets){
         glimArrLen = numGlims * 2;
     }
+    
+    //We only need to make a new glimmer arrays if the current ones aren't large enough
+    //This helps prevent memory fragmentation by limiting the number of heap allocations
+    //but this may use up more memory overall.
+    if( alwaysResizeObjPS || (glimArrLen > glimArrLenMax) ){
+        glimArrLenMax = glimArrLen;
 
-    free(fadePixelLocs);
-    fadePixelLocs = (uint16_t*) malloc(glimArrLen * sizeof(uint16_t));
+        free(fadePixelLocs);
+        fadePixelLocs = (uint16_t*) malloc(glimArrLen * sizeof(uint16_t));
 
-    free(totFadeSteps);
-    totFadeSteps = (uint8_t*) malloc(glimArrLen * sizeof(uint8_t));
+        free(totFadeSteps);
+        totFadeSteps = (uint8_t*) malloc(glimArrLen * sizeof(uint8_t));
+    }
     
     //we need to set firstFade to since the arrays
     //are only filled up to numGlims because we don't 
@@ -106,7 +113,7 @@ void GlimmerSL::advancePixelArray(){
 
 //sets the number of random pixels chosen per cycle
 //If the number of pixels is different than the current numGlims,
-//the glimmer arrays will be re-created, and the effect will be reset
+//the glimmer arrays will be reset, and the effect will be reset
 //(otherwise, nothing will happen)
 void GlimmerSL::setNumGlims(uint16_t newNumGlims){
     if(newNumGlims != numGlims){

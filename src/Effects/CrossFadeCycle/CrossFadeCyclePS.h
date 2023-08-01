@@ -23,7 +23,7 @@ randModes are: (default 0)
 
 Example calls: 
     uint8_t pattern_arr = {0, 1, 2};
-    patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
+    patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
     CrossFadeCyclePS crossFadeCycle(mainSegments, pattern, cybPnkPal, 40, 30);
     Will fade from color 0, to color 1, to color 4 of the palette
     taking 40 steps for each fade, with 30ms between steps
@@ -93,7 +93,7 @@ class CrossFadeCyclePS : public EffectBasePS {
         
         patternPS
             *pattern = nullptr,
-            patternTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
+            patternTemp = {nullptr, 0, 0}; //Must init structs w/ pointers set to null for safety
         
         void 
             setPaletteAsPattern(),

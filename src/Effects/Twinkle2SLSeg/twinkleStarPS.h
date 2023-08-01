@@ -25,16 +25,22 @@ struct twinkleStarPS {
 //a struct for holding an array of twinkles
 //to declare twinklesSet:
     //twinklePS *twinkleArr[] = { &twinkle1, &twinkle2, etc}; //can leave this blank and fill it in using buildTwinklesSet() below
-    //twinkleSetPS twinkleSet = {twinkleArr, SIZE(twinkleArr)};
+    //twinkleSetPS twinkleSet = {twinkleArr, SIZE(twinkleArr), SIZE(twinkleArr)};
+
+    //The second SIZE() is used to record the maximum size of the twinkle array for memory management.
+    //It should always be the same as the actual size of the array.
+
     //access a twinkle's property via: twinkleSet.twinkleArr[x]->property.
     //See code in Twinkle2PS for more snippets.
 struct twinkleSetPS {
     twinkleStarPS **twinkleArr; //pointer to an array of twinkles pointers
-    uint8_t length; //the size of the twinkle array (num of twinkles)
+    uint16_t length; //the size of the twinkle array (num of twinkles)
+
+    uint16_t maxLength; //the maximum length of the twinkle array (used for memory management)
 
     //sets twinkle in the array to the passed in twinkle at the specified index
-    void setTwinkle(twinkleStarPS *twinkle, uint8_t index){
-        twinkleArr[index % length] = twinkle;
+    void setTwinkle(twinkleStarPS *twinkle, uint16_t index){
+        twinkleArr[ mod16PS(index, length) ] = twinkle;
     };
 
 };

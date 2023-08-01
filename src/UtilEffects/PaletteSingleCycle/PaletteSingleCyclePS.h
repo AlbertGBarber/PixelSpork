@@ -124,7 +124,7 @@ class PaletteSingleCyclePS : public EffectBasePS {
         
         uint8_t 
             paletteLength = 0,
-            paletteLengthTemp = 0,
+            paletteLenMax = 0,
             prevMode = 0;
         
         uint16_t

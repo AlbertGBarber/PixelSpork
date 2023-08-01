@@ -39,19 +39,28 @@ void PaletteSliderPS::reset(){
 //ie for a palette of length 5, the pattern will be 0, 1, 2, 3, 4
 //(all the palette indexes in order)
 void PaletteSliderPS::setPaletteAsPattern(){
-    patternTemp = generalUtilsPS::setPaletteAsPattern(*paletteTarget);
+    free(patternTemp.patternArr);
+    generalUtilsPS::setPaletteAsPattern(patternTemp, *paletteTarget);
     pattern = &patternTemp;
 }
 
 //Creates the ouput slider palette according to the passed in length
-//Note that it deletes any existing slider palette
+//Note that a new palette will be created if the new length is greater than the memory length of the current palette
 //It also resets the effect and calls update() once to fill in the initial palette colors
 void PaletteSliderPS::makeSliderPalette(uint16_t paletteLength){
-    //create a new palette of the passed in length
-    sliderPalLen = paletteLength;
-    free(sliderPalColArr);
-    sliderPalColArr = (CRGB*) malloc(sliderPalLen * sizeof(CRGB));
-    sliderPalette = {sliderPalColArr, sliderPalLen};
+    //We only need to make a new slider palette if the current one isn't large enough
+    //This helps prevent memory fragmentation by limiting the number of heap allocations
+    //but this may use up more memory  overall.
+    if( alwaysResizeObjPS || (paletteLength > sliderPalLenMax) ){
+        sliderPalLenMax = paletteLength;
+        free(sliderPalColArr);
+        sliderPalColArr = (CRGB*) malloc(sliderPalLenMax * sizeof(CRGB));
+        sliderPalette = {sliderPalColArr, sliderPalLenMax};
+    } else {
+        //if the new slider palette length is less than the current length,
+        //we can adjust the length of the palette to "hide" the extra colors
+        sliderPalette.length = paletteLength;
+    }
     //The new palette will be blank, so we need to call update() once to fill it with colors
     reset();
     update();

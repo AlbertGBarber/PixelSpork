@@ -57,7 +57,7 @@ void GradientCycleSL::setPattern(patternPS &newPattern){
 //ie for a palette length 5, the pattern would be 
 //{0, 1, 2, 3, 4}
 void GradientCycleSL::setPaletteAsPattern(){
-    patternTemp = generalUtilsPS::setPaletteAsPattern(*palette);
+    generalUtilsPS::setPaletteAsPattern(patternTemp, *palette);
     pattern = &patternTemp;
     setTotalEffectLength();
 }

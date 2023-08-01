@@ -9,6 +9,7 @@
 #include "pins_arduino.h"
 #endif
 
+#include "./Include_Lists/GlobalVars/GlobalVars.h" //need alwaysResizeObjPS
 #include "Include_Lists/PaletteFiles.h"
 #include "Include_Lists/PatternFiles.h"
 #include "ColorUtils/colorUtilsPS.h"
@@ -18,10 +19,11 @@
 //or require both palette and patterns
 namespace generalUtilsPS {
 
-    patternPS
-        setPaletteAsPattern(palettePS &palette),
-        setPaletteAsPattern(palettePS &palette, uint16_t colorLength),
-        setPaletteAsPattern(palettePS &palette, uint8_t colorLength, uint8_t spacing),
-        setPatternAsPattern(patternPS &inputPattern, uint8_t colorLength, uint8_t spacing);
+    void
+        resizePattern(patternPS &pattern, uint16_t sizeNeeded),
+        setPaletteAsPattern(patternPS &pattern, palettePS &palette),
+        setPaletteAsPattern(patternPS &pattern, palettePS &palette, uint16_t colorLength),
+        setPaletteAsPattern(patternPS &pattern, palettePS &palette, uint8_t colorLength, uint8_t spacing),
+        setPatternAsPattern(patternPS &outputPattern, patternPS &inputPattern, uint8_t colorLength, uint8_t spacing);
 };
 #endif
