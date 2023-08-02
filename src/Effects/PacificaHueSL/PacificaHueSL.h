@@ -4,7 +4,7 @@
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
 //The source of the palettes for the effect
-#include "PacificaHuePalPS.h"
+#include "PacificaHuePal/PacificaHuePalPS.h"
 
 /*
 
