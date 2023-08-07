@@ -4,7 +4,7 @@
 LavaPS::LavaPS(SegmentSet &SegSet, uint16_t Rate):
     SegSet(SegSet)
     {    
-        palette = &lavaPalette; //set the effect palette to the lava palette
+        palette = &lavaPal; //set the effect palette to the lava palette from paletteList.h
         blendSteps = 150;
         blendScale = 80;
         //Fill in the temp palette in case the use switches to it
@@ -16,7 +16,7 @@ LavaPS::LavaPS(SegmentSet &SegSet, uint16_t Rate):
 LavaPS::LavaPS(SegmentSet &SegSet, uint16_t BlendSteps, uint16_t BlendScale, uint16_t Rate):
     SegSet(SegSet), blendSteps(BlendSteps), blendScale(BlendScale)
     {    
-        palette = &lavaPalette; //set the effect palette to the lava palette
+        palette = &lavaPal; //set the effect palette to the lava palette from paletteList.h
         //Fill in the temp palette in case the use switches to it
         paletteTemp = paletteUtilsPS::makeRandomPalette(3);
         init(Rate);

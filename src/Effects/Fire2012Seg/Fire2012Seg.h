@@ -71,8 +71,12 @@ class Fire2012Seg : public EffectBasePS {
             &SegSet; 
         
         uint8_t
+            *heat = nullptr,
             cooling,
             sparking;
+        
+        uint16_t
+            *heatSegStarts = nullptr;
         
         bool
             blend;
@@ -94,14 +98,12 @@ class Fire2012Seg : public EffectBasePS {
             prevTime = 0;
 
         uint8_t
-            *heat = nullptr,
             cooldown,
             paletteLength,
             paletteSecLen,
             sparkPoint;
         
         uint16_t
-            *heatSegStarts = nullptr,
             maxNumLeds = 0, //used for tracking the memory size of the heat arrays
             heatSecStart,
             heatIndex,

@@ -127,7 +127,8 @@ class DissolveSL : public EffectBasePS {
 
         bool
             lineMode = true, //for reference, set using setLineMode()
-            paused = false; 
+            paused = false,
+            *pixelArray = nullptr; 
         
         patternPS
             *pattern = nullptr,
@@ -162,8 +163,7 @@ class DissolveSL : public EffectBasePS {
             pixelNum;
         
         bool
-            randColorPicked = false,
-            *pixelArray = nullptr;
+            randColorPicked = false;
         
         CRGB 
             pickColor(),

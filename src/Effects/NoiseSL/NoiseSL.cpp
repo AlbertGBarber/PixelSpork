@@ -57,9 +57,15 @@ void NoiseSL::setupNoiseArray(){
     numLines = SegSet.numLines;
     uint16_t numPoints = numLines * numSegs;
     
-    free(noise);
-    //create the noise array to store noise value of each line point
-    noise = (uint8_t*) malloc(numPoints * sizeof(uint8_t));
+    //We only need to make a new noise array if the current one isn't large enough
+    //This helps prevent memory fragmentation by limiting the number of heap allocations
+    //but this may use up more memory overall.
+    if(alwaysResizeObjPS || numPoints > numPointsMax){
+        numPointsMax = numPoints;
+        free(noise);
+        //create the noise array to store noise value of each line point
+        noise = (uint8_t*) malloc(numPoints * sizeof(uint8_t));
+    }
 }
 
 //updates the effect

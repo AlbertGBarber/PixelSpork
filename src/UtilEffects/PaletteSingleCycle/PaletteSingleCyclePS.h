@@ -95,6 +95,10 @@ class PaletteSingleCyclePS : public EffectBasePS {
         
         bool 
             direct;
+        
+        CRGB 
+            *paletteColorArr1 = nullptr, //storage for the start/end palette colors
+            *paletteColorArr2 = nullptr;
                                  
         palettePS
             *inputPalette = nullptr,
@@ -130,9 +134,6 @@ class PaletteSingleCyclePS : public EffectBasePS {
         uint16_t
             currentIndex;
         
-        CRGB 
-            *paletteColorArr1 = nullptr, //storage for the start/end palette colors
-            *paletteColorArr2 = nullptr;
 };
 
 #endif

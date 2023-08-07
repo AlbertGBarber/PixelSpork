@@ -21,6 +21,10 @@ extern palettePS firePalPink;
 extern CRGB firePalBlue_arr[];
 extern palettePS firePalBlue;
 
+//Lava palette used in the Lava effect, basically a blend from dark red to yellow
+extern CRGB lavaPal_arr[];
+extern palettePS lavaPal;
+
 //Classic neon magenta-teal cyber punk palette, uses bright magenta, medium blue, and bright teal
 extern CRGB cybPnkPal_arr[];
 extern palettePS cybPnkPal;

@@ -205,6 +205,7 @@ class FireworksPS : public EffectBasePS {
             *fireWorkActive = nullptr;
         
         CRGB 
+            *trailEndColors = nullptr, //used to store the last colors of each trail, so the background color can be set
             burstColOrig = CRGB::White, //default burst color
             *burstColor = &burstColOrig, //the burstColor is a pointer, so it can be tied to and external var if needed
             bgColorOrig = 0, //default background color
@@ -261,7 +262,6 @@ class FireworksPS : public EffectBasePS {
             pixelInfo = {0, 0, 0, 0};
 
         CRGB 
-            *trailEndColors = nullptr, //used to store the last colors of each trail, so the background color can be set
             colorFinal,
             colorOut,
             colorTemp;

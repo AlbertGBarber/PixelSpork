@@ -194,6 +194,7 @@ class SegWaves : public EffectBasePS {
             direct;
 
         CRGB 
+            *segColors = nullptr,
             bgColorOrig,
             *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
         
@@ -241,7 +242,6 @@ class SegWaves : public EffectBasePS {
             currentColor,
             colorOut,
             randColor,
-            *segColors = nullptr,
             getNextColor(uint16_t segNum, uint16_t segNumRaw);
         
         void

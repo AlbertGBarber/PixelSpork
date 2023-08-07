@@ -110,10 +110,14 @@ class FairyLightsSLSeg : public EffectBasePS {
             colorMode = 0,
             bgColorMode = 0;
         
+        uint16_t
+            *twinkleSet = nullptr;
+        
         CRGB
             bgColorOrig,
-            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
-        
+            *bgColor = nullptr, //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+            *colorSet = nullptr;
+
         palettePS
             *palette = nullptr,
             paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
@@ -143,12 +147,10 @@ class FairyLightsSLSeg : public EffectBasePS {
             loopEnd;
         
         uint16_t
-            *twinkleSet = nullptr,
             twinkleRange;
         
         CRGB 
             color,
-            *colorSet = nullptr,
             pickColor();
         
         void

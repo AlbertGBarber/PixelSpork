@@ -161,7 +161,8 @@ class FirefliesSL : public EffectBasePS {
             lifeBase, 
             lifeRange,
             speedBase,
-            speedRange;
+            speedRange,
+            *particlePrevPos = nullptr;
 
         bool
             fillBG = false,
@@ -170,8 +171,9 @@ class FirefliesSL : public EffectBasePS {
 
         CRGB 
             bgColorOrig = 0, //default background color (blank)
-            *bgColor = &bgColorOrig; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
-
+            *bgColor = &bgColorOrig, //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+            *trailEndColors = nullptr; //used to store the last colors of each trail, so the background color can be set
+            
         palettePS
             *palette = nullptr,
             paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
@@ -203,14 +205,12 @@ class FirefliesSL : public EffectBasePS {
             numLines,
             numSegs,
             pixelNum,
-            longestSeg,
-            *particlePrevPos = nullptr;
+            longestSeg;
         
         particlePS
             *particlePtr = nullptr;
             
         CRGB 
-            *trailEndColors = nullptr, //used to store the last colors of each trail, so the background color can be set
             colorFinal,
             colorOut,
             bgCol;

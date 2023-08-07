@@ -82,6 +82,9 @@ class PaletteBlenderPS : public EffectBasePS {
             paused = false,
             blendEnd = false;
         
+        CRGB 
+            *blendPalette_arr = nullptr;
+        
         palettePS
             blendPalette = {nullptr, 0}; //the output palette from the blend (is filled in when the class is constructed)
         
@@ -106,7 +109,6 @@ class PaletteBlenderPS : public EffectBasePS {
             blendPaletteMaxLen = 0;
 
         CRGB
-           *blendPalette_arr = nullptr,
            startColor,
            endColor,
            newColor;

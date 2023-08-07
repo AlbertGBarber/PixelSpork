@@ -125,6 +125,7 @@ class ShiftingSeaSL : public EffectBasePS {
             gradLength;
         
         uint16_t
+            *offsets = nullptr,
             totalCycleLength, //the total number of possible offsets a pixel can have (one for each fade color), for reference
             cycleNum = 0; //tracks how many update's we've done, max value of totalCycleLength, for reference
         
@@ -166,7 +167,6 @@ class ShiftingSeaSL : public EffectBasePS {
             numLines,
             numLinesMax = 0, //used for tracking the memory size of the offset array
             curPatIndex,
-            *offsets = nullptr,
             step = 0;
         
         CRGB

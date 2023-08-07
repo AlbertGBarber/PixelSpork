@@ -152,7 +152,8 @@ class RollingWavesSL2 : public EffectBasePS {
         
         uint16_t 
             totalCycleLength, //total length of all the gradients combined, for reference
-            cycleNum = 0; // tracks what how many patterns we've gone through, for reference
+            cycleNum = 0, // tracks what how many patterns we've gone through, for reference
+            *nextLine = nullptr;
         
         bool
             initFillDone = false;
@@ -200,8 +201,7 @@ class RollingWavesSL2 : public EffectBasePS {
             numSegsMax = 0, //used for tracking the memory size of the next line array
             numLines,
             numLinesLim,
-            pixelNum,
-            *nextLine = nullptr;
+            pixelNum;
         
         bool
             setBg = false;

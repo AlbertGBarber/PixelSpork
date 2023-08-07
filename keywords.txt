@@ -156,4 +156,5 @@ pacificaPalettePS		KEYWORD3
 firePal		KEYWORD3
 firePalPink		KEYWORD3
 firePalBlue		KEYWORD3
+lavaPal		KEYWORD3
 cybPnkPal		KEYWORD3

@@ -98,6 +98,7 @@ class ShiftingRainbowSeaSL : public EffectBasePS {
             gradLength; //for reference, set this using setGradLength()
         
         uint16_t
+            *offsets = nullptr,
             cycleNum = 0; //tracks how many update's we've done, max value of 255
         
         bool
@@ -122,7 +123,6 @@ class ShiftingRainbowSeaSL : public EffectBasePS {
             step;
         
         uint16_t
-            *offsets = nullptr,
             numLines,
             numLinesMax = 0; //used for tracking the memory size of the offset array
         

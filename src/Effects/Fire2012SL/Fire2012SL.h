@@ -79,6 +79,7 @@ class Fire2012SL : public EffectBasePS {
             &SegSet; 
         
         uint8_t
+            *heat = nullptr,
             cooling,
             sparking;
         
@@ -103,7 +104,6 @@ class Fire2012SL : public EffectBasePS {
             prevTime = 0;
 
         uint8_t
-            *heat = nullptr,
             cooldown,
             paletteLength,
             paletteSecLen,

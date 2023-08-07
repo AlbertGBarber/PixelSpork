@@ -96,9 +96,11 @@ class GlimmerSL : public EffectBasePS {
             fadeSteps,
             step = 0,
             fadeMin = 50,
-            fadeMax = 255;
+            fadeMax = 255,
+            *totFadeSteps = nullptr;
 
         uint16_t
+            *fadePixelLocs = nullptr,
             numGlims; //For reference only!, Set using setNumGlims()
         
         bool 
@@ -125,11 +127,7 @@ class GlimmerSL : public EffectBasePS {
             currentTime,
             prevTime = 0;
         
-        uint8_t
-            *totFadeSteps = nullptr;
-        
         uint16_t
-            *fadePixelLocs = nullptr,
             glimArrLen,
             glimArrLenMax = 0, //used for tracking the memory size of the glimmer arrays
             numLines,

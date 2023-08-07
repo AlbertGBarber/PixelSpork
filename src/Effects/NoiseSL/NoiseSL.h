@@ -150,6 +150,7 @@ class NoiseSL : public EffectBasePS {
             &SegSet; 
         
         uint8_t 
+            *noise = nullptr,
             cMode = 0,
             bgColorMode = 0;
         
@@ -184,7 +185,6 @@ class NoiseSL : public EffectBasePS {
             scaleStep = 0;
         
         uint8_t
-            *noise = nullptr,
             noiseData,
             oldData,
             newData,
@@ -196,6 +196,7 @@ class NoiseSL : public EffectBasePS {
             pixelNum,
             numLines,
             numSegs,
+            numPointsMax = 0, //used for tracking the memory size of the noise array
             colorIndex,
             scale,
             scaleTarget,

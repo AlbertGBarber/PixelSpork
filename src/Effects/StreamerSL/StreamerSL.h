@@ -139,6 +139,7 @@ class StreamerSL : public EffectBasePS {
             fadeOn = true;
 
         CRGB 
+            *prevLineColors = nullptr,
             bgColorOrig,
             *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color) 
         
@@ -177,7 +178,6 @@ class StreamerSL : public EffectBasePS {
             pixelNum;
         
         CRGB 
-            *prevLineColors = nullptr,
             nextColor,
             colorOut,
             getNextColor(uint16_t lineNum, uint16_t segNum),

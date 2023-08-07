@@ -79,7 +79,8 @@ class AddGlitterPS : public EffectBasePS {
         uint16_t 
             glitterNum, //for reference, use setGlitterNum() to set
             *glitterRate = nullptr,
-            glitterRateOrig;
+            glitterRateOrig,
+            *glitterLocs = nullptr;
 
         CRGB 
             glitterColorOrig,
@@ -98,8 +99,7 @@ class AddGlitterPS : public EffectBasePS {
         uint16_t
             glitterNumMax = 0,
             pixelNum,
-            numLeds,
-            *glitterLocs = nullptr;
+            numLeds;
         
         void
             advanceGlitterArr(),

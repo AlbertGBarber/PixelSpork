@@ -201,6 +201,7 @@ class RainSeg : public EffectBasePS {
             infTrail = false;
 
         CRGB 
+            *trailEndColors = nullptr, //used to store the last colors of each trail, so the background color can be set 
             bgColorOrig,
             *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
         
@@ -256,7 +257,6 @@ class RainSeg : public EffectBasePS {
             *particlePtr = nullptr;
 
         CRGB 
-            *trailEndColors = nullptr, //used to store the last colors of each trail, so the background color can be set
             colorEnd,
             colorOut,
             colorTemp;

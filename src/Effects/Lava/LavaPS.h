@@ -15,6 +15,8 @@ or choose to have a palette of random color be created.
 You can customize how the effect looks by adjusting the blendSteps and blendScale values
 I encourage playing with these, since they can change the effect a lot.
 
+Note that by default, the effect uses the lavaPal palette from paletteList.h.
+
 For a similar effect with some more options, see NoiseSL.
 
 Rainbow Mode:
@@ -51,7 +53,7 @@ Example calls:
 
 Constructor inputs: 
     palette (optional, see constructors) -- A custom palette passed to the effect, is a pointer. 
-                                            Will be bound to the lavaPalette if omitted.
+                                            Will be bound to the lavaPal if omitted.
     numColors (optional, see constructors) -- How many colors will be in the randomly created palette
     blendSteps (optional, see constructors) -- Sets how many steps are used to blend between each color
                                                Basically changes how fast the colors blend
@@ -113,12 +115,7 @@ class LavaPS : public EffectBasePS {
         bool
             rainbowMode = false;
         
-        //the default lava palette, basically a blend from dark red to yellow
-        CRGB 
-            lavalPalette_arr[5] = { CRGB::DarkRed, CRGB::Maroon, CRGB::Red, CRGB::Orange, CRGB(245, 202, 10) };
-        
         palettePS
-            lavaPalette = {lavalPalette_arr, SIZE(lavalPalette_arr)}, //the default lava palette for the effect
             *palette = nullptr,
             paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
             
