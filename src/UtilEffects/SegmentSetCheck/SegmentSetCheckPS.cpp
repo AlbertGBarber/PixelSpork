@@ -1,19 +1,19 @@
 #include "SegmentSetCheckPS.h"
 
 SegmentSetCheckPS::SegmentSetCheckPS(SegmentSet &SegSet, uint8_t TestMode):
-    SegSet(SegSet), testMode(TestMode)
+    testMode(TestMode)
     {    
-        //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
-        bindSegPtrPS();
+        //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
         uint16_t Rate = 500; //set a default rate of 500ms
+        bindSegSetPtrPS();
         bindClassRatesPS();
 	}
 
 SegmentSetCheckPS::SegmentSetCheckPS(SegmentSet &SegSet, uint8_t TestMode, uint16_t Rate):
-    SegSet(SegSet), testMode(TestMode)
+    testMode(TestMode)
     {  
-        //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
-        bindSegPtrPS();
+        //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
+        bindSegSetPtrPS();
         bindClassRatesPS();
     }
 
@@ -36,18 +36,18 @@ void SegmentSetCheckPS::update(){
         
         //If we're starting a new test we need to clear the segment set
         if(testStart){
-            segDrawUtils::turnSegSetOff(SegSet);
+            segDrawUtils::turnSegSetOff(*segSet);
             testStart = false;
         }
         
         if(mode == 0 && testMode != 1){
-            numSegs = SegSet.numSegs;
-            totSegLen = SegSet.getTotalSegLength(segNum);
+            numSegs = segSet->numSegs;
+            totSegLen = segSet->getTotalSegLength(segNum);
             //for each segment we set the first pixel to red, the last to blue,
             //and then fill in the rest with green one by one from the start of the segment to the end
-            segDrawUtils::setPixelColor(SegSet, pixelCount, segNum, CRGB::Green, 0);
-            segDrawUtils::setPixelColor(SegSet, 0, segNum, CRGB::Red, 0);
-            segDrawUtils::setPixelColor(SegSet, totSegLen - 1, segNum, CRGB::Blue, 0);
+            segDrawUtils::setPixelColor(*segSet, pixelCount, segNum, CRGB::Green, 0);
+            segDrawUtils::setPixelColor(*segSet, 0, segNum, CRGB::Red, 0);
+            segDrawUtils::setPixelColor(*segSet, totSegLen - 1, segNum, CRGB::Blue, 0);
 
             pixelCount++;
             //if the we're at the end of the segment, we need to switch to the next segment
@@ -57,11 +57,11 @@ void SegmentSetCheckPS::update(){
                 segNum++;
                 //if the next segment is inactive, we set the pixelCount to its length,
                 //so that we'll switch to the next segment on the next cycle
-                //if(segNum != numSegs && !SegSet.getSegActive(segNum)){
-                    //pixelCount = SegSet.getTotalSegLength(segNum);
+                //if(segNum != numSegs && !segSet->getSegActive(segNum)){
+                    //pixelCount = segSet->getTotalSegLength(segNum);
                 //}
                 //clear the segment set
-                segDrawUtils::turnSegSetOff(SegSet);
+                segDrawUtils::turnSegSetOff(*segSet);
             }
 
             //if we've done all the segments we need to advance to the next testing mode
@@ -73,15 +73,15 @@ void SegmentSetCheckPS::update(){
             //check the segment lines
             //The first and last segment line are colored red and blue respectively
             //while each other segment line is lit up in green one at a time
-            numLines = SegSet.numLines;
+            numLines = segSet->numLines;
             //turn off the previous segment line
-            segDrawUtils::drawSegLine(SegSet, pixelCount - 1, 0, 0);
+            segDrawUtils::drawSegLine(*segSet, pixelCount - 1, 0, 0);
             //draw the segment line in green
-            segDrawUtils::drawSegLine(SegSet, pixelCount, CRGB::Green, 0);
+            segDrawUtils::drawSegLine(*segSet, pixelCount, CRGB::Green, 0);
 
             //set the first and last lines to red and green
-            segDrawUtils::drawSegLine(SegSet, 0, CRGB::Red, 0);
-            segDrawUtils::drawSegLine(SegSet, numLines - 1, CRGB::Blue, 0);
+            segDrawUtils::drawSegLine(*segSet, 0, CRGB::Red, 0);
+            segDrawUtils::drawSegLine(*segSet, numLines - 1, CRGB::Blue, 0);
 
             pixelCount++;
             //if we've drawn all the lines we need to advance to the next testing mode

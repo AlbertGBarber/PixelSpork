@@ -120,9 +120,6 @@ class PoliceStrobeSL : public EffectBasePS {
 
         ~PoliceStrobeSL();
 
-        SegmentSet 
-            &SegSet; 
-
         bool
             fillBG = true,
             fillBGOnPause = true,
@@ -187,7 +184,7 @@ class PoliceStrobeSL : public EffectBasePS {
             colorTemp;
         
         void
-            init(CRGB BgColor, uint16_t Rate),
+            init(CRGB BgColor, SegmentSet &SegSet, uint16_t Rate),
             startPause(),
             pickColor();
 };

@@ -4,20 +4,20 @@
 NoiseGradSL::NoiseGradSL(SegmentSet &SegSet, palettePS &Palette, CRGB BgColor, uint16_t BlendStepsBase, 
                                        uint16_t BlendStepsRange, uint8_t PhaseScale, uint8_t FreqScale, uint8_t BriScale, 
                                        uint16_t BlendRate, uint16_t Rate):
-    SegSet(SegSet), palette(&Palette), blendStepsBase(BlendStepsBase), blendStepsRange(BlendStepsRange), phaseScale(PhaseScale), freqScale(FreqScale), briScale(BriScale)
+    palette(&Palette), blendStepsBase(BlendStepsBase), blendStepsRange(BlendStepsRange), phaseScale(PhaseScale), freqScale(FreqScale), briScale(BriScale)
     {    
-        init(BgColor, BlendRate, Rate);
+        init(BgColor, BlendRate, SegSet, Rate);
 	}
 
 //Constructor with randomly generated palette
 NoiseGradSL::NoiseGradSL(SegmentSet &SegSet, uint8_t numColors, CRGB BgColor, uint16_t BlendStepsBase, 
                                        uint16_t BlendStepsRange, uint8_t PhaseScale, uint8_t FreqScale, uint8_t BriScale,
                                        uint16_t BlendRate, uint16_t Rate):
-    SegSet(SegSet), blendStepsBase(BlendStepsBase), blendStepsRange(BlendStepsRange), phaseScale(PhaseScale), freqScale(FreqScale), briScale(BriScale)
+    blendStepsBase(BlendStepsBase), blendStepsRange(BlendStepsRange), phaseScale(PhaseScale), freqScale(FreqScale), briScale(BriScale)
     {    
         paletteTemp = paletteUtilsPS::makeRandomPalette(numColors);
         palette = &paletteTemp;
-        init(BgColor, BlendRate, Rate);
+        init(BgColor, BlendRate, SegSet, Rate);
 	}
 
 NoiseGradSL::~NoiseGradSL(){
@@ -25,10 +25,12 @@ NoiseGradSL::~NoiseGradSL(){
 }
 
 //Initializes core common variables
-void NoiseGradSL::init(CRGB BgColor, uint16_t BlendRate, uint16_t Rate){
-    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
-    bindSegPtrPS();
+void NoiseGradSL::init(CRGB BgColor, uint16_t BlendRate, SegmentSet &SegSet, uint16_t Rate){
+    //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
+    bindSegSetPtrPS();
     bindClassRatesPS();
+
+    //bund the bgColor pointer
     bindBGColorPS();
 
     //bind the blendRate pointer
@@ -94,8 +96,8 @@ void NoiseGradSL::update(){
                 shiftBlendSteps();    
         }
         //re-fetch some core variables
-        numSegs = SegSet.numSegs;
-        numLines = SegSet.numLines;
+        numSegs = segSet->numSegs;
+        numLines = segSet->numLines;
         totBlendLength = blendSteps * palette->length;
 
         //Get a phase value for our waves using noise
@@ -146,16 +148,16 @@ void NoiseGradSL::update(){
             //color each segment pixel in the blended palette color
             for(uint16_t j = 0; j < numSegs; j++){
                 //get the current pixel's location in the segment set
-                pixelNum = segDrawUtils::getPixelNumFromLineNum(SegSet, numLines, j, i);
+                pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, j, i);
 
                 //get background color info for the current pixel
-                colorTarget = segDrawUtils::getPixelColor(SegSet, pixelNum, *bgColor, bgColorMode, j, i);
+                colorTarget = segDrawUtils::getPixelColor(*segSet, pixelNum, *bgColor, bgColorMode, j, i);
 
                 //get the color blended towards the background and output it
                 colorTarget = colorUtilsPS::getCrossFadeColor(colorOut, colorTarget, 255 - bri);
                 //colorFinal = colorOut;
                 //nscale8x3( colorFinal.r, colorFinal.g, colorFinal.b, bri); //scaling for if you want to switch to a blank bg
-                segDrawUtils::setPixelColor(SegSet, pixelNum, colorTarget, 0, 0, 0);   
+                segDrawUtils::setPixelColor(*segSet, pixelNum, colorTarget, 0, 0, 0);   
 
             }
         }

@@ -2,17 +2,17 @@
 
 //constructor for using a pattern and palette
 BreathPS::BreathPS(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint8_t BreathFreq, uint16_t Rate):
-    SegSet(SegSet), pattern(&Pattern), palette(&Palette)
+    pattern(&Pattern), palette(&Palette)
     {    
-        init(BgColor, BreathFreq, Rate);
+        init(BgColor, BreathFreq, SegSet, Rate);
 	}
 
 //constructor for using palette as pattern
 BreathPS::BreathPS(SegmentSet &SegSet, palettePS &Palette, CRGB BgColor, uint8_t BreathFreq, uint16_t Rate):
-    SegSet(SegSet), palette(&Palette)
+    palette(&Palette)
     {    
         setPaletteAsPattern();
-        init(BgColor, BreathFreq, Rate);
+        init(BgColor, BreathFreq, SegSet, Rate);
 	}
 
 //constructor for a single color breath (pass in 0 as the color to trigger randMode 1, fully random)
@@ -22,7 +22,7 @@ BreathPS::BreathPS(SegmentSet &SegSet, palettePS &Palette, CRGB BgColor, uint8_t
 //Passing in maxBreath also forces the compiler to differentiate this constructor from the rainbow one below
 //(CRGB's look like uint8_t's to the compiler)
 BreathPS::BreathPS(SegmentSet &SegSet, CRGB color, CRGB BgColor, uint8_t MaxBreath, uint8_t BreathFreq, uint16_t Rate):
-    SegSet(SegSet), maxBreath(MaxBreath)
+    maxBreath(MaxBreath)
     {    
         if(color == CRGB{0,0,0}){
             randMode = 1; //set mode to 3 since we are doing a full random set of colors
@@ -31,12 +31,12 @@ BreathPS::BreathPS(SegmentSet &SegSet, CRGB color, CRGB BgColor, uint8_t MaxBrea
         paletteTemp = paletteUtilsPS::makeSingleColorPalette(color);
         palette = &paletteTemp;
         setPaletteAsPattern();
-        init(BgColor, BreathFreq, Rate);
+        init(BgColor, BreathFreq, SegSet, Rate);
     }
 
 //constructor for rainbow mode
 BreathPS::BreathPS(SegmentSet &SegSet, CRGB BgColor, uint8_t RainbowRate, uint8_t BreathFreq, uint16_t Rate):
-    SegSet(SegSet), rainbowRate(RainbowRate)
+    rainbowRate(RainbowRate)
     {    
         randMode = 4; //set mode to 4 for rainbow mode
        
@@ -44,7 +44,7 @@ BreathPS::BreathPS(SegmentSet &SegSet, CRGB BgColor, uint8_t RainbowRate, uint8_
         paletteTemp = paletteUtilsPS::makeSingleColorPalette(colorUtilsPS::randColor());
         palette = &paletteTemp;
         setPaletteAsPattern();
-        init(BgColor, BreathFreq, Rate);
+        init(BgColor, BreathFreq, SegSet, Rate);
 	}
 
 BreathPS::~BreathPS(){
@@ -53,9 +53,9 @@ BreathPS::~BreathPS(){
 }
 
 //bind core class vars
-void BreathPS::init(CRGB BgColor, uint8_t BreathFreq, uint16_t Rate){
-    //bind the rate and SegmentSet pointer vars since they are inherited from BaseEffectPS
-    bindSegPtrPS();
+void BreathPS::init(CRGB BgColor, uint8_t BreathFreq, SegmentSet &SegSet, uint16_t Rate){
+    //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
+    bindSegSetPtrPS();
     bindClassRatesPS();
     //bind background color pointer
     bindBGColorPS();
@@ -141,7 +141,7 @@ void BreathPS::update(){
         breath = map8(breath, minBreath, maxBreath); //map from 0, 255 to min and maxBreath;
 
         colorOut = colorUtilsPS::getCrossFadeColor(breathColor, *bgColor, breath);
-        segDrawUtils::fillSegSetColor(SegSet, colorOut, 0);
+        segDrawUtils::fillSegSetColor(*segSet, colorOut, 0);
 
         //If we've reached the end of the current fade we need to choose the next color to fade to
         //To do this we check the fade brightness. Since we are sampling the brightness from a wave

@@ -109,9 +109,6 @@ class PatternShifterSeg : public EffectBasePS {
         PatternShifterSeg(SegmentSet &SegSet, shiftPatternPS &ShiftPattern, palettePS &Palette, CRGB BgColor, 
                           bool RepeatLine, bool RepeatSeg, bool Direct, uint16_t Rate);  
 
-        SegmentSet 
-            &SegSet; 
-        
         uint8_t
             colorMode = 0,
             bgColorMode = 0;

@@ -4,13 +4,13 @@
 RainSL::RainSL(SegmentSet &SegSet, palettePS &Palette, CRGB BgColor, bool BgPrefill, uint8_t SpawnChance, 
                     uint8_t MaxNumDrops, uint16_t Size, uint8_t TrailType, uint8_t TrailSize, uint16_t Rate, bool Direct):
                     
-    SegSet(SegSet), palette(&Palette), bgPrefill(BgPrefill), spawnChance(SpawnChance), 
+    palette(&Palette), bgPrefill(BgPrefill), spawnChance(SpawnChance), 
     size(Size), trailType(TrailType), trailSize(TrailSize), direct(Direct)
     {    
         speedRange = 0;
         sizeRange = 0;
         trailRange = 0;
-        init(Rate, MaxNumDrops, BgColor);
+        init(MaxNumDrops, BgColor, SegSet, Rate);
 	}
 
 //constructor for palette colors with range and trail options
@@ -19,19 +19,19 @@ RainSL::RainSL(SegmentSet &SegSet, palettePS &Palette, CRGB BgColor, bool BgPref
                     uint8_t TrailRange, bool NoTrails, bool OneTrail, bool TwoTrail, bool RevTrail, 
                     bool InfTrail, uint16_t Rate, uint16_t SpeedRange, bool Direct):
 
-    SegSet(SegSet), palette(&Palette), bgPrefill(BgPrefill), spawnChance(SpawnChance), size(Size), sizeRange(SizeRange), 
+    palette(&Palette), bgPrefill(BgPrefill), spawnChance(SpawnChance), size(Size), sizeRange(SizeRange), 
     trailSize(TrailSize), trailRange(TrailRange), noTrails(NoTrails), oneTrail(OneTrail),
     twoTrail(TwoTrail), revTrail(RevTrail), infTrail(InfTrail), speedRange(SpeedRange), direct(Direct)
     {   
         trailType = 6; //we're picking from the boolean trail options, this is indicated by trailType 6
-        init(Rate, MaxNumDrops, BgColor);
+        init(MaxNumDrops, BgColor, SegSet, Rate);
 	}
 
 //constructor for single color, no range options
 RainSL::RainSL(SegmentSet &SegSet, CRGB Color, CRGB BgColor, bool BgPrefill, uint8_t SpawnChance, 
                     uint8_t MaxNumDrops, uint16_t Size, uint8_t TrailType, uint8_t TrailSize, uint16_t Rate, bool Direct):
 
-    SegSet(SegSet), bgPrefill(BgPrefill), spawnChance(SpawnChance), size(Size), trailType(TrailType), trailSize(TrailSize), direct(Direct)
+    bgPrefill(BgPrefill), spawnChance(SpawnChance), size(Size), trailType(TrailType), trailSize(TrailSize), direct(Direct)
     {    
         speedRange = 0;
         sizeRange = 0;
@@ -39,7 +39,7 @@ RainSL::RainSL(SegmentSet &SegSet, CRGB Color, CRGB BgColor, bool BgPrefill, uin
         //make a single colored palette
         paletteTemp = paletteUtilsPS::makeSingleColorPalette(Color);
         palette = &paletteTemp;
-        init(Rate, MaxNumDrops, BgColor);
+        init(MaxNumDrops, BgColor, SegSet, Rate);
 	}
 
 //constructor for single colors with range and trail options
@@ -48,7 +48,7 @@ RainSL::RainSL(SegmentSet &SegSet, CRGB Color, CRGB BgColor, bool BgPrefill, uin
                     uint8_t TrailRange, bool NoTrails, bool OneTrail, bool TwoTrail, bool RevTrail, 
                     bool InfTrail, uint16_t Rate, uint16_t SpeedRange, bool Direct):
 
-    SegSet(SegSet), bgPrefill(BgPrefill), spawnChance(SpawnChance), size(Size), sizeRange(SizeRange), 
+    bgPrefill(BgPrefill), spawnChance(SpawnChance), size(Size), sizeRange(SizeRange), 
     trailSize(TrailSize), trailRange(TrailRange), noTrails(NoTrails), oneTrail(OneTrail),
     twoTrail(TwoTrail), revTrail(RevTrail), infTrail(InfTrail), speedRange(SpeedRange), direct(Direct)
     {    
@@ -56,7 +56,7 @@ RainSL::RainSL(SegmentSet &SegSet, CRGB Color, CRGB BgColor, bool BgPrefill, uin
         //make a single colored palette
         paletteTemp = paletteUtilsPS::makeSingleColorPalette(Color);
         palette = &paletteTemp;
-        init(Rate, MaxNumDrops, BgColor);
+        init(MaxNumDrops, BgColor, SegSet, Rate);
 	}
 
 RainSL::~RainSL(){
@@ -68,9 +68,9 @@ RainSL::~RainSL(){
 }
 
 //general setup function for class vars
-void RainSL::init(uint16_t Rate, uint8_t MaxNumDrops, CRGB BgColor){
-    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
-    bindSegPtrPS();
+void RainSL::init(uint8_t MaxNumDrops, CRGB BgColor, SegmentSet &SegSet, uint16_t Rate){
+    //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
+    bindSegSetPtrPS();
     bindClassRatesPS();
     //bind background color pointer
     bindBGColorPS();
@@ -89,8 +89,8 @@ void RainSL::setupDrops(uint8_t newMaxNumDrops){
     maxNumDrops = newMaxNumDrops;
     
     //Record the dimensions of the segment set
-    numLines = SegSet.numLines;
-    numSegs = SegSet.numSegs;
+    numLines = segSet->numLines;
+    numSegs = segSet->numSegs;
     
     //We need to know how many particles we need to store all the possible active drops for each line
     uint16_t numParticles = numLines * newMaxNumDrops;
@@ -163,7 +163,7 @@ void RainSL::setDropSpawnPos(particlePS *particlePtr){
     //Particles from particlePS.h (in the Particles Effect)
     //We have a single set of particles ( created using setupDrops() )
     //Each particle is either active or inactive
-    //An active particle is drawn moving on the SegSet, while an inactive on is waiting to become activated
+    //An active particle is drawn moving on the segSet, while an inactive on is waiting to become activated
     //The active/inactive status of particles is stored in the partActive array
     //There is a single particle set and partActive array for all the particles across all the segments set's lines
     //The areas in the array for each line's particles go up sequentially
@@ -211,7 +211,7 @@ void RainSL::update(){
         //if the bg is to be filled before the particles start, fill it in
         if( fillBG || blend || (bgPrefill && !bgFilled) ){
             bgFilled = true;
-            segDrawUtils::fillSegSetColor(SegSet, *bgColor, bgColorMode);
+            segDrawUtils::fillSegSetColor(*segSet, *bgColor, bgColorMode);
         }
 
         //for each segment and then each particle, in order:
@@ -306,13 +306,13 @@ void RainSL::update(){
 
                             //only turn off the pixel if it hasn't been touched by another particle's trail (or something else)
                             //this prevents background holes from being placed in other particles
-                            if(SegSet.leds[pixelPosTemp] == trailEndColors[particleIndex]){
-                                SegSet.leds[pixelPosTemp] = segDrawUtils::getPixelColor(SegSet, pixelPosTemp, *bgColor, bgColorMode, trailLedLocation, i);
+                            if(segSet->leds[pixelPosTemp] == trailEndColors[particleIndex]){
+                                segSet->leds[pixelPosTemp] = segDrawUtils::getPixelColor(*segSet, pixelPosTemp, *bgColor, bgColorMode, trailLedLocation, i);
                             }
                         }
                     }
 
-                    //if a particle has reached the end of the SegSet + (total particle size), it is now inactive
+                    //if a particle has reached the end of the segSet + (total particle size), it is now inactive
                     //the reason why we include the particle size is to allow the whole particle to move off the segment
                     //anything that falls outside the segment won't be drawn,
                     //so we can skip drawing the particle, and break out of the loop
@@ -344,7 +344,7 @@ void RainSL::update(){
                                     //drawParticlePixel gets pixelPosTemp for the current pixel
                                     //If we have trails, we need to record the trail end color at the end of the trail
                                     if(k == partTrailSize){
-                                        trailEndColors[particleIndex] = SegSet.leds[pixelPosTemp]; //pixelInfo.color;
+                                        trailEndColors[particleIndex] = segSet->leds[pixelPosTemp]; //pixelInfo.color;
                                     }
                                 }
                             }
@@ -365,7 +365,7 @@ void RainSL::update(){
                             //if we don't have a rear trail, then the next pixel that needs to be set to background
                             //is the last pixel in the particle body, so we record it's color
                             if( k == (partSize - 1) && (partTrailType == 0 || partTrailType == 3) ){
-                                trailEndColors[particleIndex] = SegSet.leds[pixelPosTemp];//pixelInfo.color;
+                                trailEndColors[particleIndex] = segSet->leds[pixelPosTemp];//pixelInfo.color;
                             }
                         }
                     }
@@ -411,20 +411,20 @@ void RainSL::moveParticle(particlePS *particlePtr) {
 void RainSL::drawParticlePixel(uint16_t trailLedLocation, uint8_t trailPixelNum, uint8_t trailSize, uint8_t lineNum, bool bodyPixel){
     //get the physical pixel location and color
     pixelPosTemp = getParticlePixelLoc(trailLedLocation, lineNum);
-    colorTemp = segDrawUtils::getPixelColor(SegSet, pixelPosTemp, colorOut, colorMode, trailLedLocation, lineNum);
+    colorTemp = segDrawUtils::getPixelColor(*segSet, pixelPosTemp, colorOut, colorMode, trailLedLocation, lineNum);
 
     if(!bodyPixel){
         //get the target background color and blend towards it
-        colorEnd = segDrawUtils::getPixelColor(SegSet, pixelPosTemp, *bgColor, bgColorMode, trailLedLocation, lineNum);
+        colorEnd = segDrawUtils::getPixelColor(*segSet, pixelPosTemp, *bgColor, bgColorMode, trailLedLocation, lineNum);
         //blend the color into the background according to where we are in the trail
         colorTemp = particleUtilsPS::getTrailColor(colorTemp, colorEnd, trailPixelNum, trailSize, dimPow);
     }
 
     //output the color
     if(blend){
-        SegSet.leds[pixelPosTemp] += colorTemp;
+        segSet->leds[pixelPosTemp] += colorTemp;
     } else {
-        SegSet.leds[pixelPosTemp] = colorTemp;
+        segSet->leds[pixelPosTemp] = colorTemp;
     }                 
 }
 
@@ -441,7 +441,7 @@ uint16_t RainSL::getParticlePixelLoc(uint16_t trailLedLocation, uint8_t lineNum)
         trailLedLocation = numSegs - trailLedLocation - 1;
     }
     
-    return segDrawUtils::getPixelNumFromLineNum(SegSet, numLines, trailLedLocation, lineNum);
+    return segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, trailLedLocation, lineNum);
 }
 
 //returns the position of a trail pixel(local to the segment) based on the trail direction, and the mod amount
@@ -495,5 +495,5 @@ void RainSL::spawnParticle(uint8_t particleIndex, uint8_t lineNum){
     }
     //we need to store the trailEndColor for size 1 particles
     //otherwise, when they next update, trailEndColors will be empty
-    trailEndColors[particleIndex] = SegSet.leds[pixelPosTemp];
+    trailEndColors[particleIndex] = segSet->leds[pixelPosTemp];
 }

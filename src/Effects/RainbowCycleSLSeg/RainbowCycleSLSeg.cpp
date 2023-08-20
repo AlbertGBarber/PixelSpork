@@ -1,24 +1,25 @@
 #include "RainbowCycleSLSeg.h"
 
 RainbowCycleSLSeg::RainbowCycleSLSeg(SegmentSet &SegSet, uint16_t Length, bool Direct, bool SegMode, uint16_t Rate):
-    SegSet(SegSet), length(Length), direct(Direct), segMode(SegMode)
-    {    
-        init(Rate);
+   length(Length), direct(Direct), segMode(SegMode)
+    {   
+        init(SegSet, Rate);
 	}
 
 //Does a rainbow cycle of length 255
 RainbowCycleSLSeg::RainbowCycleSLSeg(SegmentSet &SegSet, bool Direct, bool SegMode, uint16_t Rate):
-    SegSet(SegSet), direct(Direct), segMode(SegMode)
+    direct(Direct), segMode(SegMode)
     {
         length = 255;
-        init(Rate);
+        init(SegSet, Rate);
     }
 
 //initializes/resets the core counting and direction vars for the effect
-void RainbowCycleSLSeg::init(uint16_t Rate){
-    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
-    bindSegPtrPS();
+void RainbowCycleSLSeg::init(SegmentSet &SegSet, uint16_t Rate){
+    //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
+    bindSegSetPtrPS();
     bindClassRatesPS();
+    
     cycleNum = 0;
     setLength(length);
 }
@@ -27,20 +28,20 @@ void RainbowCycleSLSeg::init(uint16_t Rate){
 void RainbowCycleSLSeg::setLength(uint16_t newLength){
     uint16_t segLength;
     if(segMode){
-        segLength = SegSet.numSegs;
+        segLength = segSet->numSegs;
     } else {
-        segLength = SegSet.numLines;
+        segLength = segSet->numLines;
     }
     //set the maximum cycle length 
     //ie the total amount of cycles before the effect is back at the start
-    //we allow rainbows that are longer than the SegSet lines
+    //we allow rainbows that are longer than the segSet lines
     maxCycleLength = segLength - 1;
     if(length > segLength){
         maxCycleLength = length;
     }
 }
 
-//core update cycle, draws the rainbows along the SegSet every rate ms
+//core update cycle, draws the rainbows along the segSet every rate ms
 void RainbowCycleSLSeg::update(){
     currentTime = millis();
 
@@ -67,23 +68,23 @@ void RainbowCycleSLSeg::update(){
 
         //either draw the rainbow along the segments or the segment lines
         if(segMode){
-            numSegs = SegSet.numSegs;
+            numSegs = segSet->numSegs;
             //color each segment in a rainbow color
             for (uint16_t i = 0; i < numSegs; i++) {
                 color = getRainbowColor(i);
                 //Color the segment
-                segDrawUtils::fillSegColor(SegSet, i, color, 0);
+                segDrawUtils::fillSegColor(*segSet, i, color, 0);
             }
         } else {
             //we grab some segment info in case it's changed (It shouldn't have, but this is a safe guard)
-            numLines = SegSet.numLines;
+            numLines = segSet->numLines;
             //for each segment line, set each pixel in the line to the appropriate rainbow color
             for (uint16_t i = 0; i < numLines; i++) {
                 color = getRainbowColor(i);
                 //fill the segment line at the line location with color
-                //by default the rainbows would move counter-clockwise across the SegSet, so we use numLines - i - 1
+                //by default the rainbows would move counter-clockwise across the segSet, so we use numLines - i - 1
                 //to reverse it
-                segDrawUtils::drawSegLine(SegSet, numLines - i - 1, color, 0);
+                segDrawUtils::drawSegLine(*segSet, numLines - i - 1, color, 0);
             }
         }
         showCheckPS();

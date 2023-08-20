@@ -12,28 +12,27 @@
 
 //Constructor for effect with pattern and palette
 ShiftingSeaSL::ShiftingSeaSL(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t GradLength, uint8_t Smode, uint8_t Grouping, uint16_t Rate):
-    SegSet(SegSet), pattern(&Pattern), palette(&Palette), gradLength(GradLength), sMode(Smode), grouping(Grouping) 
+    pattern(&Pattern), palette(&Palette), gradLength(GradLength), sMode(Smode), grouping(Grouping) 
 {
-    init(Rate);
+    init(SegSet, Rate);
 }
 
 //Constructor for effect with palette
 ShiftingSeaSL::ShiftingSeaSL(SegmentSet &SegSet, palettePS &Palette, uint8_t GradLength, uint8_t Smode, uint8_t Grouping, uint16_t Rate):
-    SegSet(SegSet), palette(&Palette), gradLength(GradLength), sMode(Smode), grouping(Grouping) 
+    palette(&Palette), gradLength(GradLength), sMode(Smode), grouping(Grouping) 
 {
     setPaletteAsPattern();
-    init(Rate);
-
+    init(SegSet, Rate);
 }
 
 //Constructor for effect with randomly created palette
 ShiftingSeaSL::ShiftingSeaSL(SegmentSet &SegSet, uint8_t NumColors, uint8_t GradLength, uint8_t Smode, uint8_t Grouping, uint16_t Rate):
-    SegSet(SegSet), gradLength(GradLength), sMode(Smode), grouping(Grouping) 
+    gradLength(GradLength), sMode(Smode), grouping(Grouping) 
 {
     paletteTemp = paletteUtilsPS::makeRandomPalette(NumColors);
     palette = &paletteTemp;
     setPaletteAsPattern();
-    init(Rate);
+    init(SegSet, Rate);
 }
 
 ShiftingSeaSL::~ShiftingSeaSL(){
@@ -43,10 +42,11 @@ ShiftingSeaSL::~ShiftingSeaSL(){
 }
 
 //initializes core variables
-void ShiftingSeaSL::init(uint16_t Rate){
-    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
-    bindSegPtrPS();
+void ShiftingSeaSL::init(SegmentSet &SegSet, uint16_t Rate){
+    //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
+    bindSegSetPtrPS();
     bindClassRatesPS();
+    
     resetOffsets();
 }
 
@@ -77,7 +77,7 @@ void ShiftingSeaSL::setGrouping(uint16_t newGrouping) {
 //Will only re-size the array if it needs more room, 
 //so the can stay larger than needed if you switch to a smaller segment set
 void ShiftingSeaSL::resetOffsets() {
-    numLines = SegSet.numLines;
+    numLines = segSet->numLines;
 
     //We only need to make a new offsets array if the current one isn't large enough
     //This helps prevent memory fragmentation by limiting the number of heap allocations
@@ -150,7 +150,7 @@ void ShiftingSeaSL::update() {
             
             //get the cross faded color and write it out
             color = colorUtilsPS::getCrossFadeColor(currentColor, nextColor, gradStep, gradLength);
-            segDrawUtils::drawSegLine(SegSet, i, color, 0);
+            segDrawUtils::drawSegLine(*segSet, i, color, 0);
 
             // randomly increment the offset (keeps the effect varied)
             if (randomShift) {

@@ -28,9 +28,6 @@ Other Settings:
 class ColorModeFillPS : public EffectBasePS {
     public:
         ColorModeFillPS(SegmentSet &SegSet, uint8_t ColorMode, uint16_t Rate);  
-
-        SegmentSet 
-            &SegSet;
         
         uint8_t 
             colorMode;

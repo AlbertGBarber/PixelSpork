@@ -2,63 +2,64 @@
 
 //constructor for using the passed in pattern and palette for the wave
 SegWaves::SegWaves(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint8_t FadeSteps, bool Direct, uint16_t Rate):
-    SegSet(SegSet), pattern(&Pattern), palette(&Palette), fadeSteps(FadeSteps), direct(Direct)
+    pattern(&Pattern), palette(&Palette), fadeSteps(FadeSteps), direct(Direct)
     {    
-        init(BgColor, Rate);
+        init(BgColor, SegSet, Rate);
 	}
 
 //constructor for building the wave pattern from the passed in pattern and the palette, using the passed in waveThickness and spacing
 //Passing a color length of 0 will set the wave thickness to 1 and the spacing such that there's only one wave on the segment set at once
 SegWaves::SegWaves(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t WaveThickness, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, bool Direct, uint16_t Rate):
-    SegSet(SegSet), palette(&Palette), fadeSteps(FadeSteps), direct(Direct)
+    palette(&Palette), fadeSteps(FadeSteps), direct(Direct)
     {    
+        init(BgColor, SegSet, Rate);
         //short cut for creating a single segment wave
         if(WaveThickness == 0){ 
             WaveThickness = 1;
-            Spacing = SegSet.numSegs;
+            Spacing = segSet->numSegs;
         }
         setPatternAsPattern(Pattern, WaveThickness, Spacing);
-        init(BgColor, Rate);
 	}
 
 //constructor for building a wave using all the colors in the passed in palette, using the waveThickness and spacing for each color
 //Passing a color length of 0 will set the wave thickness to 1 and the spacing such that there's only one wave on the segment set at once
 SegWaves::SegWaves(SegmentSet &SegSet, palettePS &Palette, uint8_t WaveThickness, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, bool Direct, uint16_t Rate):
-    SegSet(SegSet), palette(&Palette), fadeSteps(FadeSteps), direct(Direct)
+    palette(&Palette), fadeSteps(FadeSteps), direct(Direct)
     {    
+        init(BgColor, SegSet, Rate);
         //short cut for creating a single segment wave
         if(WaveThickness == 0){
             WaveThickness = 1;
-            Spacing = SegSet.numSegs;
+            Spacing = segSet->numSegs;
         }
         setPaletteAsPattern(WaveThickness, Spacing);
-        init(BgColor, Rate);
 	}
 
 //constructor for doing a single colored wave, using waveThickness and spacing
 //Passing a color length of 0 will set the wave thickness to 1 and the spacing such that there's only one wave on the segment set at once
 SegWaves::SegWaves(SegmentSet &SegSet, CRGB Color, uint8_t WaveThickness, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, bool Direct, uint16_t Rate):
-    SegSet(SegSet), fadeSteps(FadeSteps), direct(Direct)
+    fadeSteps(FadeSteps), direct(Direct)
     {    
+        init(BgColor, SegSet, Rate);
         paletteTemp = paletteUtilsPS::makeSingleColorPalette(Color);
         palette = &paletteTemp;
         //short cut for creating a single segment wave
         if(WaveThickness == 0){
             WaveThickness = 1;
-            Spacing = SegSet.numSegs;
+            Spacing = segSet->numSegs;
         }
         setPaletteAsPattern(WaveThickness, Spacing);
-        init(BgColor, Rate);
 	}
 
 //constructor doing a rainbow based on the number of segments, there's no spacing for this mode
-SegWaves::SegWaves(SegmentSet &SegSet,uint8_t FadeSteps, bool Direct, uint16_t Rate):
-    SegSet(SegSet), fadeSteps(FadeSteps), direct(Direct)
+SegWaves::SegWaves(SegmentSet &SegSet, uint8_t FadeSteps, bool Direct, uint16_t Rate):
+    fadeSteps(FadeSteps), direct(Direct)
     {    
+        init(0, SegSet, Rate);
         //For the rainbow we create a pattern and palette of length equal to the number of segments
         //The pattern is just each segment number in order,
         //while the palette is filled with a rainbow spread across all the segments (one color for each segment)
-        numSegs = SegSet.numSegs;
+        numSegs = segSet->numSegs;
         uint8_t *patternArr = new uint8_t[numSegs];
         CRGB *paletteArr = new CRGB[numSegs];
         for (uint16_t i = 0; i < numSegs; i++) {
@@ -71,8 +72,6 @@ SegWaves::SegWaves(SegmentSet &SegSet,uint8_t FadeSteps, bool Direct, uint16_t R
 
         patternTemp = {patternArr, numSegs};
         pattern = &patternTemp;
-
-        init(0, Rate);
 	}
 
 //destructor
@@ -83,12 +82,14 @@ SegWaves::~SegWaves(){
 }
 
 //initialization of core variables and pointers
-void SegWaves::init(CRGB BgColor, uint16_t Rate){
-    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
-    bindSegPtrPS();
+void SegWaves::init(CRGB BgColor, SegmentSet &SegSet, uint16_t Rate){
+    //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
+    bindSegSetPtrPS();
     bindClassRatesPS();
+
     //bind background color pointer
     bindBGColorPS();
+
     reset();
     //the minimum value for fade steps is 1, this does an instant transition between colors
     //so we set the fadeOn, since this will produce a faster effect execution
@@ -110,7 +111,7 @@ void SegWaves::reset(){
 //Note that this deletes the existing array
 //Only needs to be used if you change the number of segments in your segment set
 void SegWaves::resetSegColors(){
-    numSegs = SegSet.numSegs;
+    numSegs = segSet->numSegs;
 
     //We only need to make a new array if the current one isn't large enough
     //This helps prevent memory fragmentation by limiting the number of heap allocations
@@ -126,7 +127,7 @@ void SegWaves::resetSegColors(){
 //ie a wave of thickness 1, and a spacing equal to the number of segments, so there's only one 
 //wave on the segment at once
 void SegWaves::makeSingleWave(){
-    setPaletteAsPattern(1, SegSet.numSegs);
+    setPaletteAsPattern(1, segSet->numSegs);
 }
 
 //takes the passed in pattern and creates a pattern for the wave
@@ -159,7 +160,7 @@ void SegWaves::update(){
 
         //both updateFade() and updateNoFade() need the current segment and pattern lengths,
         //so we'll do them here to reduce repetition
-        numSegs = SegSet.numSegs;
+        numSegs = segSet->numSegs;
         numSegsLim = numSegs - 1; //the loop limit for the number of segs
         patternLength = pattern->length;
 
@@ -231,8 +232,8 @@ void SegWaves::initFill(){
 CRGB SegWaves::getNextColor(uint16_t segNum, uint16_t segNumRaw){
     //nextPatternIndex is set before the call
     nextPattern = patternUtilsPS::getPatternVal(*pattern, nextPatternIndex);
-    pixelNum = segDrawUtils::getSegmentPixel(SegSet, segNum, 0);
-    //lineNum = segDrawUtils::getLineNumFromPixelNum(SegSet, 0, segNum);
+    pixelNum = segDrawUtils::getSegmentPixel(*segSet, segNum, 0);
+    //lineNum = segDrawUtils::getLineNumFromPixelNum(*segSet, 0, segNum);
 
     //If we're in random mode, the next color is taken from the segColors array
     //otherwise we work it out on the fly based on the pattern, palette, and colorMode
@@ -247,10 +248,10 @@ CRGB SegWaves::getNextColor(uint16_t segNum, uint16_t segNumRaw){
         }
     } else {
         if(nextPattern == 255){ //255 in the pattern marks a background color
-            return segDrawUtils::getPixelColor(SegSet, pixelNum, *bgColor, bgColorMode, segNum, 0);
+            return segDrawUtils::getPixelColor(*segSet, pixelNum, *bgColor, bgColorMode, segNum, 0);
         } else {
             colorOut = paletteUtilsPS::getPaletteColor(*palette, nextPattern);
-            return segDrawUtils::getPixelColor(SegSet, pixelNum, colorOut, colorMode, segNum, 0);
+            return segDrawUtils::getPixelColor(*segSet, pixelNum, colorOut, colorMode, segNum, 0);
         }
     }
 }
@@ -283,13 +284,13 @@ void SegWaves::handleRandColors(){
     //and the next pattern value
     segNum = numSegsLim;
     nextPattern = patternUtilsPS::getPatternVal(*pattern, cycleNum);
-    pixelNum = segDrawUtils::getSegmentPixel(SegSet, segNum, 0);
+    pixelNum = segDrawUtils::getSegmentPixel(*segSet, segNum, 0);
 
     //Pick the new color
     //If it's background (indicated by a pattern value of 255), we pick a background color
     //Otherwise, pick a random color based on the randMode
     if(nextPattern == 255){
-        segColors[numSegs] = segDrawUtils::getPixelColor(SegSet, pixelNum, *bgColor, bgColorMode, segNum, 0);
+        segColors[numSegs] = segDrawUtils::getPixelColor(*segSet, pixelNum, *bgColor, bgColorMode, segNum, 0);
         prevPattern = 255;
     } else if(prevPattern != nextPattern) {
         //If we're doing random colors, we still want to stick to the wave lengths in the pattern
@@ -315,7 +316,7 @@ void SegWaves::handleRandColors(){
         }
 
         //set the new random color into the segColors array
-        segColors[numSegs] = segDrawUtils::getPixelColor(SegSet, pixelNum, colorOut, colorMode, segNum, 0);
+        segColors[numSegs] = segDrawUtils::getPixelColor(*segSet, pixelNum, colorOut, colorMode, segNum, 0);
         randColor = segColors[numSegs];
             
     } else {
@@ -356,7 +357,7 @@ void SegWaves::updateFade(){
         //depending on the direction, we reverse the output segment
         segNum = handleDirect(i);
 
-        segDrawUtils::fillSegColor(SegSet, segNum, colorOut, 0);
+        segDrawUtils::fillSegColor(*segSet, segNum, colorOut, 0);
         currentColor = nextColor; //the start color of the current segment is the target color of the next one
     }
 
@@ -385,7 +386,7 @@ void SegWaves::updateNoFade(){
         //depending on the direction, we reverse the output segment
         segNum = handleDirect(i);
 
-        segDrawUtils::fillSegColor(SegSet, segNum, nextColor, 0);
+        segDrawUtils::fillSegColor(*segSet, segNum, nextColor, 0);
     }
 
     cycleNum = addMod16PS( cycleNum, 1, patternLength );

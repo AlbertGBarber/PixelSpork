@@ -104,9 +104,6 @@ class PacificaHueSL : public EffectBasePS {
 
         ~PacificaHueSL();
 
-        SegmentSet 
-            &SegSet; 
-
         PacificaHuePalPS
             *PacificaPalette = nullptr;
         
@@ -168,7 +165,7 @@ class PacificaHueSL : public EffectBasePS {
             colorOut;
         
         void 
-            init(uint16_t HueRate, uint16_t Rate),
+            init(uint16_t HueRate, SegmentSet &SegSet, uint16_t Rate),
             doOneLayer( palettePS *palette, uint16_t ciStart, uint16_t waveScale, uint8_t bri, uint16_t iOff),
             addWhitecaps();
 };

@@ -21,7 +21,7 @@ PaletteSliderPS::~PaletteSliderPS(){
 
 //setup core vars
 void PaletteSliderPS::init(uint16_t Rate){
-    //bind the rate pointer vars since they are inherited from BaseEffectPS
+    //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
     bindClassRatesPS();
     makeSliderPalette(sliderPalLen);
     reset();

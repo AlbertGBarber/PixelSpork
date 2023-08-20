@@ -68,9 +68,6 @@ class ShimmerSL : public EffectBasePS {
         ShimmerSL(SegmentSet &SegSet, palettePS &Palette, uint8_t ShimmerMin, uint8_t ShimmerMax, uint16_t Rate);
 
         ~ShimmerSL();
-
-        SegmentSet 
-            &SegSet; 
         
         uint8_t
             randMode = 0,
@@ -109,7 +106,7 @@ class ShimmerSL : public EffectBasePS {
             color;
             
         void 
-            init(uint16_t Rate);
+            init(SegmentSet &SegSet, uint16_t Rate);
 };
 
 #endif

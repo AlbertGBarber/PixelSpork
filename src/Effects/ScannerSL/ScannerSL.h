@@ -172,9 +172,6 @@ class ScannerSL : public EffectBasePS {
                   bool Bounce, bool BounceChange, bool Blend, uint16_t Rate);
         
         ~ScannerSL();
-        
-        SegmentSet 
-            &SegSet; 
 
         int8_t
             dimPow = 80; //80 range -127 -> 127 -80 good for colored bg's
@@ -261,7 +258,7 @@ class ScannerSL : public EffectBasePS {
             getPartPixelColor(uint16_t partPixelLoc, bool trailDirect);
         
         void
-            init(CRGB BgColor, uint16_t Rate),
+            init(CRGB BgColor, SegmentSet &SegSet, uint16_t Rate),
             moveParticle(particlePS *particlePtr),
             setPartColor(particlePS *particlePtr),
             setTrailColor(uint16_t trailLineNum, uint8_t segNum, uint8_t trailPixelNum);

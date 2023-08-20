@@ -94,9 +94,6 @@ Reference Vars:
 class PatternShifterSL : public EffectBasePS {
     public:
         PatternShifterSL(SegmentSet &SegSet, shiftPatternPS &ShiftPattern, palettePS &Palette, CRGB BgColor, bool Repeat, uint16_t Rate);  
-
-        SegmentSet 
-            &SegSet; 
         
         uint8_t
             colorMode = 0,

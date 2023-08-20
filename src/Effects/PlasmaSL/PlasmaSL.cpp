@@ -2,18 +2,18 @@
 
 //Constructor for effect with palette
 PlasmaSL::PlasmaSL(SegmentSet &SegSet, palettePS &Palette, uint16_t BlendSteps, bool Randomize, uint16_t Rate):
-    SegSet(SegSet), palette(&Palette), blendSteps(BlendSteps), randomize(Randomize)
+    palette(&Palette), blendSteps(BlendSteps), randomize(Randomize)
     {    
-        init(Rate);
+        init(SegSet, Rate);
 	}
 
 //Constructor for effect with randomly chosen palette
 PlasmaSL::PlasmaSL(SegmentSet &SegSet, uint8_t numColors, uint16_t BlendSteps, bool Randomize, uint16_t Rate):
-    SegSet(SegSet), blendSteps(BlendSteps), randomize(Randomize)
+    blendSteps(BlendSteps), randomize(Randomize)
     {    
         paletteTemp = paletteUtilsPS::makeRandomPalette(numColors);
         palette = &paletteTemp;
-        init(Rate);
+        init(SegSet, Rate);
 	}
 
 PlasmaSL::~PlasmaSL(){
@@ -22,9 +22,9 @@ PlasmaSL::~PlasmaSL(){
 
 //sets up variables for the effect
 //if randomize is true, the phases, phaseBase beat times, and frequencies will be randomized
-void PlasmaSL::init(uint16_t Rate){
-    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
-    bindSegPtrPS();
+void PlasmaSL::init(SegmentSet &SegSet, uint16_t Rate){
+    //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS 
+    bindSegSetPtrPS();
     bindClassRatesPS();
 
     if(randomize){
@@ -71,7 +71,7 @@ void PlasmaSL::update(){
         phaseWave1 = beatsin8(6 + pAdj1, -64, 64);
         phaseWave2 = beatsin8(7 + pAdj2, -64, 64);
 
-        numLines = SegSet.numLines;
+        numLines = segSet->numLines;
         totBlendLength = blendSteps * palette->length;
 
         //run over each of the lines in the segment set and set a color value
@@ -95,7 +95,7 @@ void PlasmaSL::update(){
             lineNum = numLines - i - 1;
 
             //write the color out to all the leds in the segment line
-            segDrawUtils::drawSegLine(SegSet, lineNum, colorOut, 0);
+            segDrawUtils::drawSegLine(*segSet, lineNum, colorOut, 0);
         }
         showCheckPS();
     }

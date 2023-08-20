@@ -3,33 +3,33 @@
 //Constructor for effect with palette
 FirefliesSL::FirefliesSL(SegmentSet &SegSet, palettePS &Palette, uint8_t MaxNumFireflies, uint8_t SpawnChance, 
                          uint16_t LifeBase, uint16_t LifeRange, uint16_t SpeedBase, uint16_t SpeedRange, uint16_t Rate):
-    SegSet(SegSet), palette(&Palette), spawnChance(SpawnChance), lifeBase(LifeBase), 
+    palette(&Palette), spawnChance(SpawnChance), lifeBase(LifeBase), 
     lifeRange(LifeRange), speedBase(SpeedBase), speedRange(SpeedRange)
     {    
-        init(MaxNumFireflies, Rate);
+        init(MaxNumFireflies, SegSet, Rate);
 	}
 
 //Constructor for effect with palette of random colors
 FirefliesSL::FirefliesSL(SegmentSet &SegSet, uint8_t numColors, uint8_t MaxNumFireflies, uint8_t SpawnChance, 
                          uint16_t LifeBase, uint16_t LifeRange, uint16_t SpeedBase, uint16_t SpeedRange, uint16_t Rate):
-    SegSet(SegSet), spawnChance(SpawnChance), lifeBase(LifeBase), 
+    spawnChance(SpawnChance), lifeBase(LifeBase), 
     lifeRange(LifeRange), speedBase(SpeedBase), speedRange(SpeedRange)
     {    
         paletteTemp = paletteUtilsPS::makeRandomPalette(numColors);
         palette = &paletteTemp;
-        init(MaxNumFireflies, Rate);
+        init(MaxNumFireflies, SegSet, Rate);
 	}
 
 //constructor for effect with single color
 //!!If using pre-build FastLED colors you need to pass them as CRGB( *color code* )
 FirefliesSL::FirefliesSL(SegmentSet &SegSet, CRGB Color, uint8_t MaxNumFireflies, uint8_t SpawnChance, 
                          uint16_t LifeBase, uint16_t LifeRange, uint16_t SpeedBase, uint16_t SpeedRange, uint16_t Rate):
-    SegSet(SegSet), spawnChance(SpawnChance), lifeBase(LifeBase), 
+    spawnChance(SpawnChance), lifeBase(LifeBase), 
     lifeRange(LifeRange), speedBase(SpeedBase), speedRange(SpeedRange)
     {    
         paletteTemp = paletteUtilsPS::makeSingleColorPalette(Color);
         palette = &paletteTemp;
-        init(MaxNumFireflies, Rate);
+        init(MaxNumFireflies, SegSet, Rate);
 	}
 
 
@@ -42,13 +42,14 @@ FirefliesSL::~FirefliesSL(){
 }
 
 //common initialization function for core vars
-void FirefliesSL::init(uint8_t maxNumFireflies, uint16_t Rate){
-    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
-    bindSegPtrPS();
+void FirefliesSL::init(uint8_t maxNumFireflies, SegmentSet &SegSet, uint16_t Rate){
+    //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
+    bindSegSetPtrPS();
     bindClassRatesPS();
+    
     setupFireflies(maxNumFireflies);
     //do a quick clear of the strip
-    segDrawUtils::fillSegSetColor(SegSet, *bgColor, bgColorMode);
+    segDrawUtils::fillSegSetColor(*segSet, *bgColor, bgColorMode);
 }
 
 //Create the data structures for a set of Fireflies (particles)
@@ -61,9 +62,8 @@ void FirefliesSL::init(uint8_t maxNumFireflies, uint16_t Rate){
 void FirefliesSL::setupFireflies(uint8_t newMaxNumFireflies){
 
     //Set the background to clear any lingering particles from the segment set
-    segDrawUtils::fillSegSetColor(SegSet, *bgColor, bgColorMode);
+    segDrawUtils::fillSegSetColor(*segSet, *bgColor, bgColorMode);
     
-
     //must always have at least 1 firefly spawning
     if(newMaxNumFireflies == 0){
         newMaxNumFireflies = 1;
@@ -87,7 +87,7 @@ void FirefliesSL::setupFireflies(uint8_t newMaxNumFireflies){
 
         //to allow the effect to work along segment lines, we use the maximum number of lines
         //as the range of the particle's motion
-        numLines = SegSet.numLines;
+        numLines = segSet->numLines;
         particleSetTemp = particleUtilsPS::buildParticleSet(maxNumFireflies, numLines, true, speedBase, speedRange, 1, 0, 
                                                             0, 0, 0, false, palette->length, true);
         particleSet = &particleSetTemp;
@@ -116,14 +116,14 @@ void FirefliesSL::update(){
         prevTime = currentTime;
 
         //re-fetch the segment vars in-case they've been modified
-        numLines = SegSet.numLines;
-        numSegs = SegSet.numSegs;
-        longestSeg = SegSet.segNumMaxNumLines;
+        numLines = segSet->numLines;
+        numSegs = segSet->numSegs;
+        longestSeg = segSet->segNumMaxNumLines;
 
         //If the bg is to be filled before the particles start, fill it in
         //(such as if you have a background that's changing with time (alla bgColorMode 6))
         if( fillBG || blend ){
-            segDrawUtils::fillSegSetColor(SegSet, *bgColor, bgColorMode);
+            segDrawUtils::fillSegSetColor(*segSet, *bgColor, bgColorMode);
         }
 
         //For each firefly (particle) update it if it's life > 0
@@ -154,8 +154,8 @@ void FirefliesSL::update(){
 
                     //get the physical pixel location based on the line and seg numbers
                     //we always get the pixel in the line that's on the longest segment
-                    pixelNum = segDrawUtils::getPixelNumFromLineNum(SegSet, numLines, longestSeg, particlePrevPos[i]);
-                    //segDrawUtils::getPixelColor(SegSet, &pixelInfo, *bgColor, bgColorMode, particlePrevPos[i]);
+                    pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, longestSeg, particlePrevPos[i]);
+                    //segDrawUtils::getPixelColor(segSet, &pixelInfo, *bgColor, bgColorMode, particlePrevPos[i]);
 
                     //only turn off the line if it hasn't been touched by another particle (or something else)
                     //this prevents background holes from being placed in other particles
@@ -163,9 +163,9 @@ void FirefliesSL::update(){
                     //with the particle position
                     //This helps avoid issues with un-equal segments, where multiple lines can converge on a single pixel
                     //but you still only want to draw the last particle in the set for consistency
-                    if(SegSet.leds[pixelNum] == trailEndColors[i]){
-                        segDrawUtils::drawSegLine(SegSet, particlePrevPos[i], *bgColor, bgColorMode);
-                        //SegSet.leds[pixelInfo.pixelLoc] = pixelInfo.color;
+                    if(segSet->leds[pixelNum] == trailEndColors[i]){
+                        segDrawUtils::drawSegLine(*segSet, particlePrevPos[i], *bgColor, bgColorMode);
+                        //segSet->leds[pixelInfo.pixelLoc] = pixelInfo.color;
                     }
                 }
 
@@ -276,10 +276,10 @@ void FirefliesSL::drawParticlePixel(particlePS *particlePtr, uint16_t partNum){
     for(uint16_t i = 0; i < numSegs; i++){
         //get the pixel's physical location and adjust for any color modes
         //also fetch the background and particle color at this point 
-        pixelNum = segDrawUtils::getPixelNumFromLineNum(SegSet, numLines, i, partPos);
-        //segDrawUtils::getPixelColor(SegSet, &pixelInfo, colorOut, colorMode, particlePtr->position);
-        bgCol = segDrawUtils::getPixelColor(SegSet, pixelNum, *bgColor, bgColorMode, i, partPos);
-        colorFinal = segDrawUtils::getPixelColor(SegSet, pixelNum, colorOut, colorMode, i, partPos);
+        pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, i, partPos);
+        //segDrawUtils::getPixelColor(segSet, &pixelInfo, colorOut, colorMode, particlePtr->position);
+        bgCol = segDrawUtils::getPixelColor(*segSet, pixelNum, *bgColor, bgColorMode, i, partPos);
+        colorFinal = segDrawUtils::getPixelColor(*segSet, pixelNum, colorOut, colorMode, i, partPos);
         
         //set the color based on if we're fading in or out
         switch(fadeType){
@@ -302,19 +302,19 @@ void FirefliesSL::drawParticlePixel(particlePS *particlePtr, uint16_t partNum){
 
         //output the color
         if(blend){
-            SegSet.leds[pixelNum] += colorFinal;
+            segSet->leds[pixelNum] += colorFinal;
         } else {
-            SegSet.leds[pixelNum] = colorFinal;
+            segSet->leds[pixelNum] = colorFinal;
         }    
         //Need to check to dim the pixel color manually
         //b/c we're not calling setPixelColor directly
-        segDrawUtils::handleBri(SegSet, pixelNum);
+        segDrawUtils::handleBri(*segSet, pixelNum);
 
         //if we're writing out the pixel on the longest segment, we need to record the 
         //color, so we can use it for setting the background in update()
         if(i == longestSeg){
             //Record the output color for setting the background in the next update
-            trailEndColors[partNum] = SegSet.leds[pixelNum];  
+            trailEndColors[partNum] = segSet->leds[pixelNum];  
         }
     }           
 }

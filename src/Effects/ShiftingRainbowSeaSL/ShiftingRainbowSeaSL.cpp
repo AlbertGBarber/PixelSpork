@@ -13,7 +13,7 @@
 //In sMode 0 the gradLength isn't used, but to make sure that if you set it back to sMode 0,
 //the gradLength will be set to random value between 20 - 40
 ShiftingRainbowSeaSL::ShiftingRainbowSeaSL(SegmentSet &SegSet, uint8_t GradLength, uint8_t Grouping, uint16_t Rate): 
-    SegSet(SegSet), grouping(Grouping), gradLength(GradLength)
+    grouping(Grouping), gradLength(GradLength)
     {
         if(GradLength == 0){
             sMode = 0;
@@ -21,7 +21,7 @@ ShiftingRainbowSeaSL::ShiftingRainbowSeaSL(SegmentSet &SegSet, uint8_t GradLengt
         } else {
             sMode = 1;
         }
-        init(Rate);
+        init(SegSet, Rate);
     }
 
 ShiftingRainbowSeaSL::~ShiftingRainbowSeaSL(){
@@ -29,9 +29,9 @@ ShiftingRainbowSeaSL::~ShiftingRainbowSeaSL(){
 }
 
 //initializes core variables for effect
-void ShiftingRainbowSeaSL::init(uint16_t Rate){
-    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
-    bindSegPtrPS();
+void ShiftingRainbowSeaSL::init(SegmentSet &SegSet, uint16_t Rate){
+    //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
+    bindSegSetPtrPS();
     bindClassRatesPS();
     resetOffsets();
 }
@@ -60,7 +60,7 @@ void ShiftingRainbowSeaSL::setGrouping(uint16_t newGrouping) {
 
 //re-builds the offset array with new values
 void ShiftingRainbowSeaSL::resetOffsets() {
-    numLines = SegSet.numLines;
+    numLines = segSet->numLines;
 
     //We only need to make a new offsets array if the current one isn't large enough
     //This helps prevent memory fragmentation by limiting the number of heap allocations
@@ -93,8 +93,7 @@ void ShiftingRainbowSeaSL::update() {
             step = addMod16PS( cycleNum, offsets[i], 256); // where we are in the cycle of all the colors
             color = colorUtilsPS::wheel(step, 0, sat, val); //wheel since it's a rainbow
             
-            segDrawUtils::drawSegLine(SegSet, i, color, 0);
-            //segDrawUtils::setPixelColor(SegSet, i, color, 0);
+            segDrawUtils::drawSegLine(*segSet, i, color, 0);
 
             //randomly increment the offset
             if (randomShift) {

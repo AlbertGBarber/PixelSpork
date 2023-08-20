@@ -90,9 +90,6 @@ class GradientCycleFastSL : public EffectBasePS {
         GradientCycleFastSL(SegmentSet &SegSet, uint8_t NumColors, uint8_t GradLength, uint16_t Rate);
 
         ~GradientCycleFastSL();
-        
-        SegmentSet 
-            &SegSet; 
 
         uint8_t
             randMode = 0,
@@ -139,7 +136,7 @@ class GradientCycleFastSL : public EffectBasePS {
             colorOut;
         
         void 
-            init(uint16_t Rate),
+            init(SegmentSet &SegSet, uint16_t Rate),
             pickNextColor(),
             initalFill();    
 };

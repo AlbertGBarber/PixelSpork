@@ -44,9 +44,6 @@ Functions:
 class PacificaPS : public EffectBasePS {
     public:
         PacificaPS(SegmentSet &SegSet, uint16_t Rate);  
-
-        SegmentSet 
-            &SegSet; 
         
         uint8_t 
             //Produces a total blend length of 240 for the whole palette, matches the original code

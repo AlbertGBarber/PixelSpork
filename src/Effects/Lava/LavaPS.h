@@ -96,9 +96,6 @@ class LavaPS : public EffectBasePS {
         LavaPS(SegmentSet &SegSet, uint8_t numColors, uint16_t BlendSteps, uint16_t BlendScale, uint16_t Rate);
     
         ~LavaPS();
-
-        SegmentSet 
-            &SegSet; 
         
         uint8_t 
             rainSat = 255, //saturation value for rainbow mode
@@ -143,7 +140,7 @@ class LavaPS : public EffectBasePS {
             colorOut;
         
         void
-            init(uint16_t Rate);
+            init(SegmentSet &SegSet, uint16_t Rate);
 };
 
 #endif

@@ -114,9 +114,6 @@ class ShiftingSeaSL : public EffectBasePS {
         //destructor
         ~ShiftingSeaSL();
 
-        SegmentSet 
-            &SegSet; 
-        
         uint8_t
             shiftThreshold = 15,
             shiftStep = 1,
@@ -175,7 +172,7 @@ class ShiftingSeaSL : public EffectBasePS {
             nextColor;
         
         void
-            init(uint16_t Rate),
+            init(SegmentSet &SegSet, uint16_t Rate),
             setTotalCycleLen();
 };
 

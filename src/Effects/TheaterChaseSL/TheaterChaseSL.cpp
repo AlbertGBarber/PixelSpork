@@ -1,11 +1,11 @@
 #include "TheaterChaseSL.h"
 
-TheaterChaseSL::TheaterChaseSL(SegmentSet &SegSet, CRGB Color, CRGB BgColor, uint8_t LitLength, uint8_t Spacing, uint16_t Rate):
-    SegSet(SegSet)
+TheaterChaseSL::TheaterChaseSL(SegmentSet &SegSet, CRGB Color, CRGB BgColor, uint8_t LitLength, uint8_t Spacing, uint16_t Rate)
     {    
-        //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
-        bindSegPtrPS();
+        //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS     
+        bindSegSetPtrPS();
         bindClassRatesPS();
+        //bind the bgColor pointer
         bindBGColorPS();
         //bind the color variable since it's a pointer
         colorOrig = Color;
@@ -46,12 +46,12 @@ void TheaterChaseSL::update(){
     if( ( currentTime - prevTime ) >= *rate ) {
         prevTime = currentTime;
 
-        numLines = SegSet.numLines;
+        numLines = segSet->numLines;
         //recalculate the draw length so you can change spacing or litLength on the fly
         totalDrawLength = spacing + litLength;
 
         //fill the whole strip with bgColor
-        segDrawUtils::fillSegSetColor(SegSet, *bgColor, bgColorMode);
+        segDrawUtils::fillSegSetColor(*segSet, *bgColor, bgColorMode);
 
         //Re-draw the spots, working with regions of totalDrawLength (sum of litLength and spacing)
         //Each spot loops around it's region, rather than actually moving down the strip
@@ -61,8 +61,7 @@ void TheaterChaseSL::update(){
                 //if the spot size is greater than 1 (litLength), then we will run into the next 
                 //spot region. To prevent this, loop the spot round by modding by totalDrawLength
                 lineNum = i + addMod16PS( j, cycleNum, totalDrawLength ); //i + (j + cycleNum) % totalDrawLength;
-                segDrawUtils::drawSegLine(SegSet, lineNum, *color, colorMode);
-                //segDrawUtils::setPixelColor(SegSet, pixelLoc, *color, colorMode);
+                segDrawUtils::drawSegLine(*segSet, lineNum, *color, colorMode);
             }
         }
         

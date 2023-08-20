@@ -109,10 +109,7 @@ class DissolveSL : public EffectBasePS {
         DissolveSL(SegmentSet &SegSet, uint8_t RandMode, uint16_t SpawnRateInc, uint16_t Rate);
     
         ~DissolveSL();
-
-        SegmentSet 
-            &SegSet; 
-
+        
         uint8_t
             randMode,
             colorMode = 0,
@@ -170,7 +167,7 @@ class DissolveSL : public EffectBasePS {
             color;
 
         void
-            init(uint16_t Rate),
+            init(SegmentSet &SegSet, uint16_t Rate),
             spawnLed(uint16_t pixelNum);
 };
 

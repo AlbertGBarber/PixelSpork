@@ -2,32 +2,32 @@
 
 //constructor for rainbow mode
 PrideWPalSL::PrideWPalSL(SegmentSet &SegSet, bool BriDirect, bool RandomBriInc, uint16_t Rate):
-    SegSet(SegSet), briDirect(BriDirect)
+    briDirect(BriDirect)
     {   
         prideMode = true; 
         //we make a random palette so we get gradSteps correctly (needed for program, but not used for rainbow)
         //and just in case rainbow mode is turned off
         paletteTemp = paletteUtilsPS::makeRandomPalette(4);
         palette = &paletteTemp;
-        init(RandomBriInc, Rate);
+        init(RandomBriInc, SegSet, Rate);
 	}
 
 //constructor for palette input
 PrideWPalSL::PrideWPalSL(SegmentSet &SegSet, palettePS &Palette, bool BriDirect, bool RandomBriInc, uint16_t Rate):
-    SegSet(SegSet), palette(&Palette), briDirect(BriDirect)
+    palette(&Palette), briDirect(BriDirect)
     {    
         prideMode = false; 
-        init(RandomBriInc, Rate);
+        init(RandomBriInc, SegSet, Rate);
 	}
 
 //constructor for making a random palette
 PrideWPalSL::PrideWPalSL(SegmentSet &SegSet, uint8_t numColors, bool BriDirect, bool RandomBriInc, uint16_t Rate):
-    SegSet(SegSet), briDirect(BriDirect)
+    briDirect(BriDirect)
     {    
         prideMode = false; 
         paletteTemp = paletteUtilsPS::makeRandomPalette(numColors);
         palette = &paletteTemp;
-        init(RandomBriInc, Rate);
+        init(RandomBriInc, SegSet, Rate);
 	}
 
 //constructor with inputs for all main variables
@@ -35,12 +35,12 @@ PrideWPalSL::PrideWPalSL(SegmentSet &SegSet, palettePS &Palette, bool BriDirect,
                                             uint8_t BrightDepthMin, uint8_t BrightDepthMax, uint16_t BriThetaFreq, 
                                             uint8_t BriThetaInc16Min, uint8_t BriThetaInc16Max, uint8_t HueChangeMin, 
                                             uint8_t HueChangeMax, uint16_t Rate):
-    SegSet(SegSet), palette(&Palette), briDirect(BriDirect), gradLength(GradLength), brightDepthMin(BrightDepthMin), 
+    palette(&Palette), briDirect(BriDirect), gradLength(GradLength), brightDepthMin(BrightDepthMin), 
     brightDepthMax(BrightDepthMax), briThetaFreq(BriThetaFreq), briThetaInc16Min(BriThetaInc16Min), 
     briThetaInc16Max(BriThetaInc16Max), hueChangeMin(HueChangeMin), hueChangeMax(HueChangeMax)
     {
         prideMode = false; 
-        init(false, Rate);
+        init(false, SegSet, Rate);
     }
 
 PrideWPalSL::~PrideWPalSL(){
@@ -50,10 +50,11 @@ PrideWPalSL::~PrideWPalSL(){
 //Initializes core variables and also picks random values for briThetaInc16 and briThetaFreq if randomBriInc is true
 //The random values are picked from ranges hand picked by me to offer a good variation in the effect
 //while not being too extreme
-void PrideWPalSL::init(bool RandomBriInc, uint16_t Rate){
-    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
-    bindSegPtrPS();
+void PrideWPalSL::init(bool RandomBriInc, SegmentSet &SegSet, uint16_t Rate){
+    //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
+    bindSegSetPtrPS();
     bindClassRatesPS();
+    
     if(RandomBriInc){
         randomizeBriInc( 15, 25, 30, 40 );
         randomizeBriFreq( 200, 500 );
@@ -115,8 +116,8 @@ void PrideWPalSL::update(){
         
         //fetch some core vars
         //we re-fetch these in case the segment set or palette has changed
-        numSegs = SegSet.numSegs;
-        numLines = SegSet.numLines;
+        numSegs = segSet->numSegs;
+        numLines = segSet->numLines;
         numSteps = gradLength * palette->length;
 
         //For each segment line do the following:
@@ -156,12 +157,12 @@ void PrideWPalSL::update(){
 
             for (uint16_t j = 0; j < numSegs; j++) {
                 //get the physical pixel location based on the line and seg numbers
-                pixelNum = segDrawUtils::getPixelNumFromLineNum(SegSet, numLines, j, lineNum);
-                nblend(SegSet.leds[pixelNum], newColor, 128);
+                pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, j, lineNum);
+                nblend(segSet->leds[pixelNum], newColor, 128);
                 
                 //Need to check to dim the pixel color manually
                 //b/c we're not calling setPixelColor directly
-                segDrawUtils::handleBri(SegSet, pixelNum);
+                segDrawUtils::handleBri(*segSet, pixelNum);
             }
         }          
         showCheckPS();
@@ -210,7 +211,7 @@ void PrideWPalPS::update() {
         //do the subtraction here so we don't need to do it each loop
         //@getSegmentPixel
         //The loop limit is adjusted up by one
-        numActiveLeds = SegSet.numActiveSegLeds - 1;
+        numActiveLeds = segSet->numActiveSegLeds - 1;
         //re-calculate the gradLength incase the palette changed
         numSteps = gradLength * palette->length;
 
@@ -246,9 +247,9 @@ void PrideWPalPS::update() {
             }
 
             //get the physical pixel location based on the line and seg numbers
-            pixelNum = segDrawUtils::getSegmentPixel(SegSet, numActiveLeds - i);
+            pixelNum = segDrawUtils::getSegmentPixel(*segSet, numActiveLeds - i);
 
-            nblend(SegSet.leds[pixelNum], newColor, blendRatio);
+            nblend(segSet->leds[pixelNum], newColor, blendRatio);
         }
         showCheckPS();
     }

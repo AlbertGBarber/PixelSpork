@@ -123,9 +123,6 @@ class StreamerSL : public EffectBasePS {
         StreamerSL(SegmentSet &SegSet, CRGB Color, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate);
 
         ~StreamerSL();
-
-        SegmentSet 
-            &SegSet;
             
         uint8_t
             colorMode = 0,
@@ -152,7 +149,7 @@ class StreamerSL : public EffectBasePS {
             paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
         
         void 
-            init(CRGB BgColor, uint16_t Rate),
+            init(CRGB BgColor, SegmentSet &SegSet, uint16_t Rate),
             setPatternAsPattern(patternPS &inputPattern, uint8_t colorLength, uint8_t spacing),
             setPaletteAsPattern(uint8_t colorLength, uint8_t spacing),
             reset(),

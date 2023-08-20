@@ -3,7 +3,7 @@
 //constructor for a traditional two color strobe
 PoliceStrobeSL::PoliceStrobeSL(SegmentSet &SegSet, CRGB ColorOne, CRGB ColorTwo, CRGB BgColor, uint8_t NumPulses, 
                                uint16_t PauseTime, uint8_t PulseMode, bool SegMode, uint16_t Rate):
-    SegSet(SegSet), numPulses(NumPulses), pauseTime(PauseTime), pulseMode(PulseMode), segMode(SegMode)
+    numPulses(NumPulses), pauseTime(PauseTime), pulseMode(PulseMode), segMode(SegMode)
     {    
         //create a dual color palette for the two strobe colors
         CRGB *newPalette_arr = new CRGB[2];
@@ -15,24 +15,24 @@ PoliceStrobeSL::PoliceStrobeSL(SegmentSet &SegSet, CRGB ColorOne, CRGB ColorTwo,
         //Set the pattern to match the dual color palette
         setPaletteAsPattern();
 
-        init(BgColor, Rate);
+        init(BgColor, SegSet, Rate);
 	}
 
 //Constructor using both pattern and palette
 PoliceStrobeSL::PoliceStrobeSL(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, 
                                uint8_t NumPulses, uint16_t PauseTime, uint8_t PulseMode, bool SegMode, uint16_t Rate):
-    SegSet(SegSet), pattern(&Pattern), palette(&Palette), numPulses(NumPulses), pauseTime(PauseTime), pulseMode(PulseMode), segMode(SegMode)
+    pattern(&Pattern), palette(&Palette), numPulses(NumPulses), pauseTime(PauseTime), pulseMode(PulseMode), segMode(SegMode)
     {    
-        init(BgColor, Rate); 
+        init(BgColor, SegSet, Rate); 
 	}
 
 //constructor for using any palette for the colors
 PoliceStrobeSL::PoliceStrobeSL(SegmentSet &SegSet, palettePS &Palette, CRGB BgColor, uint8_t NumPulses, 
                                uint16_t PauseTime, uint8_t PulseMode, bool SegMode, uint16_t Rate):
-    SegSet(SegSet), palette(&Palette), numPulses(NumPulses), pauseTime(PauseTime), pulseMode(PulseMode), segMode(SegMode)
+    palette(&Palette), numPulses(NumPulses), pauseTime(PauseTime), pulseMode(PulseMode), segMode(SegMode)
     {    
         setPaletteAsPattern();
-        init(BgColor, Rate); 
+        init(BgColor, SegSet, Rate); 
 	}
 
 PoliceStrobeSL::~PoliceStrobeSL(){
@@ -53,9 +53,9 @@ void PoliceStrobeSL::reset(){
     }
 }
 
-void PoliceStrobeSL::init(CRGB BgColor, uint16_t Rate){
-    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
-    bindSegPtrPS();
+void PoliceStrobeSL::init(CRGB BgColor, SegmentSet &SegSet, uint16_t Rate){
+    //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
+    bindSegSetPtrPS();
     bindClassRatesPS();
     //bind background color pointer (if needed)
     bindBGColorPS();
@@ -106,10 +106,10 @@ void PoliceStrobeSL::update(){
         if(segMode){
             //Get the number of segments
             //We're in segMod, so we're drawing the strobes along segment instead of segment lines
-            numLines = SegSet.numSegs;
+            numLines = segSet->numSegs;
         } else {
             //get the current number of segment lines
-            numLines = SegSet.numLines;
+            numLines = segSet->numLines;
         }
 
         //we add (numLines % 2) to account for odd length strips ((numLines % 2) is either 1 or 0)
@@ -150,10 +150,10 @@ void PoliceStrobeSL::update(){
             for(uint16_t i = lightStart; i <= lightEnd; i++){
                 if(segMode){
                     //In segMode, we draw the pulses along segments
-                    segDrawUtils::fillSegColor(SegSet, i, colorOut, modeOut);
+                    segDrawUtils::fillSegColor(*segSet, i, colorOut, modeOut);
                 } else {
                     //Not in segMod: we draw the pulses along segment lines
-                    segDrawUtils::drawSegLine(SegSet, i, colorOut, modeOut);
+                    segDrawUtils::drawSegLine(*segSet, i, colorOut, modeOut);
                 }
             }
             
@@ -196,7 +196,7 @@ void PoliceStrobeSL::update(){
             pulseCount = 1;
             //fill the segment set with the background to clear the strip for the next pulse cycle
             if(fillBG){
-                segDrawUtils::fillSegSetColor(SegSet, *bgColor, bgColorMode);
+                segDrawUtils::fillSegSetColor(*segSet, *bgColor, bgColorMode);
             }
             pulseBG = false;
         }
@@ -209,7 +209,7 @@ void PoliceStrobeSL::update(){
 //if pause time is 0, then we skip the pause
 void PoliceStrobeSL::startPause(){
     if(fillBGOnPause){
-        segDrawUtils::fillSegSetColor(SegSet, *bgColor, bgColorMode);
+        segDrawUtils::fillSegSetColor(*segSet, *bgColor, bgColorMode);
     }
     paused = true && (pauseTime != 0);
     pauseStartTime = millis();

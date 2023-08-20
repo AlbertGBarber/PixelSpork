@@ -80,9 +80,6 @@ class LarsonScannerSL : public EffectBasePS {
         LarsonScannerSL(SegmentSet &SegSet, uint8_t ScanType, CRGB ScanColor, CRGB BgColor, uint8_t EyeSize, uint8_t TrailLength, uint16_t Rate);  
 
         ~LarsonScannerSL();
-
-        SegmentSet 
-            &SegSet;
         
         uint8_t
             scanType,

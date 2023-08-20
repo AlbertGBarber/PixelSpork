@@ -1,10 +1,10 @@
 #include "Fire2012SL.h"
 
 Fire2012SL::Fire2012SL(SegmentSet &SegSet, palettePS &Palette, CRGB BgColor, uint8_t Cooling, uint8_t Sparking, bool Blend, bool Direct, uint16_t Rate):
-    SegSet(SegSet), palette(&Palette), cooling(Cooling), sparking(Sparking), blend(Blend), direct(Direct)
+    palette(&Palette), cooling(Cooling), sparking(Sparking), blend(Blend), direct(Direct)
     {    
-        //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
-        bindSegPtrPS();
+        //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
+        bindSegSetPtrPS();
         bindClassRatesPS();
         //bind background color pointer (if needed)
         bindBGColorPS();
@@ -20,8 +20,8 @@ Fire2012SL::~Fire2012SL(){
 void Fire2012SL::reset(){
 
     //fetch some core vars
-    numSegs = SegSet.numSegs;
-    numLines = SegSet.numLines;
+    numSegs = segSet->numSegs;
+    numLines = segSet->numLines;
     uint16_t numPoints = numLines * numSegs;
 
     //create the heat array to store temperatures of each line point
@@ -110,12 +110,12 @@ void Fire2012SL::update(){
                 }
 
                 //get the physical pixel location based on the line and seg numbers
-                ledLoc = segDrawUtils::getPixelNumFromLineNum(SegSet, numLines, segNum, i);
+                ledLoc = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, segNum, i);
                 //write out the temperature color
                 colorOut = fire2012SegUtilsPS::getPixelHeatColorPalette(palette, paletteLength, paletteSecLen, 
-                                                                       bgColor, heat[j + heatSecStart], blend);
+                                                                        bgColor, heat[j + heatSecStart], blend);
 
-                segDrawUtils::setPixelColor(SegSet, ledLoc, colorOut, 0, 0, 0);    
+                segDrawUtils::setPixelColor(*segSet, ledLoc, colorOut, 0, 0, 0);    
             }
         }
         showCheckPS();

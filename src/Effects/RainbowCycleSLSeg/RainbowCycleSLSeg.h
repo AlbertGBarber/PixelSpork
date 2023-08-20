@@ -66,9 +66,6 @@ class RainbowCycleSLSeg : public EffectBasePS {
 
         //Does a rainbow cycle of length 255
         RainbowCycleSLSeg(SegmentSet &SegSet, bool Direct, bool SegMode, uint16_t Rate); 
-
-        SegmentSet 
-            &SegSet;
     
         uint8_t
             satur = 255,
@@ -105,7 +102,7 @@ class RainbowCycleSLSeg : public EffectBasePS {
             color;
 
         void 
-            init(uint16_t Rate);
+            init(SegmentSet &SegSet, uint16_t Rate);
 
 };
 

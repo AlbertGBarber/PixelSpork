@@ -202,9 +202,6 @@ class ColorWipeSLSeg : public EffectBasePS {
                 
         ~ColorWipeSLSeg();
 
-        SegmentSet 
-            &SegSet;
-
         CRGB 
             bgColorOrig = 0, //default background color (blank)
             *bgColor = &bgColorOrig; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color) 
@@ -295,7 +292,7 @@ class ColorWipeSLSeg : public EffectBasePS {
             colorOut;
         
         void 
-            init(uint16_t Rate),
+            init(SegmentSet &SegSet, uint16_t Rate),
             doLineWipe(uint16_t wipeNum, uint16_t wipeStep, uint16_t lineNum),
             doSegWipe(uint16_t wipeNum, uint16_t wipeStep, uint16_t segNum);
 };

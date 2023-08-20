@@ -38,7 +38,7 @@ so changing the offsetRate of the Util will also change it for all the segments
 
 Make sure you use the Util's functions for adjusting the settings. They will set the settings for all the 
 segmentSets. The variables in this Util are for reference
-ie use setDirect(), setRate(), setOffsetActive() instead of just changing direct, runOffset, Rate
+ie use setDirect(), setRate(), setOffsetActive() instead of just changing direct, runOffset, SegSet, Rate
 (you can change colorMode directly since this is independent of the segmentSets)
 
 Example calls: 

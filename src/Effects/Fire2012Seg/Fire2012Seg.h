@@ -66,9 +66,6 @@ class Fire2012Seg : public EffectBasePS {
         Fire2012Seg(SegmentSet &SegSet, palettePS &Palette, CRGB BgColor, uint8_t Cooling, uint8_t Sparking, bool Blend, uint16_t Rate);  
         
         ~Fire2012Seg();
-
-        SegmentSet 
-            &SegSet; 
         
         uint8_t
             *heat = nullptr,

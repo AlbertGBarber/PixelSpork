@@ -2,27 +2,27 @@
 
 //constructor with pattern
 GradientCycleSL::GradientCycleSL(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t GradLength, uint16_t Rate):
-    SegSet(SegSet), pattern(&Pattern), palette(&Palette), gradLength(GradLength)
+    pattern(&Pattern), palette(&Palette), gradLength(GradLength)
     {    
-        init(Rate);
+        init(SegSet, Rate);
 	}
 
 //constructor with palette as pattern
 GradientCycleSL::GradientCycleSL(SegmentSet &SegSet, palettePS &Palette, uint8_t GradLength, uint16_t Rate):
-    SegSet(SegSet), palette(&Palette), gradLength(GradLength)
+    palette(&Palette), gradLength(GradLength)
     {    
         setPaletteAsPattern();
-        init(Rate);
+        init(SegSet, Rate);
 	}
 
 //constructor with random colors
 GradientCycleSL::GradientCycleSL(SegmentSet &SegSet, uint8_t NumColors, uint8_t GradLength, uint16_t Rate):
-    SegSet(SegSet), gradLength(GradLength)
+    gradLength(GradLength)
     {    
         paletteTemp = paletteUtilsPS::makeRandomPalette(NumColors);
         palette = &paletteTemp;
         setPaletteAsPattern();
-        init(Rate);
+        init(SegSet, Rate);
 	}
 
 GradientCycleSL::~GradientCycleSL(){
@@ -31,9 +31,9 @@ GradientCycleSL::~GradientCycleSL(){
 }
 
 //inits core variables for the effect
-void GradientCycleSL::init(uint16_t Rate){
-    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
-    bindSegPtrPS();
+void GradientCycleSL::init(SegmentSet &SegSet, uint16_t Rate){
+    //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
+    bindSegSetPtrPS();
     bindClassRatesPS();
     cycleNum = 0;
     setTotalEffectLength();
@@ -81,7 +81,7 @@ void GradientCycleSL::update(){
         prevTime = currentTime;
 
         //we set the segment vars here since the pixel locations depend on them
-        numLines = SegSet.numLines;
+        numLines = segSet->numLines;
 
         //In the loop below, we only pick new colors once blendStep is 0
         //due to cycleNum, blendStep is not always 0 for the first pixel
@@ -99,7 +99,7 @@ void GradientCycleSL::update(){
             colorOut = colorUtilsPS::getCrossFadeColor(currentColor, nextColor, blendStep, gradLength);
             //write the color out to all the leds in the segment line
             //(we used numLines - 1 - i in place of just i to make the default line motion positive)
-            segDrawUtils::drawSegLine(SegSet, numLines - 1 - i, colorOut, 0);
+            segDrawUtils::drawSegLine(*segSet, numLines - 1 - i, colorOut, 0);
         }
 
         cycleNum = addMod16PS(cycleNum, 1, totalCycleLength);

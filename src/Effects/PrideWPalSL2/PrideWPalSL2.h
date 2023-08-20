@@ -140,9 +140,6 @@ class PrideWPalSL2 : public EffectBasePS {
                      uint8_t HueChangeMax, uint16_t Rate);
 
         ~PrideWPalSL2();
-
-        SegmentSet 
-            &SegSet; 
         
         //commented values are values from Mark's code
         uint8_t
@@ -205,7 +202,7 @@ class PrideWPalSL2 : public EffectBasePS {
             colorOut;
         
         void
-            init(bool RandomBriInc, uint16_t Rate);
+            init(bool RandomBriInc, SegmentSet &SegSet, uint16_t Rate);
 };
 
 #endif

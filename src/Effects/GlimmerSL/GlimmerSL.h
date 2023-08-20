@@ -87,9 +87,6 @@ class GlimmerSL : public EffectBasePS {
 
         ~GlimmerSL();
         
-        SegmentSet 
-            &SegSet; 
-        
         uint8_t 
             colorMode = 0,
             bgColorMode = 0,
@@ -147,7 +144,7 @@ class GlimmerSL : public EffectBasePS {
             getFadeColor(uint8_t glimNum);
         
         void 
-            init(CRGB GlimmerColor, CRGB BgColor, uint16_t Rate),
+            init(CRGB GlimmerColor, CRGB BgColor, SegmentSet &SegSet, uint16_t Rate),
             advancePixelArray();
 };
 

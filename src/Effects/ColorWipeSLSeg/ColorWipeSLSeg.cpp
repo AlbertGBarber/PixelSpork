@@ -3,29 +3,29 @@
 //Constructor using pattern and palette
 ColorWipeSLSeg::ColorWipeSLSeg(SegmentSet &SegSet, palettePS &Palette, patternPS &Pattern, uint16_t WipeLength, uint8_t Style,
                          bool Simult, bool Alternate, bool WipeDirect, bool SegMode, uint16_t Rate):
-    SegSet(SegSet), palette(&Palette), pattern(&Pattern), wipeLength(WipeLength), style(Style), simult(Simult), alternate(Alternate), wipeDirect(WipeDirect), segMode(SegMode)
+    palette(&Palette), pattern(&Pattern), wipeLength(WipeLength), style(Style), simult(Simult), alternate(Alternate), wipeDirect(WipeDirect), segMode(SegMode)
     {    
-        init(Rate);
+        init(SegSet, Rate);
 	} 
 
 //Constructor using palette alone 
 ColorWipeSLSeg::ColorWipeSLSeg(SegmentSet &SegSet, palettePS &Palette, uint16_t WipeLength, uint8_t Style,
                          bool Simult, bool Alternate, bool WipeDirect, bool SegMode, uint16_t Rate):
-    SegSet(SegSet), palette(&Palette), wipeLength(WipeLength), style(Style), simult(Simult), alternate(Alternate), wipeDirect(WipeDirect), segMode(SegMode)
+    palette(&Palette), wipeLength(WipeLength), style(Style), simult(Simult), alternate(Alternate), wipeDirect(WipeDirect), segMode(SegMode)
     {   
         setPaletteAsPattern();
-        init(Rate);
+        init(SegSet, Rate);
 	}
 
 //Constructor for a single color wipe
 ColorWipeSLSeg::ColorWipeSLSeg(SegmentSet &SegSet, CRGB WipeColor, uint16_t WipeLength, uint8_t Style,
                          bool Simult, bool Alternate, bool WipeDirect, bool SegMode, uint16_t Rate):
-    SegSet(SegSet), wipeLength(WipeLength), style(Style), simult(Simult), alternate(Alternate), wipeDirect(WipeDirect), segMode(SegMode)
+    wipeLength(WipeLength), style(Style), simult(Simult), alternate(Alternate), wipeDirect(WipeDirect), segMode(SegMode)
     {    
         paletteTemp = paletteUtilsPS::makeSingleColorPalette(WipeColor);
         palette = &paletteTemp;
         setPaletteAsPattern();
-        init(Rate);
+        init(SegSet, Rate);
 	}
 
 //destructor
@@ -35,9 +35,9 @@ ColorWipeSLSeg::~ColorWipeSLSeg(){
 }
 
 //Sets up the core variables for the effect 
-void ColorWipeSLSeg::init(uint16_t Rate){
-    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
-    bindSegPtrPS();
+void ColorWipeSLSeg::init(SegmentSet &SegSet, uint16_t Rate){
+    //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
+    bindSegSetPtrPS();
     bindClassRatesPS();
     //Store the inital wipe direction for reference later
     startingDirect = wipeDirect;
@@ -52,7 +52,7 @@ void ColorWipeSLSeg::init(uint16_t Rate){
 
 //Resets various wipe variables to their starting states,
 //restarting the wipe
-//(Note that if looping, startingDirect and the SegSet direction may be different than their inital values)
+//(Note that if looping, startingDirect and the segSet direction may be different than their inital values)
 void ColorWipeSLSeg::reset(){
     done = false;
     wipeNumSeq = 0;
@@ -79,8 +79,8 @@ void ColorWipeSLSeg::setPaletteAsPattern(){
 void ColorWipeSLSeg::setWipeLength(uint16_t newLength){
     wipeLength = newLength;
 
-    numLines = SegSet.numLines;
-    numSegs = SegSet.numSegs;
+    numLines = segSet->numLines;
+    numSegs = segSet->numSegs;
 
     //Record the wipe length into either segWipeLen or lineWipeLen
     if(segMode){
@@ -247,8 +247,8 @@ void ColorWipeSLSeg::update(){
             wipeDirect = startingDirect;
         }
         
-        numSegs = SegSet.numSegs;
-        numLines = SegSet.numLines;
+        numSegs = segSet->numSegs;
+        numLines = segSet->numLines;
 
         //Set the maximum wipe value, we use this later to skip any parts of wipes that are off the segment set
         if(segMode){
@@ -394,8 +394,8 @@ void ColorWipeSLSeg::doLineWipe(uint16_t wipeNum, uint16_t wipeStep, uint16_t li
         }
         
         //output the color to the pixel, note that if the color mode is non-zero, it will override the wipe style
-        pixelNum = segDrawUtils::getPixelNumFromLineNum(SegSet, numLines, j, lineNum);
-        segDrawUtils::setPixelColor(SegSet, pixelNum, colorOut, modeOut, j, lineNum);
+        pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, j, lineNum);
+        segDrawUtils::setPixelColor(*segSet, pixelNum, colorOut, modeOut, j, lineNum);
     }        
 }
 
@@ -427,7 +427,7 @@ void ColorWipeSLSeg::doSegWipe(uint16_t wipeNum, uint16_t wipeStep, uint16_t seg
         }
 
         //output the color to the pixel, note that if the color mode is non-zero, it will override the wipe style
-        pixelNum = segDrawUtils::getPixelNumFromLineNum(SegSet, numLines, segNum, j);
-        segDrawUtils::setPixelColor(SegSet, pixelNum, colorOut, modeOut, segNum, j);
+        pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, segNum, j);
+        segDrawUtils::setPixelColor(*segSet, pixelNum, colorOut, modeOut, segNum, j);
     }
 }

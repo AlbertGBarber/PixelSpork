@@ -143,9 +143,6 @@ class SegWavesFast : public EffectBasePS {
         SegWavesFast(SegmentSet &SegSet, CRGB Color, uint8_t WaveThickness, uint8_t Spacing, CRGB BgColor, bool Direct, uint16_t Rate);  
     
         ~SegWavesFast();
-        
-        SegmentSet 
-            &SegSet;
 
         uint8_t
             randMode = 0;
@@ -206,7 +203,7 @@ class SegWavesFast : public EffectBasePS {
         void
             initalFill(),
             getDirection(),
-            init(CRGB BgColor, uint16_t Rate);
+            init(CRGB BgColor, SegmentSet &SegSet, uint16_t Rate);
 };  
 
 #endif

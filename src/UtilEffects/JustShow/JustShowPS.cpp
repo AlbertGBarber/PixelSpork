@@ -1,10 +1,9 @@
 #include "JustShowPS.h"
 
-JustShowPS::JustShowPS(SegmentSet &SegSet, uint16_t Rate):
-    SegSet(SegSet)
+JustShowPS::JustShowPS(SegmentSet &SegSet, uint16_t Rate)
     {    
-        //bind the rate and SegmentSet pointer vars since they are inherited from BaseEffectPS
-        bindSegPtrPS();
+        //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS 
+        bindSegSetPtrPS();
         bindClassRatesPS();
 	}
 

@@ -7,10 +7,9 @@
 
 //macros
 
-//bind the SegmentSet pointer since it is inherited from BaseEffectPS
-#define bindSegPtrPS() ({        \
-    segmentSetPtr = &SegSet; \
-})                               \
+#define bindSegSetPtrPS() ({  \
+    (segSet = &SegSet);     \
+})                            \
 
 //bind the rate vars since they are inherited from BaseEffectPS
 //the rate is used to control the update cycle
@@ -38,7 +37,7 @@
 
 //checks the effect is set to show, if so, do so
 #define showCheckPS() ({                      \
-    (segDrawUtils::show(SegSet, showNow));\
+    (segDrawUtils::show(*segSet, showNow));\
 })                                            \
 
 //This is the base effect class from which effects are derived (and some other helper functions)
@@ -55,11 +54,11 @@ class EffectBasePS {
         bool
             showNow = true;
 
-        //pointer to the SegmentSet the effect is using, used for fading
-        //defaults to null, since a couple of other classes use the effectBase but don't use a SegmentSet
-        //this sounds bad, but it lets you use them in an an EffectGroup, which is very useful
+        //pointer to the SegmentSet the effect is using
+        //defaults to null, because utility classes use the effectBase but don't use a SegmentSet
+        //this sounds bad, but it lets you use them in EffectSets, which is very useful
         SegmentSet 
-            *segmentSetPtr = nullptr;
+            *segSet = nullptr;
 
         //virtual update function to be implemented in each effect
         //making it virtual so that the update functions of effects can be called from the EffectBase class

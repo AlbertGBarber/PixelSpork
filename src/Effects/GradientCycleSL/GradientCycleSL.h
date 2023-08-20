@@ -71,9 +71,6 @@ class GradientCycleSL : public EffectBasePS {
 
         ~GradientCycleSL();
 
-        SegmentSet 
-            &SegSet; 
-
         uint8_t
             gradLength;
         
@@ -117,7 +114,7 @@ class GradientCycleSL : public EffectBasePS {
             colorOut;
         
         void 
-            init(uint16_t Rate),
+            init(SegmentSet &SegSet, uint16_t Rate),
             setNextColors(uint16_t pixelNum);
         
 };

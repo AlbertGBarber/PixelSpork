@@ -180,9 +180,6 @@ class ParticlesSL : public EffectBasePS {
 
         ~ParticlesSL();
 
-        SegmentSet 
-            &SegSet; 
-
         int8_t
             dimPow = 80; //80 range -127 -> 127 -80 good for colored bg's
 
@@ -256,7 +253,7 @@ class ParticlesSL : public EffectBasePS {
             colorFinal;
         
         void
-            init(CRGB BgColor),
+            init(CRGB BgColor, SegmentSet &SegSet),
             moveParticle(particlePS *particlePtr),
             setTrailColor(uint16_t trailLineNum, uint8_t segNum, uint8_t trailPixelNum);
 };

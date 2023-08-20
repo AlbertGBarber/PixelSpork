@@ -3,30 +3,30 @@
 //Constructor for effect with palette
 FireworksPS::FireworksPS(SegmentSet &SegSet, palettePS &Palette, uint8_t MaxNumFireworks, uint8_t MaxNumSparks, 
                          uint8_t SpawnChance, uint16_t LifeBase, uint8_t SpeedDecay, uint16_t Rate, uint16_t SpeedRange):
-    SegSet(SegSet), palette(&Palette), spawnChance(SpawnChance), lifeBase(LifeBase), speedDecay(SpeedDecay), speedRange(SpeedRange)
+    palette(&Palette), spawnChance(SpawnChance), lifeBase(LifeBase), speedDecay(SpeedDecay), speedRange(SpeedRange)
     {    
-        init(MaxNumFireworks, MaxNumSparks, Rate);
+        init(MaxNumFireworks, MaxNumSparks, SegSet, Rate);
 	}
 
 //Constructor for effect with palette of random colors
 FireworksPS::FireworksPS(SegmentSet &SegSet, uint16_t numColors, uint8_t MaxNumFireworks, uint8_t MaxNumSparks, 
                          uint8_t SpawnChance, uint16_t LifeBase, uint8_t SpeedDecay, uint16_t Rate, uint16_t SpeedRange):
-    SegSet(SegSet), spawnChance(SpawnChance), lifeBase(LifeBase), speedDecay(SpeedDecay), speedRange(SpeedRange)
+    spawnChance(SpawnChance), lifeBase(LifeBase), speedDecay(SpeedDecay), speedRange(SpeedRange)
     {    
         paletteTemp = paletteUtilsPS::makeRandomPalette(numColors);
         palette = &paletteTemp;
-        init(MaxNumFireworks, MaxNumSparks, Rate);
+        init(MaxNumFireworks, MaxNumSparks, SegSet, Rate);
 	}
 
 //constructor for effect with single color
 //!!If using pre-build FastLED colors you need to pass them as CRGB( *color code* )
 FireworksPS::FireworksPS(SegmentSet &SegSet, CRGB Color, uint8_t MaxNumFireworks, uint8_t MaxNumSparks, 
  uint8_t SpawnChance, uint16_t LifeBase, uint8_t SpeedDecay, uint16_t Rate, uint16_t SpeedRange):
-    SegSet(SegSet), spawnChance(SpawnChance), lifeBase(LifeBase), speedDecay(SpeedDecay), speedRange(SpeedRange)
+    spawnChance(SpawnChance), lifeBase(LifeBase), speedDecay(SpeedDecay), speedRange(SpeedRange)
     {    
         paletteTemp = paletteUtilsPS::makeSingleColorPalette(Color);
         palette = &paletteTemp;
-        init(MaxNumFireworks, MaxNumSparks, Rate);
+        init(MaxNumFireworks, MaxNumSparks, SegSet, Rate);
 	}
 
 FireworksPS::~FireworksPS(){
@@ -38,17 +38,18 @@ FireworksPS::~FireworksPS(){
 }
 
 //common initialization function for core vars
-void FireworksPS::init(uint8_t maxNumFireworks, uint8_t maxNumSparks, uint16_t Rate){
-    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
-    bindSegPtrPS();
+void FireworksPS::init(uint8_t maxNumFireworks, uint8_t maxNumSparks, SegmentSet &SegSet, uint16_t Rate){
+    //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
+    bindSegSetPtrPS();
     bindClassRatesPS();
+
     //set how long the center "bomb" pixel is alive for in ms.
     //This seems to look good in practice, but you might need to adjust centerLife
     //for more extreme values of lifeBase
     centerLife = lifeBase / 10 + 100;
     setupFireworks(maxNumFireworks, maxNumSparks);
     //do a quick clear of the strip
-    segDrawUtils::fillSegSetColor(SegSet, *bgColor, bgColorMode);
+    segDrawUtils::fillSegSetColor(*segSet, *bgColor, bgColorMode);
 }
 
 //Create the data structures for a set of fireworks
@@ -66,7 +67,7 @@ void FireworksPS::init(uint8_t maxNumFireworks, uint8_t maxNumSparks, uint16_t R
 void FireworksPS::setupFireworks(uint8_t newMaxNumFireworks, uint8_t newMaxNumSparks){
 
     //Set the background to clear any lingering particles from the segment set
-    segDrawUtils::fillSegSetColor(SegSet, *bgColor, bgColorMode);
+    segDrawUtils::fillSegSetColor(*segSet, *bgColor, bgColorMode);
 
     //must always have at least 1 spark spawning
     if(newMaxNumSparks == 0){
@@ -147,11 +148,11 @@ void FireworksPS::update(){
     if( deltaTime >= *rate ) {
         prevTime = currentTime;
 
-        numLEDs = SegSet.numLeds;
+        numLEDs = segSet->numLeds;
         //if the bg is to be filled before the particles start, fill it in
         //(such as if you have a background that's changing with time (alla bgColorMode 6))
         if( fillBG || blend ){
-            segDrawUtils::fillSegSetColor(SegSet, *bgColor, bgColorMode);
+            segDrawUtils::fillSegSetColor(*segSet, *bgColor, bgColorMode);
         }
 
         //For each firework, we check if it's active and then update any of its active particles
@@ -212,15 +213,15 @@ void FireworksPS::update(){
                             //get the previous particle location (the trail is always 1 behind the particle)
                             trailLedLocation = getTrailLedLoc(1);
                             //get the physical pixel location and the color it's meant to be
-                            segDrawUtils::getPixelColor(SegSet, trailLedLocation, &pixelInfo, *bgColor, bgColorMode);
+                            segDrawUtils::getPixelColor(*segSet, trailLedLocation, &pixelInfo, *bgColor, bgColorMode);
                             
                             //only turn off the pixel if it hasn't been touched by another particle (or something else)
                             //this prevents background holes from being placed in other particles
-                            if(SegSet.leds[pixelInfo.pixelLoc] == trailEndColors[particleIndex]){
-                                SegSet.leds[pixelInfo.pixelLoc] = pixelInfo.color;
+                            if(segSet->leds[pixelInfo.pixelLoc] == trailEndColors[particleIndex]){
+                                segSet->leds[pixelInfo.pixelLoc] = pixelInfo.color;
                                 //Need to check to dim the pixel color manually
                                 //b/c we're not calling setPixelColor directly
-                                segDrawUtils::handleBri(SegSet, pixelInfo.pixelLoc); 
+                                segDrawUtils::handleBri(*segSet, pixelInfo.pixelLoc); 
                             }
                         }
 
@@ -244,11 +245,11 @@ void FireworksPS::update(){
                             
                             //Draw the body pixel
                             drawParticlePixel(particlePtr, trailLedLocation);
-                            //segDrawUtils::setPixelColor(SegSet, 0, 0, bgColorMode); 
+                            //segDrawUtils::setPixelColor(segSet, 0, 0, bgColorMode); 
                             //The pixel that needs to be set to background
                             //is the last pixel in the particle body, so we record it's color
                             if( k == (partSize - 1) ){
-                                trailEndColors[particleIndex] = SegSet.leds[pixelInfo.pixelLoc];
+                                trailEndColors[particleIndex] = segSet->leds[pixelInfo.pixelLoc];
                             }
                         }
                     }
@@ -306,9 +307,9 @@ void FireworksPS::drawParticlePixel(particlePS *particlePtr, uint16_t trailLedLo
 
     //get the pixel's physical location and adjust for any color modes
     //also fetch the background color at this point (colorFinal)
-    segDrawUtils::getPixelColor(SegSet, trailLedLocation, &pixelInfo, colorOut, colorMode);
+    segDrawUtils::getPixelColor(*segSet, trailLedLocation, &pixelInfo, colorOut, colorMode);
     
-    colorFinal = segDrawUtils::getPixelColor(SegSet, pixelInfo.pixelLoc, *bgColor, bgColorMode, pixelInfo.segNum, pixelInfo.lineNum);
+    colorFinal = segDrawUtils::getPixelColor(*segSet, pixelInfo.pixelLoc, *bgColor, bgColorMode, pixelInfo.segNum, pixelInfo.lineNum);
     
     //if the pixel is the first particle in the firework, then it is the center particle
     //which only ever fades from the burst color 
@@ -335,14 +336,14 @@ void FireworksPS::drawParticlePixel(particlePS *particlePtr, uint16_t trailLedLo
     
     //output the color
     if(blend){
-        SegSet.leds[pixelInfo.pixelLoc] += colorFinal;
+        segSet->leds[pixelInfo.pixelLoc] += colorFinal;
     } else {
-        SegSet.leds[pixelInfo.pixelLoc] = colorFinal;
+        segSet->leds[pixelInfo.pixelLoc] = colorFinal;
     }       
 
     //Need to check to dim the pixel color manually
     //b/c we're not calling setPixelColor directly
-    segDrawUtils::handleBri(SegSet, pixelInfo.pixelLoc);         
+    segDrawUtils::handleBri(*segSet, pixelInfo.pixelLoc);         
 }
 
 //returns the previous position end of the particle

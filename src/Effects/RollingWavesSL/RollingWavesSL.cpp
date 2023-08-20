@@ -2,27 +2,27 @@
 
 //constructor with pattern
 RollingWavesSL::RollingWavesSL(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate):
-    SegSet(SegSet), pattern(&Pattern), palette(&Palette), gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)
+    pattern(&Pattern), palette(&Palette), gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)
     {    
-        init(BGColor,Rate);
+        init(BGColor, SegSet, Rate);
 	}
 
 //constructor with palette as pattern
 RollingWavesSL::RollingWavesSL(SegmentSet &SegSet, palettePS &Palette, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate):
-    SegSet(SegSet), palette(&Palette), gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)
+    palette(&Palette), gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)
     {    
         setPaletteAsPattern();
-        init(BGColor, Rate);
+        init(BGColor, SegSet, Rate);
 	}
 
 //constructor with random colors
 RollingWavesSL::RollingWavesSL(SegmentSet &SegSet, uint8_t NumColors, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate):
-    SegSet(SegSet), gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)
+    gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)
     {    
         paletteTemp = paletteUtilsPS::makeRandomPalette(NumColors);
         palette = &paletteTemp;
         setPaletteAsPattern();
-        init(BGColor, Rate);
+        init(BGColor, SegSet, Rate);
 	}
 
 RollingWavesSL::~RollingWavesSL(){
@@ -31,11 +31,14 @@ RollingWavesSL::~RollingWavesSL(){
 }
 
 //inits core variables for the effect
-void RollingWavesSL::init(CRGB BgColor, uint16_t Rate){
-    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
-    bindSegPtrPS();
+void RollingWavesSL::init(CRGB BgColor, SegmentSet &SegSet, uint16_t Rate){
+    //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
+    bindSegSetPtrPS();
     bindClassRatesPS();
+
+    //bind bgColor pointer
     bindBGColorPS();
+
     cycleNum = 0;
     setTrailMode(trailMode);
     setTotalEffectLength();
@@ -152,8 +155,8 @@ void RollingWavesSL::update(){
 
         //fetch some core vars
         //we re-fetch these in case the segment set or palette has changed
-        numSegs = SegSet.numSegs;
-        numLines = SegSet.numLines;
+        numSegs = segSet->numSegs;
+        numLines = segSet->numLines;
         
         //we need to set the current color for the initial loop step
         //because it will not automatically be set in the loop unless the first blendStep is 0
@@ -193,13 +196,13 @@ void RollingWavesSL::update(){
 
             for(uint16_t j = 0; j < numSegs; j++){
                 //get the physical pixel location based on the line and seg numbers
-                pixelNum = segDrawUtils::getPixelNumFromLineNum(SegSet, numLines, j, lineNum);
+                pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, j, lineNum);
                 //We get the pixel info for the current led, supplying the background or wave color info
                 //depending on if the current led is a spacing pixel
                 if(setBg){
-                    colorOut = segDrawUtils::getPixelColor(SegSet, pixelNum, *bgColor, bgColorMode, j, lineNum);
+                    colorOut = segDrawUtils::getPixelColor(*segSet, pixelNum, *bgColor, bgColorMode, j, lineNum);
                 } else{
-                    colorOut = segDrawUtils::getPixelColor(SegSet, pixelNum, currentColor, colorMode, j, lineNum);
+                    colorOut = segDrawUtils::getPixelColor(*segSet, pixelNum, currentColor, colorMode, j, lineNum);
 
                     //Dim the color
                     //If the blendStep is at the "head" led, we don't dim it
@@ -207,7 +210,7 @@ void RollingWavesSL::update(){
                         colorOut = desaturate(colorOut, stepTemp, halfGrad);
                     }
                 }
-                segDrawUtils::setPixelColor(SegSet, pixelNum, colorOut, 0, j, lineNum);
+                segDrawUtils::setPixelColor(*segSet, pixelNum, colorOut, 0, j, lineNum);
             }
         }
 

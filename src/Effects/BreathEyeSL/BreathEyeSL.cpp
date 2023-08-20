@@ -2,17 +2,17 @@
 
 //constructor for using a pattern and palette
 BreathEyeSL::BreathEyeSL(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint16_t EyeHalfSize, bool Wrap, bool RandEyePos, uint8_t BreathFreq, uint16_t Rate):
-    SegSet(SegSet), pattern(&Pattern), palette(&Palette), eyeHalfSize(EyeHalfSize), wrap(Wrap), randEyePos(RandEyePos)
+    pattern(&Pattern), palette(&Palette), eyeHalfSize(EyeHalfSize), wrap(Wrap), randEyePos(RandEyePos)
     {    
-        init(BgColor, BreathFreq, Rate);
+        init(BgColor, BreathFreq, SegSet, Rate);
 	}
 
 //constructor for using palette as pattern
 BreathEyeSL::BreathEyeSL(SegmentSet &SegSet, palettePS &Palette, CRGB BgColor, uint16_t EyeHalfSize, bool Wrap, bool RandEyePos, uint8_t BreathFreq, uint16_t Rate):
-    SegSet(SegSet), palette(&Palette), eyeHalfSize(EyeHalfSize), wrap(Wrap), randEyePos(RandEyePos)
+    palette(&Palette), eyeHalfSize(EyeHalfSize), wrap(Wrap), randEyePos(RandEyePos)
     {    
         setPaletteAsPattern();
-        init(BgColor, BreathFreq, Rate);
+        init(BgColor, BreathFreq, SegSet, Rate);
 	}
 
 //constructor for a single color breath (pass in 0 as the color to trigger randMode 1, fully random)
@@ -22,7 +22,7 @@ BreathEyeSL::BreathEyeSL(SegmentSet &SegSet, palettePS &Palette, CRGB BgColor, u
 //Passing in maxBreath also forces the compiler to differentiate this constructor from the rainbow one below
 //(CRGB's look like uint8_t's to the compiler)
 BreathEyeSL::BreathEyeSL(SegmentSet &SegSet, CRGB color, CRGB BgColor, uint8_t MaxBreath, uint16_t EyeHalfSize, bool Wrap, bool RandEyePos, uint8_t BreathFreq, uint16_t Rate):
-    SegSet(SegSet), maxBreath(MaxBreath), eyeHalfSize(EyeHalfSize), wrap(Wrap), randEyePos(RandEyePos)
+    maxBreath(MaxBreath), eyeHalfSize(EyeHalfSize), wrap(Wrap), randEyePos(RandEyePos)
     {    
         if(color == CRGB{0,0,0}){
             randMode = 1; //set mode to 3 since we are doing a full random set of colors
@@ -31,12 +31,12 @@ BreathEyeSL::BreathEyeSL(SegmentSet &SegSet, CRGB color, CRGB BgColor, uint8_t M
         paletteTemp = paletteUtilsPS::makeSingleColorPalette(color);
         palette = &paletteTemp;
         setPaletteAsPattern();
-        init(BgColor, BreathFreq, Rate);
+        init(BgColor, BreathFreq, SegSet, Rate);
     }
 
 //constructor for rainbow mode
 BreathEyeSL::BreathEyeSL(SegmentSet &SegSet, CRGB BgColor, uint8_t RainbowRate, uint16_t EyeHalfSize, bool Wrap, bool RandEyePos, uint8_t BreathFreq, uint16_t Rate):
-    SegSet(SegSet), rainbowRate(RainbowRate), eyeHalfSize(EyeHalfSize), wrap(Wrap), randEyePos(RandEyePos)
+    rainbowRate(RainbowRate), eyeHalfSize(EyeHalfSize), wrap(Wrap), randEyePos(RandEyePos)
     {    
         randMode = 4; //set mode to 4 for rainbow mode
        
@@ -44,7 +44,7 @@ BreathEyeSL::BreathEyeSL(SegmentSet &SegSet, CRGB BgColor, uint8_t RainbowRate, 
         paletteTemp = paletteUtilsPS::makeSingleColorPalette(colorUtilsPS::randColor());
         palette = &paletteTemp;
         setPaletteAsPattern();
-        init(BgColor, BreathFreq, Rate);
+        init(BgColor, BreathFreq, SegSet, Rate);
 	}
 
 BreathEyeSL::~BreathEyeSL(){
@@ -53,9 +53,9 @@ BreathEyeSL::~BreathEyeSL(){
 }
 
 //bind core class vars
-void BreathEyeSL::init(CRGB BgColor, uint8_t BreathFreq, uint16_t Rate){
-    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
-    bindSegPtrPS();
+void BreathEyeSL::init(CRGB BgColor, uint8_t BreathFreq, SegmentSet &SegSet,  uint16_t Rate){
+    //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS  
+    bindSegSetPtrPS();
     bindClassRatesPS();
     //bind background color pointer
     bindBGColorPS();
@@ -86,7 +86,7 @@ void BreathEyeSL::reset(){
     //Set the eye center position
     //If it's not being chosen randomly we default to the center of the segment set
     //Because it makes the most sense, and is probably what most people are looking for
-    numLines = SegSet.numLines;
+    numLines = segSet->numLines;
     if(randEyePos){
         eyePos = random16(numLines);
     } else {
@@ -96,7 +96,7 @@ void BreathEyeSL::reset(){
     getNextColor();
 
     //blank out the segment set for before the first update
-    segDrawUtils::fillSegSetColor(SegSet, *bgColor, 0);
+    segDrawUtils::fillSegSetColor(*segSet, *bgColor, 0);
 }
 
 //sets the pattern to match the current palette
@@ -158,7 +158,7 @@ void BreathEyeSL::update(){
     if( (currentTime - prevTime) >= *rate ) {
         prevTime = currentTime;
 
-        numLines = SegSet.numLines;
+        numLines = segSet->numLines;
 
         bWave = triwave8(currentTime / *breathFreq); 
         breath = ease8InOutCubic(bWave); 
@@ -195,11 +195,11 @@ void BreathEyeSL::update(){
             //So if we're not wrapping we ignore any lines that are greater than eyePos
             //The opposite is true for the forward line number
             if( wrap || (lineNumRev < eyePos) ){
-                segDrawUtils::drawSegLine(SegSet, lineNumRev, dimColor, 0);
+                segDrawUtils::drawSegLine(*segSet, lineNumRev, dimColor, 0);
             }
 
             if( wrap || (lineNumFor > eyePos) ){
-                segDrawUtils::drawSegLine(SegSet, lineNumFor, dimColor, 0);
+                segDrawUtils::drawSegLine(*segSet, lineNumFor, dimColor, 0);
             }
 
         }
@@ -231,7 +231,7 @@ void BreathEyeSL::update(){
 
             //fill in the segment set with background if needed
             if(fillBG){
-                segDrawUtils::fillSegSetColor(SegSet, *bgColor, 0);
+                segDrawUtils::fillSegSetColor(*segSet, *bgColor, 0);
             }
 
         } else if(lockColor && breath < breathEndVal){

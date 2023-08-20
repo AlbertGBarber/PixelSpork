@@ -93,10 +93,7 @@ class Noise16PS : public EffectBasePS {
         Noise16PS(SegmentSet &SegSet, uint8_t numColors, uint16_t BlendSteps, uint16_t BlendScale,
                   uint8_t X_mode, uint8_t Y_mode, uint8_t Z_mode, uint16_t X_val, uint16_t Y_val, uint16_t Z_val, uint16_t Rate);
 
-        ~Noise16PS();
-
-        SegmentSet 
-            &SegSet; 
+        ~Noise16PS(); 
         
         uint8_t
             x_mode,
@@ -146,7 +143,7 @@ class Noise16PS : public EffectBasePS {
             colorOut;
         
         void 
-            init(uint16_t Rate);
+            init(SegmentSet &SegSet, uint16_t Rate);
 };
 
 #endif

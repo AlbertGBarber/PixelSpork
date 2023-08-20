@@ -4,10 +4,10 @@
 ParticlesSL::ParticlesSL(SegmentSet &SegSet, palettePS &Palette, CRGB BgColor, uint8_t numParticles, uint8_t direction, uint16_t baseSpeed, 
                         uint16_t speedRange, uint16_t size, uint16_t sizeRange, uint8_t trailType, uint8_t trailSize, 
                         uint8_t trailRange, uint8_t bounce, uint8_t colorIndex, bool randColor):
-    SegSet(SegSet), palette(&Palette)
+    palette(&Palette)
     {    
-        init(BgColor);
-        numLines = SegSet.numLines;
+        init(BgColor, SegSet);
+        numLines = segSet->numLines;
         particleSetTemp = particleUtilsPS::buildParticleSet(numParticles, numLines, direction, baseSpeed, 
                                                             speedRange, size, sizeRange, trailType, trailSize, 
                                                             trailRange, bounce, colorIndex, randColor);
@@ -17,9 +17,9 @@ ParticlesSL::ParticlesSL(SegmentSet &SegSet, palettePS &Palette, CRGB BgColor, u
 
 //constructor for using a particle set you've already made
 ParticlesSL::ParticlesSL(SegmentSet &SegSet, particleSetPS &ParticleSet, palettePS &Palette, CRGB BgColor):
-    SegSet(SegSet), particleSet(&ParticleSet), palette(&Palette)
+    particleSet(&ParticleSet), palette(&Palette)
     {    
-        init(BgColor);
+        init(BgColor, SegSet);
         trailEndColors = (CRGB*) malloc( (particleSet->length) * sizeof(CRGB) );
     }
 
@@ -35,16 +35,17 @@ ParticlesSL::~ParticlesSL(){
 }
 
 //initializes the core variables of the effect
-void ParticlesSL::init(CRGB BgColor){
-    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
-    bindSegPtrPS();
+void ParticlesSL::init(CRGB BgColor, SegmentSet &SegSet){
+    //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
     //The effect uses the rates of the particles, but all effects must have a Rate var, so we make one up
     uint16_t Rate = 80; 
+    bindSegSetPtrPS();
     bindClassRatesPS();
+
     //bind background color pointer
     bindBGColorPS();
     //initial fill to clear out any previous effects
-    segDrawUtils::fillSegSetColor(SegSet, *bgColor, bgColorMode);
+    segDrawUtils::fillSegSetColor(*segSet, *bgColor, bgColorMode);
 }
 
 //sets the effect to use a new particle set
@@ -62,7 +63,7 @@ void ParticlesSL::setParticleSet(particleSetPS &newParticleSet){
 
     particleSet = &newParticleSet;
 
-    segDrawUtils::fillSegSetColor(SegSet, *bgColor, bgColorMode);
+    segDrawUtils::fillSegSetColor(*segSet, *bgColor, bgColorMode);
 }
 
 //resets all the particles to their start locations
@@ -81,7 +82,7 @@ void ParticlesSL::reset(){
 //To minimize the number of re-draws (we don't need to re-draw if no particles have moved) we limit the overall update rate
 //to that of the fastest particle. This is re-checked every update.
 //Bounce and end behavior:
-//For a particle to bounce, it must reverse it's direction once it hits either end of the SegSet's lines
+//For a particle to bounce, it must reverse it's direction once it hits either end of the segSet's lines
 //However, how/when it bounces is a matter of opinion. I have opted for the following:
 //The particle only bounces when it's main body (not trail) reaches an end point.
 //Both the front and rear trails wrap back on themselves as the particle bounces
@@ -104,14 +105,14 @@ void ParticlesSL::update(){
 
         //refill the background if directed (if we're using a dynamic rainbow or something)
         if(fillBG || blend){
-            segDrawUtils::fillSegSetColor(SegSet, *bgColor, bgColorMode);
+            segDrawUtils::fillSegSetColor(*segSet, *bgColor, bgColorMode);
         }
 
         //re-fetch the segment vars in-case they've been modified
         numParticles = particleSet->length;
-        numLines = SegSet.numLines;
-        numSegs = SegSet.numSegs;
-        longestSeg = SegSet.segNumMaxNumLines;
+        numLines = segSet->numLines;
+        numSegs = segSet->numSegs;
+        longestSeg = segSet->segNumMaxNumLines;
 
         //for each particle, in order:
         //move it to it's next position (ie line number) (if needed)
@@ -141,7 +142,7 @@ void ParticlesSL::update(){
             size = particlePtr->size; //the length of the main body of the particle
             trailType = particlePtr->trailType; //the type of trail for the particle (see above for types)
             trailSize = particlePtr->trailSize; //the length of the trail(s) of the particle (only applies if the pixel has a trail)
-            bounce = particlePtr->bounce; //sets if the particle wraps to the beginning of the SegSet once it reaches the end, or if it reverses direction (it bounces)
+            bounce = particlePtr->bounce; //sets if the particle wraps to the beginning of the segSet once it reaches the end, or if it reverses direction (it bounces)
             
             //record the fastest particle for accurate effect updating
             if( speed < updateRate ){
@@ -188,16 +189,16 @@ void ParticlesSL::update(){
                 }
 
                 //get the physical pixel location and the color it's meant to be
-                //segDrawUtils::getPixelColor(SegSet, &pixelInfo, *bgColor, bgColorMode, trailLineNum);
-                pixelNum = segDrawUtils::getPixelNumFromLineNum(SegSet, numLines, longestSeg, trailLineNum);
+                //segDrawUtils::getPixelColor(segSet, &pixelInfo, *bgColor, bgColorMode, trailLineNum);
+                pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, longestSeg, trailLineNum);
                 //only turn off the pixel if it hasn't been touched by another particle's trail (or something else)
                 //this prevents background holes from being placed in other particles
                 //For segments with multiple lines we use the particle pixel that's on the longest segment to check the background color
                 //For the longest segment the full particle will always be drawn (it may be truncated on shorted segments)
                 //so we know that if the trail pixel has not been over-written, it should not have been over-written on other segments
-                if(SegSet.leds[pixelNum] == trailEndColors[i]){
-                    //SegSet.leds[pixelInfo.pixelLoc] = pixelInfo.color;
-                    segDrawUtils::drawSegLine(SegSet, trailLineNum, *bgColor, bgColorMode);
+                if(segSet->leds[pixelNum] == trailEndColors[i]){
+                    //segSet->leds[pixelInfo.pixelLoc] = pixelInfo.color;
+                    segDrawUtils::drawSegLine(*segSet, trailLineNum, *bgColor, bgColorMode);
                 }
             }
 
@@ -226,7 +227,7 @@ void ParticlesSL::update(){
                             //If we have rear trails, we need to record the trail end color at the end of the trail
                             //but only if we're writing to the longest seg (see notes in the background setting code above, and the intro)
                             if(k == trailSize && j == longestSeg){
-                                trailEndColors[i] = SegSet.leds[pixelNum];
+                                trailEndColors[i] = segSet->leds[pixelNum];
                             }
                         }
                     }
@@ -247,24 +248,23 @@ void ParticlesSL::update(){
                     }
 
                     //get the pixel location and color and set it
-                    //segDrawUtils::getPixelColor(SegSet, &pixelInfo, partColor, colorMode, trailLineNum);
-                    pixelNum = segDrawUtils::getPixelNumFromLineNum(SegSet, numLines, j, trailLineNum);
-                    colorFinal = segDrawUtils::getPixelColor(SegSet, pixelNum, partColor, colorMode, j, trailLineNum);
+                    pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, j, trailLineNum);
+                    colorFinal = segDrawUtils::getPixelColor(*segSet, pixelNum, partColor, colorMode, j, trailLineNum);
                     
                     if(blend){
-                        SegSet.leds[pixelNum] += colorFinal;
+                        segSet->leds[pixelNum] += colorFinal;
                     } else {
-                        SegSet.leds[pixelNum] = colorFinal;
+                        segSet->leds[pixelNum] = colorFinal;
                     }
                     //Need to check to dim the pixel color manually
                     //b/c we're not calling setPixelColor directly
-                    segDrawUtils::handleBri(SegSet, pixelNum);
+                    segDrawUtils::handleBri(*segSet, pixelNum);
 
                     //if we don't have a rear trail, then the next pixel that needs to be set to background
                     //is the last pixel in the particle body, so we record it's color
                     //but only if we're writing to the longest seg (see notes in the background setting code above, and the intro)
                     if( k == (size - 1) && (trailType == 0 || trailType == 3) && j == longestSeg ){
-                        trailEndColors[i] = SegSet.leds[pixelNum];
+                        trailEndColors[i] = segSet->leds[pixelNum];
                     }
                 }
             }
@@ -311,23 +311,22 @@ void ParticlesSL::moveParticle(particlePS *particlePtr) {
 //the trail is blended towards background color according to the trailSize
 void ParticlesSL::setTrailColor(uint16_t trailLineNum, uint8_t segNum, uint8_t trailPixelNum){
     //get the physical pixel location, it's color, and the target background color
-    //segDrawUtils::getPixelColor(SegSet, &pixelInfo, partColor, colorMode, trailLineNum);
-    pixelNum = segDrawUtils::getPixelNumFromLineNum(SegSet, numLines, segNum, trailLineNum);
+    pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, segNum, trailLineNum);
     
-    colorTarget = segDrawUtils::getPixelColor(SegSet, pixelNum, *bgColor, bgColorMode, segNum, trailLineNum);
-    colorFinal = segDrawUtils::getPixelColor(SegSet, pixelNum, partColor, colorMode, segNum, trailLineNum);
+    colorTarget = segDrawUtils::getPixelColor(*segSet, pixelNum, *bgColor, bgColorMode, segNum, trailLineNum);
+    colorFinal = segDrawUtils::getPixelColor(*segSet, pixelNum, partColor, colorMode, segNum, trailLineNum);
 
     //blend the color into the background according to where we are in the trail
     colorFinal = particleUtilsPS::getTrailColor(colorFinal, colorTarget, trailPixelNum, trailSize, dimPow);
     //output the color
     if(blend){
-        SegSet.leds[pixelNum] += colorFinal;
+        segSet->leds[pixelNum] += colorFinal;
     } else {
-        SegSet.leds[pixelNum] = colorFinal;
+        segSet->leds[pixelNum] = colorFinal;
     }    
     //Need to check to dim the pixel color manually
     //b/c we're not calling setPixelColor directly
-    segDrawUtils::handleBri(SegSet, pixelNum);             
+    segDrawUtils::handleBri(*segSet, pixelNum);             
 }
 
 //returns the position of a trail pixel(local to the segment) based on the trail direction, and the mod amount

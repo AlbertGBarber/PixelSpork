@@ -2,35 +2,34 @@
 
 //constructor for using the passed in pattern and palette for the streamer
 StreamerFastSL::StreamerFastSL(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint16_t Rate):
-    SegSet(SegSet), pattern(&Pattern), palette(&Palette)
+    pattern(&Pattern), palette(&Palette)
     {    
-        init(BgColor, Rate);
+        init(BgColor, SegSet, Rate);
 	}
 
 //constructor for building the streamer pattern from the passed in pattern and the palette, using the passed in colorLength and spacing
 StreamerFastSL::StreamerFastSL(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint16_t Rate):
-    SegSet(SegSet), palette(&Palette)
+    palette(&Palette)
     {    
         setPatternAsPattern(Pattern, ColorLength, Spacing);
-        init(BgColor, Rate);
+        init(BgColor, SegSet, Rate);
 	}
     
 //constructor for building a streamer using all the colors in the passed in palette, using the colorLength and spacing for each color
 StreamerFastSL::StreamerFastSL(SegmentSet &SegSet, palettePS &Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint16_t Rate):
-    SegSet(SegSet), palette(&Palette)
+    palette(&Palette)
     {    
         setPaletteAsPattern(ColorLength, Spacing);
-        init(BgColor, Rate);
+        init(BgColor, SegSet, Rate);
 	}
 
 //constructor for doing a single colored streamer, using colorLength and spacing
-StreamerFastSL::StreamerFastSL(SegmentSet &SegSet, CRGB Color, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint16_t Rate):
-    SegSet(SegSet)
+StreamerFastSL::StreamerFastSL(SegmentSet &SegSet, CRGB Color, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint16_t Rate)
     {    
         paletteTemp = paletteUtilsPS::makeSingleColorPalette(Color);
         palette = &paletteTemp;
         setPaletteAsPattern(ColorLength, Spacing);
-        init(BgColor, Rate);
+        init(BgColor, SegSet, Rate);
 	}
 
 StreamerFastSL::~StreamerFastSL(){
@@ -64,9 +63,9 @@ void StreamerFastSL::reset(){
 }
 
 //initialization of core variables and pointers
-void StreamerFastSL::init(CRGB BgColor, uint16_t Rate){
-    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
-    bindSegPtrPS();
+void StreamerFastSL::init(CRGB BgColor, SegmentSet &SegSet, uint16_t Rate){
+    //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
+    bindSegSetPtrPS();
     bindClassRatesPS();
     //bind background color pointer
     bindBGColorPS();
@@ -127,7 +126,7 @@ void StreamerFastSL::initalFill(){
     cycleNum = 0;
 
     //fetch some core vars
-    numLines = SegSet.numLines;
+    numLines = segSet->numLines;
     numLinesLim = numLines - 1;
 
     uint16_t patternLength = pattern->length;
@@ -138,7 +137,7 @@ void StreamerFastSL::initalFill(){
         nextColor = pickStreamerColor(nextPattern);
 
         //write out the copied color to the whole line
-        segDrawUtils::drawSegLine(SegSet, i, nextColor, 0);
+        segDrawUtils::drawSegLine(*segSet, i, nextColor, 0);
         //every time we draw a pixel, we're basically doing one whole update()
         //so we need to increment the cycleNum, so that once the preFill is done, the 
         //next update() call will sync properly
@@ -166,9 +165,9 @@ void StreamerFastSL::update(){
         }
 
         //fetch some core vars
-        numLines = SegSet.numLines;
+        numLines = segSet->numLines;
         numLinesLim = numLines - 1;
-        longestSeg = SegSet.segNumMaxNumLines;
+        longestSeg = segSet->segNumMaxNumLines;
 
         for (int32_t i = numLinesLim; i >= 0; i--) {
 
@@ -182,11 +181,11 @@ void StreamerFastSL::update(){
                 //To copy the color we always copy from the pixel on the longest segment,
                 //Since all the pixels on the longest segment are on separate lines
                 //(unlike shorter segments, where a single pixel can be in multiple lines, so it's color may not be what we expect)
-                pixelNum = segDrawUtils::getPixelNumFromLineNum(SegSet, numLines, longestSeg, i - 1);
-                nextColor = SegSet.leds[pixelNum];
+                pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, longestSeg, i - 1);
+                nextColor = segSet->leds[pixelNum];
             }
             //write out the copied color to the whole line
-            segDrawUtils::drawSegLine(SegSet, i, nextColor, 0);
+            segDrawUtils::drawSegLine(*segSet, i, nextColor, 0);
 
         }
         cycleNum = addMod16PS( cycleNum, 1, pattern->length ); //one update = one cycle

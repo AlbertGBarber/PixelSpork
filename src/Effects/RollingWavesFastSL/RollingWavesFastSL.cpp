@@ -2,27 +2,27 @@
 
 //constructor with pattern
 RollingWavesFastSL::RollingWavesFastSL(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate):
-    SegSet(SegSet), pattern(&Pattern), palette(&Palette), gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)
+    pattern(&Pattern), palette(&Palette), gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)
     {    
-        init(BGColor,Rate);
+        init(BGColor, SegSet, Rate);
 	}
 
 //constructor with palette as pattern
 RollingWavesFastSL::RollingWavesFastSL(SegmentSet &SegSet, palettePS &Palette, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate):
-    SegSet(SegSet), palette(&Palette), gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)
+    palette(&Palette), gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)
     {    
         setPaletteAsPattern();
-        init(BGColor, Rate);
+        init(BGColor, SegSet, Rate);
 	}
 
 //constructor with random colors
 RollingWavesFastSL::RollingWavesFastSL(SegmentSet &SegSet, uint8_t NumColors, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate):
-    SegSet(SegSet), gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)
+    gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)
     {    
         paletteTemp = paletteUtilsPS::makeRandomPalette(NumColors);
         palette = &paletteTemp;
         setPaletteAsPattern();
-        init(BGColor, Rate);
+        init(BGColor, SegSet, Rate);
 	}
 
 RollingWavesFastSL::~RollingWavesFastSL(){
@@ -31,11 +31,13 @@ RollingWavesFastSL::~RollingWavesFastSL(){
 }
 
 //inits core variables for the effect
-void RollingWavesFastSL::init(CRGB BgColor, uint16_t Rate){
-    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
-    bindSegPtrPS();
+void RollingWavesFastSL::init(CRGB BgColor, SegmentSet &SegSet, uint16_t Rate){
+    //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
+    bindSegSetPtrPS();
     bindClassRatesPS();
+    //bind bgColor pointer
     bindBGColorPS();
+
     cycleNum = 0;
     setTrailMode(trailMode);
     setTotalEffectLength();
@@ -154,7 +156,7 @@ void RollingWavesFastSL::initalFill(){
         }
         colorOut = getWaveColor(cycleNum);
         //Draw the colored line
-        segDrawUtils::drawSegLine(SegSet, i, colorOut, 0);
+        segDrawUtils::drawSegLine(*segSet, i, colorOut, 0);
 
         cycleNum = addmod8(cycleNum, 1, blendLimit);//track what step we're on in the wave
     }
@@ -184,9 +186,9 @@ void RollingWavesFastSL::update(){
         prevTime = currentTime;
 
         //fetch some core vars
-        numLines = SegSet.numLines;
+        numLines = segSet->numLines;
         numLinesLim = numLines - 1;
-        longestSeg = SegSet.segNumMaxNumLines;
+        longestSeg = segSet->segNumMaxNumLines;
 
         //We need to pre-fill the strip with a full cycle the first time the update is called
         //so that the colors are copied down the strip correctly on subsequent cycles
@@ -212,17 +214,17 @@ void RollingWavesFastSL::update(){
                 colorOut = getWaveColor(blendStep);
 
                 //Draw the line
-                segDrawUtils::drawSegLine(SegSet, i, colorOut, 0);
+                segDrawUtils::drawSegLine(*segSet, i, colorOut, 0);
             } else {
                 //Copy the pixel color from the previous line
                 //To copy the color we always copy from the pixel on the longest segment,
                 //Since all the pixels on the longest segment are on separate lines
                 //(unlike shorter segments, where a single pixel can be in multiple lines, so it's color may not be what we expect)
-                pixelNum = segDrawUtils::getPixelNumFromLineNum(SegSet, numLines, longestSeg, i - 1);
-                colorOut = SegSet.leds[pixelNum];
+                pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, longestSeg, i - 1);
+                colorOut = segSet->leds[pixelNum];
 
                 //write out the copied color to the whole line
-                segDrawUtils::drawSegLine(SegSet, i, colorOut, 0);
+                segDrawUtils::drawSegLine(*segSet, i, colorOut, 0);
             }
         }
         cycleNum = addMod16PS( cycleNum, 1, totalCycleLength );

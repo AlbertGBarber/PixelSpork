@@ -57,9 +57,6 @@ class TwinkleFastSL : public EffectBasePS {
         //destructor
         ~TwinkleFastSL();
         
-        SegmentSet 
-            &SegSet; 
-        
         uint8_t
             randMode = 0,
             colorMode = 0,
@@ -101,7 +98,7 @@ class TwinkleFastSL : public EffectBasePS {
             color;
         
         void
-            init(CRGB BgColor, uint16_t Rate);
+            init(CRGB BgColor, SegmentSet &SegSet, uint16_t Rate);
 };
 
 #endif

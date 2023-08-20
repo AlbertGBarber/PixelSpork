@@ -21,11 +21,9 @@ Flags:
 */
 class EmptyEffectPS : public EffectBasePS {
     public:
-        EmptyEffectPS(SegmentSet &SegSet, uint16_t Rate);  
-
-        SegmentSet 
-            &SegSet; 
+        EmptyEffectPS(SegmentSet &SegSet, uint8_t AnArg, uint16_t Rate);  
         
+        uint8_t anArg; //sample effect variable
         //use for background color (if needed)
         //use BgColor in constructor
         //CRGB 

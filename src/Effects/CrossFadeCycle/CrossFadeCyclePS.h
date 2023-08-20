@@ -73,9 +73,6 @@ class CrossFadeCyclePS : public EffectBasePS {
 
         ~CrossFadeCyclePS();
 
-        SegmentSet 
-            &SegSet; 
-
         uint8_t
             steps, //total steps per fade
             randMode = 0; //see description above
@@ -117,7 +114,7 @@ class CrossFadeCyclePS : public EffectBasePS {
         
         void
             getNextColor(),
-            init(uint16_t Rate);
+            init(SegmentSet &SegSet, uint16_t Rate);
 };
 
 #endif

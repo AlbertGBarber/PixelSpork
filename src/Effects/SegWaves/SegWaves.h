@@ -177,9 +177,6 @@ class SegWaves : public EffectBasePS {
 
         ~SegWaves();
 
-        SegmentSet 
-            &SegSet; 
-
         uint8_t
             colorMode = 0,
             bgColorMode = 0,
@@ -249,7 +246,7 @@ class SegWaves : public EffectBasePS {
             updateNoFade(),
             handleRandColors(),
             initFill(),
-            init(CRGB BgColor, uint16_t Rate);
+            init(CRGB BgColor, SegmentSet &SegSet, uint16_t Rate);
 };
 
 #endif

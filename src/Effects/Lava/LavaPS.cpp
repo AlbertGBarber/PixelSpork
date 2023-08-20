@@ -1,52 +1,51 @@
 #include "LavaPS.h"
 
 //constructor for base lava effect with default values
-LavaPS::LavaPS(SegmentSet &SegSet, uint16_t Rate):
-    SegSet(SegSet)
+LavaPS::LavaPS(SegmentSet &SegSet, uint16_t Rate)
     {    
         palette = &lavaPal; //set the effect palette to the lava palette from paletteList.h
         blendSteps = 150;
         blendScale = 80;
         //Fill in the temp palette in case the use switches to it
         paletteTemp = paletteUtilsPS::makeRandomPalette(3);
-        init(Rate);
+        init(SegSet, Rate);
 	}
 
 //constructor for lava with adjustable values
 LavaPS::LavaPS(SegmentSet &SegSet, uint16_t BlendSteps, uint16_t BlendScale, uint16_t Rate):
-    SegSet(SegSet), blendSteps(BlendSteps), blendScale(BlendScale)
+    blendSteps(BlendSteps), blendScale(BlendScale)
     {    
         palette = &lavaPal; //set the effect palette to the lava palette from paletteList.h
         //Fill in the temp palette in case the use switches to it
         paletteTemp = paletteUtilsPS::makeRandomPalette(3);
-        init(Rate);
+        init(SegSet, Rate);
 	}
 
 //constructor for a custom palette
 LavaPS::LavaPS(SegmentSet &SegSet, palettePS &Palette, uint16_t BlendSteps, uint16_t BlendScale, uint16_t Rate):
-    SegSet(SegSet), palette(&Palette), blendSteps(BlendSteps), blendScale(BlendScale)
+    palette(&Palette), blendSteps(BlendSteps), blendScale(BlendScale)
     {    
         //Fill in the temp palette in case the use switches to it
         paletteTemp = paletteUtilsPS::makeRandomPalette(3);
-        init(Rate);
+        init(SegSet, Rate);
 	}
 
 //constructor for a random palette
 LavaPS::LavaPS(SegmentSet &SegSet, uint8_t numColors, uint16_t BlendSteps, uint16_t BlendScale, uint16_t Rate):
-    SegSet(SegSet), blendSteps(BlendSteps), blendScale(BlendScale)
+    blendSteps(BlendSteps), blendScale(BlendScale)
     {    
         paletteTemp = paletteUtilsPS::makeRandomPalette(numColors);
         palette = &paletteTemp;
-        init(Rate);
+        init(SegSet, Rate);
 	}
 
 LavaPS::~LavaPS(){
     free(paletteTemp.paletteArr);
 }
 
-void LavaPS::init(uint16_t Rate){
-    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
-    bindSegPtrPS();
+void LavaPS::init(SegmentSet &SegSet, uint16_t Rate){
+    //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
+    bindSegSetPtrPS();
     bindClassRatesPS();   
 }
 
@@ -63,7 +62,7 @@ void LavaPS::update(){
         }
 
         pixelCount = 0;
-        numSegs = SegSet.numSegs;
+        numSegs = segSet->numSegs;
 
         //get the total blend length
         if(rainbowMode){
@@ -76,11 +75,11 @@ void LavaPS::update(){
 
         //run over each of the leds in the segment set and set a noise/color value
         for (uint16_t i = 0; i < numSegs; i++) {
-            totSegLen = SegSet.getTotalSegLength(i);
+            totSegLen = segSet->getTotalSegLength(i);
             for(uint16_t j = 0; j < totSegLen; j++){
                 
                 //get the current pixel's location in the segment set
-                pixelNum = segDrawUtils::getSegmentPixel(SegSet, i, j);
+                pixelNum = segDrawUtils::getSegmentPixel(*segSet, i, j);
 
                 //do some noise magic to get a brightness val and color index
                 brightness = inoise8(pixelCount * brightnessScale, currentTime/5);
@@ -99,7 +98,7 @@ void LavaPS::update(){
 
                 //set the output color's brightness
                 nscale8x3(colorOut.r, colorOut.g, colorOut.b, brightness);
-                segDrawUtils::setPixelColor(SegSet, pixelNum, colorOut, 0, 0, 0);
+                segDrawUtils::setPixelColor(*segSet, pixelNum, colorOut, 0, 0, 0);
 
                 pixelCount++;
             }

@@ -124,9 +124,6 @@ class BreathPS : public EffectBasePS {
         BreathPS(SegmentSet &SegSet, CRGB BgColor, uint8_t RainbowRate, uint8_t BreathFreq, uint16_t Rate);
 
         ~BreathPS();
-
-        SegmentSet 
-            &SegSet; 
         
         uint8_t
             breathFreqOrig,
@@ -183,7 +180,7 @@ class BreathPS : public EffectBasePS {
         
         void
             getNextColor(),
-            init(CRGB BgColor, uint8_t BreathFreq, uint16_t Rate);
+            init(CRGB BgColor, uint8_t BreathFreq, SegmentSet &SegSet, uint16_t Rate);
 };
 
 #endif

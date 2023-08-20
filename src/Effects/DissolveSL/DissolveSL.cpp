@@ -2,29 +2,29 @@
 
 //constructor for pattern
 DissolveSL::DissolveSL(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t RandMode, uint16_t SpawnRateInc, uint16_t Rate):
-    SegSet(SegSet), pattern(&Pattern), palette(&Palette), randMode(RandMode), spawnRateInc(SpawnRateInc)
+    pattern(&Pattern), palette(&Palette), randMode(RandMode), spawnRateInc(SpawnRateInc)
     {    
-        init(Rate);
+        init(SegSet, Rate);
 	}
 
 //constructor for palette as pattern
 DissolveSL::DissolveSL(SegmentSet &SegSet, palettePS &Palette, uint8_t RandMode, uint16_t SpawnRateInc, uint16_t Rate):
-    SegSet(SegSet), palette(&Palette), randMode(RandMode), spawnRateInc(SpawnRateInc)
+    palette(&Palette), randMode(RandMode), spawnRateInc(SpawnRateInc)
     {
         setPaletteAsPattern();
-        init(Rate);
+        init(SegSet, Rate);
     }
 
 //constructor for randomly chosen colors (should only use randMode 1 or 3 with this constructor)
 DissolveSL::DissolveSL(SegmentSet &SegSet, uint8_t RandMode, uint16_t SpawnRateInc, uint16_t Rate):
-    SegSet(SegSet), randMode(RandMode), spawnRateInc(SpawnRateInc)
+    randMode(RandMode), spawnRateInc(SpawnRateInc)
     {
         //although we're randomly choosing colors, we still make a palette and pattern 
         //so that if the randMode is changed later, there's still a palette/pattern to use
         paletteTemp = paletteUtilsPS::makeRandomPalette(3);
         palette = &paletteTemp;
         setPaletteAsPattern();
-        init(Rate);
+        init(SegSet, Rate);
     }
 
 //destructor
@@ -35,9 +35,9 @@ DissolveSL::~DissolveSL(){
 }
 
 //inits core variables for the effect
-void DissolveSL::init(uint16_t Rate){
-    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
-    bindSegPtrPS();
+void DissolveSL::init(SegmentSet &SegSet, uint16_t Rate){
+    //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
+    bindSegSetPtrPS();
     bindClassRatesPS();
     setLineMode(lineMode);
 }
@@ -66,9 +66,9 @@ void DissolveSL::resetPixelArray(){
     //otherwise we'll be setting each pixel individually, so we need to set the numLines to match
     //(we use numLines, even though it's more like numPixels for the individual case to keep the code clean)
     if(lineMode){
-        numLines = SegSet.numLines;
+        numLines = segSet->numLines;
     } else {
-        numLines = SegSet.numLeds;
+        numLines = segSet->numLeds;
     }
 
     //To record if a line has been switched or not, we need to create an array of bools
@@ -123,7 +123,7 @@ CRGB DissolveSL::pickColor(){
                 color = colorUtilsPS::randColor();
             } else if(randMode == 4) {
                 currentIndex = patternUtilsPS::getShuffleVal(*pattern, currentIndex);
-                color = paletteUtilsPS::getPaletteColor( *palette, currentIndex );
+                color = paletteUtilsPS::getPaletteColor(*palette, currentIndex);
             }
             randColorPicked = true;
         }
@@ -142,7 +142,7 @@ CRGB DissolveSL::pickColor(){
         //maxNumSpawn increases every spawnRateInc ms, to help speed up the spawning over time
     //To avoid getting stuck with just a few lines not switched (and missing them every time due to the randomness)
     //We use setAllThreshold, which is the maximum number of lines we'll try to set randomly
-    //(setAllThreshold is set by init() based on the length of the SegSet)
+    //(setAllThreshold is set by init() based on the length of the segSet)
     //If numSpawned passes setAllThreshold, we'll set any remaining lines in order (up to maxNumSpawn lines per cycle)
     //Once all the lines have been set (numSpawned >= numLines)
     //We reset the pixel array, maxNumSpawn, thresStartPoint (used when setting the lines once the threshold is met)
@@ -224,9 +224,9 @@ void DissolveSL::spawnLed(uint16_t lineNum){
 
     if(lineMode){
         //write the color out to all the leds in the segment line
-        segDrawUtils::drawSegLine(SegSet, lineNum, color, colorMode);
+        segDrawUtils::drawSegLine(*segSet, lineNum, color, colorMode);
     } else {
-        segDrawUtils::setPixelColor(SegSet, lineNum, color, colorMode);
+        segDrawUtils::setPixelColor(*segSet, lineNum, color, colorMode);
     }
     numSpawned++;
 }

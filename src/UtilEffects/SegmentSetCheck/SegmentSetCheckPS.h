@@ -41,9 +41,6 @@ class SegmentSetCheckPS : public EffectBasePS {
         SegmentSetCheckPS(SegmentSet &SegSet, uint8_t TestMode);  
 
         SegmentSetCheckPS(SegmentSet &SegSet, uint8_t TestMode, uint16_t Rate);  
-
-        SegmentSet 
-            &SegSet; 
         
         uint8_t
             testMode;

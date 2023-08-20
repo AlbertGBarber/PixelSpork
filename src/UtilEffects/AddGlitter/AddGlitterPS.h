@@ -69,9 +69,6 @@ class AddGlitterPS : public EffectBasePS {
         AddGlitterPS(SegmentSet &SegSet, CRGB GlitterColor, uint16_t GlitterNum, uint8_t GlitterMode, uint16_t GlitterRate, uint16_t Rate);  
 
         ~AddGlitterPS();
-
-        SegmentSet 
-            &SegSet; 
         
         uint8_t    
             glitterMode;

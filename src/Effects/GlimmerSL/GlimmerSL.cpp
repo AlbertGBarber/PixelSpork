@@ -1,14 +1,14 @@
 #include "GlimmerSL.h"
 //Constructor using default fade in and out values
 GlimmerSL::GlimmerSL(SegmentSet &SegSet, uint16_t NumGlims, CRGB GlimmerColor, CRGB BgColor, bool TwoPixelSets, uint8_t FadeSteps, uint16_t Rate):
-    SegSet(SegSet), numGlims(NumGlims), fadeSteps(FadeSteps), twoPixelSets(TwoPixelSets)
+    numGlims(NumGlims), fadeSteps(FadeSteps), twoPixelSets(TwoPixelSets)
     {    
-        init(GlimmerColor, BgColor, Rate);
+        init(GlimmerColor, BgColor, SegSet, Rate);
 	}
 
 //Constructor for setting maximum fade in and out values
 GlimmerSL::GlimmerSL(SegmentSet &SegSet, uint16_t NumGlims, CRGB GlimmerColor, CRGB BgColor, bool TwoPixelSets, uint8_t FadeSteps, uint8_t FadeMin, uint8_t FadeMax, uint16_t Rate):
-    SegSet(SegSet), numGlims(NumGlims), fadeSteps(FadeSteps), twoPixelSets(TwoPixelSets), fadeMin(FadeMin), fadeMax(FadeMax)
+    numGlims(NumGlims), fadeSteps(FadeSteps), twoPixelSets(TwoPixelSets), fadeMin(FadeMin), fadeMax(FadeMax)
     {    
         //fade min can't be greater than fade max
         if(fadeMin > fadeMax){
@@ -16,7 +16,7 @@ GlimmerSL::GlimmerSL(SegmentSet &SegSet, uint16_t NumGlims, CRGB GlimmerColor, C
             fadeMin = fadeMax;
             fadeMax = temp;
         }
-        init(GlimmerColor, BgColor, Rate);
+        init(GlimmerColor, BgColor, SegSet, Rate);
 	}
 
 GlimmerSL::~GlimmerSL(){
@@ -24,12 +24,13 @@ GlimmerSL::~GlimmerSL(){
     free(totFadeSteps);
 }
 
-void GlimmerSL::init(CRGB GlimmerColor, CRGB BgColor, uint16_t Rate){
-    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
-    bindSegPtrPS();
+void GlimmerSL::init(CRGB GlimmerColor, CRGB BgColor, SegmentSet &SegSet, uint16_t Rate){
+    //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
+    bindSegSetPtrPS();
     bindClassRatesPS();
     //bind background color pointer
     bindBGColorPS();
+    
     //bind the glimmer color to a pointer
     //so it can be bound to an external variable like bgColor
     colorOrig = GlimmerColor;
@@ -73,7 +74,7 @@ void GlimmerSL::setupPixelArray(){
     //(note that firstFade is not needed if we're only doing a single pixel set)
     firstFade = true;
     fillPixelArray();
-    segDrawUtils::fillSegSetColor(SegSet, *bgColor, bgColorMode);
+    segDrawUtils::fillSegSetColor(*segSet, *bgColor, bgColorMode);
 }
 
 //fills in the pixel arrays with random locations and fade values
@@ -88,12 +89,12 @@ void GlimmerSL::fillPixelArray(){
     //if we're in line mode, then we're drawing full lines,
     //otherwise we're drawing individual pixels
     if(lineMode){
-        numLines = SegSet.numLines;
+        numLines = segSet->numLines;
     } else {
-        numLines = SegSet.numLeds;
+        numLines = segSet->numLeds;
     }
 
-    numSegs = SegSet.numSegs;
+    numSegs = segSet->numSegs;
     for(uint16_t i = 0; i < numGlims; i++){
         totFadeSteps[i] = random8(fadeMin, fadeMax); //target fade amount between the bgColor and the glimmer color
         fadePixelLocs[i] = random16(numLines);
@@ -169,7 +170,7 @@ void GlimmerSL::update(){
         //but for rainbow or gradient backgrounds that a cycling
         //you want to redraw the whole thing
         if(fillBG){
-            segDrawUtils::fillSegSetColor(SegSet, *bgColor, bgColorMode);
+            segDrawUtils::fillSegSetColor(*segSet, *bgColor, bgColorMode);
         }
 
         //increment the step, we mod by fadeSteps + 1 because we want to
@@ -205,33 +206,33 @@ void GlimmerSL::update(){
                 //we need to fill in all the segment pixels on the line
                 for(uint16_t j = 0; j < numSegs; j++){
                     //get the physical pixel location
-                    pixelNum = segDrawUtils::getPixelNumFromLineNum(SegSet, numLines, j, fadePixelLocs[i]);
+                    pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, j, fadePixelLocs[i]);
 
                     //get the background color for the pixel, we check this every cycle to account for color modes
-                    startColor = segDrawUtils::getPixelColor(SegSet, pixelNum, *bgColor, bgColorMode, j, fadePixelLocs[i]);
+                    startColor = segDrawUtils::getPixelColor(*segSet, pixelNum, *bgColor, bgColorMode, j, fadePixelLocs[i]);
                     
                     //get the final target glimmer color, accounting for color modes
-                    targetColor = segDrawUtils::getPixelColor(SegSet, pixelNum, *glimmerColor, colorMode, j, fadePixelLocs[i]);
+                    targetColor = segDrawUtils::getPixelColor(*segSet, pixelNum, *glimmerColor, colorMode, j, fadePixelLocs[i]);
 
                     //get the final faded color
                     fadeColor = getFadeColor(i);
 
-                    segDrawUtils::setPixelColor(SegSet, pixelNum, fadeColor, 0, j, fadePixelLocs[i]);
+                    segDrawUtils::setPixelColor(*segSet, pixelNum, fadeColor, 0, j, fadePixelLocs[i]);
                 }
             } else {
                 //For single pixel's we need to get the info of where the pixel is in the segment set, then set its color
                 //grab the background color, accounting for color modes
                 //this also fills in the pixelInfo struct, telling us the pixel's segment number, line number, and physical address
-                segDrawUtils::getPixelColor(SegSet, fadePixelLocs[i], &pixelInfo, *bgColor, bgColorMode);
+                segDrawUtils::getPixelColor(*segSet, fadePixelLocs[i], &pixelInfo, *bgColor, bgColorMode);
                 startColor = pixelInfo.color;
 
                 //get the glimmer color, accounting for color modes
-                targetColor = segDrawUtils::getPixelColor(SegSet, pixelInfo.pixelLoc, *glimmerColor, colorMode, pixelInfo.segNum, pixelInfo.lineNum);
+                targetColor = segDrawUtils::getPixelColor(*segSet, pixelInfo.pixelLoc, *glimmerColor, colorMode, pixelInfo.segNum, pixelInfo.lineNum);
                 
                 //get the final faded color
                 fadeColor = getFadeColor(i);
 
-                segDrawUtils::setPixelColor(SegSet, pixelInfo.pixelLoc, fadeColor, 0, 0, 0);
+                segDrawUtils::setPixelColor(*segSet, pixelInfo.pixelLoc, fadeColor, 0, 0, 0);
             }
         }
         

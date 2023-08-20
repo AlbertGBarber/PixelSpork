@@ -96,10 +96,7 @@ class SoftTwinkleSL : public EffectBasePS {
         SoftTwinkleSL(SegmentSet &SegSet, uint8_t Density, uint16_t Rate);  
 
         uint8_t
-            density;
-
-        SegmentSet 
-            &SegSet; 
+            density; 
         
         CRGB 
             lightColor = CRGB{8,5,1};

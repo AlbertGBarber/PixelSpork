@@ -3,46 +3,46 @@
 //constructor for pattern and palette ver
 StrobeSLSeg::StrobeSLSeg(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint8_t NumPulses, 
                         uint16_t PauseTime, bool SegEach, bool SegDual, bool SegLine, bool SegLineDual, bool SegAll, uint16_t Rate):
-    SegSet(SegSet), pattern(&Pattern), palette(&Palette), numPulses(NumPulses), pauseTime(PauseTime), segEach(SegEach), segDual(SegDual), segLineDual(SegLineDual), segLine(SegLine), segAll(SegAll)
+    pattern(&Pattern), palette(&Palette), numPulses(NumPulses), pauseTime(PauseTime), segEach(SegEach), segDual(SegDual), segLineDual(SegLineDual), segLine(SegLine), segAll(SegAll)
     {    
-        init(BgColor, Rate);
+        init(BgColor, SegSet, Rate);
 	}
 
 //constructor for palette ver
 StrobeSLSeg::StrobeSLSeg(SegmentSet &SegSet, palettePS &Palette, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, 
                         bool SegEach, bool SegDual, bool SegLine, bool SegLineDual, bool SegAll, uint16_t Rate):
-    SegSet(SegSet), palette(&Palette), numPulses(NumPulses), pauseTime(PauseTime), segEach(SegEach), segDual(SegDual), segLineDual(SegLineDual), segLine(SegLine), segAll(SegAll)
+    palette(&Palette), numPulses(NumPulses), pauseTime(PauseTime), segEach(SegEach), segDual(SegDual), segLineDual(SegLineDual), segLine(SegLine), segAll(SegAll)
     {    
         setPaletteAsPattern();
-        init(BgColor, Rate);
+        init(BgColor, SegSet, Rate);
 	}
 
 //constructor for single color
 //!!If using pre-build FastLED colors you need to pass them as CRGB( *color code* )
 StrobeSLSeg::StrobeSLSeg(SegmentSet &SegSet, CRGB Color, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, 
                         bool SegEach, bool SegDual, bool SegLine, bool SegLineDual, bool SegAll, uint16_t Rate):
-    SegSet(SegSet), numPulses(NumPulses), pauseTime(PauseTime), segEach(SegEach), segDual(SegDual), segLineDual(SegLineDual), segLine(SegLine), segAll(SegAll)
+    numPulses(NumPulses), pauseTime(PauseTime), segEach(SegEach), segDual(SegDual), segLineDual(SegLineDual), segLine(SegLine), segAll(SegAll)
     {    
         paletteTemp = paletteUtilsPS::makeSingleColorPalette(Color);
         palette = &paletteTemp;
         setPaletteAsPattern();
-        init(BgColor, Rate);
+        init(BgColor, SegSet, Rate);
 	}
 
 //constructor for randomly generated palette
 StrobeSLSeg::StrobeSLSeg(SegmentSet &SegSet, uint8_t numColors, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, 
                         bool SegEach, bool SegDual, bool SegLine, bool SegLineDual, bool SegAll, uint16_t Rate):
-    SegSet(SegSet), numPulses(NumPulses), pauseTime(PauseTime), segEach(SegEach), segDual(SegDual), segLineDual(SegLineDual), segLine(SegLine), segAll(SegAll)
+    numPulses(NumPulses), pauseTime(PauseTime), segEach(SegEach), segDual(SegDual), segLineDual(SegLineDual), segLine(SegLine), segAll(SegAll)
     {    
         paletteTemp = paletteUtilsPS::makeRandomPalette(numColors);
         palette = &paletteTemp;
         setPaletteAsPattern();
-        init(BgColor, Rate);
+        init(BgColor, SegSet, Rate);
 	}
 
-void StrobeSLSeg::init(CRGB BgColor, uint16_t Rate){
-    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
-    bindSegPtrPS();
+void StrobeSLSeg::init(CRGB BgColor, SegmentSet &SegSet, uint16_t Rate){
+    //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS 
+    bindSegSetPtrPS();
     bindClassRatesPS();
     //bind background color pointer (if needed)
     bindBGColorPS();
@@ -181,7 +181,7 @@ void StrobeSLSeg::update(){
                     if(!direct){
                         nextSeg = numSegs - 1 - nextSeg;
                     }
-                    segDrawUtils::fillSegColor(SegSet, nextSeg, colorOut, modeOut);
+                    segDrawUtils::fillSegColor(*segSet, nextSeg, colorOut, modeOut);
                     break;
                 case 1:
                     //We need to fill every other seg, alternating for each set of pulses
@@ -189,7 +189,7 @@ void StrobeSLSeg::update(){
                     //this will set the loop to either fill in the even or odd segments
                     //firstHalf flips every time we finish a set of pulses
                     for(uint16_t i = firstHalf; i < numSegs; i += 2){
-                        segDrawUtils::fillSegColor(SegSet, i, colorOut, modeOut);
+                        segDrawUtils::fillSegColor(*segSet, i, colorOut, modeOut);
                     }
                     break;
                 case 2:
@@ -198,17 +198,17 @@ void StrobeSLSeg::update(){
                     if(!direct){
                         nextSeg = numLines - 1 - nextSeg;
                     }
-                    segDrawUtils::drawSegLine(SegSet, nextSeg, colorOut, modeOut);
+                    segDrawUtils::drawSegLine(*segSet, nextSeg, colorOut, modeOut);
                     break;
                 case 3:
                     //similar to case 1, but we're filling seg lines instead of segments
                     for(uint8_t i = firstHalf; i < numLines; i += 2){
-                        segDrawUtils::drawSegLine(SegSet, i, colorOut, modeOut);
+                        segDrawUtils::drawSegLine(*segSet, i, colorOut, modeOut);
                     }
                     break;
                 default: //(mode 4)
                     //just fill the whole segment set
-                    segDrawUtils::fillSegSetColor(SegSet, colorOut, modeOut);
+                    segDrawUtils::fillSegSetColor(*segSet, colorOut, modeOut);
                     break;
             }
 
@@ -266,7 +266,7 @@ void StrobeSLSeg::update(){
             //fill the segment set with the background to clear the strip for the next pulse cycle
             //(if desired)
             if(fillBG){
-                segDrawUtils::fillSegSetColor(SegSet, *bgColor, bgColorMode);
+                segDrawUtils::fillSegSetColor(*segSet, *bgColor, bgColorMode);
             }
             //don't want to start with the background for the next pulse cycle
             pulseBG = false;
@@ -307,8 +307,8 @@ void StrobeSLSeg::setPulseMode(){
 //while cycleCountMax is sets the total number of strobe cycles to do to show all the colors in the pattern
 //This is rounded up to a whole number of strobe cycles
 void StrobeSLSeg::setCycleCountMax(){
-    numSegs = SegSet.numSegs;
-    numLines = SegSet.numLines;
+    numSegs = segSet->numSegs;
+    numLines = segSet->numLines;
     if(pulseMode == 0){
         //we need to pulse each seg once, so a full strobe cycle is numSegs
         cycleLoopLimit = numSegs;
@@ -341,7 +341,7 @@ void StrobeSLSeg::setCycleCountMax(){
 //if pause time is 0, then we skip the pause
 void StrobeSLSeg::startPause(){
     if(fillBGOnPause){
-        segDrawUtils::fillSegSetColor(SegSet, *bgColor, bgColorMode);
+        segDrawUtils::fillSegSetColor(*segSet, *bgColor, bgColorMode);
     }
     paused = true && (pauseTime != 0);
     pauseStartTime = millis();

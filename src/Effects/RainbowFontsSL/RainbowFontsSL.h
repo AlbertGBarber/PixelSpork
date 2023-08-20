@@ -51,9 +51,6 @@ Functions:
 class RainbowFontsSL : public EffectBasePS {
     public:
         RainbowFontsSL(SegmentSet &SegSet, uint8_t WaveFreq, uint16_t Rate);  
-
-        SegmentSet 
-            &SegSet; 
         
         uint8_t
             waveFreq;

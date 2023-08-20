@@ -129,7 +129,7 @@ class EffectFaderPS {
         
         SegmentSet
             *getSegPtr(uint8_t effectNum),
-            *SegSet = nullptr;
+            *segSet = nullptr;
         
         void
             resetSegVars();

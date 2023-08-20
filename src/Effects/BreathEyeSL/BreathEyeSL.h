@@ -156,10 +156,7 @@ class BreathEyeSL : public EffectBasePS {
         //Constructor for rainbow mode
         BreathEyeSL(SegmentSet &SegSet, CRGB BgColor, uint8_t RainbowRate, uint16_t EyeHalfSize, bool Wrap, bool RandEyePos, uint8_t BreathFreq, uint16_t Rate);
 
-        ~BreathEyeSL();
-
-        SegmentSet 
-            &SegSet; 
+        ~BreathEyeSL(); 
         
         int8_t 
             dimPow = 80;
@@ -237,7 +234,7 @@ class BreathEyeSL : public EffectBasePS {
         
         void
             getNextColor(),
-            init(CRGB BgColor, uint8_t BreathFreq, uint16_t Rate);
+            init(CRGB BgColor, uint8_t BreathFreq, SegmentSet &SegSet, uint16_t Rate);
 };
 
 #endif

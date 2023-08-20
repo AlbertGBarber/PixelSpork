@@ -154,10 +154,7 @@ class Twinkle2SLSeg : public EffectBasePS {
 
         //destructor
         ~Twinkle2SLSeg();
-
-        SegmentSet 
-            &SegSet;
-
+        
         uint8_t
             segMode, //For reference only, use setSegMode()
             randMode = 0,
@@ -189,7 +186,7 @@ class Twinkle2SLSeg : public EffectBasePS {
         
         twinkleSetPS 
             *twinkleSet = nullptr,
-            twinkleSetTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
+            twinkleSetTemp = {nullptr, 0, 0}; //Must init structs w/ pointers set to null for safety
         
         void 
             setSteps(uint8_t newFadeInSteps, uint8_t newFadeOutSteps),
@@ -242,7 +239,7 @@ class Twinkle2SLSeg : public EffectBasePS {
             drawLineTwinkle(),
             drawSegTwinkle(),
             drawPixelTwinkle(),
-            init(uint8_t FadeInSteps, uint8_t FadeOutSteps, CRGB BgColor, uint16_t Rate);
+            init(uint8_t FadeInSteps, uint8_t FadeOutSteps, CRGB BgColor, SegmentSet &SegSet, uint16_t Rate);
 };
 
 #endif

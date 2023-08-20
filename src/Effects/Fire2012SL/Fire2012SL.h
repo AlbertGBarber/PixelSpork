@@ -75,9 +75,6 @@ class Fire2012SL : public EffectBasePS {
         
         ~Fire2012SL();
 
-        SegmentSet 
-            &SegSet; 
-        
         uint8_t
             *heat = nullptr,
             cooling,

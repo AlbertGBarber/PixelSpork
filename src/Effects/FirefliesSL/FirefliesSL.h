@@ -145,10 +145,7 @@ class FirefliesSL : public EffectBasePS {
         FirefliesSL(SegmentSet &SegSet, CRGB Color, uint8_t MaxNumFireflies, uint8_t SpawnChance, 
                     uint16_t LifeBase, uint16_t LifeRange, uint16_t SpeedBase, uint16_t SpeedRange, uint16_t Rate);
 
-        ~FirefliesSL();
-
-        SegmentSet 
-            &SegSet; 
+        ~FirefliesSL(); 
 
         uint8_t
             spawnChance,
@@ -216,7 +213,7 @@ class FirefliesSL : public EffectBasePS {
             bgCol;
         
         void
-            init(uint8_t maxNumFireflies, uint16_t Rate),
+            init(uint8_t maxNumFireflies, SegmentSet &SegSet, uint16_t Rate),
             moveParticle(particlePS *particlePtr, uint16_t partNum),
             drawParticlePixel(particlePS *particlePtr, uint16_t partNum),
             spawnFirefly(uint8_t fireflyNum);

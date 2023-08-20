@@ -176,9 +176,6 @@ class FireworksPS : public EffectBasePS {
                 
         ~FireworksPS();
 
-        SegmentSet 
-            &SegSet; 
-
         uint8_t
             spawnChance,
             spawnRangeDiv = 5, //sets what range of the strip fireworks spawn in: from numLEDs / spawnRangeDiv to (numLEDs - numLEDs / spawnRangeDiv)
@@ -267,7 +264,7 @@ class FireworksPS : public EffectBasePS {
             colorTemp;
         
         void
-            init(uint8_t maxNumFireworks, uint8_t maxNumSparks, uint16_t Rate),
+            init(uint8_t maxNumFireworks, uint8_t maxNumSparks, SegmentSet &SegSet, uint16_t Rate),
             moveParticle(particlePS *particlePtr),
             drawParticlePixel(particlePS *particlePtr, uint16_t trailLedLocation),
             spawnFirework(uint8_t fireworkNum);

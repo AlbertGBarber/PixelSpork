@@ -50,9 +50,6 @@ class TheaterChaseSL : public EffectBasePS {
     public:
         TheaterChaseSL(SegmentSet &SegSet, CRGB Color, CRGB BgColor, uint8_t LitLength, uint8_t Spacing, uint16_t Rate);  
 
-        SegmentSet 
-            &SegSet; 
-        
         uint8_t
             litLength = 1, //min of 1
             spacing = 1, //min of 1

@@ -1,10 +1,10 @@
 #include "RainbowFontsSL.h"
 
 RainbowFontsSL::RainbowFontsSL(SegmentSet &SegSet, uint8_t WaveFreq, uint16_t Rate):
-    SegSet(SegSet), waveFreq(WaveFreq)
+    waveFreq(WaveFreq)
     {    
-        //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
-        bindSegPtrPS();
+        //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
+        bindSegSetPtrPS();
         bindClassRatesPS();
         
         //minimum wave freq is 1
@@ -24,8 +24,8 @@ void RainbowFontsSL::update(){
 
         //fetch some core vars
         //we re-fetch these in case the segment set or palette has changed
-        numSegs = SegSet.numSegs;
-        numLines = SegSet.numLines;
+        numSegs = segSet->numSegs;
+        numLines = segSet->numLines;
         
         hl = numLines/2;
 
@@ -47,8 +47,8 @@ void RainbowFontsSL::update(){
                 //get the physical pixel location based on the line and seg numbers
                 //and then write out the color
                 //Note that the actual line written to is offset and wraps
-                pixelNum = segDrawUtils::getPixelNumFromLineNum(SegSet, numLines, j,  lineNum);
-                segDrawUtils::setPixelColor(SegSet, pixelNum, colorOut, 0, 0, 0);
+                pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, j,  lineNum);
+                segDrawUtils::setPixelColor(*segSet, pixelNum, colorOut, 0, 0, 0);
             }
 
         }

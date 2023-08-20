@@ -85,9 +85,6 @@ class ShiftingRainbowSeaSL : public EffectBasePS {
         //destructor
         ~ShiftingRainbowSeaSL();
 
-        SegmentSet 
-            &SegSet; 
-        
         uint8_t
             sat = 255,
             val = 255,
@@ -127,7 +124,7 @@ class ShiftingRainbowSeaSL : public EffectBasePS {
             numLinesMax = 0; //used for tracking the memory size of the offset array
         
         void
-            init(uint16_t Rate);
+            init(SegmentSet &SegSet, uint16_t Rate);
 };
 
 #endif

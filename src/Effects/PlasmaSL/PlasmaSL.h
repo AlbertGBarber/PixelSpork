@@ -110,9 +110,6 @@ class PlasmaSL : public EffectBasePS {
 
         ~PlasmaSL();
 
-        SegmentSet 
-            &SegSet; 
-
         uint8_t
             freq1 = 23, 
             freq2 = 15, 
@@ -175,7 +172,7 @@ class PlasmaSL : public EffectBasePS {
 
         void
             shiftPhase(uint8_t *phase, uint8_t *phaseTarget, int8_t *phaseStep, uint8_t phaseBase, uint8_t phaseRange),
-            init(uint16_t Rate);
+            init(SegmentSet &SegSet, uint16_t Rate);
 };
 
 #endif

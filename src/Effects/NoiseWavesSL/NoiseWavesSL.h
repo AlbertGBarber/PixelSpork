@@ -89,10 +89,7 @@ class NoiseWavesSL : public EffectBasePS {
         //Constructor with randomly generated palette
         NoiseWavesSL(SegmentSet &SegSet, uint8_t numColors, CRGB BgColor, uint16_t BlendScale, uint8_t PhaseScale, uint8_t FreqScale, uint16_t Rate);
 
-        ~NoiseWavesSL();
-
-        SegmentSet 
-            &SegSet; 
+        ~NoiseWavesSL(); 
         
         uint8_t 
             bgColorMode = 0,
@@ -139,7 +136,7 @@ class NoiseWavesSL : public EffectBasePS {
             colorOut;
         
         void 
-            init(CRGB BgColor, uint16_t Rate);
+            init(CRGB BgColor, SegmentSet &SegSet, uint16_t Rate);
 };
 
 #endif

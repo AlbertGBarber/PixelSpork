@@ -113,9 +113,6 @@ class RollingWavesSL : public EffectBasePS {
 
         ~RollingWavesSL();
 
-        SegmentSet 
-            &SegSet;
-
         uint8_t
             dimPow = 120, //120
             spacing,
@@ -181,7 +178,7 @@ class RollingWavesSL : public EffectBasePS {
             colorOut;
         
         void 
-            init(CRGB BgColor, uint16_t Rate),
+            init(CRGB BgColor, SegmentSet &SegSet, uint16_t Rate),
             setNextColors(uint16_t segPixelNum);
         
 };

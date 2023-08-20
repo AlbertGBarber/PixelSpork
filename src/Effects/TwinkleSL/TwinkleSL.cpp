@@ -2,29 +2,29 @@
 
 //palette based constructor
 TwinkleSL::TwinkleSL(SegmentSet &SegSet, palettePS &Palette, CRGB BgColor, uint16_t NumTwinkles, uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate):
-    SegSet(SegSet), palette(&Palette), numTwinkles(NumTwinkles)
+    palette(&Palette), numTwinkles(NumTwinkles)
     {    
-        init(FadeInSteps, FadeOutSteps, BgColor, Rate);
+        init(FadeInSteps, FadeOutSteps, BgColor, SegSet, Rate);
 	}
 
 //single color constructor
 TwinkleSL::TwinkleSL(SegmentSet &SegSet, CRGB Color, CRGB BgColor, uint16_t NumTwinkles, uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate):
-    SegSet(SegSet), numTwinkles(numTwinkles)
+    numTwinkles(numTwinkles)
     {    
         setSingleColor(Color);
-        init(FadeInSteps, FadeOutSteps, BgColor, Rate);
+        init(FadeInSteps, FadeOutSteps, BgColor, SegSet, Rate);
 	}
 
 //random colors constructor
 TwinkleSL::TwinkleSL(SegmentSet &SegSet, CRGB BgColor, uint16_t NumTwinkles, uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate):
-    SegSet(SegSet), numTwinkles(NumTwinkles)
+    numTwinkles(NumTwinkles)
     {    
         //we make a random palette of one color so that 
         //if we switch to randMode 0 then we have a palette to use
         setSingleColor(colorUtilsPS::randColor()); 
         //since we're choosing colors at random, set the randMode
         randMode = 1;
-        init(FadeInSteps, FadeOutSteps, BgColor, Rate);
+        init(FadeInSteps, FadeOutSteps, BgColor, SegSet, Rate);
 	}
 
 TwinkleSL::~TwinkleSL(){
@@ -33,10 +33,11 @@ TwinkleSL::~TwinkleSL(){
 }
 
 //sets up all the core class vars, and initializes the pixel and color arrays
-void TwinkleSL::init(uint8_t FadeInSteps, uint8_t FadeOutSteps, CRGB BgColor, uint16_t Rate){
-    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
-    bindSegPtrPS();
+void TwinkleSL::init(uint8_t FadeInSteps, uint8_t FadeOutSteps, CRGB BgColor, SegmentSet &SegSet, uint16_t Rate){
+    //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
+    bindSegSetPtrPS();
     bindClassRatesPS();
+    //bind the bgColor pointer
     bindBGColorPS();
     //Set the steps, this will also create the twinkle color and location arrays
     setSteps(FadeInSteps, FadeOutSteps);
@@ -52,7 +53,7 @@ void TwinkleSL::setSingleColor(CRGB Color){
     palette = &paletteTemp;
 }
 
-//creates the 2D arrays for storing the random twinkle locations (relative to the SegSet) and their colors
+//creates the 2D arrays for storing the random twinkle locations (relative to the segSet) and their colors
 //There's two separate arrays, which could be combined into an array of structs, but ehh
 //The arrays are laid out like [numTwinkles][totalFadeSteps], where the column index is the fade step the twinkle is on
 //the minium value of totalFadeSteps is 2, one step to fade in, and one step to fade out
@@ -99,7 +100,7 @@ void TwinkleSL::deleteTwinkleArrays(){
 void TwinkleSL::reset(){
     startUpDone = false;
     totalSteps = 0;
-    segDrawUtils::fillSegSetColor(SegSet, *bgColor, bgColorMode);
+    segDrawUtils::fillSegSetColor(*segSet, *bgColor, bgColorMode);
 }
 
 //sets the number of fade in and out steps (min value of 1)
@@ -172,8 +173,8 @@ void TwinkleSL::update(){
     if( ( currentTime - prevTime ) >= *rate ) {
         prevTime = currentTime;
      
-        numSegs = SegSet.numSegs;
-        numLines = SegSet.numLines;
+        numSegs = segSet->numSegs;
+        numLines = segSet->numLines;
         paletteLength = palette->length;
 
         //startup settings to limit how much of the array is written out
@@ -189,7 +190,7 @@ void TwinkleSL::update(){
         //but for rainbow or gradient backgrounds that a cycling
         //you want to redraw the whole thing
         if(fillBG){
-            segDrawUtils::fillSegSetColor(SegSet, *bgColor, bgColorMode);
+            segDrawUtils::fillSegSetColor(*segSet, *bgColor, bgColorMode);
         }
 
         //We run through all the twinkles in the array and set their color based on the fade level (the array column index)
@@ -208,11 +209,11 @@ void TwinkleSL::update(){
                 //line color (colorIndexArr[i][j]) and the color mode
                 for(uint16_t k = 0; k < numSegs; k++){
                     //get the physical pixel location based on the line and seg numbers
-                    pixelNum = segDrawUtils::getPixelNumFromLineNum(SegSet, numLines, k, lineNum);
+                    pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, k, lineNum);
                     //grab the background color, accounting for color modes
-                    colorTarget = segDrawUtils::getPixelColor(SegSet, pixelNum, *bgColor, bgColorMode, k, lineNum);
+                    colorTarget = segDrawUtils::getPixelColor(*segSet, pixelNum, *bgColor, bgColorMode, k, lineNum);
                     //get the twinkle color, accounting for color modes
-                    twinkleColor = segDrawUtils::getPixelColor(SegSet, pixelNum, colorIndexArr[i][j], colorMode, k, lineNum);
+                    twinkleColor = segDrawUtils::getPixelColor(*segSet, pixelNum, colorIndexArr[i][j], colorMode, k, lineNum);
 
                     //we either fade in or out depending which index we're on (earlier fade in, later fade out)
                     //we don't want to double count the final step of the fade in and the initial step of the fade out
@@ -228,7 +229,7 @@ void TwinkleSL::update(){
                         twinkleColor = colorUtilsPS::getCrossFadeColor(twinkleColor, colorTarget, step, fadeOutSteps);
                     }
                     //set the pixel color
-                    segDrawUtils::setPixelColor(SegSet, pixelNum, twinkleColor, 0, 0, 0);
+                    segDrawUtils::setPixelColor(*segSet, pixelNum, twinkleColor, 0, 0, 0);
                 }
             }
         }

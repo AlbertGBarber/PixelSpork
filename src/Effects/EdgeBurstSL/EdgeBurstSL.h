@@ -110,9 +110,6 @@ class EdgeBurstSL : public EffectBasePS {
         EdgeBurstSL(SegmentSet &SegSet, uint8_t numColors, bool RandomizePal, uint8_t BurstFreq, uint16_t Rate);
 
         ~EdgeBurstSL();
-
-        SegmentSet 
-            &SegSet; 
         
         uint8_t
             burstPause = 2,
@@ -161,7 +158,7 @@ class EdgeBurstSL : public EffectBasePS {
             colorOut;
         
         void
-            init(uint16_t Rate),
+            init(SegmentSet &SegSet, uint16_t Rate),
             pickRandStart();
 };
 

@@ -90,10 +90,7 @@ class TwinkleSL : public EffectBasePS {
         TwinkleSL(SegmentSet &SegSet, CRGB BgColor, uint16_t numTwinkles, uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate);
 
         //destructor
-        ~TwinkleSL();
-
-        SegmentSet 
-            &SegSet; 
+        ~TwinkleSL(); 
         
         uint8_t 
             randMode = 0,
@@ -158,7 +155,7 @@ class TwinkleSL : public EffectBasePS {
             pickColor();
 
         void
-            init(uint8_t FadeInSteps, uint8_t FadeOutSteps, CRGB BgColor, uint16_t Rate),
+            init(uint8_t FadeInSteps, uint8_t FadeOutSteps, CRGB BgColor, SegmentSet &SegSet, uint16_t Rate),
             incrementTwinkleArrays();
 };
 

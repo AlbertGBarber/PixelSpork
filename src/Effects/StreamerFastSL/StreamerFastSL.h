@@ -146,9 +146,6 @@ class StreamerFastSL : public EffectBasePS {
         CRGB 
             bgColorOrig,
             *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
-
-        SegmentSet 
-            &SegSet; 
         
         patternPS
             *pattern = nullptr,
@@ -187,7 +184,7 @@ class StreamerFastSL : public EffectBasePS {
         
         void
             initalFill(),
-            init(CRGB BgColor, uint16_t Rate);
+            init(CRGB BgColor, SegmentSet &SegSet, uint16_t Rate);
 };  
 
 #endif

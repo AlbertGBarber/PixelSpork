@@ -3,27 +3,27 @@
 //Constructor using pattern and palette
 ColorWipeSeg::ColorWipeSeg(SegmentSet &SegSet, palettePS &Palette, patternPS &Pattern, uint8_t Style,
                           bool Alternate, bool WipeDirect, bool SegWipeDir, uint16_t Rate):
-    SegSet(SegSet), palette(&Palette), pattern(&Pattern), style(Style), alternate(Alternate), wipeDirect(WipeDirect), segWipeDir(SegWipeDir)
+    palette(&Palette), pattern(&Pattern), style(Style), alternate(Alternate), wipeDirect(WipeDirect), segWipeDir(SegWipeDir)
     {    
-        init(Rate);
+        init(SegSet, Rate);
 	}
 
 //Constructor using palette alone 
 ColorWipeSeg::ColorWipeSeg(SegmentSet &SegSet, palettePS &Palette, uint8_t Style, bool Alternate, bool WipeDirect, bool SegWipeDir, uint16_t Rate):
-    SegSet(SegSet), palette(&Palette), style(Style), alternate(Alternate), wipeDirect(WipeDirect), segWipeDir(SegWipeDir)
+    palette(&Palette), style(Style), alternate(Alternate), wipeDirect(WipeDirect), segWipeDir(SegWipeDir)
     {    
         setPaletteAsPattern();
-        init(Rate);
+        init(SegSet, Rate);
 	}
 
 //Constructor for a single color wipe
 ColorWipeSeg::ColorWipeSeg(SegmentSet &SegSet, CRGB WipeColor, uint8_t Style, bool Alternate, bool WipeDirect, bool SegWipeDir, uint16_t Rate):
-    SegSet(SegSet), style(Style), alternate(Alternate), wipeDirect(WipeDirect), segWipeDir(SegWipeDir)
+    style(Style), alternate(Alternate), wipeDirect(WipeDirect), segWipeDir(SegWipeDir)
     {    
         paletteTemp = paletteUtilsPS::makeSingleColorPalette(WipeColor);
         palette = &paletteTemp;
         setPaletteAsPattern();
-        init(Rate);
+        init(SegSet, Rate);
 	}
 
 //destructor
@@ -33,9 +33,9 @@ ColorWipeSeg::~ColorWipeSeg(){
 }
 
 //Setup core variables for the effect
-void ColorWipeSeg::init(uint16_t Rate){
-    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
-    bindSegPtrPS();
+void ColorWipeSeg::init(SegmentSet &SegSet, uint16_t Rate){
+    //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
+    bindSegSetPtrPS();
     bindClassRatesPS();
     startingDirect = wipeDirect;
     reset();
@@ -140,7 +140,7 @@ void ColorWipeSeg::setUpLoop(bool nLooped, bool nBgLoop, bool nShiftPatLoop, boo
 //Sets the order the segment are wiped in, either starting with the first of last segment depending on segWipeDir
 //Also sets up the first wipe for the set
 void ColorWipeSeg::setUpWipeOrder(){
-    numSegs = SegSet.numSegs;
+    numSegs = segSet->numSegs;
 
     //Get the step we increment the currentSeg by, either 1 or -1
     segStep = segWipeDir - !segWipeDir;
@@ -164,7 +164,7 @@ void ColorWipeSeg::setupSegWipe(){
     wipeStep = wipeDirect - !wipeDirect;
     
     //Set the wipe start and end pixels
-    segLength = SegSet.getTotalSegLength(currentSeg);
+    segLength = segSet->getTotalSegLength(currentSeg);
     if (wipeDirect) { // positive: start from zeroth segment pixel and run to last
         currentPixel = 0;
         endPixel = segLength - 1;
@@ -192,8 +192,8 @@ void ColorWipeSeg::update(){
         prevTime = currentTime;
 
         //get the location of the next pixel and its line
-        pixelNum = segDrawUtils::getSegmentPixel(SegSet, currentSeg, currentPixel);
-        lineNum = segDrawUtils::getLineNumFromPixelNum(SegSet, currentPixel, currentSeg);
+        pixelNum = segDrawUtils::getSegmentPixel(*segSet, currentSeg, currentPixel);
+        lineNum = segDrawUtils::getLineNumFromPixelNum(*segSet, currentPixel, currentSeg);
 
         if(bgWipe){ //if we're doing a background wipe, only relevant when looping
             modeOut = bgColorMode;
@@ -221,7 +221,7 @@ void ColorWipeSeg::update(){
         }
 
         //Set the pixel color
-        segDrawUtils::setPixelColor(SegSet, pixelNum, colorOut, modeOut, currentSeg, lineNum);
+        segDrawUtils::setPixelColor(*segSet, pixelNum, colorOut, modeOut, currentSeg, lineNum);
 
         //Advance the currentPixel to the next pixel
         //If were at the last pixel in the segment, we need to either setup the next segment wipe

@@ -2,35 +2,35 @@
 
 //constructor for using the passed in pattern and palette for the streamer
 StreamerSL::StreamerSL(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate):
-    SegSet(SegSet), pattern(&Pattern), palette(&Palette), fadeSteps(FadeSteps)
+    pattern(&Pattern), palette(&Palette), fadeSteps(FadeSteps)
     {    
-        init(BgColor, Rate);
+        init(BgColor, SegSet, Rate);
 	}
 
 //constructor for building the streamer pattern from the passed in pattern and the palette, using the passed in colorLength and spacing
 StreamerSL::StreamerSL(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate):
-    SegSet(SegSet), palette(&Palette), fadeSteps(FadeSteps)
+    palette(&Palette), fadeSteps(FadeSteps)
     {    
         setPatternAsPattern(Pattern, ColorLength, Spacing);
-        init(BgColor, Rate);
+        init(BgColor, SegSet, Rate);
 	}
 
 //constructor for building a streamer using all the colors in the passed in palette, using the colorLength and spacing for each color
 StreamerSL::StreamerSL(SegmentSet &SegSet, palettePS &Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate):
-    SegSet(SegSet), palette(&Palette), fadeSteps(FadeSteps)
+    palette(&Palette), fadeSteps(FadeSteps)
     {    
         setPaletteAsPattern(ColorLength, Spacing);
-        init(BgColor, Rate);
+        init(BgColor, SegSet, Rate);
 	}
 
 //constructor for doing a single colored streamer, using colorLength and spacing
 StreamerSL::StreamerSL(SegmentSet &SegSet, CRGB Color, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate):
-    SegSet(SegSet), fadeSteps(FadeSteps)
+    fadeSteps(FadeSteps)
     {    
         paletteTemp = paletteUtilsPS::makeSingleColorPalette(Color);
         palette = &paletteTemp;
         setPaletteAsPattern(ColorLength, Spacing);
-        init(BgColor, Rate);
+        init(BgColor, SegSet, Rate);
 	}
 
 //destructor
@@ -41,12 +41,13 @@ StreamerSL::~StreamerSL(){
 }
 
 //initialization of core variables and pointers
-void StreamerSL::init(CRGB BgColor, uint16_t Rate){
-    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
-    bindSegPtrPS();
+void StreamerSL::init(CRGB BgColor, SegmentSet &SegSet, uint16_t Rate){
+    //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
+    bindSegSetPtrPS();
     bindClassRatesPS();
     //bind background color pointer
     bindBGColorPS();
+    
     reset();
     //the minimum value for fade steps is 1, this does an instant transition between colors
     //so we set the fadeOn, since this will produce a faster effect execution
@@ -81,7 +82,7 @@ void StreamerSL::reset(){
     blendStep = 0;
     cycleNum = 0;
 
-    numSegs = SegSet.numSegs;
+    numSegs = segSet->numSegs;
      
     //We only need to make a new array if the current one isn't large enough
     //This helps prevent memory fragmentation by limiting the number of heap allocations
@@ -103,9 +104,9 @@ void StreamerSL::update(){
 
         //both updateFade() and updateNoFade() need the current segment and pattern lengths,
         //so we'll do them here to reduce repetition
-        numLines = SegSet.numLines;
+        numLines = segSet->numLines;
         numLinesLim = numLines - 1; //used for setting the line colors
-        longestSeg = SegSet.segNumMaxNumLines;
+        longestSeg = segSet->segNumMaxNumLines;
         patternLength = pattern->length;
 
         if(fadeOn){
@@ -124,12 +125,12 @@ void StreamerSL::update(){
 CRGB StreamerSL::getNextColor(uint16_t lineNum, uint16_t segNum){
 
     //get the current pixel's location in the segment set
-    pixelNum = segDrawUtils::getPixelNumFromLineNum(SegSet, numLines, segNum, lineNum);
+    pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, segNum, lineNum);
     if(nextPattern == 255){
-        return segDrawUtils::getPixelColor(SegSet, pixelNum, *bgColor, bgColorMode, segNum, lineNum);
+        return segDrawUtils::getPixelColor(*segSet, pixelNum, *bgColor, bgColorMode, segNum, lineNum);
     } else {
         nextColor = paletteUtilsPS::getPaletteColor(*palette, nextPattern);
-        return segDrawUtils::getPixelColor(SegSet, pixelNum, nextColor, colorMode, segNum, lineNum);
+        return segDrawUtils::getPixelColor(*segSet, pixelNum, nextColor, colorMode, segNum, lineNum);
     }
 }
 
@@ -188,7 +189,7 @@ void StreamerSL::updateFade(){
                 colorOut = getBlendedColor(nextColor, longestSeg);
                 //write the color out to all the leds in the segment line
                 //(we used numLinesLim - i in place of just i to make the default line motion positive)
-                segDrawUtils::drawSegLine(SegSet, numLinesLim - i, colorOut, 0);
+                segDrawUtils::drawSegLine(*segSet, numLinesLim - i, colorOut, 0);
                 break;
             case 1: case 2: case 6: case 7:
                 //For these modes each pixel may be different, so we need to blend each of them individually
@@ -198,7 +199,7 @@ void StreamerSL::updateFade(){
                     //Note that getNextColor() also gets the pixelNum for the lineNum & segNum
                     nextColor = getNextColor(numLinesLim - i, j); 
                     colorOut = getBlendedColor(nextColor, j);
-                    segDrawUtils::setPixelColor(SegSet, pixelNum, colorOut, 0, j, i);
+                    segDrawUtils::setPixelColor(*segSet, pixelNum, colorOut, 0, j, i);
                 }
                 break;
         }
@@ -236,7 +237,7 @@ void StreamerSL::updateNoFade(){
             //(we used numLinesLim - i in place of just i to make the default line motion positive)
             //Note that getNextColor() also gets the pixelNum for the lineNum & segNum
             nextColor = getNextColor(numLinesLim - i, j);
-            segDrawUtils::setPixelColor(SegSet, pixelNum, nextColor, 0, j, i); 
+            segDrawUtils::setPixelColor(*segSet, pixelNum, nextColor, 0, j, i); 
         }   
     }
     //No blending, so the color change after each step

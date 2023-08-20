@@ -2,18 +2,18 @@
 
 //Constructor with palette
 NoiseWavesSL::NoiseWavesSL(SegmentSet &SegSet, palettePS &Palette, CRGB BgColor, uint16_t BlendScale, uint8_t PhaseScale, uint8_t FreqScale, uint16_t Rate):
-    SegSet(SegSet), palette(&Palette), blendScale(BlendScale), phaseScale(PhaseScale), freqScale(FreqScale)
+    palette(&Palette), blendScale(BlendScale), phaseScale(PhaseScale), freqScale(FreqScale)
     {    
-        init(BgColor, Rate);
+        init(BgColor, SegSet, Rate);
     }
 
 //Constructor with randomly generated palette
 NoiseWavesSL::NoiseWavesSL(SegmentSet &SegSet, uint8_t numColors, CRGB BgColor, uint16_t BlendScale, uint8_t PhaseScale, uint8_t FreqScale, uint16_t Rate):
-    SegSet(SegSet), blendScale(BlendScale), phaseScale(PhaseScale), freqScale(FreqScale)
+    blendScale(BlendScale), phaseScale(PhaseScale), freqScale(FreqScale)
     {    
         paletteTemp = paletteUtilsPS::makeRandomPalette(numColors);
         palette = &paletteTemp;
-        init(BgColor, Rate);
+        init(BgColor, SegSet, Rate);
 	}
 
 NoiseWavesSL::~NoiseWavesSL(){
@@ -21,10 +21,12 @@ NoiseWavesSL::~NoiseWavesSL(){
 }
 
 //Initializes core common variables
-void NoiseWavesSL::init(CRGB BgColor, uint16_t Rate){
-    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
-    bindSegPtrPS();
+void NoiseWavesSL::init(CRGB BgColor, SegmentSet &SegSet, uint16_t Rate){
+    //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
+    bindSegSetPtrPS();
     bindClassRatesPS();
+
+    //bind the bgColor pointer
     bindBGColorPS();
 
     //Catch is any noise var is == 0
@@ -60,8 +62,8 @@ void NoiseWavesSL::update(){
 
         freqCounter = 0;
         //re-fetch some core variables incase the palette has changed
-        numSegs = SegSet.numSegs;
-        numLines = SegSet.numLines;
+        numSegs = segSet->numSegs;
+        numLines = segSet->numLines;
         totBlendLength = blendSteps * palette->length;
 
         //Get a phase value for our waves using noise
@@ -98,14 +100,14 @@ void NoiseWavesSL::update(){
             //take the line color and brightness and apply it to all the seg pixels on the line
             for(uint16_t j = 0; j < numSegs; j++){
                 //get the current pixel's location in the segment set
-                pixelNum = segDrawUtils::getPixelNumFromLineNum(SegSet, numLines, j, i);
+                pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, j, i);
 
                 //get background color info for the current pixel
-                colorTarget = segDrawUtils::getPixelColor(SegSet, pixelNum, *bgColor, bgColorMode, j, i);
+                colorTarget = segDrawUtils::getPixelColor(*segSet, pixelNum, *bgColor, bgColorMode, j, i);
 
                 //get the color blended towards the background and output it
                 colorTarget = colorUtilsPS::getCrossFadeColor(colorOut, colorTarget, 255 - bri);
-                segDrawUtils::setPixelColor(SegSet, pixelNum, colorTarget, 0, 0, 0);   
+                segDrawUtils::setPixelColor(*segSet, pixelNum, colorTarget, 0, 0, 0);   
             }
         }
         showCheckPS();
@@ -134,7 +136,7 @@ void NoiseWavesPS::update(){
         freqCounter = 0;
         pixelCount = 0;
         //re-fetch some core variables incase the palette has changed
-        numSegs = SegSet.numSegs;
+        numSegs = segSet->numSegs;
         totBlendLength = blendSteps * palette->length;
 
         //Get a phase value for our waves using noise
@@ -143,7 +145,7 @@ void NoiseWavesPS::update(){
 
         //run over each of the leds in the segment set and set a color/brightness value
         for (uint8_t i = 0; i < numSegs; i++) {
-            totSegLen = SegSet.getTotalSegLength(i);
+            totSegLen = segSet->getTotalSegLength(i);
             for(uint16_t j = 0; j < totSegLen; j++){
                 //Get a changing frequency multiplier, which helps produce the waves
                 //We need this to change as we loop or all the pixels will have the same wave value
@@ -151,7 +153,7 @@ void NoiseWavesPS::update(){
                 freqCounter = addmod8(freqCounter, 1, 60);
 
                 //get the current pixel's location in the segment set
-                pixelNum = segDrawUtils::getSegmentPixel(SegSet, i, j);
+                pixelNum = segDrawUtils::getSegmentPixel(*segSet, i, j);
 
                 //Get a color based on some noise
                 //For the color index we add an offset the increments each cycle
@@ -177,12 +179,12 @@ void NoiseWavesPS::update(){
                 //nscale8x3( colorOut.r, colorOut.g, colorOut.b, bri); //scaling for if you want to switch to a blank bg
 
                 //get background color info for the current pixel
-                lineNum = segDrawUtils::getLineNumFromPixelNum(SegSet, j, i);
-                colorTarget = segDrawUtils::getPixelColor(SegSet, pixelNum, *bgColor, bgColorMode, i, lineNum);
+                lineNum = segDrawUtils::getLineNumFromPixelNum(*segSet, j, i);
+                colorTarget = segDrawUtils::getPixelColor(*segSet, pixelNum, *bgColor, bgColorMode, i, lineNum);
 
                 //get the color blended towards the background and output it
                 colorOut = colorUtilsPS::getCrossFadeColor(colorOut, colorTarget, 255 - bri);
-                segDrawUtils::setPixelColor(SegSet, pixelNum, colorOut, 0, 0, 0);   
+                segDrawUtils::setPixelColor(*segSet, pixelNum, colorOut, 0, 0, 0);   
 
                 pixelCount++;
             }

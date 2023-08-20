@@ -97,9 +97,6 @@ class FairyLightsSLSeg : public EffectBasePS {
 
         //destructor
         ~FairyLightsSLSeg();
-
-        SegmentSet 
-            &SegSet; 
         
         uint8_t
             segMode, //for reference, use setSegMode() to set
@@ -157,7 +154,7 @@ class FairyLightsSLSeg : public EffectBasePS {
             modeZeroSet(),
             modeOneSet(),
             modeTwoSet(),
-            init(CRGB BgColor, uint16_t Rate),
+            init(CRGB BgColor, SegmentSet &SegSet, uint16_t Rate),
             drawTwinkle(uint8_t twinkleNum, CRGB &tColor, uint8_t cMode);
 };
 

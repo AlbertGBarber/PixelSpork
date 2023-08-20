@@ -114,9 +114,6 @@ class NoiseGradSL : public EffectBasePS {
                     uint8_t PhaseScale, uint8_t FreqScale, uint8_t BriScale, uint16_t BlendRate, uint16_t Rate);
         
         ~NoiseGradSL();
-
-        SegmentSet 
-            &SegSet; 
         
         uint8_t 
             bgColorMode = 0,
@@ -180,7 +177,7 @@ class NoiseGradSL : public EffectBasePS {
         
         void
             shiftBlendSteps(),
-            init(CRGB BgColor, uint16_t BlendRate, uint16_t Rate);
+            init(CRGB BgColor, uint16_t BlendRate, SegmentSet &SegSet, uint16_t Rate);
 };
 
 #endif

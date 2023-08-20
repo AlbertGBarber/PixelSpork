@@ -100,9 +100,6 @@ class ColorMeltSL : public EffectBasePS {
 
         ~ColorMeltSL();
         
-        SegmentSet 
-            &SegSet; 
-        
         uint8_t
             meltFreq,
             phaseFreq,
@@ -145,7 +142,7 @@ class ColorMeltSL : public EffectBasePS {
             colorOut;
         
         void 
-            init(uint16_t Rate);
+            init(SegmentSet &SegSet, uint16_t Rate);
 };
 
 #endif

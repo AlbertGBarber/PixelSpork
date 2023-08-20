@@ -145,9 +145,6 @@ class NoiseSL : public EffectBasePS {
         NoiseSL(SegmentSet &SegSet, palettePS &Palette, uint16_t BlendSteps, uint16_t ScaleBase, uint16_t ScaleRange, uint16_t Speed, uint8_t CMode, uint16_t Rate); 
 
         ~NoiseSL();
-
-        SegmentSet 
-            &SegSet; 
         
         uint8_t 
             *noise = nullptr,
@@ -213,7 +210,7 @@ class NoiseSL : public EffectBasePS {
             colorOut;
         
         void
-            init(uint16_t Rate),
+            init(SegmentSet &SegSet, uint16_t Rate),
             fillNoise8(),
             mapNoiseSegsWithPalette(),
             setShiftScale();

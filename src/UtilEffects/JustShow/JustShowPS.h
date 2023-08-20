@@ -23,20 +23,16 @@ Example calls:
     Will call FastLED.show() every 30ms
 
 Constructor Inputs:
-    SegSet -- A segment set, required for the utility, but the exact segment set doesn't matter, since FastLED.show() updates all LEDs
+    segSet -- A segment set, required for the utility, but the exact segment set doesn't matter, since FastLED.show() updates all LEDs
     Rate -- update rate (ms). Like with other effects, this a pointer.
 
 Functions:
     update() -- updates the utility
    
-
 */
 class JustShowPS : public EffectBasePS {
     public:
         JustShowPS(SegmentSet &SegSet, uint16_t Rate);  
-
-        SegmentSet 
-            &SegSet; 
         
         void 
             update(void);

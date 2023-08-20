@@ -131,10 +131,7 @@ class RollingWavesFastSL : public EffectBasePS {
         RollingWavesFastSL(SegmentSet &SegSet, uint8_t NumColors, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate);
 
         ~RollingWavesFastSL();
-
-        SegmentSet 
-            &SegSet; 
-
+        
         uint8_t
             randMode = 0,
             dimPow = 120, //120
@@ -203,7 +200,7 @@ class RollingWavesFastSL : public EffectBasePS {
             colorOut;
         
         void
-            init(CRGB BgColor, uint16_t Rate),
+            init(CRGB BgColor, SegmentSet &SegSet, uint16_t Rate),
             initalFill(),
             setNextColors(uint16_t segPixelNum);       
 };

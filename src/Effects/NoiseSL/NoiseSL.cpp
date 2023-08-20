@@ -2,18 +2,18 @@
 
 //Constructor for randomly generated palette
 NoiseSL::NoiseSL(SegmentSet &SegSet, uint8_t numColors, uint16_t BlendSteps, uint16_t ScaleBase, uint16_t ScaleRange, uint16_t Speed, uint8_t CMode, uint16_t Rate):
-    SegSet(SegSet), blendSteps(BlendSteps), scaleBase(ScaleBase), scaleRange(ScaleRange), speed(Speed), cMode(CMode)
+    blendSteps(BlendSteps), scaleBase(ScaleBase), scaleRange(ScaleRange), speed(Speed), cMode(CMode)
     {    
-        init(Rate);    
+        init(SegSet, Rate);    
         paletteTemp = paletteUtilsPS::makeRandomPalette(numColors);
         palette = &paletteTemp; 
 	}
 
 //Constructor using palette
 NoiseSL::NoiseSL(SegmentSet &SegSet, palettePS &Palette, uint16_t BlendSteps, uint16_t ScaleBase, uint16_t ScaleRange, uint16_t Speed, uint8_t CMode, uint16_t Rate):
-    SegSet(SegSet), palette(&Palette), blendSteps(BlendSteps), scaleBase(ScaleBase), scaleRange(ScaleRange), speed(Speed), cMode(CMode)
+    palette(&Palette), blendSteps(BlendSteps), scaleBase(ScaleBase), scaleRange(ScaleRange), speed(Speed), cMode(CMode)
     {
-        init(Rate);
+        init(SegSet, Rate);
     }
 
 NoiseSL::~NoiseSL(){
@@ -22,9 +22,9 @@ NoiseSL::~NoiseSL(){
 }
 
 //Sets up the initial effect values and other key variables
-void NoiseSL::init(uint16_t Rate){
-    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
-    bindSegPtrPS();
+void NoiseSL::init(SegmentSet &SegSet, uint16_t Rate){
+    //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
+    bindSegSetPtrPS();
     bindClassRatesPS();
 
     //create the noise array
@@ -42,9 +42,9 @@ void NoiseSL::init(uint16_t Rate){
     setShiftScale();
 }
 
-//If you ever change the effect's SegSet call this function
-//Creates a noise array for the SegSet lines
-//Ideally this would be a 2D array, with each row being a line on the SegSet
+//If you ever change the effect's segSet call this function
+//Creates a noise array for the segSet lines
+//Ideally this would be a 2D array, with each row being a line on the segSet
 //But it's much easier in C++ to create a 1D array and then offset out starting points
 //when reading/writing values
 //So each segment line is stored consecutively in the array
@@ -53,8 +53,8 @@ void NoiseSL::init(uint16_t Rate){
 //4, 5, 6, 7 for line 1, etc
 void NoiseSL::setupNoiseArray(){
     //fetch some core vars
-    numSegs = SegSet.numSegs;
-    numLines = SegSet.numLines;
+    numSegs = segSet->numSegs;
+    numLines = segSet->numLines;
     uint16_t numPoints = numLines * numSegs;
     
     //We only need to make a new noise array if the current one isn't large enough
@@ -165,7 +165,7 @@ void NoiseSL::mapNoiseSegsWithPalette(){
             }
 
             //get the physical pixel location based on the line and seg numbers
-            pixelNum = segDrawUtils::getPixelNumFromLineNum(SegSet, numLines, j, i);
+            pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, j, i);
 
             //Get the output color based on the noise value
             switch (cMode){
@@ -177,7 +177,7 @@ void NoiseSL::mapNoiseSegsWithPalette(){
                     //get the resulting blended color and dim it by bri
                     colorOut = paletteUtilsPS::getPaletteGradColor(*palette, colorIndex, 0, totBlendLength, blendSteps);
                     //get background color info for the current pixel
-                    colorTarget = segDrawUtils::getPixelColor(SegSet, pixelNum, *bgColor, bgColorMode, j, i);
+                    colorTarget = segDrawUtils::getPixelColor(*segSet, pixelNum, *bgColor, bgColorMode, j, i);
                     //get the color blended towards the background and output it
                     colorOut = colorUtilsPS::getCrossFadeColor(colorOut, colorTarget, 255 - bri);
                     //nscale8x3(colorOut.r, colorOut.g, colorOut.b, bri);
@@ -189,7 +189,7 @@ void NoiseSL::mapNoiseSegsWithPalette(){
                     //get the resulting blended color and dim it by bri
                     colorOut = paletteUtilsPS::getPaletteGradColor(*palette, colorIndex, iHue, totBlendLength, blendSteps);
                     //get background color info for the current pixel
-                    colorTarget = segDrawUtils::getPixelColor(SegSet, pixelNum, *bgColor, bgColorMode, j, i);
+                    colorTarget = segDrawUtils::getPixelColor(*segSet, pixelNum, *bgColor, bgColorMode, j, i);
                     //get the color blended towards the background and output it
                     colorOut = colorUtilsPS::getCrossFadeColor(colorOut, colorTarget, 255 - bri);
                     //nscale8x3(colorOut.r, colorOut.g, colorOut.b, bri);
@@ -209,7 +209,7 @@ void NoiseSL::mapNoiseSegsWithPalette(){
                     colorOut = CHSV(iHue + (colorIndex>>2), 255, colorIndex );
                     break;
             }
-            segDrawUtils::setPixelColor(SegSet, pixelNum, colorOut, 0, 0, 0); 
+            segDrawUtils::setPixelColor(*segSet, pixelNum, colorOut, 0, 0, 0); 
         }
     }
 

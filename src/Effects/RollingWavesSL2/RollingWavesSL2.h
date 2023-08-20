@@ -137,10 +137,7 @@ class RollingWavesSL2 : public EffectBasePS {
         //Constructor with random colors
         RollingWavesSL2(SegmentSet &SegSet, uint8_t NumColors, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate);
 
-        ~RollingWavesSL2();
-
-        SegmentSet 
-            &SegSet; 
+        ~RollingWavesSL2(); 
             
         uint8_t
             randMode = 0,
@@ -213,7 +210,7 @@ class RollingWavesSL2 : public EffectBasePS {
             colorOut;
         
         void
-            init(CRGB BgColor, uint16_t Rate),
+            init(CRGB BgColor, SegmentSet &SegSet, uint16_t Rate),
             initalFill(),
             setNextColors(uint16_t segPixelNum);       
 };

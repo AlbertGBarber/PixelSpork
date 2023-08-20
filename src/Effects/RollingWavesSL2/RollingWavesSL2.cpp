@@ -2,27 +2,27 @@
 
 //constructor with pattern
 RollingWavesSL2::RollingWavesSL2(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate):
-    SegSet(SegSet), pattern(&Pattern), palette(&Palette), gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)
+    pattern(&Pattern), palette(&Palette), gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)
     {    
-        init(BGColor,Rate);
+        init(BGColor, SegSet, Rate);
 	}
 
 //constructor with palette as pattern
 RollingWavesSL2::RollingWavesSL2(SegmentSet &SegSet, palettePS &Palette, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate):
-    SegSet(SegSet), palette(&Palette), gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)
+    palette(&Palette), gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)
     {    
         setPaletteAsPattern();
-        init(BGColor, Rate);
+        init(BGColor, SegSet, Rate);
 	}
 
 //constructor with random colors
 RollingWavesSL2::RollingWavesSL2(SegmentSet &SegSet, uint8_t NumColors, CRGB BGColor, uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate):
-    SegSet(SegSet), gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)
+    gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)
     {    
         paletteTemp = paletteUtilsPS::makeRandomPalette(NumColors);
         palette = &paletteTemp;
         setPaletteAsPattern();
-        init(BGColor, Rate);
+        init(BGColor, SegSet, Rate);
 	}
 
 RollingWavesSL2::~RollingWavesSL2(){
@@ -32,11 +32,14 @@ RollingWavesSL2::~RollingWavesSL2(){
 }
 
 //inits core variables for the effect
-void RollingWavesSL2::init(CRGB BgColor, uint16_t Rate){
-    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
-    bindSegPtrPS();
+void RollingWavesSL2::init(CRGB BgColor, SegmentSet &SegSet, uint16_t Rate){
+    //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS  
+    bindSegSetPtrPS();
     bindClassRatesPS();
+
+    //bind bgColor pointer
     bindBGColorPS();
+    
     cycleNum = 0;
     setTrailMode(trailMode);
     setTotalEffectLength();
@@ -88,7 +91,7 @@ void RollingWavesSL2::setTotalEffectLength(){
 //next line to be drawn
 //!!! You should call this if you ever change the segment set
 void RollingWavesSL2::buildLineArr(){
-    numSegs = SegSet.numSegs;
+    numSegs = segSet->numSegs;
     
     //We only need to make a new nextLine array if the current one isn't large enough
     //This helps prevent memory fragmentation by limiting the number of heap allocations
@@ -100,7 +103,7 @@ void RollingWavesSL2::buildLineArr(){
     }
 
     //fetch some core vars
-    numLines = SegSet.numLines;
+    numLines = segSet->numLines;
     numLinesLim = numLines - 1;
 }
 
@@ -177,7 +180,7 @@ void RollingWavesSL2::initalFill(){
         colorOut = getWaveColor(cycleNum);
 
         //Draw the colored line
-        segDrawUtils::drawSegLine(SegSet, i, colorOut, 0);
+        segDrawUtils::drawSegLine(*segSet, i, colorOut, 0);
 
         cycleNum = addmod8(cycleNum, 1, blendLimit);//track what step we're on in the wave
     }
@@ -218,7 +221,7 @@ void RollingWavesSL2::update(){
         //We need to get the pixel locations of the final segment line
         //(Which is the one the loop starts on)
         for(uint16_t j = 0; j < numSegs; j++){
-            nextLine[j] = segDrawUtils::getPixelNumFromLineNum(SegSet, numLines, j, numLinesLim);
+            nextLine[j] = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, j, numLinesLim);
         }
 
         //Run backwards across all the segment lines and copy the color from the line before it
@@ -245,7 +248,7 @@ void RollingWavesSL2::update(){
                     //The nextPixelNumber from the previous loop iteration is now
                     //the pixelNumber for this iteration
                     pixelNum = nextLine[j];
-                    segDrawUtils::setPixelColor(SegSet, pixelNum, colorOut, 0, j, i);
+                    segDrawUtils::setPixelColor(*segSet, pixelNum, colorOut, 0, j, i);
                 }
             } else {
                 //copy the pixel colors from the previous line to the current one
@@ -255,9 +258,9 @@ void RollingWavesSL2::update(){
                     //The pixel locations from the previous loop are now the current ones
                     //and we now need to fill in the next line locations
                     pixelNum = nextLine[j];
-                    nextLine[j] = segDrawUtils::getPixelNumFromLineNum(SegSet, numLines, j, i - 1);
+                    nextLine[j] = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, j, i - 1);
                     //copy the color of the next pixel in line into the current pixel
-                    SegSet.leds[pixelNum] = SegSet.leds[nextLine[j]];
+                    segSet->leds[pixelNum] = segSet->leds[nextLine[j]];
                 }
             }
         }

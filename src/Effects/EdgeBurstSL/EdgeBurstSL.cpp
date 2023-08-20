@@ -2,9 +2,9 @@
 
 //Constructor for rainbow mode
 EdgeBurstSL::EdgeBurstSL(SegmentSet &SegSet, uint8_t BurstFreq, uint16_t Rate):
-    SegSet(SegSet), burstFreq(BurstFreq)
+    burstFreq(BurstFreq)
     {    
-        init(Rate);
+        init(SegSet, Rate);
         rainbowMode = true;
 
         //We create a random palette in case rainbow mode is turned off without setting a palette
@@ -15,18 +15,17 @@ EdgeBurstSL::EdgeBurstSL(SegmentSet &SegSet, uint8_t BurstFreq, uint16_t Rate):
 
 //Constructor for colors from palette
 EdgeBurstSL::EdgeBurstSL(SegmentSet &SegSet, palettePS &Palette, uint8_t BurstFreq, uint16_t Rate):
-    SegSet(SegSet), burstFreq(BurstFreq), palette(&Palette)
+    burstFreq(BurstFreq), palette(&Palette)
     {    
-        init(Rate);
+        init(SegSet, Rate);
 	}
 
 //Constructor for a randomly created palette
 //RandomizePal = true will randomize the palette for each wave
 EdgeBurstSL::EdgeBurstSL(SegmentSet &SegSet, uint8_t numColors, bool RandomizePal, uint8_t BurstFreq, uint16_t Rate):
-    SegSet(SegSet), burstFreq(BurstFreq), randomizePal(RandomizePal)
+    burstFreq(BurstFreq), randomizePal(RandomizePal)
     {    
-        init(Rate);
-
+        init(SegSet, Rate);
         paletteTemp = paletteUtilsPS::makeRandomPalette(numColors);
         palette = &paletteTemp; 
 	}
@@ -36,9 +35,9 @@ EdgeBurstSL::~EdgeBurstSL(){
 }
 
 //initialize core vars
-void EdgeBurstSL::init(uint16_t Rate){
-    //bind the rate and SegSet pointer vars since they are inherited from BaseEffectPS
-    bindSegPtrPS();
+void EdgeBurstSL::init(SegmentSet &SegSet, uint16_t Rate){
+    //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
+    bindSegSetPtrPS();
     bindClassRatesPS();
         
     //minimum burst freq is 1
@@ -73,8 +72,8 @@ void EdgeBurstSL::update(){
 
         //fetch some core vars
         //we re-fetch these in case the segment set or palette has changed
-        numSegs = SegSet.numSegs;
-        numLines = SegSet.numLines;
+        numSegs = segSet->numSegs;
+        numLines = segSet->numLines;
 
         //Get the blend length for each color in the palette
         //(using 255 steps across the whole palette)
@@ -120,8 +119,8 @@ void EdgeBurstSL::update(){
                 //get the physical pixel location based on the line and seg numbers
                 //and then write out the color
                 //Note that the actual line written to is offset and wraps
-                pixelNum = segDrawUtils::getPixelNumFromLineNum(SegSet, numLines, j, addMod16PS(i, offset, numLines) );
-                segDrawUtils::setPixelColor(SegSet, pixelNum, colorOut, 0, 0, 0);
+                pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, j, addMod16PS(i, offset, numLines) );
+                segDrawUtils::setPixelColor(*segSet, pixelNum, colorOut, 0, 0, 0);
             }
 
         }

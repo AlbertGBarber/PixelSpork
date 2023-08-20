@@ -190,10 +190,7 @@ class StrobeSLSeg : public EffectBasePS {
         StrobeSLSeg(SegmentSet &SegSet, uint8_t numColors, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, 
                     bool SegEach, bool SegDual, bool SegLine, bool SegLineDual, bool SegAll, uint16_t Rate);
 
-        ~StrobeSLSeg();  
-
-        SegmentSet 
-            &SegSet; 
+        ~StrobeSLSeg();   
         
         bool
             fillBG = true, //flag to fill the background after each set of pulses
@@ -274,7 +271,7 @@ class StrobeSLSeg : public EffectBasePS {
         
         void
             startPause(),
-            init(CRGB BgColor, uint16_t Rate),
+            init(CRGB BgColor, SegmentSet &SegSet, uint16_t Rate),
             pickColor();
 };
 

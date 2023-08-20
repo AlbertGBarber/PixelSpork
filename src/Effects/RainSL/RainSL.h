@@ -174,9 +174,6 @@ class RainSL : public EffectBasePS {
         
         ~RainSL();
 
-        SegmentSet 
-            &SegSet; 
-
         int8_t
             dimPow = 80; //80 range -127 -> 127 -80 good for colored bg's
         
@@ -271,7 +268,7 @@ class RainSL : public EffectBasePS {
             colorTemp;
         
         void
-            init(uint16_t Rate, uint8_t MaxNumDrops, CRGB BgColor),
+            init(uint8_t MaxNumDrops, CRGB BgColor, SegmentSet &SegSet, uint16_t Rate),
             setDropSpawnPos(particlePS *particlePtr),
             moveParticle(particlePS *particlePtr),
             drawParticlePixel(uint16_t trailLedLocation, uint8_t trailPixelNum, uint8_t trailSize, uint8_t segNum, bool bodyPixel),
