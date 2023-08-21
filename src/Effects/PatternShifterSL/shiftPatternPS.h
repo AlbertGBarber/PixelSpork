@@ -18,7 +18,7 @@ For example, you might use one of these effects to draw a flag and move it acros
 The flag would be stored as a shiftPattern (which would then be passed into one of the effects)
 
 The main part of a shift pattern is the patternArr, which is a 1D array of both color indexes and line numbers
-The array has a very specific structure. 
+The array has a very specific structure, and is usually created to work with a single segment set.
 This is most easily shown with an example:
 
 Lets say I have an 8x8 matrix and I want to draw an arrow shifting horizontally across it
@@ -58,10 +58,9 @@ To create the arrow as a shiftPattern I would represent it as:
     //  Part 1  ------ Part 2 --------
     //Seg Lines --Line Color Pattern--
 
-    //Final part of setting up the shiftPattern: 
-    //NumSegs should match the length of each "row" in part 2
-    //It is usually the number of segments in the segment set you intend to use the pattern with
-    shiftPatternPS arrowPattern(arrowPattern_arr, SIZE(arrowPattern_arr), numSegs);
+    //Final part of setting up the shiftPattern:
+    //Note that we include the segment set we intend to use the pattern with in the pattern definition
+    shiftPatternPS arrowPattern(horzLines, numSegs, arrowPattern_arr, SIZE(arrowPattern_arr);
 
 //******************************************************************************
 
@@ -71,7 +70,7 @@ which each represent a pattern for a segment line (or lines).
 To help show this (and make it much easier to see what a pattern is), I've split the array across multiple text lines.
 Each line represents a segment line in the matrix and consists of parts 1 and 2.
 Part 1 is ALWAYS two digits, representing the start and end segment lines for the line color pattern (part 2).
-This means that for patterns with repeating parts, you don't need to keep re-defining the pattern for each segment line,
+This means that for patterns with repeating parts, you don't need to keep re-defining same pattern for each segment line,
 you can just increase how many lines each part of the pattern is draw over.
 
 Part 2 is the line color pattern.
@@ -108,13 +107,25 @@ This should be similar for most other patterns:
 (numSegs + 2) is the length of each pattern "row", the +2 spanning part 1 and numSegs spanning part 2
 *4 is the number of "rows" in the pattern
 
+With all this info, we can create the shiftPattern using its constructor:
+
+shiftPatternPS(SegmentSet &SegSet, uint16_t PatRowLength, uint16_t *PatternArr, uint16_t Length)
+
+Where:
+    * SegSet is the segment set we want to draw the pattern on: horzLines
+    * PatRowLength is how long each "row" of the pattern is (with out the +2).
+      In this case this is the numSegs in the horzLines: 8
+    * PatternArr and Length are the patter array itself and the array's length
+      (which we use SIZE() to set automatically)
+
 To summarize:
 shiftPatterns are usually specific to a SegmentSet
 For the pattern array:
     Part 1 is how many segment lines the pattern line spans (up to, but not including the final line).
     Part 2 is the color pattern on the segments. 
     255 is used to indicate a background color.
-The length of the array is usually (<numSegs> + 2) * number of "rows" in the pattern
+The length of the array is usually (<numSegs> + 2) * number of "rows" in the pattern,
+"rows" can vary in length, but are usually numSegs long (see the PatternShifter effects for more info)
 
 Final gotchas:
 *The segment lines (part 1) don't have to be in sequential order, ie you can have a a pattern line from 3 to 4, then a line from 0 to 3
@@ -122,25 +133,30 @@ Final gotchas:
 *Gaps between segment lines may cause weird effects (ie you have a pattern line from 0 to 2 and from 5 to 6, but nothing in between)
  Gaps won't be filed with anything, so the lines patterns will just repeat as the pattern moves
 *Make sure you use the correct array length
-*When setting up an effect, make sure you are using the correct SegmentSet
+*Patterns require a segment set as a input. This is tied to the pattern's segSet pointer, like in effects. 
+ You can change the segSet just as you would in effects, this will also change the segSet for the PatternShifter effects. 
 */
 
 //See above for explanation of shiftPatterns
 struct shiftPatternPS {
+    SegmentSet *segSet; //pointer to the segment set for the shift pattern
     uint16_t *patternArr = nullptr; //pointer to the pattern array
     uint16_t length; //length of the pattern array
-    uint16_t numSegs; //how many long each line color pattern "row" is
+    uint16_t patRowLength; //how many long each line color pattern "row" is (not including the +2 for the lines span)
   
     uint16_t numRows; //how many "rows" are in the pattern array
     uint16_t patLineLength; //How many total lines in the segment set the pattern spans, ie "from segment line 0 to 8"
 
     //Constructor
-    shiftPatternPS(uint16_t *PatternArr, uint16_t Length, uint16_t NumSegs){
+    shiftPatternPS(SegmentSet &SegSet, uint16_t PatRowLength, uint16_t *PatternArr, uint16_t Length){
+        //bind the SegSet address to the segSet pointer
+        bindSegSetPtrPS();
+
         patternArr = PatternArr;
         length = Length;
-        numSegs = NumSegs;
+        patRowLength = PatRowLength;
 
-        numRows = length / (2 + numSegs);
+        numRows = length / (2 + patRowLength);
 
         //Temp vars used to find the total number of lines spanned by the shiftPattern
         uint16_t startLine = 65535; //We want to find the lowest startLine so we need to start it at uint16_t max
@@ -174,7 +190,7 @@ struct shiftPatternPS {
 
     //Returns the first index of the specified "row" in the patternArr
     uint16_t getPatRowStartIndex(uint16_t patternRow){
-        return patternRow * (2 + numSegs);
+        return patternRow * (2 + patRowLength);
     };
 
     //Returns either the start or end segment line for the specified "row" in the patternArr

@@ -41,8 +41,12 @@ Patterns can be longer (have more segments) than the segment set, the pattern wi
 However because the line values of the pattern don't shift, the pattern must fit onto the segment's lines,
 anything extra won't be drawn.
 
-Note that shiftPatterns generally only work with a specific segment set
-!!Make sure you use the correct segment set when setting up the effect!!
+Note that the effect has a segSet pointer like other effects, but
+the effect doesn't take a segment set as an input, it gets it from the shiftPattern.
+Ie the effect's segSet pointer is bound to the shiftPattern's segSet pointer.
+(Usually a shiftPattern is intended to work with a specific segment set, so it made sense to include the segment set in the pattern itself)
+Note that because segSet is a pointer, the effect and pattern's segment set are one and the same.
+If you want to change what segment set the effect is using, you should change the shiftPattern's segment set instead.
 
 The bgColor will be draw on any pattern indexes with the value 255.
 The bgColor is a pointer, so you can bind it to an external color variable.
@@ -67,10 +71,10 @@ Example calls:
         0, 1,   0, 255,  //segment line 0, dot 1, then space
         1, 2,   255, 0, //segment line 1, space, then dot 2
     };
-    shiftPatternPS basicPattern(basicPattern_arr, SIZE(basicPattern_arr), patternSegs);
+    shiftPatternPS basicPattern(mainSegments, patternSegs, basicPattern_arr, SIZE(basicPattern_arr));
 
-    PatternShifterSeg patternShifterSeg(mainSegments, basicPattern, cybPnkPal, 0, false, false, true, 100);
-    Will shift the "basicPattern" across the segment set using colors from cybPnkPal
+    PatternShifterSeg patternShifterSeg(basicPattern, cybPnkPal, 0, false, false, true, 100);
+    Will shift the "basicPattern" across its segment set using colors from cybPnkPal
     The background is blank
     The pattern is not repeated across segment lines or segments
     The segment shift direction is true (from first to last segment)
@@ -106,7 +110,7 @@ Reference Vars:
 */
 class PatternShifterSeg : public EffectBasePS {
     public:
-        PatternShifterSeg(SegmentSet &SegSet, shiftPatternPS &ShiftPattern, palettePS &Palette, CRGB BgColor, 
+        PatternShifterSeg(shiftPatternPS &ShiftPattern, palettePS &Palette, CRGB BgColor, 
                           bool RepeatLine, bool RepeatSeg, bool Direct, uint16_t Rate);  
 
         uint8_t

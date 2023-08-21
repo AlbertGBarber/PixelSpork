@@ -20,8 +20,7 @@ Ie if you had a pattern where and single segment line was lit up,
 it would be shifted from one segment line to the next as the effect runs.
 (This doesn't change the pattern, all the movement is local to the effect)
 
-This effect is really only useful for segment set with multiple segments
-Ie 2D shapes
+This effect is really only useful for segment set with multiple segments, Ie 2D shapes
 
 The shiftPattern can be set to repeat, which will draw the pattern as many times as possible along the segment set
 For ie, for a segment set with 10 lines:
@@ -32,8 +31,12 @@ Patterns can be longer (have more segment lines) than the segment set, the patte
 Your pattern color "rows" must be the same length as the number of segments in the segment set
 ie for a set with 5 segments, your pattern "rows" should have a color for each segment.
 
-Note that shiftPatterns generally only work with a specific segment set
-!!Make sure you use the correct segment set when setting up the effect!!
+Note that the effect has a segSet pointer like other effects, but
+the effect doesn't take a segment set as an input, it gets it from the shiftPattern.
+Ie the effect's segSet pointer is bound to the shiftPattern's segSet pointer.
+(Usually a shiftPattern is intended to work with a specific segment set, so it made sense to include the segment set in the pattern itself)
+Note that because segSet is a pointer, the effect and pattern's segment set are one and the same.
+If you want to change what segment set the effect is using, you should change the shiftPattern's segment set instead.
 
 The bgColor will be draw on any pattern indexes with the value 255.
 The bgColor is a pointer, so you can bind it to an external color variable.
@@ -58,10 +61,10 @@ Example calls:
         1, 2,   255, //segment line 1, space
         2, 3,   0,   //segment line 2, dot 2
     };
-    shiftPatternPS basicPattern(basicPattern_arr, SIZE(basicPattern_arr), patternSegs);
+    shiftPatternPS basicPattern(mainSegments, patternSegs, basicPattern_arr, SIZE(basicPattern_arr));
 
-    PatternShifterSL patternShifterSL(mainSegments, basicPattern, cybPnkPal, 0, false, 100);
-    Will shift the "basicPattern" across the segment set using colors from cybPnkPal
+    PatternShifterSL patternShifterSL(basicPattern, cybPnkPal, 0, false, 100);
+    Will shift the "basicPattern" across its segment set using colors from cybPnkPal
     The background is blank
     The pattern is not repeated
     The effect updates at 100ms
@@ -93,7 +96,7 @@ Reference Vars:
 */
 class PatternShifterSL : public EffectBasePS {
     public:
-        PatternShifterSL(SegmentSet &SegSet, shiftPatternPS &ShiftPattern, palettePS &Palette, CRGB BgColor, bool Repeat, uint16_t Rate);  
+        PatternShifterSL(shiftPatternPS &ShiftPattern, palettePS &Palette, CRGB BgColor, bool Repeat, uint16_t Rate);  
         
         uint8_t
             colorMode = 0,

@@ -1,10 +1,10 @@
 #include "PatternShifterSL.h"
 
-PatternShifterSL::PatternShifterSL(SegmentSet &SegSet, shiftPatternPS &ShiftPattern, palettePS &Palette, CRGB BgColor, bool Repeat, uint16_t Rate):
+PatternShifterSL::PatternShifterSL(shiftPatternPS &ShiftPattern, palettePS &Palette, CRGB BgColor, bool Repeat, uint16_t Rate):
     palette(&Palette), repeat(Repeat)
     {    
-        //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
-        bindSegSetPtrPS();
+        //bind the rate vars since they are inherited from BaseEffectPS
+        //(we bind the segSet pointer in setShiftPattern b/c its part of shiftPatterns)
         bindClassRatesPS();
         //bind background color pointer
         bindBGColorPS();
@@ -21,9 +21,15 @@ void PatternShifterSL::reset(){
 //Sets the pattern to be the passed in pattern, also sets up various effect variables
 //If you change the pattern you must do it via this function
 void PatternShifterSL::setShiftPattern(shiftPatternPS &newShiftPattern){
-    numLines = segSet->numLines;
-    
     shiftPattern = &newShiftPattern;
+
+    //bind the shift pattern's segment set pointer to the effect's segSet pointer
+    //(using the effect's segSet pointer is important because it makes sure the effect behaves like other effects)
+    segSet = shiftPattern->segSet;
+
+    //number of lines in the shiftPattern's segment set
+    numLines = segSet->numLines;
+
     //number of "rows" in the pattern
     numPatRows = shiftPattern->numRows;
 
@@ -31,7 +37,7 @@ void PatternShifterSL::setShiftPattern(shiftPatternPS &newShiftPattern){
     patLineLength = shiftPattern->patLineLength;
 
     //get the number of segments from the pattern
-    numPatSegs = shiftPattern->numSegs;
+    numPatSegs = shiftPattern->patRowLength;
 
     //We need to cap the number of pattern segments if it's greater than the number of segments in the segment set
     //Otherwise we'd try to draw onto segments that didn't exist
