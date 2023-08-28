@@ -1,13 +1,13 @@
 #ifndef RainbowCycleSLSeg_h
 #define RainbowCycleSLSeg_h
-    
+
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
 #include "MathUtils/mathUtilsPS.h"
 
 /*
 Draws a repeated rainbow of a set length repeatedly along segment lines
-shifts the rainbows in along the SegmentSet liens in the passed in direction at the passed in rate
+shifts the rainbows in along the SegmentSetPS liens in the passed in direction at the passed in rate
 suggested min length is 5 (ie red, yellow, green, blue, indigo/violet)
 
 This is the 2D version of rainbowCycle which draws on segment lines or whole segments
@@ -20,7 +20,7 @@ the library's colorModes. These produce a smoother rainbow.
 To do this you make a BGRateFill effect with color mode 3 or 4
 Then change the segment's gradLineVal or gradSegVal to set the rainbow length, set the offsetRate to set the speed
 set runOffset to true, and change the offsetDirect if needed. 
-ie: //mainSegments.runOffset = true;
+ie:   mainSegments.runOffset = true;
       mainSegments.gradLineVal = 30;
       mainSegments.offsetRateOrig = 80;
       mainSegments.offsetDirect = true;
@@ -62,23 +62,24 @@ Reference Vars:
 */
 class RainbowCycleSLSeg : public EffectBasePS {
     public:
-        RainbowCycleSLSeg(SegmentSet &SegSet, uint16_t Length, bool Direct, bool SegMode, uint16_t Rate); 
+        //Constructor for a custom length rainbow cycle
+        RainbowCycleSLSeg(SegmentSetPS &SegSet, uint16_t Length, bool Direct, bool SegMode, uint16_t Rate);
 
-        //Does a rainbow cycle of length 255
-        RainbowCycleSLSeg(SegmentSet &SegSet, bool Direct, bool SegMode, uint16_t Rate); 
-    
+        //Constructor for a full length rainbow (255)
+        RainbowCycleSLSeg(SegmentSetPS &SegSet, bool Direct, bool SegMode, uint16_t Rate);
+
         uint8_t
             satur = 255,
             value = 255;
-        
+
         uint16_t
-            length; //reference only, call setLength() to change the rainbow length
-        
+            length;  //reference only, call setLength() to change the rainbow length
+
         bool
             segMode,
             direct;
-        
-        void 
+
+        void
             setLength(uint16_t newLength),
             update(void);
 
@@ -89,21 +90,20 @@ class RainbowCycleSLSeg : public EffectBasePS {
 
         int8_t
             stepDirect;
-        
+
         uint16_t
             cycleNum,
             numLines,
             numSegs,
             maxCycleLength,
             stepVal;
-        
+
         CRGB
             getRainbowColor(uint16_t index),
             color;
 
-        void 
-            init(SegmentSet &SegSet, uint16_t Rate);
-
+        void
+            init(SegmentSetPS &SegSet, uint16_t Rate);
 };
 
 #endif

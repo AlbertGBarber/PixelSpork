@@ -1,48 +1,50 @@
 #include "ColorMeltSL.h"
 
 //Constructor for rainbow mode
-ColorMeltSL::ColorMeltSL(SegmentSet &SegSet, uint8_t MeltFreq, uint8_t PhaseFreq, bool BriInvert, uint16_t Rate):
-    meltFreq(MeltFreq), phaseFreq(PhaseFreq), briInvert(BriInvert)
-    {    
-        rainbowMode = true;
-        init(SegSet, Rate);
+ColorMeltSL::ColorMeltSL(SegmentSetPS &SegSet, uint8_t MeltFreq, uint8_t PhaseFreq, bool BriInvert, uint16_t Rate)
+    : meltFreq(MeltFreq), phaseFreq(PhaseFreq), briInvert(BriInvert)  //
+{
+    rainbowMode = true;
+    init(SegSet, Rate);
 
-        //We create a random palette in case rainbow mode is turned off without setting a palette
-        //This won't be used while rainbowMode is true
-        paletteTemp = paletteUtilsPS::makeRandomPalette(3);
-        palette = &paletteTemp; 
-	}
+    //We create a random palette in case rainbow mode is turned off without setting a palette
+    //This won't be used while rainbowMode is true
+    paletteTemp = paletteUtilsPS::makeRandomPalette(3);
+    palette = &paletteTemp;
+}
 
 //Constructor for colors from palette
-ColorMeltSL::ColorMeltSL(SegmentSet &SegSet, palettePS &Palette, uint8_t MeltFreq, uint8_t PhaseFreq, bool BriInvert, uint16_t Rate):
-    palette(&Palette), meltFreq(MeltFreq), phaseFreq(PhaseFreq), briInvert(BriInvert)
-    {    
-        init(SegSet, Rate);
-	}
+ColorMeltSL::ColorMeltSL(SegmentSetPS &SegSet, palettePS &Palette, uint8_t MeltFreq, uint8_t PhaseFreq,
+                         bool BriInvert, uint16_t Rate)
+    : palette(&Palette), meltFreq(MeltFreq), phaseFreq(PhaseFreq), briInvert(BriInvert)  //
+{
+    init(SegSet, Rate);
+}
 
 //Constructor for a randomly created palette
-ColorMeltSL::ColorMeltSL(SegmentSet &SegSet, uint8_t numColors, uint8_t MeltFreq, uint8_t PhaseFreq, bool BriInvert, uint16_t Rate):
-    meltFreq(MeltFreq), phaseFreq(PhaseFreq), briInvert(BriInvert)
-    {    
-        init(SegSet, Rate);
-        paletteTemp = paletteUtilsPS::makeRandomPalette(numColors);
-        palette = &paletteTemp; 
-	}
+ColorMeltSL::ColorMeltSL(SegmentSetPS &SegSet, uint8_t numColors, uint8_t MeltFreq, uint8_t PhaseFreq,
+                         bool BriInvert, uint16_t Rate)
+    : meltFreq(MeltFreq), phaseFreq(PhaseFreq), briInvert(BriInvert)  //
+{
+    init(SegSet, Rate);
+    paletteTemp = paletteUtilsPS::makeRandomPalette(numColors);
+    palette = &paletteTemp;
+}
 
-ColorMeltSL::~ColorMeltSL(){
+ColorMeltSL::~ColorMeltSL() {
     free(paletteTemp.paletteArr);
 }
 
-void ColorMeltSL::init(SegmentSet &SegSet, uint16_t Rate){
+void ColorMeltSL::init(SegmentSetPS &SegSet, uint16_t Rate) {
     //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
     bindSegSetPtrPS();
     bindClassRatesPS();
-    if(phaseFreq == 0){
+    if( phaseFreq == 0 ) {
         phaseEnable = false;
     }
 
     //minimum melt freq is 1
-    if(meltFreq < 1){
+    if( meltFreq < 1 ) {
         meltFreq = 1;
     }
 }
@@ -66,23 +68,23 @@ void ColorMeltSL::init(SegmentSet &SegSet, uint16_t Rate){
 
 //updates the effect
 //I don't fully understand how the effect works, it's mainly combining a bunch of waves
-void ColorMeltSL::update(){
+void ColorMeltSL::update() {
     currentTime = millis();
 
-    if( ( currentTime - prevTime ) >= *rate ) {
+    if( (currentTime - prevTime) >= *rate ) {
         prevTime = currentTime;
-        
+
         //fetch some core vars
         //we re-fetch these in case the segment set or palette has changed
         numSegs = segSet->numSegs;
         numLines = segSet->numLines;
 
-        hl = numLines/hlDiv;
-        t1 = beat8(meltFreq); 
-        t2 = beat8(7); 
+        hl = numLines / hlDiv;
+        t1 = beat8(meltFreq);
+        t2 = beat8(7);
 
         //increment the phase
-        if(phaseEnable){
+        if( phaseEnable ) {
             phase = beat8(phaseFreq);
         }
 
@@ -92,34 +94,34 @@ void ColorMeltSL::update(){
         blendLength = 255 / palette->length;
 
         //set a color for each line and then color in all the pixels on the line
-        for (uint16_t i = 0; i < numLines; i++) {
+        for( uint16_t i = 0; i < numLines; i++ ) {
 
-            c1 = 255 - ( (abs(i - hl) * 255) / hl );
-            c2 = sin8(c1 + phase); //adding the phase here seems to work best
+            c1 = 255 - ((abs(i - hl) * 255) / hl);
+            c2 = sin8(c1 + phase);  //adding the phase here seems to work best
             c3 = sin8(c2 + c1);
 
             v = sin8(c3 + t1);
             v = (uint16_t)v * v / 255;
 
             //Inverts the wave brightness to make light areas dark and visa versa
-            if(briInvert){
+            if( briInvert ) {
                 v = 255 - v;
             }
 
             //If we're in rainbow mode, pick a color using th HSV color wheel
             //Otherwise pick a color from the palette. Note that we use 255 blend steps for the whole palette.
             //We also need to dim the color by v.
-            if(rainbowMode){
+            if( rainbowMode ) {
                 colorOut = CHSV(c1 + t2, 255, v);
             } else {
                 colorOut = paletteUtilsPS::getPaletteGradColor(*palette, c1 + t2, 0, 255, blendLength);
                 nscale8x3(colorOut.r, colorOut.g, colorOut.b, v);
             }
 
-            for (uint16_t j = 0; j < numSegs; j++) {
+            for( uint16_t j = 0; j < numSegs; j++ ) {
                 //get the physical pixel location based on the line and seg numbers
                 //and then write out the color
-                pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, j,  numLines - i - 1);
+                pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, j, numLines - i - 1);
                 segDrawUtils::setPixelColor(*segSet, pixelNum, colorOut, 0, 0, 0);
             }
         }

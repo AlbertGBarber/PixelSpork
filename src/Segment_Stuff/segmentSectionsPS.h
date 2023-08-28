@@ -1,5 +1,5 @@
-#ifndef segmentSections_h
-#define segmentSections_h
+#ifndef segmentSectionsPS_h
+#define segmentSectionsPS_h
 
 //need to include arduino here to get it to compile
 #if ARDUINO >= 100
@@ -13,7 +13,7 @@
 /* 
 There are two different section types, stored as structs
 They are used to build segments. Each segment is composed of one type of section.
-(see SegmentSet.h for more info)
+(see SegmentSetPS.h for more info)
 
 Each section type works best for separate situations:
     The first type is a length of continuous pixels (segmentSecCont)
@@ -48,28 +48,28 @@ struct segmentSecCont {
     uint16_t startPixel;
     int16_t length;
     //used to mark if the segment should be treated as a single pixel in effects
-    bool single; //Will be default initialized to 0 if omitted from the section definition in your code
-                 //I've looked it up, it seems to be true, although some sources say it will be undefined
-                 //But so far it's worked in all my code....
-                 //You can't add a default value (ie single = false) b/c the base Arduino compiler doesn't like it (ok for ESP boards tho)
+    bool single;  //Will be default initialized to 0 if omitted from the section definition in your code
+                  //I've looked it up, it seems to be true, although some sources say it will be undefined
+                  //But so far it's worked in all my code....
+                  //You can't add a default value (ie single = false) b/c the base Arduino compiler doesn't like it (ok for ESP boards tho)
 
     //support for direction of segment section, not implemented elsewhere
     //avoid using due to increase in memory usage
     //instead, if you have a section facing the wrong way, use a negative section length, with the final pixel as the start pixel
     //bool direct;
-} ;
+};
 
 //A section containing an array of pixel addresses. These do not have to be continuous.
 //example definition:
 //const PROGMEM uint16_t pixel_arr[] = {0, 2, 1};
 //const PROGMEM segmentSecMix segmentSec = { pixel_arr, SIZE(pixel_arr) };
-//Segment segment0 = { segmentSec, true };
+//SegmentPS segment0 = { segmentSec, true };
 struct segmentSecMix {
     uint16_t *pixArr;
     uint16_t length;
     //used to mark if the segment should be treated as a single pixel in effects
-    bool single; //Will be default initialized to 0 if omitted from the section definition in your code
-                 //(see comment in segmentSecCont above)
-} ;
+    bool single;  //Will be default initialized to 0 if omitted from the section definition in your code
+                  //(see comment in segmentSecCont above)
+};
 
 #endif

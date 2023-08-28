@@ -3,11 +3,11 @@
 #define EffectSetPS_h
 
 #if ARDUINO >= 100
-#include "Arduino.h"
+    #include "Arduino.h"
 #else
-#include "WConstants.h"
-#include "WProgram.h"
-#include "pins_arduino.h"
+    #include "WConstants.h"
+    #include "WProgram.h"
+    #include "pins_arduino.h"
 #endif
 
 #include "Effects/EffectBasePS.h"
@@ -75,7 +75,7 @@ Creating An Effect Array:
 
     The palette blender was created with a direct variable like:
     <Before Arduino setup()>
-        PaletteBlenderPS PB(cybPnkPal, palette2, true, 30, 100);
+        PaletteBlenderPS PB(cybPnkPal_PS, palette2, true, 30, 100);
 
     While the StreamerSL was created with a pointer using new:
     <Before Arduino setup()>
@@ -151,7 +151,7 @@ class EffectSetPS {
     public:
         //Basic Constructor
         EffectSetPS(EffectBasePS **EffectArr, uint8_t NumEffects, uint16_t RunTime);
-        
+
         //Constructor with an effect destruct limit (see notes above)
         EffectSetPS(EffectBasePS **EffectArr, uint8_t NumEffects, uint8_t EffectDestLimit, uint16_t RunTime);
 
@@ -159,23 +159,23 @@ class EffectSetPS {
             **effectArr = nullptr,
             *getEffectPtr(uint8_t num);
 
-        uint8_t 
-            numEffects, //length of the effectSet array, this is public so you can do shenanigans,
-                        //like only having a single array for all effects, but manipulating the "length" 
-                        //so that you only use the bit you need
-            effectDestLimit = 0; //The destruct limit for the effect array (see notes above)
+        uint8_t
+            numEffects,           //length of the effectSet array, this is public so you can do shenanigans,
+                                  //like only having a single array for all effects, but manipulating the "length"
+                                  //so that you only use the bit you need
+            effectDestLimit = 0;  //The destruct limit for the effect array (see notes above)
 
         unsigned long
-            runTime, //run time of the effect effectArr (ms), passing 0 will set it as infinite
-            startTime = 0, //The time (ms) the first update() was called, for reference
-            timeElapsed = 0; //the elapsed time (ms), for reference
+            runTime,          //run time of the effect effectArr (ms), passing 0 will set it as infinite
+            startTime = 0,    //The time (ms) the first update() was called, for reference
+            timeElapsed = 0;  //the elapsed time (ms), for reference
 
-        bool 
-            infinite = false, //if set, the effect effectArr will run indefinitely
-            started = false, //has the effect effectArr started (only relevant if not infinite)
-            done = false; //has the effect effectArr finished (if not infinite)
-        
-        void 
+        bool
+            infinite = false,  //if set, the effect effectArr will run indefinitely
+            started = false,   //has the effect effectArr started (only relevant if not infinite)
+            done = false;      //has the effect effectArr finished (if not infinite)
+
+        void
             reset(void),
             setNewSet(EffectBasePS **newEffectArr, uint8_t newNumEffects),
             setEffect(EffectBasePS *newEffect, uint8_t effectNum),
@@ -185,12 +185,12 @@ class EffectSetPS {
             destructEffect(uint8_t effectNum),
             updateEffect(uint8_t effectNum),
             update(void);
-        
+
     private:
         unsigned long
             currentTime;
-        
-        void 
+
+        void
             init();
 };
 

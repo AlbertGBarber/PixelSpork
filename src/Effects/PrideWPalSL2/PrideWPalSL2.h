@@ -75,14 +75,14 @@ Example calls:
     The brightness wave values will be randomized, see init() for the ranges
     The effect updates at 80ms
 
-    PrideWPalSL2 prideWPal2(mainSegments, cybPnkPal, true, true, 80);
-    Will do an effect using colors from cybPnkPal
+    PrideWPalSL2 prideWPal2(mainSegments, cybPnkPal_PS, true, true, 80);
+    Will do an effect using colors from cybPnkPal_PS
     Colors will shift from the center to the outer segment
     The brightness wave values will be randomized, see init() for the ranges
     The effect updates at 80ms
 
-    PrideWPalSL2 prideWPal2(mainSegments, cybPnkPal, true, 20, 120, 250, 350, 20, 40, 3, 7, 60);
-    Will do an effect using colors from cybPnkPal
+    PrideWPalSL2 prideWPal2(mainSegments, cybPnkPal_PS, true, 20, 120, 250, 350, 20, 40, 3, 7, 60);
+    Will do an effect using colors from cybPnkPal_PS
     Colors will shift from the center to the outer segment, using 20 steps to blend the colors
     The brightDepth will vary from 120 to 250
     The briThetaInc16 will vary from 20 to 40 with a briThetaFreq of 350
@@ -125,53 +125,53 @@ Other Settings (see Inputs Guide for more info on most vars):
 class PrideWPalSL2 : public EffectBasePS {
     public:
         //Constructor for rainbow mode
-        PrideWPalSL2(SegmentSet &SegSet, bool Direct, bool RandomBriInc, uint16_t Rate);
+        PrideWPalSL2(SegmentSetPS &SegSet, bool Direct, bool RandomBriInc, uint16_t Rate);
 
         //Constructor for palette input
-        PrideWPalSL2(SegmentSet &SegSet, palettePS &Palette, bool Direct, bool RandomBriInc, uint16_t Rate);  
+        PrideWPalSL2(SegmentSetPS &SegSet, palettePS &Palette, bool Direct, bool RandomBriInc, uint16_t Rate);
 
         //Constructor for making a random palette
-        PrideWPalSL2(SegmentSet &SegSet, uint8_t numColors, bool Direct, bool RandomBriInc, uint16_t Rate);
+        PrideWPalSL2(SegmentSetPS &SegSet, uint8_t numColors, bool Direct, bool RandomBriInc, uint16_t Rate);
 
         //Constructor with inputs for all main variables
-        PrideWPalSL2(SegmentSet &SegSet, palettePS &Palette, bool Direct, uint8_t GradLength, 
-                     uint8_t BrightDepthMin, uint8_t BrightDepthMax, uint16_t BriThetaFreq, 
-                     uint8_t BriThetaInc16Min, uint8_t BriThetaInc16Max, uint8_t HueChangeMin, 
+        PrideWPalSL2(SegmentSetPS &SegSet, palettePS &Palette, bool Direct, uint8_t GradLength,
+                     uint8_t BrightDepthMin, uint8_t BrightDepthMax, uint16_t BriThetaFreq,
+                     uint8_t BriThetaInc16Min, uint8_t BriThetaInc16Max, uint8_t HueChangeMin,
                      uint8_t HueChangeMax, uint16_t Rate);
 
         ~PrideWPalSL2();
-        
+
         //commented values are values from Mark's code
         uint8_t
-            brightDepthMin = 120, //96 //how much the brightness varies by, min sets how long we stay in a flat color
-            brightDepthMax = 250, //224
-            briThetaInc16Min = 25, //How many "waves" we have
+            brightDepthMin = 120,   //96 //how much the brightness varies by, min sets how long we stay in a flat color
+            brightDepthMax = 250,   //224
+            briThetaInc16Min = 25,  //How many "waves" we have
             briThetaInc16Max = 40,
-            hueChangeMin = 3, //5 //sets how fast the colors shift
-            hueChangeMax = 7; //9
+            hueChangeMin = 3,  //5 //sets how fast the colors shift
+            hueChangeMax = 7;  //9
 
-        uint16_t 
-            gradLength = 20, //How many gradient steps to shift colors
-            briThetaFreq = 350; //203 //how long we spend transitioning through waves
-        
+        uint16_t
+            gradLength = 20,     //How many gradient steps to shift colors
+            briThetaFreq = 350;  //203 //how long we spend transitioning through waves
+
         bool
             direct,
             prideMode = false;
-        
+
         palettePS
             *palette = nullptr,
-            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
+            paletteTemp = {nullptr, 0};  //Must init structs w/ pointers set to null for safety
 
-        void 
-            randomizeBriInc(uint8_t briThetaMinMin, uint8_t briThetaMinMax, uint8_t briThetaMaxMin, uint8_t briThetaMaxMax ),
-            randomizeBriFreq( uint16_t briFreqMin, uint16_t briFreqMax ),
+        void
+            randomizeBriInc(uint8_t briThetaMinMin, uint8_t briThetaMinMax, uint8_t briThetaMaxMin, uint8_t briThetaMaxMax),
+            randomizeBriFreq(uint16_t briFreqMin, uint16_t briFreqMax),
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
             prevTime = 0;
-        
+
         uint8_t
             sat8,
             bri8,
@@ -196,13 +196,13 @@ class PrideWPalSL2 : public EffectBasePS {
             numLines,
             numSegs,
             segOut;
-    
+
         CRGB
             newColor,
             colorOut;
-        
+
         void
-            init(bool RandomBriInc, SegmentSet &SegSet, uint16_t Rate);
+            init(bool RandomBriInc, SegmentSetPS &SegSet, uint16_t Rate);
 };
 
 #endif

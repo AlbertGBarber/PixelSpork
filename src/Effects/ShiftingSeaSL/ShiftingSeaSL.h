@@ -42,7 +42,7 @@ Please note that this effect will not work with the colorModes of segDrawUtils::
 But you can find a rainbow version of the effect in ShiftingRainbowSeaPS.h
 
 The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
-passing in a SegmentSet with only one segment containing the whole strip.
+passing in a SegmentSetPS with only one segment containing the whole strip.
 
 Also note that the class needs a uint16_t array the length of the number of pixels in the segment in order to work
 So if you are short on ram, you might not be able to run this!
@@ -54,13 +54,13 @@ Example call:
 
     uint8_t pattern_arr = {0, 2, 1};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
-    ShiftingSeaSL shiftingSea(mainSegments, pattern, cybPnkPal, 20, 0, 3, 40);
-    Will shift through the colors of cybPnkPal according to the pattern (color 0, then 2, then 1),
+    ShiftingSeaSL shiftingSea(mainSegments, pattern, cybPnkPal_PS, 20, 0, 3, 40);
+    Will shift through the colors of cybPnkPal_PS according to the pattern (color 0, then 2, then 1),
     with 20 steps between each shift, using mode 0
     grouping pixels by 3, at a rate of 40ms
 
-    ShiftingSeaSL shiftingSea(mainSegments, cybPnkPal, 20, 0, 3, 40);
-    Will shift through the colors of cybPnkPal, with 20 steps between each shift, using mode 0
+    ShiftingSeaSL shiftingSea(mainSegments, cybPnkPal_PS, 20, 0, 3, 40);
+    Will shift through the colors of cybPnkPal_PS, with 20 steps between each shift, using mode 0
     grouping pixels by 3, at a rate of 40ms
 
     ShiftingSeaSL shiftingSea(mainSegments, 4, 15, 1, 1, 60);
@@ -103,13 +103,16 @@ Reference Vars:
 class ShiftingSeaSL : public EffectBasePS {
     public:
         //Constructor for effect with pattern and palette
-        ShiftingSeaSL(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t GradLength, uint8_t Smode, uint8_t Grouping, uint16_t Rate);
+        ShiftingSeaSL(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t GradLength,
+                      uint8_t Smode, uint8_t Grouping, uint16_t Rate);
 
         //Constructor for effect with palette
-        ShiftingSeaSL(SegmentSet &SegSet, palettePS &Palette, uint8_t GradLength, uint8_t Smode, uint8_t Grouping, uint16_t Rate);  
+        ShiftingSeaSL(SegmentSetPS &SegSet, palettePS &Palette, uint8_t GradLength, uint8_t Smode, uint8_t Grouping,
+                      uint16_t Rate);
 
         //Constructor for effect with randomly created palette
-        ShiftingSeaSL(SegmentSet &SegSet, uint8_t NumColors, uint8_t GradLength, uint8_t Smode, uint8_t Grouping, uint16_t Rate);
+        ShiftingSeaSL(SegmentSetPS &SegSet, uint8_t NumColors, uint8_t GradLength, uint8_t Smode, uint8_t Grouping,
+                      uint16_t Rate);
 
         //destructor
         ~ShiftingSeaSL();
@@ -117,62 +120,62 @@ class ShiftingSeaSL : public EffectBasePS {
         uint8_t
             shiftThreshold = 15,
             shiftStep = 1,
-            grouping, //for reference, set this using setGrouping()
-            sMode, //for reference, set this using setMode()
+            grouping,  //for reference, set this using setGrouping()
+            sMode,     //for reference, set this using setMode()
             gradLength;
-        
+
         uint16_t
             *offsets = nullptr,
-            totalCycleLength, //the total number of possible offsets a pixel can have (one for each fade color), for reference
-            cycleNum = 0; //tracks how many update's we've done, max value of totalCycleLength, for reference
-        
+            totalCycleLength,  //the total number of possible offsets a pixel can have (one for each fade color), for reference
+            cycleNum = 0;      //tracks how many update's we've done, max value of totalCycleLength, for reference
+
         bool
             randomShift = false,
             addBlank = false;
-        
-        CRGB 
+
+        CRGB
             blankColorOrig = 0,
             *blankColor = &blankColorOrig;
-        
+
         palettePS
             *palette = nullptr,
-            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety            
-        
+            paletteTemp = {nullptr, 0};  //Must init structs w/ pointers set to null for safety
+
         patternPS
             *pattern = nullptr,
-            patternTemp = {nullptr, 0, 0}; //Must init structs w/ pointers set to null for safety
-        
+            patternTemp = {nullptr, 0, 0};  //Must init structs w/ pointers set to null for safety
+
         void
             setMode(uint8_t newMode),
             setGrouping(uint16_t newGrouping),
             resetOffsets(),
             setPaletteAsPattern(),
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
             prevTime = 0;
 
-        uint8_t 
+        uint8_t
             patternLen,
-            curColorIndex, 
+            curColorIndex,
             nextColorIndex,
             gradStep;
 
         uint16_t
             numLines,
-            numLinesMax = 0, //used for tracking the memory size of the offset array
+            numLinesMax = 0,  //used for tracking the memory size of the offset array
             curPatIndex,
             step = 0;
-        
+
         CRGB
             color,
             currentColor,
             nextColor;
-        
+
         void
-            init(SegmentSet &SegSet, uint16_t Rate),
+            init(SegmentSetPS &SegSet, uint16_t Rate),
             setTotalCycleLen();
 };
 

@@ -77,34 +77,35 @@ Reference Vars:
 */
 class LarsonScannerSL : public EffectBasePS {
     public:
-        LarsonScannerSL(SegmentSet &SegSet, uint8_t ScanType, CRGB ScanColor, CRGB BgColor, uint8_t EyeSize, uint8_t TrailLength, uint16_t Rate);  
+        LarsonScannerSL(SegmentSetPS &SegSet, uint8_t ScanType, CRGB ScanColor, CRGB BgColor,
+                        uint8_t EyeSize, uint8_t TrailLength, uint16_t Rate);
 
         ~LarsonScannerSL();
-        
+
         uint8_t
             scanType,
             trailLength;
 
-        bool 
+        bool
             bounce = true;
 
         uint16_t
             eyeSize;
 
-        CRGB 
+        CRGB
             bgColorOrig,
-            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
-        
-        palettePS
-            palette = {nullptr, 0}; //palette used for ParticlePS instance. Init to empty for safety
-        
-        ParticlesSL
-            *scannerInst = nullptr; //pointer to the ParticlePS instance
-            
-        particleSetPS
-            particleSet = {nullptr, 0}; //the particle set used in the ParticlePS instance. Init to empty for safety
+            *bgColor = nullptr;  //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
 
-        void 
+        palettePS
+            palette = {nullptr, 0};  //palette used for ParticlePS instance. Init to empty for safety
+
+        ParticlesSL
+            *scannerInst = nullptr;  //pointer to the ParticlePS instance
+
+        particleSetPS
+            particleSet = {nullptr, 0};  //the particle set used in the ParticlePS instance. Init to empty for safety
+
+        void
             setColorMode(uint8_t colorMode, bool bgColorMode),
             setColor(CRGB color),
             setScanType(uint8_t newType),
@@ -112,13 +113,13 @@ class LarsonScannerSL : public EffectBasePS {
             setEyeSize(uint8_t newEyeSize),
             setBounce(bool newBounce),
             update(void);
-    
+
     private:
         unsigned long
             prevRate = 0,
             currentTime,
             prevTime = 0;
-        
+
         uint16_t
             numLines;
 };

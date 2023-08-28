@@ -52,8 +52,8 @@ Example calls:
         z is mode 0, so is static at 0;
     The effect updates at 40ms
     
-    Noise16PS noise16PS(mainSegments, cybPnkPal, 20, 600, 1, 0, 2, 40, 10, 5, 60);
-    Will produce a noise effect using colors from cybPnkPal
+    Noise16PS noise16PS(mainSegments, cybPnkPal_PS, 20, 600, 1, 0, 2, 40, 10, 5, 60);
+    Will produce a noise effect using colors from cybPnkPal_PS
     There are 40 blend steps between each color
     An overall scaling value of 600 is applied to the noise
     The noise has the following inputs:
@@ -86,39 +86,39 @@ Functions:
 class Noise16PS : public EffectBasePS {
     public:
         //Constructor with palette
-        Noise16PS(SegmentSet &SegSet, palettePS &Palette, uint16_t BlendSteps, uint16_t BlendScale,
+        Noise16PS(SegmentSetPS &SegSet, palettePS &Palette, uint16_t BlendSteps, uint16_t BlendScale,
                   uint8_t X_mode, uint8_t Y_mode, uint8_t Z_mode, uint16_t X_val, uint16_t Y_val, uint16_t Z_val, uint16_t Rate);
 
         //Constructor with randomly generated palette
-        Noise16PS(SegmentSet &SegSet, uint8_t numColors, uint16_t BlendSteps, uint16_t BlendScale,
+        Noise16PS(SegmentSetPS &SegSet, uint8_t numColors, uint16_t BlendSteps, uint16_t BlendScale,
                   uint8_t X_mode, uint8_t Y_mode, uint8_t Z_mode, uint16_t X_val, uint16_t Y_val, uint16_t Z_val, uint16_t Rate);
 
-        ~Noise16PS(); 
-        
+        ~Noise16PS();
+
         uint8_t
             x_mode,
             y_mode,
             z_mode,
             blendSteps;
-        
+
         uint16_t
             x_val,
-            y_val, 
+            y_val,
             z_val,
-            blendScale; // the "zoom factor" for the noise
-        
-        palettePS 
-            *palette = nullptr,
-            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
+            blendScale;  // the "zoom factor" for the noise
 
-        void 
+        palettePS
+            *palette = nullptr,
+            paletteTemp = {nullptr, 0};  //Must init structs w/ pointers set to null for safety
+
+        void
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
             prevTime = 0;
-        
+
         uint8_t
             bri,
             noise;
@@ -132,18 +132,18 @@ class Noise16PS : public EffectBasePS {
             totSegLen,
             pixelNum,
             numSegs;
-        
-        uint32_t 
+
+        uint32_t
             real_x,
             real_y,
             real_z,
-            getShiftVal( uint8_t shiftMode, uint16_t scale );
-        
-        CRGB 
+            getShiftVal(uint8_t shiftMode, uint16_t scale);
+
+        CRGB
             colorOut;
-        
-        void 
-            init(SegmentSet &SegSet, uint16_t Rate);
+
+        void
+            init(SegmentSetPS &SegSet, uint16_t Rate);
 };
 
 #endif

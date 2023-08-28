@@ -15,7 +15,7 @@ or choose to have a palette of random color be created.
 You can customize how the effect looks by adjusting the blendSteps and blendScale values
 I encourage playing with these, since they can change the effect a lot.
 
-Note that by default, the effect uses the lavaPal palette from paletteList.h.
+Note that by default, the effect uses the lavaPal_PS palette from paletteList.h.
 
 For a similar effect with some more options, see NoiseSL.
 
@@ -39,8 +39,8 @@ Example calls:
     and a blendScale of 20 (see inputs for info below)
     at an update rate of 10ms
 
-    LavaPS lava(mainSegments, cybPnkPal, 40, 80, 10);
-    Will do a lava effect using cybPnkPal for colors, 
+    LavaPS lava(mainSegments, cybPnkPal_PS, 40, 80, 10);
+    Will do a lava effect using cybPnkPal_PS for colors, 
     with 40 blendSteps
     and a blendScale of 80
     at an update rate of 10ms
@@ -53,7 +53,7 @@ Example calls:
 
 Constructor inputs: 
     palette (optional, see constructors) -- A custom palette passed to the effect, is a pointer. 
-                                            Will be bound to the lavaPal if omitted.
+                                            Will be bound to the lavaPal_PS if omitted.
     numColors (optional, see constructors) -- How many colors will be in the randomly created palette
     blendSteps (optional, see constructors) -- Sets how many steps are used to blend between each color
                                                Basically changes how fast the colors blend
@@ -84,47 +84,47 @@ Reference vars:
 class LavaPS : public EffectBasePS {
     public:
         //Constructor for effect using default lava palette, blendSteps and blendScale
-        LavaPS(SegmentSet &SegSet, uint16_t Rate);  
+        LavaPS(SegmentSetPS &SegSet, uint16_t Rate);
 
         //Constructor for effect with default lava palette, but custom scale and steps
-        LavaPS(SegmentSet &SegSet, uint16_t BlendSteps, uint16_t BlendScale, uint16_t Rate);  
+        LavaPS(SegmentSetPS &SegSet, uint16_t BlendSteps, uint16_t BlendScale, uint16_t Rate);
 
         //Constructor for effect using colors from palette
-        LavaPS(SegmentSet &SegSet, palettePS &Palette, uint16_t BlendSteps, uint16_t BlendScale, uint16_t Rate);
-        
+        LavaPS(SegmentSetPS &SegSet, palettePS &Palette, uint16_t BlendSteps, uint16_t BlendScale, uint16_t Rate);
+
         //constructor for a randomly created palette
-        LavaPS(SegmentSet &SegSet, uint8_t numColors, uint16_t BlendSteps, uint16_t BlendScale, uint16_t Rate);
-    
+        LavaPS(SegmentSetPS &SegSet, uint8_t numColors, uint16_t BlendSteps, uint16_t BlendScale, uint16_t Rate);
+
         ~LavaPS();
-        
-        uint8_t 
-            rainSat = 255, //saturation value for rainbow mode
-            rainVal = 255, //"value" value for rainbow mode
-            hueOffset = 0; //offset for the hue in rainbow mode (helps keeps the colors)
-        
+
+        uint8_t
+            rainSat = 255,  //saturation value for rainbow mode
+            rainVal = 255,  //"value" value for rainbow mode
+            hueOffset = 0;  //offset for the hue in rainbow mode (helps keeps the colors)
+
         uint16_t
             blendSteps = 30,
             blendScale = 80,
             brightnessScale = 150,
-            hueRateOrig = 235, //Default hue shifting time (ms), does a complete hue cycle ~every min (only relevant for rainbow mode)
-            *hueRate = &hueRateOrig; //The hue shifting time (ms), by default it's bound to hueRateOrig, but it's a pointer so you can bind it externally
-        
+            hueRateOrig = 235,        //Default hue shifting time (ms), does a complete hue cycle ~every min (only relevant for rainbow mode)
+            *hueRate = &hueRateOrig;  //The hue shifting time (ms), by default it's bound to hueRateOrig, but it's a pointer so you can bind it externally
+
         bool
             rainbowMode = false;
-        
+
         palettePS
             *palette = nullptr,
-            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
-            
-        void 
+            paletteTemp = {nullptr, 0};  //Must init structs w/ pointers set to null for safety
+
+        void
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
             prevTime = 0,
             prevHueTime = 0;
-        
+
         uint8_t
             brightness;
 
@@ -135,12 +135,12 @@ class LavaPS : public EffectBasePS {
             totSegLen,
             numSegs,
             pixelNum;
-        
-        CRGB 
+
+        CRGB
             colorOut;
-        
+
         void
-            init(SegmentSet &SegSet, uint16_t Rate);
+            init(SegmentSetPS &SegSet, uint16_t Rate);
 };
 
 #endif

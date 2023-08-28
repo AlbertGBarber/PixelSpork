@@ -70,9 +70,9 @@ Example calls:
     The blendSteps will be shifted every 5000ms (5 sec).
     The effect updates at 80ms.
     
-    NoiseGradSL noiseGrad(mainSegments, cybPnkPal, 0, 8, 16, 5, 20, 10, 3000, 80);
+    NoiseGradSL noiseGrad(mainSegments, cybPnkPal_PS, 0, 8, 16, 5, 20, 10, 3000, 80);
     NoiseGradSL.bgColorMode = 6; //put in Arduino Setup()
-    Will produce an effect using colors from cybPnkPal
+    Will produce an effect using colors from cybPnkPal_PS
     The background is blank (but using bgColorMode of 6, ie a shifting rainbow)
     There are a minimum of 8 blendSteps and range of 16 for a maximum blendSteps of 24
     The phaseScale is 5, the freqScale is 20, and the briScale is 10.
@@ -106,52 +106,52 @@ Functions:
 class NoiseGradSL : public EffectBasePS {
     public:
         //Constructor with palette
-        NoiseGradSL(SegmentSet &SegSet, palettePS &Palette, CRGB BgColor, uint16_t BlendStepsBase, uint16_t BlendStepsRange,
-                    uint8_t PhaseScale, uint8_t FreqScale, uint8_t BriScale, uint16_t BlendRate, uint16_t Rate);  
+        NoiseGradSL(SegmentSetPS &SegSet, palettePS &Palette, CRGB BgColor, uint16_t BlendStepsBase, uint16_t BlendStepsRange,
+                    uint8_t PhaseScale, uint8_t FreqScale, uint8_t BriScale, uint16_t BlendRate, uint16_t Rate);
 
         //Constructor with randomly generated palette
-        NoiseGradSL(SegmentSet &SegSet, uint8_t numColors, CRGB BgColor, uint16_t BlendStepsBase, uint16_t BlendStepsRange,
+        NoiseGradSL(SegmentSetPS &SegSet, uint8_t numColors, CRGB BgColor, uint16_t BlendStepsBase, uint16_t BlendStepsRange,
                     uint8_t PhaseScale, uint8_t FreqScale, uint8_t BriScale, uint16_t BlendRate, uint16_t Rate);
-        
+
         ~NoiseGradSL();
-        
-        uint8_t 
+
+        uint8_t
             bgColorMode = 0,
-            phaseScale, 
-            freqScale, 
+            phaseScale,
+            freqScale,
             briScale,
-            briFreq = 5; 
+            briFreq = 5;
 
         uint16_t
             blendStepsBase,
             blendStepsRange,
             blendSteps = 10;
-        
-        uint16_t 
+
+        uint16_t
             blendRateOrig,
             *blendRate = nullptr;
-        
+
         bool
             doBrightness = true;
 
-        CRGB 
+        CRGB
             bgColorOrig,
-            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
-        
-        palettePS 
-            *palette = nullptr,
-            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
+            *bgColor = nullptr;  //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
 
-        void 
+        palettePS
+            *palette = nullptr,
+            paletteTemp = {nullptr, 0};  //Must init structs w/ pointers set to null for safety
+
+        void
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
             blendShiftTime,
             prevTime = 0,
             prevBlendShiftTime = 0;
-        
+
         int8_t
             blendStepsStep = 0;
 
@@ -170,14 +170,14 @@ class NoiseGradSL : public EffectBasePS {
             pixelNum,
             numSegs,
             totBlendLength;
-        
-        CRGB 
+
+        CRGB
             colorTarget,
             colorOut;
-        
+
         void
             shiftBlendSteps(),
-            init(CRGB BgColor, uint16_t BlendRate, SegmentSet &SegSet, uint16_t Rate);
+            init(CRGB BgColor, uint16_t BlendRate, SegmentSetPS &SegSet, uint16_t Rate);
 };
 
 #endif

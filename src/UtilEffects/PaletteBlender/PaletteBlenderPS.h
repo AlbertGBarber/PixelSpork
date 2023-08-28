@@ -64,55 +64,56 @@ Notes:
 */
 class PaletteBlenderPS : public EffectBasePS {
     public:
-        PaletteBlenderPS(palettePS &StartPalette, palettePS &EndPalette, bool looped, uint8_t TotalSteps, uint16_t Rate);
-        
+        PaletteBlenderPS(palettePS &StartPalette, palettePS &EndPalette, bool looped, uint8_t TotalSteps,
+                         uint16_t Rate);
+
         ~PaletteBlenderPS();
 
         uint8_t
-            step, //the current step, mainly for reference, not intended to be manually set
-            totalSteps; //The total number of steps taken to blend between the palettes, you can change this on the fly
-        
-        uint16_t 
+            step,        //the current step, mainly for reference, not intended to be manually set
+            totalSteps;  //The total number of steps taken to blend between the palettes, you can change this on the fly
+
+        uint16_t
             pauseTime = 0;
-        
+
         bool
             looped,
             randomize = false,
             compliment = false,
             paused = false,
             blendEnd = false;
-        
-        CRGB 
+
+        CRGB
             *blendPalette_arr = nullptr;
-        
+
         palettePS
-            blendPalette = {nullptr, 0}; //the output palette from the blend (is filled in when the class is constructed)
-        
+            blendPalette = {nullptr, 0};  //the output palette from the blend (is filled in when the class is constructed)
+
         palettePS
             *startPalette = nullptr,
             *endPalette = nullptr;
-        
+
         void
             reset(palettePS &StartPalette, palettePS &EndPalette), //resets just the colors (also starts the blend again)
             reset(palettePS &StartPalette, palettePS &EndPalette, uint8_t TotalSteps, uint16_t Rate), //resets all vars
             reset(), //resets the loop vars, restarting the blend from the beginning
             setupBlendPalette(uint8_t blendPaletteLength), //used only by PaletteCycle, not for general use!
             update();
-    
+
     private:
         unsigned long
             currentTime,
             pauseStartTime = 0,
             prevTime = 0;
 
-        uint8_t 
+        uint8_t
             blendPaletteMaxLen = 0;
 
         CRGB
-           startColor,
-           endColor,
-           newColor;
-        
+            startColor,
+            endColor,
+            newColor;
+
         palettePS
             *palTempPtr = nullptr;
 };

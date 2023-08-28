@@ -21,11 +21,11 @@
 #pragma once
 
 #if ARDUINO >= 100
-#include "Arduino.h"
+    #include "Arduino.h"
 #else
-#include "WConstants.h"
-#include "WProgram.h"
-#include "pins_arduino.h"
+    #include "WConstants.h"
+    #include "WProgram.h"
+    #include "pins_arduino.h"
 #endif
 
 #include "./Include_Lists/GlobalVars/GlobalVars.h"
@@ -65,8 +65,8 @@ Utils TODO:
     -- Function that sets up a synced rainbow across multiple segment sets. 
        Basically it just goes through each segment set and sets various rainbow offsets and lengths.
     -- Copy one section to another?
-    -- Segment x,y. Not a util, but a function added to segments sets. 
-       Segment sets are already matrixes -> their dimensions are numSegs x numLines. 
+    -- segment x,y. Not a util, but a function added to segments sets. 
+       segment sets are already matrixes -> their dimensions are numSegs x numLines. 
        The function would just return the pixel at the passed in line and seg num.
 */
 

@@ -84,43 +84,43 @@ Flags:
 */
 class EffectSetFaderPS : public EffectBasePS {
     public:
-        EffectSetFaderPS(EffectSetPS &EffectSet, uint16_t FadeRunTime); 
+        EffectSetFaderPS(EffectSetPS &EffectSet, uint16_t FadeRunTime);
 
-        ~EffectSetFaderPS(); 
+        ~EffectSetFaderPS();
 
         uint16_t
-            fadeRunTime, //For reference, set with setupFader()
-            rateOrig = 60, //The default update rate (ms)
-            *rate = &rateOrig; //The update rate is a pointer, so it can be tied to and external var if needed, 
-                               //by default it's tied to rateOrig
-        
+            fadeRunTime,        //For reference, set with setupFader()
+            rateOrig = 60,      //The default update rate (ms)
+            *rate = &rateOrig;  //The update rate is a pointer, so it can be tied to and external var if needed,
+                                //by default it's tied to rateOrig
+
         bool
             fadeIn = true,
             fadeOut = true,
             fadeInStarted = false,
             fadeOutStarted = false;
-        
+
         EffectSetPS
             *effectSet = nullptr;
 
         EffectFaderPS
             *effectFader = nullptr;
 
-        void 
+        void
             setupFader(uint16_t newFadeRunTime),
             reset(EffectSetPS &newEffectSet, uint16_t newFadeRunTime),
             reset(),
             resetFader(),
             resetBrightness(),
             update();
-    
+
     private:
         unsigned long
             currentTime,
             prevTime = 0,
             *runTime = nullptr,
             *setTimeElap;
-        
+
         bool
             *infinite = nullptr,
             firstUpdate = true,

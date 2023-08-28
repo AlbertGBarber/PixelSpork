@@ -38,7 +38,7 @@ I've also allowed you to adjust the pause time factor between waves.
 I have this set to 2 (the original was 4), which makes the pause time very short.
 
 The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
-passing in a SegmentSet with only one segment containing the whole strip.
+passing in a SegmentSetPS with only one segment containing the whole strip.
 
 Rainbow colors are controlled by rainbowMode, true will do rainbows.
 
@@ -62,8 +62,8 @@ Example calls:
     Will do a a rainbow edge burst with a burst freq of 15
     The effect updates at 80ms
 
-    EdgeBurstSL edgeBurst(mainSegments, cybPnkPal, 10, 80);
-    Will do a an edge burst using colors from cybPnkPal with a burst freq of 10
+    EdgeBurstSL edgeBurst(mainSegments, cybPnkPal_PS, 10, 80);
+    Will do a an edge burst using colors from cybPnkPal_PS with a burst freq of 10
     The effect updates at 80ms
 
     EdgeBurstSL edgeBurst(mainSegments, 3, true, 10, 80);
@@ -100,65 +100,65 @@ Reference vars:
 class EdgeBurstSL : public EffectBasePS {
     public:
         //Constructor for rainbow mode
-        EdgeBurstSL(SegmentSet &SegSet, uint8_t BurstFreq, uint16_t Rate);  
+        EdgeBurstSL(SegmentSetPS &SegSet, uint8_t BurstFreq, uint16_t Rate);
 
         //Constructor for colors from palette
-        EdgeBurstSL(SegmentSet &SegSet, palettePS &Palette, uint8_t BurstFreq, uint16_t Rate);
+        EdgeBurstSL(SegmentSetPS &SegSet, palettePS &Palette, uint8_t BurstFreq, uint16_t Rate);
 
         //Constructor for a randomly created palette
         //RandomizePal = true will randomize the palette for each wave
-        EdgeBurstSL(SegmentSet &SegSet, uint8_t numColors, bool RandomizePal, uint8_t BurstFreq, uint16_t Rate);
+        EdgeBurstSL(SegmentSetPS &SegSet, uint8_t numColors, bool RandomizePal, uint8_t BurstFreq, uint16_t Rate);
 
         ~EdgeBurstSL();
-        
+
         uint8_t
             burstPause = 2,
             burstFreq = 15;
-        
-        uint16_t 
+
+        uint16_t
             burstCount = 0;
-        
+
         bool
             randomizePal = true,
             rainbowMode = false;
-        
+
         palettePS
             *palette = nullptr,
-            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
+            paletteTemp = {nullptr, 0};  //Must init structs w/ pointers set to null for safety
 
-        void 
+        void
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
             prevTime = 0;
-        
+
         int16_t
             edge;
-        
+
         uint8_t
             beatVal,
             t1,
             f,
             v,
             h;
-        
+
         uint16_t
             offset = 0,
             blendLength,
             pixelNum,
             numLines,
             numSegs;
-        
-        bool    
+
+        bool
             offsetFlipFlop = true;
-    
-        CRGB 
+
+        CRGB
             colorOut;
-        
+
         void
-            init(SegmentSet &SegSet, uint16_t Rate),
+            init(SegmentSetPS &SegSet, uint16_t Rate),
             pickRandStart();
 };
 

@@ -70,8 +70,8 @@ By default it is bound to bgColorOrig, which is set to 0 (blank color).
 You can adjust most of the effect variables on the fly, but changing the segWipeDir will only take effect once a wipe loops.
 
 Example calls: 
-    ColorWipeSeg colorWipeSeg(mainSegments, cybPnkPal, 0, false, false, true, 60);
-    Will do a color wipe along mainSegment's segments using colors from cybPnkPal
+    ColorWipeSeg colorWipeSeg(mainSegments, cybPnkPal_PS, 0, false, false, true, 60);
+    Will do a color wipe along mainSegment's segments using colors from cybPnkPal_PS
     (A pattern will be generated to match the palette)
     The style is 0, each segment will alternate colors according to the pattern.
     Alternate is false, so the wipes will all wipe in the same direction.
@@ -81,8 +81,8 @@ Example calls:
     
     uint8_t pattern_arr = {0, 1, 2};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
-    ColorWipeSeg colorWipeSeg(mainSegments, cybPnkPal, pattern, 1, true, true, true, 60);
-    Will do a color wipe along mainSegment's segments using colors from cybPnkPal according to pattern
+    ColorWipeSeg colorWipeSeg(mainSegments, cybPnkPal_PS, pattern, 1, true, true, true, 60);
+    Will do a color wipe along mainSegment's segments using colors from cybPnkPal_PS according to pattern
     The style is 1, each segment pixel will alternate colors according to the pattern.
     Alternate is true, so the wipes will alternate wipe directions for each segment.
     Both the wipe direction and segWipeDir are true.
@@ -145,34 +145,34 @@ Flags:
 class ColorWipeSeg : public EffectBasePS {
     public:
         //Constructor using pattern and palette
-        ColorWipeSeg(SegmentSet &SegSet, palettePS &Palette, patternPS &Pattern, uint8_t Style,
-                      bool Alternate, bool WipeDirect, bool SegWipeDir, uint16_t Rate);
+        ColorWipeSeg(SegmentSetPS &SegSet, palettePS &Palette, patternPS &Pattern, uint8_t Style,
+                     bool Alternate, bool WipeDirect, bool SegWipeDir, uint16_t Rate);
 
         //Constructor using palette alone
-        ColorWipeSeg(SegmentSet &SegSet, palettePS &Palette, uint8_t Style, bool Alternate, bool WipeDirect, 
+        ColorWipeSeg(SegmentSetPS &SegSet, palettePS &Palette, uint8_t Style, bool Alternate, bool WipeDirect,
                      bool SegWipeDir, uint16_t Rate);
 
-        //Constructor for a single color wipe           
-        ColorWipeSeg(SegmentSet &SegSet, CRGB WipeColor, uint8_t Style, bool Alternate, bool WipeDirect, 
+        //Constructor for a single color wipe
+        ColorWipeSeg(SegmentSetPS &SegSet, CRGB WipeColor, uint8_t Style, bool Alternate, bool WipeDirect,
                      bool SegWipeDir, uint16_t Rate);
-    
+
         ~ColorWipeSeg();
 
-        CRGB 
-            bgColorOrig = 0, //default background color (blank)
-            *bgColor = &bgColorOrig; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color) 
-        
+        CRGB
+            bgColorOrig = 0,          //default background color (blank)
+            *bgColor = &bgColorOrig;  //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+
         uint8_t
             style,
             colorMode = 0,
             bgColorMode = 0;
-        
+
         uint16_t
-            pixelCount = 0, //for reference
-            segWipeCount = 0, //for reference
-            patOffset = 0, //for reference
-            loopCount = 0; //for reference
-        
+            pixelCount = 0,    //for reference
+            segWipeCount = 0,  //for reference
+            patOffset = 0,     //for reference
+            loopCount = 0;     //for reference
+
         //General bools
         bool
             done = false,
@@ -186,26 +186,26 @@ class ColorWipeSeg : public EffectBasePS {
             altSegWipeDirLoop = false,
             altWipeDirLoop = false,
             bgLoop = false,
-            bgAltLoop = false, //only matters if altWipeDirLoop is true
+            bgAltLoop = false,  //only matters if altWipeDirLoop is true
             shiftPatLoop = false,
             patShiftDir = false;
-        
+
         palettePS
             *palette = nullptr,
-            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
-        
+            paletteTemp = {nullptr, 0};  //Must init structs w/ pointers set to null for safety
+
         patternPS
             *pattern = nullptr,
-            patternTemp = {nullptr, 0, 0}; //Must init structs w/ pointers set to null for safety
+            patternTemp = {nullptr, 0, 0};  //Must init structs w/ pointers set to null for safety
 
-        void 
+        void
             reset(),
             setPaletteAsPattern(),
             resetLoop(),
-            setUpLoop(bool nLooped, bool nBgLoop, bool nShiftPatLoop, bool nPatShiftDir, bool nAltWipeDirLoop, 
+            setUpLoop(bool nLooped, bool nBgLoop, bool nShiftPatLoop, bool nPatShiftDir, bool nAltWipeDirLoop,
                       bool nBgAltLoop, bool nAltSegWipeDirLoop),
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
@@ -216,7 +216,7 @@ class ColorWipeSeg : public EffectBasePS {
             segStep,
             patternStep;
 
-        uint8_t 
+        uint8_t
             palIndex,
             modeOut;
 
@@ -229,18 +229,18 @@ class ColorWipeSeg : public EffectBasePS {
             endPixel,
             pixelNum,
             lineNum;
-        
+
         bool
             startingDirect,
             bgWipe = false;
-        
-        CRGB 
+
+        CRGB
             colorOut;
-        
-        void 
+
+        void
             setUpWipeOrder(),
             setupSegWipe(),
-            init(SegmentSet &SegSet, uint16_t Rate);
+            init(SegmentSetPS &SegSet, uint16_t Rate);
 };
 
 #endif

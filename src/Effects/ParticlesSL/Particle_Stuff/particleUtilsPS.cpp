@@ -6,42 +6,42 @@
 using namespace particleUtilsPS;
 
 //resets a given particle back to it's starting position and sets it's update time to 0
-void particleUtilsPS::resetParticle(particlePS *particle){
+void particleUtilsPS::resetParticle(particlePS *particle) {
     particle->position = particle->startPosition;
     particle->lastUpdateTime = 0;
 }
 
 //resets a given particle in a particle set back to it's starting position and sets it's update time to 0
-void particleUtilsPS::resetParticle(particleSetPS &particleSet, uint8_t partNum){
+void particleUtilsPS::resetParticle(particleSetPS &particleSet, uint8_t partNum) {
     resetParticle(particleSet.particleArr[partNum]);
 }
 
 //resets a set of particles back to their starting position and sets their update time to 0
-void particleUtilsPS::resetParticleSet(particleSetPS &particleSet){
-    for(uint8_t i = 0; i < particleSet.length; i++ ){
+void particleUtilsPS::resetParticleSet(particleSetPS &particleSet) {
+    for( uint8_t i = 0; i < particleSet.length; i++ ) {
         resetParticle(particleSet, i);
     }
-}       
+}
 
 //Fills in a given particle set with particles using the passed in options
 //The option names are the same as used in the individual setParticle functions and do the same things
 //ie maxPosition will be passed to setParticleSetPositions() as the maxPosition input
 //See each of the individual functions for what the options do
-//NOTE: the particles are created using new, so don't forget to call freeParticleSet() or freeParticle() once you are 
+//NOTE: the particles are created using new, so don't forget to call freeParticleSet() or freeParticle() once you are
 //finished with a particleSet
-particleSetPS particleUtilsPS::buildParticleSet(uint8_t numParticles, uint16_t maxPosition, uint8_t direction, uint16_t baseSpeed, 
-                                                uint16_t speedRange, uint16_t size, uint16_t sizeRange, uint8_t trailType, 
-                                                uint8_t trailSize, uint8_t trailRange, uint8_t bounce, uint8_t colorIndex, 
-                                                bool randColor){
+particleSetPS particleUtilsPS::buildParticleSet(uint8_t numParticles, uint16_t maxPosition, uint8_t direction, uint16_t baseSpeed,
+                                                uint16_t speedRange, uint16_t size, uint16_t sizeRange, uint8_t trailType,
+                                                uint8_t trailSize, uint8_t trailRange, uint8_t bounce, uint8_t colorIndex,
+                                                bool randColor) {
 
     //particlePS **particleArr = new particlePS*[numParticles];
-    particlePS **particleArr = (particlePS**) malloc(numParticles * sizeof(particlePS*));
-    particleSetPS newParticleSet = { particleArr, numParticles, numParticles };
+    particlePS **particleArr = (particlePS **)malloc(numParticles * sizeof(particlePS *));
+    particleSetPS newParticleSet = {particleArr, numParticles, numParticles};
 
     //create a new set of particles
-    for(uint8_t i = 0; i < numParticles; i++ ){
+    for( uint8_t i = 0; i < numParticles; i++ ) {
         //particlePS *p = new particlePS();
-        particlePS *p = (particlePS*) malloc(sizeof(particlePS));
+        particlePS *p = (particlePS *)malloc(sizeof(particlePS));
         newParticleSet.setParticle(p, i);
     }
 
@@ -59,11 +59,11 @@ particleSetPS particleUtilsPS::buildParticleSet(uint8_t numParticles, uint16_t m
 //The option names are the same as used in the individual setParticle functions and do the same things
 //ie maxPosition will be passed to setParticleSetPositions() as the maxPosition input
 //See each of the individual functions for what the options do
-void particleUtilsPS::randomizeParticleSet(particleSetPS &particleSet, uint16_t maxPosition, uint8_t direction, uint16_t baseSpeed, 
-                                           uint16_t speedRange, uint16_t size, uint16_t sizeRange, uint8_t trailType, uint8_t trailSize, 
-                                           uint8_t trailRange, uint8_t bounce, uint8_t colorIndex, bool randColor){
-    for(uint8_t i = 0; i < particleSet.length; i++ ){
-        randomizeParticle(particleSet, i, maxPosition, direction, baseSpeed, speedRange, size, 
+void particleUtilsPS::randomizeParticleSet(particleSetPS &particleSet, uint16_t maxPosition, uint8_t direction, uint16_t baseSpeed,
+                                           uint16_t speedRange, uint16_t size, uint16_t sizeRange, uint8_t trailType, uint8_t trailSize,
+                                           uint8_t trailRange, uint8_t bounce, uint8_t colorIndex, bool randColor) {
+    for( uint8_t i = 0; i < particleSet.length; i++ ) {
+        randomizeParticle(particleSet, i, maxPosition, direction, baseSpeed, speedRange, size,
                           sizeRange, trailType, trailSize, trailRange, bounce, colorIndex, randColor);
     }
 }
@@ -72,9 +72,9 @@ void particleUtilsPS::randomizeParticleSet(particleSetPS &particleSet, uint16_t 
 //The option names are the same as used in the individual setParticle functions and do the same things
 //ie maxPosition will be passed to setParticleSetPositions() as the maxPosition input
 //See each of the individual functions for what the options do
-void particleUtilsPS::randomizeParticle(particleSetPS &particleSet, uint8_t partNum, uint16_t maxPosition, uint8_t direction, uint16_t baseSpeed, 
-                                        uint16_t speedRange, uint16_t size, uint16_t sizeRange, uint8_t trailType, uint8_t trailSize, 
-                                        uint8_t trailRange, uint8_t bounce, uint8_t colorIndex, bool randColor){
+void particleUtilsPS::randomizeParticle(particleSetPS &particleSet, uint8_t partNum, uint16_t maxPosition, uint8_t direction, uint16_t baseSpeed,
+                                        uint16_t speedRange, uint16_t size, uint16_t sizeRange, uint8_t trailType, uint8_t trailSize,
+                                        uint8_t trailRange, uint8_t bounce, uint8_t colorIndex, bool randColor) {
 
     setParticleSetPosition(particleSet, partNum, maxPosition, true);
     setParticleSetDirection(particleSet, partNum, direction);
@@ -105,14 +105,14 @@ void particleUtilsPS::randomizeParticle(particleSetPS &particleSet, uint8_t part
 //calls setParticleSetPositions() using 100 as the "max" value. opt2 and opt3 are not used
 //Another example: setParticleSetProp(particleSet, 4, 1, 5, 2);
 //calls setParticleSetTrails() using  1 (opt1) as the trailType, 5 (opt2) ad the trailSize, and 2 (opt3) as the range
-void particleUtilsPS::setParticleSetProp(particleSetPS &particleSet, uint8_t propNum, uint16_t opt1, uint16_t opt2, uint16_t opt3){
+void particleUtilsPS::setParticleSetProp(particleSetPS &particleSet, uint8_t propNum, uint16_t opt1, uint16_t opt2, uint16_t opt3) {
     particleSetLength = particleSet.length;
     randColor = false;
-    if(opt2 != 0){
+    if( opt2 != 0 ) {
         randColor = true;
     }
-    for(uint8_t i = 0; i < particleSetLength; i++ ){
-        switch (propNum) {
+    for( uint8_t i = 0; i < particleSetLength; i++ ) {
+        switch( propNum ) {
             case 0:
                 setParticleSetPosition(particleSet, i, opt1, opt2);
                 break;
@@ -136,15 +136,15 @@ void particleUtilsPS::setParticleSetProp(particleSetPS &particleSet, uint8_t pro
                 break;
             case 7:
                 setParticleSetColor(particleSet, i, opt1, randColor);
-        }     
+        }
     }
 }
 
 //Sets a particle's startPosition to the passed in value
 //if rand is true, it will be chosen randomly up to the passed in position
-//(generally use the SegmentSet length as the position for rand)
-void particleUtilsPS::setParticleSetPosition(particleSetPS &particleSet, uint8_t partNum, uint16_t position, bool rand){
-    if(rand){
+//(generally use the SegmentSetPS length as the position for rand)
+void particleUtilsPS::setParticleSetPosition(particleSetPS &particleSet, uint8_t partNum, uint16_t position, bool rand) {
+    if( rand ) {
         position = random16(position);
     }
     particleSet.particleArr[partNum]->startPosition = position;
@@ -152,8 +152,8 @@ void particleUtilsPS::setParticleSetPosition(particleSetPS &particleSet, uint8_t
 
 //sets a particle's direction based on the passed in direction
 //to set the direction randomly, pass in a value > 1
-void particleUtilsPS::setParticleSetDirection(particleSetPS &particleSet, uint8_t partNum, uint8_t direction){
-    if( direction > 1 ){
+void particleUtilsPS::setParticleSetDirection(particleSetPS &particleSet, uint8_t partNum, uint8_t direction) {
+    if( direction > 1 ) {
         direction = random8(2);
     }
     particleSet.particleArr[partNum]->direction = direction;
@@ -162,36 +162,35 @@ void particleUtilsPS::setParticleSetDirection(particleSetPS &particleSet, uint8_
 //sets a particle's speed to the passed in baseSpeed (ms)
 //The speed is varied by a random amount no greater than the passed in range
 //(the baseSpeed is the fastest a particle will go)
-void particleUtilsPS::setParticleSetSpeed(particleSetPS &particleSet, uint8_t partNum, uint16_t baseSpeed, uint16_t range){
+void particleUtilsPS::setParticleSetSpeed(particleSetPS &particleSet, uint8_t partNum, uint16_t baseSpeed, uint16_t range) {
     particleSet.particleArr[partNum]->speed = baseSpeed + random16(range + 1);
 }
 
 //sets a particle's size to the passed in size
 //The size is varied by a random amount no greater than the passed in range
-void particleUtilsPS::setParticleSetSize(particleSetPS &particleSet, uint8_t partNum, uint16_t size, uint16_t range){
+void particleUtilsPS::setParticleSetSize(particleSetPS &particleSet, uint8_t partNum, uint16_t size, uint16_t range) {
     //particles must have a minimum size of 1
-    if(size == 0){
+    if( size == 0 ) {
         size = 1;
     }
     particleSet.particleArr[partNum]->size = size + random16(range + 1);
 }
 
 //sets the type of a particle's trail (see particle.h for trail types)
-//if you pass in a trailType > 4 (the highest trail type) the trails will be chosen randomly from the 
+//if you pass in a trailType > 4 (the highest trail type) the trails will be chosen randomly from the
 //first three trail types (0, 1, 2)
 //If you want a specific set of trail types chosen randomly, use setParticleSetTrailRand()
-void particleUtilsPS::setParticleSetTrailType(particleSetPS &particleSet, uint8_t partNum, uint8_t trailType){
-    if(trailType > 4){
+void particleUtilsPS::setParticleSetTrailType(particleSetPS &particleSet, uint8_t partNum, uint8_t trailType) {
+    if( trailType > 4 ) {
         trailType = random8(3);
     }
     particleSet.particleArr[partNum]->trailType = trailType;
-
 }
 
 //does setParticleSetTrailRand(), but for a whole set
-void particleUtilsPS::setAllTrailRand(particleSetPS &particleSet, bool noTrails, 
-                                      bool oneTrail, bool twoTrail, bool revTrail, bool infTrail){
-    for(uint8_t i = 0; i < particleSet.length; i++ ){
+void particleUtilsPS::setAllTrailRand(particleSetPS &particleSet, bool noTrails,
+                                      bool oneTrail, bool twoTrail, bool revTrail, bool infTrail) {
+    for( uint8_t i = 0; i < particleSet.length; i++ ) {
         setTrailRand(particleSet, i, noTrails, oneTrail, twoTrail, revTrail, infTrail);
     }
 }
@@ -199,13 +198,13 @@ void particleUtilsPS::setAllTrailRand(particleSetPS &particleSet, bool noTrails,
 //sets the type of a particle's trail (see particle.h for trail types) randomly according to the passed in flags
 //each flag allows a trail type to be chosen randomly
 //Flags:
-//noTrails -- trail type 0
-//oneTrail -- trail type 1
-//twoTrail -- trail type 2
-//revTrail -- trail type 3
-//infTrail -- trail type 4
-void particleUtilsPS::setTrailRand(particleSetPS &particleSet, uint8_t partNum, bool noTrails, 
-                                   bool oneTrail, bool twoTrail, bool revTrail, bool infTrail){
+//  noTrails -- trail type 0
+//  oneTrail -- trail type 1
+//  twoTrail -- trail type 2
+//  revTrail -- trail type 3
+//  infTrail -- trail type 4
+void particleUtilsPS::setTrailRand(particleSetPS &particleSet, uint8_t partNum, bool noTrails,
+                                   bool oneTrail, bool twoTrail, bool revTrail, bool infTrail) {
     uint8_t trailType = 0;
     //booleans = 1 for true and 0 for false, so we will randomly pick from as many true flags as we have
     uint8_t randVal = random8(noTrails + oneTrail + twoTrail + revTrail + infTrail) + 1;
@@ -214,35 +213,34 @@ void particleUtilsPS::setTrailRand(particleSetPS &particleSet, uint8_t partNum, 
     //we go over each trail flag in order, reducing the randVal at each flag if it's set
     //once randVal is 0, we've reached the trail type that matches the randVal
     //Think of it like an extended while loop, where we searching for the randVal, but only incrementing if the trail flag is set
-    if(noTrails && randVal > 0){
+    if( noTrails && randVal > 0 ) {
         trailType = 0;
         randVal--;
     }
-    if(oneTrail && randVal > 0){
+    if( oneTrail && randVal > 0 ) {
         trailType = 1;
         randVal--;
     }
-    if(twoTrail && randVal > 0){
+    if( twoTrail && randVal > 0 ) {
         trailType = 2;
         randVal--;
     }
-    if(revTrail && randVal > 0){
+    if( revTrail && randVal > 0 ) {
         trailType = 3;
         randVal--;
     }
-    if(infTrail && randVal > 0){
+    if( infTrail && randVal > 0 ) {
         trailType = 4;
     }
 
     particleSet.particleArr[partNum]->trailType = trailType;
-
 }
 
 //sets the length of a particle's trail
 //The trail length is varied by a random amount no greater than the passed in range
 //Trails must have a minimum length of 1
-void particleUtilsPS::setParticleSetTrailSize(particleSetPS &particleSet, uint8_t partNum, uint8_t trailSize, uint8_t range){
-    if( trailSize == 0 ){
+void particleUtilsPS::setParticleSetTrailSize(particleSetPS &particleSet, uint8_t partNum, uint8_t trailSize, uint8_t range) {
+    if( trailSize == 0 ) {
         trailSize = 1;
     }
     particleSet.particleArr[partNum]->trailSize = trailSize + random8(range + 1);
@@ -250,8 +248,8 @@ void particleUtilsPS::setParticleSetTrailSize(particleSetPS &particleSet, uint8_
 
 //sets a particle's bounce behavior on the passed in bounce value
 //to set the bounce randomly, pass in a value > 1
-void particleUtilsPS::setParticleSetBounce(particleSetPS &particleSet, uint8_t partNum, uint8_t bounce){
-    if(bounce > 1){
+void particleUtilsPS::setParticleSetBounce(particleSetPS &particleSet, uint8_t partNum, uint8_t bounce) {
+    if( bounce > 1 ) {
         bounce = random8(2);
     }
     particleSet.particleArr[partNum]->bounce = bounce;
@@ -260,8 +258,8 @@ void particleUtilsPS::setParticleSetBounce(particleSetPS &particleSet, uint8_t p
 //sets a particle's colorIndex to the passed in value
 //If you want the color to be randomly picked from a palette
 //pass in the palette's length as colorIndex and set randColor as true
-void particleUtilsPS::setParticleSetColor(particleSetPS &particleSet, uint8_t partNum, uint8_t colorIndex, bool randColor){
-    if(randColor){
+void particleUtilsPS::setParticleSetColor(particleSetPS &particleSet, uint8_t partNum, uint8_t colorIndex, bool randColor) {
+    if( randColor ) {
         colorIndex = random8(colorIndex);
     }
     particleSet.particleArr[partNum]->colorIndex = colorIndex;
@@ -270,9 +268,9 @@ void particleUtilsPS::setParticleSetColor(particleSetPS &particleSet, uint8_t pa
 //Frees the pointers in a particle set (the pointer to the particle array and all thr pointers in the array)
 //Call when you're finished with a particle set that was created using buildParticleSet()
 //!!!DO NOT call this if the particle set was not created using malloc() or buildParticleSet()
-void particleUtilsPS::freeParticleSet(particleSetPS &particleSet){
+void particleUtilsPS::freeParticleSet(particleSetPS &particleSet) {
     //Free all the pointers to particles in the particle array (if it exists)
-    if(particleSet.particleArr){
+    if( particleSet.particleArr ) {
         freeAllParticles(particleSet);
     }
     //Now free the pointer to the particle array itself
@@ -280,18 +278,18 @@ void particleUtilsPS::freeParticleSet(particleSetPS &particleSet){
 }
 
 //Frees all the particles pointers in a particleSet, should only be used if the particles were generated using malloc()
-//Note that this frees all particles up to the maxLength of the set's particle array. 
+//Note that this frees all particles up to the maxLength of the set's particle array.
 //This should be the actual memory size of the array.
 //!!!DO NOT call this if the particle set was not created using malloc() or buildParticleSet()
-void particleUtilsPS::freeAllParticles(particleSetPS &particleSet){
-    for(uint8_t i = 0; i < particleSet.maxLength; i++ ){
+void particleUtilsPS::freeAllParticles(particleSetPS &particleSet) {
+    for( uint8_t i = 0; i < particleSet.maxLength; i++ ) {
         freeParticle(particleSet, i);
     }
 }
 
 //Frees the pointer to a particle in a particleSet, should only be used if the particles was generated using malloc()
 //!!!DO NOT call this if the particle set was not created using malloc() or buildParticleSet()
-void particleUtilsPS::freeParticle(particleSetPS &particleSet, uint8_t partNum){
+void particleUtilsPS::freeParticle(particleSetPS &particleSet, uint8_t partNum) {
     free(particleSet.particleArr[partNum]);
 }
 
@@ -302,17 +300,17 @@ void particleUtilsPS::freeParticle(particleSetPS &particleSet, uint8_t partNum){
 //the maximum brightness is scaled by dimPow
 //dimPow 0 will produce a normal linear gradient, but for more shimmery waves we can dial the brightness down
 //dimPow of 80 gives a good effect
-//The body of the particle will still be drawn at full brightness since it's drawn separately 
+//The body of the particle will still be drawn at full brightness since it's drawn separately
 CRGB particleUtilsPS::getTrailColor(CRGB &color, CRGB &targetColor, uint8_t step, uint8_t totalSteps, int8_t dimPow) {
-    
+
     //dimRatio = ( (uint16_t)step * dimPow ) / (totalSteps + 1) ;
-    
+
     //alternate dimming formula for more aggressive dimming (set dimPow between -127 and 127)
     //basically subtracts a term from the step value to simulate an increase in dimming
     //the subtraction term decreases as we get closer to totalSteps, so we don't bug out and over run
-    dimRatio = ( (uint16_t)step * (255 - dimPow) ) / (totalSteps + 1) + dimPow; 
+    dimRatio = ((uint16_t)step * (255 - dimPow)) / (totalSteps + 1) + dimPow;
 
-    //ratio = dim8_video(ratio); 
+    //ratio = dim8_video(ratio);
     //dimRatio = triwave8( 128 * (uint16_t)step / (totalSteps) );
 
     return colorUtilsPS::getCrossFadeColor(color, targetColor, dimRatio);
@@ -321,7 +319,7 @@ CRGB particleUtilsPS::getTrailColor(CRGB &color, CRGB &targetColor, uint8_t step
 //a quick function for getting direction multipliers based on a bool
 //returns either 1 or -1
 //uses the convention that true is forward (1) and false is backwards (-1)
-int8_t particleUtilsPS::getDirectStep(bool direction){
+int8_t particleUtilsPS::getDirectStep(bool direction) {
     return direction - !direction;
 }
 

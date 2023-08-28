@@ -80,25 +80,25 @@ There are quite a lot of extra configuration options to help make more dynamic s
 Example calls: 
     uint8_t pattern_arr = {0, 1, 2};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
-    StrobeSLSeg strobe(mainSegments, pattern, cybPnkPal, 0, 4, 0, true, true, false, false, false, 50);
+    StrobeSLSeg strobe(mainSegments, pattern, cybPnkPal_PS, 0, 4, 0, true, true, false, false, false, 50);
     setNewColorBool(true); //put in Arduino Setup() (sets newColor flag)
-    Will do a set of strobes using cybPnkPal and strobe modes 0 and 1.
+    Will do a set of strobes using cybPnkPal_PS and strobe modes 0 and 1.
     The background is blank, there are 4 pulses per strobe with 50ms between each
     The pause time is 0
     The effect has been set to do a new color for each set of pulses
 
-    StrobeSLSeg strobe(mainSegments, cybPnkPal, 0, 4, 0, true, true, false, false, false, 50);
+    StrobeSLSeg strobe(mainSegments, cybPnkPal_PS, 0, 4, 0, true, true, false, false, false, 50);
     setNewColorBool(true); //put in Arduino Setup() (sets newColor flag)
-    Will do a set of strobes using cybPnkPal and strobe modes 0 and 1.
+    Will do a set of strobes using cybPnkPal_PS and strobe modes 0 and 1.
     The background is blank, there are 4 pulses per strobe with 50ms between each
     The pause time is 0
     The effect has been set to do a new color for each set of pulses
 
-    StrobeSLSeg strobe(mainSegments, cybPnkPal, CRGB::Red, 2, 500, true, false, false, false, true, 100);
+    StrobeSLSeg strobe(mainSegments, cybPnkPal_PS, CRGB::Red, 2, 500, true, false, false, false, true, 100);
     alternate = true; //put in Arduino Setup()
     fillBG = false; //put in Arduino Setup()
     fillBGOnPause = false; //put in Arduino Setup()
-    Will do a set of strobes using cybPnkPal and strobe modes 0 and 4.
+    Will do a set of strobes using cybPnkPal_PS and strobe modes 0 and 4.
     The background is red, there are 2 pulses per strobe with 100ms between each
     The pause time is 500
     The effect has been set to alternate segment fill directions after each cycle (this only affects mode 0)
@@ -174,30 +174,30 @@ class StrobeSLSeg : public EffectBasePS {
     public:
 
         //constructor for pattern and palette ver
-        StrobeSLSeg(SegmentSet &SegSet, patternPS &pattern, palettePS &Palette, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, 
+        StrobeSLSeg(SegmentSetPS &SegSet, patternPS &pattern, palettePS &Palette, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime,
                     bool SegEach, bool SegDual, bool SegLine, bool SegLineDual, bool SegAll, uint16_t Rate);
 
         //constructor for palette ver
-        StrobeSLSeg(SegmentSet &SegSet, palettePS &Palette, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, 
+        StrobeSLSeg(SegmentSetPS &SegSet, palettePS &Palette, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime,
                     bool SegEach, bool SegDual, bool SegLine, bool SegLineDual, bool SegAll, uint16_t Rate);
 
         //constructor for single color ver
         //!!If using pre-build FastLED colors you need to pass them as CRGB( *color code* )
-        StrobeSLSeg(SegmentSet &SegSet, CRGB Color, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, 
-                    bool SegEach, bool SegDual, bool SegLine, bool SegLineDual, bool SegAll, uint16_t Rate);
-        
-        //constructor for randomly generate palette ver
-        StrobeSLSeg(SegmentSet &SegSet, uint8_t numColors, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, 
+        StrobeSLSeg(SegmentSetPS &SegSet, CRGB Color, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime,
                     bool SegEach, bool SegDual, bool SegLine, bool SegLineDual, bool SegAll, uint16_t Rate);
 
-        ~StrobeSLSeg();   
-        
+        //constructor for randomly generate palette ver
+        StrobeSLSeg(SegmentSetPS &SegSet, uint8_t numColors, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime,
+                    bool SegEach, bool SegDual, bool SegLine, bool SegLineDual, bool SegAll, uint16_t Rate);
+
+        ~StrobeSLSeg();
+
         bool
-            fillBG = true, //flag to fill the background after each set of pulses
-            fillBGOnPause = true, //flag to fill the background during each pause
-            paused = false, //if a pause is active
-            pauseEvery = false, 
-            newColor = false, //reference only, set using setNewColorBool()
+            fillBG = true,         //flag to fill the background after each set of pulses
+            fillBGOnPause = true,  //flag to fill the background during each pause
+            paused = false,        //if a pause is active
+            pauseEvery = false,
+            newColor = false,  //reference only, set using setNewColorBool()
             direct = true,
             alternate = false,
             segEach,
@@ -205,34 +205,34 @@ class StrobeSLSeg : public EffectBasePS {
             segLineDual,
             segLine,
             segAll;
-        
-        int8_t
-            pulseMode = -1; //current pulse mode, for reference only
 
-        uint8_t 
-            colorNum = 0, //palette index of the color currently being pulsed
+        int8_t
+            pulseMode = -1;  //current pulse mode, for reference only
+
+        uint8_t
+            colorNum = 0,  //palette index of the color currently being pulsed
             randMode = 0,
-            numPulses, 
+            numPulses,
             colorMode = 0,
             bgColorMode = 0;
-        
+
         uint16_t
             pauseTime,
             totalCycles = 0;
-        
-        palettePS
-            *palette = nullptr, //the palette used for the strobe colors
-            paletteTemp = {nullptr, 0}; //palette used for auto generate palettes, init to null for safety
-        
-        patternPS
-            *pattern = nullptr, //the strobe color pattern (using colors from the palette)
-            patternTemp = {nullptr, 0, 0}; //Must init structs w/ pointers set to null for safety
 
-        CRGB 
+        palettePS
+            *palette = nullptr,          //the palette used for the strobe colors
+            paletteTemp = {nullptr, 0};  //palette used for auto generate palettes, init to null for safety
+
+        patternPS
+            *pattern = nullptr,             //the strobe color pattern (using colors from the palette)
+            patternTemp = {nullptr, 0, 0};  //Must init structs w/ pointers set to null for safety
+
+        CRGB
             bgColorOrig,
-            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
-        
-        void 
+            *bgColor = nullptr;  //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+
+        void
             reset(),
             setPulseMode(),
             setCycleCountMax(),
@@ -240,38 +240,38 @@ class StrobeSLSeg : public EffectBasePS {
             setPattern(patternPS &newPattern),
             setNewColorBool(bool newColorBool),
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
             pauseStartTime,
             prevTime = 0;
-        
+
         uint8_t
             pulseCount = 1,
             palIndex,
             modeOut;
-        
+
         uint16_t
             nextSeg,
-            numSegs,    
+            numSegs,
             cycleLoopLimit,
             numLines,
             cycleNum = 0,
             cycleCountMax;
-        
+
         bool
             boolTemp,
             pulseBG = false,
             firstHalf = true;
-        
+
         CRGB
             colorOut,
             colorTemp;
-        
+
         void
             startPause(),
-            init(CRGB BgColor, SegmentSet &SegSet, uint16_t Rate),
+            init(CRGB BgColor, SegmentSetPS &SegSet, uint16_t Rate),
             pickColor();
 };
 

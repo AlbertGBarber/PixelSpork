@@ -1,47 +1,47 @@
 #include "EdgeBurstSL.h"
 
 //Constructor for rainbow mode
-EdgeBurstSL::EdgeBurstSL(SegmentSet &SegSet, uint8_t BurstFreq, uint16_t Rate):
-    burstFreq(BurstFreq)
-    {    
-        init(SegSet, Rate);
-        rainbowMode = true;
+EdgeBurstSL::EdgeBurstSL(SegmentSetPS &SegSet, uint8_t BurstFreq, uint16_t Rate)
+    : burstFreq(BurstFreq)  //
+{
+    init(SegSet, Rate);
+    rainbowMode = true;
 
-        //We create a random palette in case rainbow mode is turned off without setting a palette
-        //This won't be used while rainbowMode is true
-        paletteTemp = paletteUtilsPS::makeRandomPalette(3);
-        palette = &paletteTemp; 
-	}
+    //We create a random palette in case rainbow mode is turned off without setting a palette
+    //This won't be used while rainbowMode is true
+    paletteTemp = paletteUtilsPS::makeRandomPalette(3);
+    palette = &paletteTemp;
+}
 
 //Constructor for colors from palette
-EdgeBurstSL::EdgeBurstSL(SegmentSet &SegSet, palettePS &Palette, uint8_t BurstFreq, uint16_t Rate):
-    burstFreq(BurstFreq), palette(&Palette)
-    {    
-        init(SegSet, Rate);
-	}
+EdgeBurstSL::EdgeBurstSL(SegmentSetPS &SegSet, palettePS &Palette, uint8_t BurstFreq, uint16_t Rate)
+    : burstFreq(BurstFreq), palette(&Palette)  //
+{
+    init(SegSet, Rate);
+}
 
 //Constructor for a randomly created palette
 //RandomizePal = true will randomize the palette for each wave
-EdgeBurstSL::EdgeBurstSL(SegmentSet &SegSet, uint8_t numColors, bool RandomizePal, uint8_t BurstFreq, uint16_t Rate):
-    burstFreq(BurstFreq), randomizePal(RandomizePal)
-    {    
-        init(SegSet, Rate);
-        paletteTemp = paletteUtilsPS::makeRandomPalette(numColors);
-        palette = &paletteTemp; 
-	}
+EdgeBurstSL::EdgeBurstSL(SegmentSetPS &SegSet, uint8_t numColors, bool RandomizePal, uint8_t BurstFreq, uint16_t Rate)
+    : burstFreq(BurstFreq), randomizePal(RandomizePal)  //
+{
+    init(SegSet, Rate);
+    paletteTemp = paletteUtilsPS::makeRandomPalette(numColors);
+    palette = &paletteTemp;
+}
 
-EdgeBurstSL::~EdgeBurstSL(){
+EdgeBurstSL::~EdgeBurstSL() {
     free(paletteTemp.paletteArr);
 }
 
 //initialize core vars
-void EdgeBurstSL::init(SegmentSet &SegSet, uint16_t Rate){
+void EdgeBurstSL::init(SegmentSetPS &SegSet, uint16_t Rate) {
     //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
     bindSegSetPtrPS();
     bindClassRatesPS();
-        
+
     //minimum burst freq is 1
-    if(burstFreq < 1){
+    if( burstFreq < 1 ) {
         burstFreq = 1;
     }
 }
@@ -64,10 +64,10 @@ void EdgeBurstSL::init(SegmentSet &SegSet, uint16_t Rate){
 //Updates the effect
 //To be honest I don't really know how the waves work
 //But the main driver is t1
-void EdgeBurstSL::update(){
+void EdgeBurstSL::update() {
     currentTime = millis();
 
-    if( ( currentTime - prevTime ) >= *rate ) {
+    if( (currentTime - prevTime) >= *rate ) {
         prevTime = currentTime;
 
         //fetch some core vars
@@ -79,7 +79,7 @@ void EdgeBurstSL::update(){
         //(using 255 steps across the whole palette)
         //We do this so we only need to do it once per cycle
         blendLength = 255 / palette->length;
-        
+
         beatVal = beat8(burstFreq);
         t1 = triwave8(beatVal);
 
@@ -89,40 +89,39 @@ void EdgeBurstSL::update(){
         //Unfortunately, the wave doesn't usually hit 128 exactly due to the frequency
         //So we need to catch it after is passes through, but then only set the offset once
         //hence the flipFlop boolean, which stops us from setting the offset more than once each half cycle
-        if(beatVal > 128 && !offsetFlipFlop){
+        if( beatVal > 128 && !offsetFlipFlop ) {
             pickRandStart();
-        } else if(beatVal < 128 && offsetFlipFlop){
+        } else if( beatVal < 128 && offsetFlipFlop ) {
             pickRandStart();
         }
 
         //set a color for each line and then color in all the pixels on the line
-        for (uint16_t i = 0; i < numLines; i++) {
+        for( uint16_t i = 0; i < numLines; i++ ) {
 
             f = (uint32_t)(i * 255) / numLines;
             //note really sure how burstPause works, but it seems to easily adjust the time between waves
             edge = triwave8(f) + t1 * burstPause - (burstPause / 2 * 255);
             edge = clamp8PS(edge, 0, 255);
-            v = triwave8( uint8_t(edge) );
+            v = triwave8(uint8_t(edge));
             h = edge * edge / 255 - 51;
 
             //If we're in rainbow mode, pick a color using th HSV color wheel
             //Otherwise pick a color from the palette. Note that we use 255 blend steps for the whole palette.
             //We also need to dim the color by v.
-            if(rainbowMode){
+            if( rainbowMode ) {
                 colorOut = CHSV(h, 255, v);
             } else {
                 colorOut = paletteUtilsPS::getPaletteGradColor(*palette, h, 0, 255, blendLength);
                 nscale8x3(colorOut.r, colorOut.g, colorOut.b, v);
             }
 
-            for (uint16_t j = 0; j < numSegs; j++) {
+            for( uint16_t j = 0; j < numSegs; j++ ) {
                 //get the physical pixel location based on the line and seg numbers
                 //and then write out the color
                 //Note that the actual line written to is offset and wraps
-                pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, j, addMod16PS(i, offset, numLines) );
+                pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, j, addMod16PS(i, offset, numLines));
                 segDrawUtils::setPixelColor(*segSet, pixelNum, colorOut, 0, 0, 0);
             }
-
         }
         showCheckPS();
     }
@@ -132,11 +131,11 @@ void EdgeBurstSL::update(){
 //sets the flipFlop so we know not to set the offset more than once per wave cycle
 //Also increments the burstCount var to track how many bursts we've done
 //If randomizePal is true, the colors in paletteTemp will be set randomly
-void EdgeBurstSL::pickRandStart(){
+void EdgeBurstSL::pickRandStart() {
     offsetFlipFlop = !offsetFlipFlop;
     burstCount++;
     offset = random16(numLines);
-    if(randomizePal){
+    if( randomizePal ) {
         paletteUtilsPS::randomize(paletteTemp);
     }
 }

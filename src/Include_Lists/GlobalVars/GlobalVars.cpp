@@ -1,3 +1,3 @@
 #include "GlobalVars.h"
 
-extern bool alwaysResizeObjPS = false;
+extern bool alwaysResizeObj_PS = false;

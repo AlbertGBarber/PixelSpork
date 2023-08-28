@@ -32,11 +32,11 @@ Functions:
 */
 class JustShowPS : public EffectBasePS {
     public:
-        JustShowPS(SegmentSet &SegSet, uint16_t Rate);  
-        
-        void 
+        JustShowPS(SegmentSetPS &SegSet, uint16_t Rate);
+
+        void
             update(void);
-    
+
     private:
         unsigned long
             currentTime,

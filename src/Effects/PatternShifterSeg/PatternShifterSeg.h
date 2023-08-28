@@ -2,7 +2,7 @@
 #define PatternShifterSeg_h
 
 //TODO -- Make an effect that moves the pattern both along segment and segment lines at the same time
-//        Shouldn't be too much work, you'll need two cycleNums, one for lines and segments, and then to take the 
+//        Shouldn't be too much work, you'll need two cycleNums, one for lines and segments, and then to take the
 //        line shifting code from PatternShifterSL.
 //        Will also need to turn off the last segment and line, and have separate update rates for segments and lines
 //        (maybe make it so the rates are additions to the base rate ie lineRate = rate + x)
@@ -73,8 +73,8 @@ Example calls:
     };
     shiftPatternPS basicPattern(mainSegments, patternSegs, basicPattern_arr, SIZE(basicPattern_arr));
 
-    PatternShifterSeg patternShifterSeg(basicPattern, cybPnkPal, 0, false, false, true, 100);
-    Will shift the "basicPattern" across its segment set using colors from cybPnkPal
+    PatternShifterSeg patternShifterSeg(basicPattern, cybPnkPal_PS, 0, false, false, true, 100);
+    Will shift the "basicPattern" across its segment set using colors from cybPnkPal_PS
     The background is blank
     The pattern is not repeated across segment lines or segments
     The segment shift direction is true (from first to last segment)
@@ -110,50 +110,50 @@ Reference Vars:
 */
 class PatternShifterSeg : public EffectBasePS {
     public:
-        PatternShifterSeg(shiftPatternPS &ShiftPattern, palettePS &Palette, CRGB BgColor, 
-                          bool RepeatLine, bool RepeatSeg, bool Direct, uint16_t Rate);  
+        PatternShifterSeg(shiftPatternPS &ShiftPattern, palettePS &Palette, CRGB BgColor,
+                          bool RepeatLine, bool RepeatSeg, bool Direct, uint16_t Rate);
 
         uint8_t
             colorMode = 0,
             bgColorMode = 0;
-        
+
         uint16_t
-            cycleNum = 0; //for reference only
-        
+            cycleNum = 0;  //for reference only
+
         bool
-            repeatLine, //for reference only, set using setRepeat()
-            repeatSeg, //for reference only, set using setRepeat()
-            direct; //true is first to last segment
-        
-        CRGB 
+            repeatLine,  //for reference only, set using setRepeat()
+            repeatSeg,   //for reference only, set using setRepeat()
+            direct;      //true is first to last segment
+
+        CRGB
             bgColorOrig,
-            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
-        
+            *bgColor = nullptr;  //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+
         shiftPatternPS
             *shiftPattern = nullptr;
-        
+
         palettePS
             *palette = nullptr;
 
-        void 
+        void
             setShiftPattern(shiftPatternPS &newShiftPattern),
             setRepeat(bool newRepeatSeg, bool newRepeatLine),
             reset(),
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
             prevTime = 0;
 
         int8_t
-            directStep; //1 or -1
-        
+            directStep;  //1 or -1
+
         uint8_t
             modeOut,
             colorIndex;
 
-        uint16_t 
+        uint16_t
             numPatSegs,
             numLines,
             numSegs,
@@ -170,8 +170,8 @@ class PatternShifterSeg : public EffectBasePS {
             segNum,
             repeatLineCount = 1,
             repeatSegCount = 1;
-        
-        CRGB 
+
+        CRGB
             colorOut;
 };
 

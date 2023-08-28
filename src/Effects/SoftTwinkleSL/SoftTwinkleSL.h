@@ -10,7 +10,7 @@
 /* 
 Note:
 The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
-passing in a SegmentSet with only one segment containing the whole strip.
+passing in a SegmentSetPS with only one segment containing the whole strip.
 
 For this animation to work, the Red component of lightColor
 MUST be nonzero, AND must be an EVEN number!!!!
@@ -93,29 +93,29 @@ Notes:
 */
 class SoftTwinkleSL : public EffectBasePS {
     public:
-        SoftTwinkleSL(SegmentSet &SegSet, uint8_t Density, uint16_t Rate);  
+        SoftTwinkleSL(SegmentSetPS &SegSet, uint8_t Density, uint16_t Rate);
 
         uint8_t
-            density; 
-        
-        CRGB 
-            lightColor = CRGB{8,5,1};
-        
+            density;
+
+        CRGB
+            lightColor = CRGB{8, 5, 1};
+
         void
             reset(),
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
             prevTime = 0;
-        
-        uint16_t 
+
+        uint16_t
             pixelNum,
             numLines,
             lineNum,
             longestSeg;
-        
+
         CRGB
             color;
 };

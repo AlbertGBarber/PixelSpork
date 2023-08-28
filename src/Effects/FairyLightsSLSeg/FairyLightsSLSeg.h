@@ -87,74 +87,77 @@ Reference Vars:
 class FairyLightsSLSeg : public EffectBasePS {
     public:
         //Palette based constructor
-        FairyLightsSLSeg(SegmentSet &SegSet, palettePS &Palette, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode, uint8_t SegMode, uint16_t Rate);
-        
+        FairyLightsSLSeg(SegmentSetPS &SegSet, palettePS &Palette, uint8_t NumTwinkles, CRGB BGColor,
+                         uint8_t Tmode, uint8_t SegMode, uint16_t Rate);
+
         //Single color constructor
-        FairyLightsSLSeg(SegmentSet &SegSet, CRGB Color, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode, uint8_t SegMode, uint16_t Rate);
-        
+        FairyLightsSLSeg(SegmentSetPS &SegSet, CRGB Color, uint8_t NumTwinkles, CRGB BGColor,
+                         uint8_t Tmode, uint8_t SegMode, uint16_t Rate);
+
         //Random colors constructor
-        FairyLightsSLSeg(SegmentSet &SegSet, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode, uint8_t SegMode, uint16_t Rate); 
+        FairyLightsSLSeg(SegmentSetPS &SegSet, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode,
+                         uint8_t SegMode, uint16_t Rate);
 
         //destructor
         ~FairyLightsSLSeg();
-        
+
         uint8_t
-            segMode, //for reference, use setSegMode() to set
+            segMode,  //for reference, use setSegMode() to set
             randMode = 0,
-            cycleNum = 0, //for reference, how many twinkles have been drawn (resets once numTwinkles updates have been done)
-            numTwinkles, //for reference only, set using setNumTwinkles()
+            cycleNum = 0,  //for reference, how many twinkles have been drawn (resets once numTwinkles updates have been done)
+            numTwinkles,   //for reference only, set using setNumTwinkles()
             tMode,
             colorMode = 0,
             bgColorMode = 0;
-        
+
         uint16_t
             *twinkleSet = nullptr;
-        
+
         CRGB
             bgColorOrig,
-            *bgColor = nullptr, //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+            *bgColor = nullptr,  //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
             *colorSet = nullptr;
 
         palettePS
             *palette = nullptr,
-            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
+            paletteTemp = {nullptr, 0};  //Must init structs w/ pointers set to null for safety
 
         bool
             reDrawAll = false,
             fillBG = false,
-            turnOff = false; //tracks if we're turning the twinkles on or off, depending on the mode
-        
+            turnOff = false;  //tracks if we're turning the twinkles on or off, depending on the mode
+
         void
             setSingleColor(CRGB Color),
             setNumTwinkles(uint8_t newNumTwinkles),
             setSegMode(uint8_t newSegMode),
             spawnTwinkles(),
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
             prevTime = 0;
-        
+
         uint8_t
-            maxNumTwinkles = 0, //used for tracking the memory size of the twinkle arrays
+            maxNumTwinkles = 0,  //used for tracking the memory size of the twinkle arrays
             paletteLength,
             cycleLimit,
             loopStart,
             loopEnd;
-        
+
         uint16_t
             twinkleRange;
-        
-        CRGB 
+
+        CRGB
             color,
             pickColor();
-        
+
         void
             modeZeroSet(),
             modeOneSet(),
             modeTwoSet(),
-            init(CRGB BgColor, SegmentSet &SegSet, uint16_t Rate),
+            init(CRGB BgColor, SegmentSetPS &SegSet, uint16_t Rate),
             drawTwinkle(uint8_t twinkleNum, CRGB &tColor, uint8_t cMode);
 };
 

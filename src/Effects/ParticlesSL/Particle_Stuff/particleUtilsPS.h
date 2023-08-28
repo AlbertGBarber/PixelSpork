@@ -16,35 +16,35 @@
 //These functions also give you the option of choosing the values at random, to create random sets of particles
 
 //buildParticleSet() is the main function for creating a set of particles
-//while setParticleSetProp() can change a single quality of all the particles in a set 
+//while setParticleSetProp() can change a single quality of all the particles in a set
 //(say you wanted to change all their speeds, etc)
 //there are then sub-functions for changing a specific particle's aspects within a set
 
 //understanding these functions will help you manipulate particles efficiently (see .cpp file for comments)
 
 //series of utility functions for interacting with particles
-namespace particleUtilsPS{
+namespace particleUtilsPS {
 
     //main build particleSet function
     particleSetPS
-        buildParticleSet(uint8_t numParticles, uint16_t maxPosition, uint8_t direction, uint16_t baseSpeed, 
-                         uint16_t speedRange, uint16_t size, uint16_t sizeRange, uint8_t trailType, uint8_t trailSize, 
+        buildParticleSet(uint8_t numParticles, uint16_t maxPosition, uint8_t direction, uint16_t baseSpeed,
+                         uint16_t speedRange, uint16_t size, uint16_t sizeRange, uint8_t trailType, uint8_t trailSize,
                          uint8_t trailRange, uint8_t bounce, uint8_t colorIndex, bool randColor);
 
     //randomizes the particles in a particle set
-    void 
-        randomizeParticleSet(particleSetPS &particleSet, uint16_t maxPosition, uint8_t direction, uint16_t baseSpeed, 
-                             uint16_t speedRange, uint16_t size, uint16_t sizeRange, uint8_t trailType, uint8_t trailSize, 
+    void
+        randomizeParticleSet(particleSetPS &particleSet, uint16_t maxPosition, uint8_t direction, uint16_t baseSpeed,
+                             uint16_t speedRange, uint16_t size, uint16_t sizeRange, uint8_t trailType, uint8_t trailSize,
                              uint8_t trailRange, uint8_t bounce, uint8_t colorIndex, bool randColor);
 
     //randomizes properties of a specific particle in a particle set
     void
-        randomizeParticle(particleSetPS &particleSet, uint8_t partNum, uint16_t maxPosition, uint8_t direction, uint16_t baseSpeed, 
-                          uint16_t speedRange, uint16_t size, uint16_t sizeRange, uint8_t trailType, uint8_t trailSize, 
+        randomizeParticle(particleSetPS &particleSet, uint8_t partNum, uint16_t maxPosition, uint8_t direction, uint16_t baseSpeed,
+                          uint16_t speedRange, uint16_t size, uint16_t sizeRange, uint8_t trailType, uint8_t trailSize,
                           uint8_t trailRange, uint8_t bounce, uint8_t colorIndex, bool randColor);
 
     //functions for deleting or resetting particles
-    void 
+    void
         resetParticle(particlePS *particle),
         resetParticleSet(particleSetPS &particleSet),
         resetParticle(particleSetPS &particleSet, uint8_t partNum),
@@ -66,15 +66,15 @@ namespace particleUtilsPS{
 
     //functions for more precise trail mode setting
     void
-        setAllTrailRand(particleSetPS &particleSet, bool noTrails, 
+        setAllTrailRand(particleSetPS &particleSet, bool noTrails,
                         bool oneTrail, bool twoTrail, bool revTrail, bool infTrail),
-        setTrailRand(particleSetPS &particleSet, uint8_t partNum, bool noTrails, 
+        setTrailRand(particleSetPS &particleSet, uint8_t partNum, bool noTrails,
                      bool oneTrail, bool twoTrail, bool revTrail, bool infTrail);
-                
+
     int8_t
         getDirectStep(bool direction);
 
-    //for setting colors of particles       
+    //for setting colors of particles
     CRGB
         getTrailColor(CRGB &color, CRGB &targetColor, uint8_t step, uint8_t totalSteps, int8_t dimPow);
 
@@ -82,7 +82,7 @@ namespace particleUtilsPS{
     static uint8_t
         dimRatio,
         particleSetLength;
-    
+
     static bool
         randColor;
 };

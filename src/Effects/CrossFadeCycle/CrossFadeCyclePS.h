@@ -5,7 +5,7 @@
 #include "GeneralUtils/generalUtilsPS.h"
 
 /* 
-Cross fades the entire SegmentSet from one solid color to the next
+Cross fades the entire SegmentSetPS from one solid color to the next
 following either a pattern and palette, a palette alone, or using random colors
 each fade is done in a specified number of steps, at a specified rate
 see constructors below for inputs
@@ -24,11 +24,11 @@ randModes are: (default 0)
 Example calls: 
     uint8_t pattern_arr = {0, 1, 2};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
-    CrossFadeCyclePS crossFadeCycle(mainSegments, pattern, cybPnkPal, 40, 30);
+    CrossFadeCyclePS crossFadeCycle(mainSegments, pattern, cybPnkPal_PS, 40, 30);
     Will fade from color 0, to color 1, to color 4 of the palette
     taking 40 steps for each fade, with 30ms between steps
 
-    CrossFadeCyclePS crossFadeCycle(mainSegments, cybPnkPal, 40, 30);
+    CrossFadeCyclePS crossFadeCycle(mainSegments, cybPnkPal_PS, 40, 30);
     Will fade through the colors of the palette in order
     taking 40 steps for each fade, with 30ms between steps
 
@@ -63,58 +63,58 @@ Flags:
 class CrossFadeCyclePS : public EffectBasePS {
     public:
         //Constructor for pattern and palette
-        CrossFadeCyclePS(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t Steps, uint16_t Rate);
-        
+        CrossFadeCyclePS(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t Steps, uint16_t Rate);
+
         //Constructor for palette as the pattern
-        CrossFadeCyclePS(SegmentSet &SegSet, palettePS &Palette, uint8_t Steps, uint16_t Rate);  
-        
+        CrossFadeCyclePS(SegmentSetPS &SegSet, palettePS &Palette, uint8_t Steps, uint16_t Rate);
+
         //Constructor for random colors
-        CrossFadeCyclePS(SegmentSet &SegSet, uint8_t Steps, uint16_t Rate);
+        CrossFadeCyclePS(SegmentSetPS &SegSet, uint8_t Steps, uint16_t Rate);
 
         ~CrossFadeCyclePS();
 
         uint8_t
-            steps, //total steps per fade
-            randMode = 0; //see description above
-        
-        uint16_t 
+            steps,         //total steps per fade
+            randMode = 0;  //see description above
+
+        uint16_t
             pauseTime = 0,
-            fadeCount; //how many total fades we've done
-        
+            fadeCount;  //how many total fades we've done
+
         bool
             paused = false;
 
         palettePS
             *palette = nullptr,
-            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
-        
+            paletteTemp = {nullptr, 0};  //Must init structs w/ pointers set to null for safety
+
         patternPS
             *pattern = nullptr,
-            patternTemp = {nullptr, 0, 0}; //Must init structs w/ pointers set to null for safety
-        
-        void 
+            patternTemp = {nullptr, 0, 0};  //Must init structs w/ pointers set to null for safety
+
+        void
             setPaletteAsPattern(),
             reset(void),
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
             prevTime = 0;
-        
+
         uint8_t
-            patternIndex = 0, //What index we're fading to in the pattern
-            palIndex = 0, //the index of the pattern that we are currently fading away from, mainly used for shuffle()
-            currentStep = 0; //current step of the current fade
-        
-        CRGB 
-            startColor, //the color we are fading from
+            patternIndex = 0,  //What index we're fading to in the pattern
+            palIndex = 0,      //the index of the pattern that we are currently fading away from, mainly used for shuffle()
+            currentStep = 0;   //current step of the current fade
+
+        CRGB
+            startColor,  //the color we are fading from
             colorOut,
-            nextColor; //the color we are fading to
-        
+            nextColor;  //the color we are fading to
+
         void
             getNextColor(),
-            init(SegmentSet &SegSet, uint16_t Rate);
+            init(SegmentSetPS &SegSet, uint16_t Rate);
 };
 
 #endif

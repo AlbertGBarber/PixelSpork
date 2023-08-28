@@ -1,15 +1,15 @@
 #include "GradientCycleFastSegPS.h"
 
 //constructor with pattern
-GradientCycleFastSegPS::GradientCycleFastSegPS(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, uint8_t GradLength, bool Direct, uint16_t Rate):
-    segmentSet(SegmentSet), pattern(Pattern), palette(Palette), gradLength(GradLength), direct(Direct)
+GradientCycleFastSegPS::GradientCycleFastSegPS(SegmentSetPS &SegmentSetPS, patternPS *Pattern, palettePS *Palette, uint8_t GradLength, bool Direct, uint16_t Rate):
+    segmentSet(SegmentSetPS), pattern(Pattern), palette(Palette), gradLength(GradLength), direct(Direct)
     {    
         init(Rate);
 	}
 
 //constuctor with palette as pattern
-GradientCycleFastSegPS::GradientCycleFastSegPS(SegmentSet &SegmentSet, palettePS *Palette, uint8_t GradLength, bool Direct, uint16_t Rate):
-    segmentSet(SegmentSet), palette(Palette), gradLength(GradLength), direct(Direct)
+GradientCycleFastSegPS::GradientCycleFastSegPS(SegmentSetPS &SegmentSetPS, palettePS *Palette, uint8_t GradLength, bool Direct, uint16_t Rate):
+    segmentSet(SegmentSetPS), palette(Palette), gradLength(GradLength), direct(Direct)
     {    
         setPaletteAsPattern();
         init(Rate);
@@ -17,8 +17,8 @@ GradientCycleFastSegPS::GradientCycleFastSegPS(SegmentSet &SegmentSet, palettePS
 
 //constructor with palette of randomly choosen colors
 //(does not set randColors or randColor mode)
-GradientCycleFastSegPS::GradientCycleFastSegPS(SegmentSet &SegmentSet, uint8_t NumColors, uint8_t GradLength, bool Direct, uint16_t Rate):
-    segmentSet(SegmentSet), gradLength(GradLength), direct(Direct)
+GradientCycleFastSegPS::GradientCycleFastSegPS(SegmentSetPS &SegmentSetPS, uint8_t NumColors, uint8_t GradLength, bool Direct, uint16_t Rate):
+    segmentSet(SegmentSetPS), gradLength(GradLength), direct(Direct)
     {    
         paletteTemp = paletteUtilsPS::makeRandomPalette(NumColors);
         palette = &paletteTemp;

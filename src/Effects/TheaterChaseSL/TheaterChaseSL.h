@@ -18,7 +18,7 @@ ie color = &YourColorVar
 colorOrig is the default binding
 
 The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
-passing in a SegmentSet with only one segment containing the whole strip.
+passing in a SegmentSetPS with only one segment containing the whole strip.
 
 Example call: 
     TheaterChaseSL theaterChase(mainSegments, CRGB::Red, CRGB::Green, 1, 2, 100)
@@ -48,28 +48,29 @@ Reference Vars:
 */
 class TheaterChaseSL : public EffectBasePS {
     public:
-        TheaterChaseSL(SegmentSet &SegSet, CRGB Color, CRGB BgColor, uint8_t LitLength, uint8_t Spacing, uint16_t Rate);  
+        TheaterChaseSL(SegmentSetPS &SegSet, CRGB Color, CRGB BgColor, uint8_t LitLength, uint8_t Spacing,
+                       uint16_t Rate);
 
         uint8_t
-            litLength = 1, //min of 1
-            spacing = 1, //min of 1
+            litLength = 1,  //min of 1
+            spacing = 1,    //min of 1
             colorMode = 0,
             bgColorMode = 0;
-        
+
         uint16_t
-            cycleNum = 0; //How many update cycles have happened, for reference only
-        
-        CRGB 
+            cycleNum = 0;  //How many update cycles have happened, for reference only
+
+        CRGB
             colorOrig,
-            *color = nullptr, //color is a pointer so it can be tied to an external variable if needed (such as a palette color)
+            *color = nullptr,  //color is a pointer so it can be tied to an external variable if needed (such as a palette color)
             bgColorOrig,
-            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
-    
+            *bgColor = nullptr;  //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+
         void
             setLitLength(uint8_t newLitLength),
             setSpacing(uint8_t newSpacing),
             update(void);
-    
+
     private:
         unsigned long
             currentTime,

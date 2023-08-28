@@ -8,7 +8,7 @@
 //(this class is redundant since CrossFadeCycle can do randoms, but is here anyway)
 class CrossFadeCycleRandPS : public EffectBasePS {
     public:
-        CrossFadeCycleRandPS(SegmentSet &SegmentSet, uint16_t NumCycles, uint8_t Steps, uint16_t Rate);
+        CrossFadeCycleRandPS(SegmentSetPS &SegmentSetPS, uint16_t NumCycles, uint8_t Steps, uint16_t Rate);
        
         uint8_t
             steps;
@@ -20,7 +20,7 @@ class CrossFadeCycleRandPS : public EffectBasePS {
             infinite = false,
             done = false;
 
-        SegmentSet 
+        SegmentSetPS 
             &segmentSet; 
 
         void 

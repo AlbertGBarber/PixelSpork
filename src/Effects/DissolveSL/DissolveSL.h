@@ -23,18 +23,18 @@ You can increase the starting number of lines set at once (maxNumSpawnBase), whi
 accelerate the morphing, and may be good on longer segment sets.
 
 The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
-passing in a SegmentSet with only one segment containing the whole strip.
+passing in a SegmentSetPS with only one segment containing the whole strip.
 
 Each segment line will be filled in, rather than each pixel.
 
 Example calls: 
     uint8_t pattern_arr = {0, 1, 2};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
-    DissolveSL dissolve(mainSegments, pattern, cybPnkPal, 0, 150, 70);
+    DissolveSL dissolve(mainSegments, pattern, cybPnkPal_PS, 0, 150, 70);
     Will dissolve from color 0 in the palette to color 1, to color 4, etc using randMode 0 (see below) 
     with the number of leds set on one cycle increasing every 150ms with the effect updating every 70ms
 
-    DissolveSL dissolve(mainSegments, cybPnkPal, 4, 100, 100);
+    DissolveSL dissolve(mainSegments, cybPnkPal_PS, 4, 100, 100);
     Will dissolve from one palette color to the next using randMode 4 (see below) 
     with the number of leds set on one cycle increasing every 100ms with the effect updating every 100ms
 
@@ -53,7 +53,7 @@ randModes:
 You should be able switch freely between randModes on the fly (the random modes will set up a random palette/pattern as a fallback)
 
 You can freely use colorModes from segDrawUtils::setPixelColor(), but they don't make much sense
-unless you are running an offset in the SegmentSet or using colorModes 5 or 6.
+unless you are running an offset in the SegmentSetPS or using colorModes 5 or 6.
 
 Constructor Inputs
     pattern(optional, see constructors) -- A pattern is struct made from a 1-d array of palette indexes ie {0, 1, 3, 6, 7} 
@@ -100,16 +100,17 @@ Notes:
 class DissolveSL : public EffectBasePS {
     public:
         //constructor for pattern
-        DissolveSL(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t RandMode, uint16_t SpawnRateInc, uint16_t Rate); 
+        DissolveSL(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t RandMode,
+                   uint16_t SpawnRateInc, uint16_t Rate);
 
         //constructor for palette as pattern
-        DissolveSL(SegmentSet &SegSet, palettePS &Palette, uint8_t RandMode, uint16_t SpawnRateInc, uint16_t Rate); 
-        
+        DissolveSL(SegmentSetPS &SegSet, palettePS &Palette, uint8_t RandMode, uint16_t SpawnRateInc, uint16_t Rate);
+
         //constructor for randomly chosen colors (should only use randMode 2 or 3 with this constructor)
-        DissolveSL(SegmentSet &SegSet, uint8_t RandMode, uint16_t SpawnRateInc, uint16_t Rate);
-    
+        DissolveSL(SegmentSetPS &SegSet, uint8_t RandMode, uint16_t SpawnRateInc, uint16_t Rate);
+
         ~DissolveSL();
-        
+
         uint8_t
             randMode,
             colorMode = 0,
@@ -119,28 +120,28 @@ class DissolveSL : public EffectBasePS {
             setAllThreshold,
             pauseTime = 0,
             spawnRateInc,
-            dissolveCount = 0, //The number of full dissolves we've done
-            numCycles = 0; //how many update cycles we've been through (resets when we've gone through the whole pattern)
+            dissolveCount = 0,  //The number of full dissolves we've done
+            numCycles = 0;      //how many update cycles we've been through (resets when we've gone through the whole pattern)
 
         bool
-            lineMode = true, //for reference, set using setLineMode()
+            lineMode = true,  //for reference, set using setLineMode()
             paused = false,
-            *pixelArray = nullptr; 
-        
+            *pixelArray = nullptr;
+
         patternPS
             *pattern = nullptr,
-            patternTemp = {nullptr, 0, 0}; //Must init structs w/ pointers set to null for safety 
+            patternTemp = {nullptr, 0, 0};  //Must init structs w/ pointers set to null for safety
 
         palettePS
             *palette = nullptr,
-            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
-        
+            paletteTemp = {nullptr, 0};  //Must init structs w/ pointers set to null for safety
+
         void
             setPaletteAsPattern(),
             resetPixelArray(),
             setLineMode(bool newLineMode),
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
@@ -148,26 +149,26 @@ class DissolveSL : public EffectBasePS {
             prevTime = 0;
 
         uint8_t
-            maxNumSpawn, //How many lines we'll try to spawn each cycle (starts as maxNumSpawnBase and increases with time)    
+            maxNumSpawn,  //How many lines we'll try to spawn each cycle (starts as maxNumSpawnBase and increases with time)
             currentIndex = 0;
-        
+
         uint16_t
             thresStartPoint = 0,
             numLines,
-            maxNumLines = 0, //used for tracking the memory size of the pixelArray
+            maxNumLines = 0,  //used for tracking the memory size of the pixelArray
             lineNum,
             numSpawned = 0,
             pixelNum;
-        
+
         bool
             randColorPicked = false;
-        
-        CRGB 
+
+        CRGB
             pickColor(),
             color;
 
         void
-            init(SegmentSet &SegSet, uint16_t Rate),
+            init(SegmentSetPS &SegSet, uint16_t Rate),
             spawnLed(uint16_t pixelNum);
 };
 

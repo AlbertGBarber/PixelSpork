@@ -3,20 +3,20 @@
 
 //A file for global variables and constants, makes it easy to include them in whatever.
 
-#define D_LED 65535
-//D_LED is used to indicate a dummy led (max of uint16_t)
-//Pixels with this value will be ignored by color setting functions
-//This is critical for handling cases where you try to find the address of a pixel that doesn't exist in the segment set
-//ex for a segment set with 300 pixels, trying to get the address of the 301st
-//We must be able to return a location that is impossible for all segment sets
-//(we can't just return 301 because that could be an actual address in the segment set)
-//Hence we use the constant D_LED as a global impossible address marker
-//This limits the maximum segment set length to 65534, but that's still waaay more pixels than any current MC can handle
+#define D_LED_PS 65535
+/* D_LED_PS is used to indicate a dummy led (max of uint16_t)
+Pixels with this value will be ignored by color setting functions
+This is critical for handling cases where you try to find the address of a pixel that doesn't exist in the segment set
+ex for a segment set with 300 pixels, trying to get the address of the 301st
+We must be able to return a location that is impossible for all segment sets
+(we can't just return 301 because that could be an actual address in the segment set)
+Hence we use the constant D_LED_PS as a global impossible address marker
+This limits the maximum segment set length to 65534, but that's still waaay more pixels than any current MC can handle
 
-//Warning DO NOT USE D_LED for marking dummy leds in segment sets because some effect's need to read colors from LEDs
-//You must create real leds off the strip, see the wiki page Advanced Segment Usage for more.
+Warning DO NOT USE D_LED_PS for marking dummy LEDs in segment sets because some effect's need to read colors from LEDs
+You must create real LEDs off the strip, see the wiki page Advanced Segment Usage for more. */
 
-extern bool alwaysResizeObjPS; //defaulted to false in GlobalVars.cpp
+extern bool alwaysResizeObj_PS;  //defaulted to false in GlobalVars.cpp
 /*
 If true, then whenever an effect, utility, etc tries to create an object on the heap (ie using new or malloc)
 the code will check the size of the existing object. Only creating a new object if it needs more space.
@@ -39,9 +39,9 @@ If it is large enough, then I leave the array as is, but tweak other limits in m
 This helps limit heap fragmentation by limiting how often I'm re-allocating memory.
 However this can lead to more memory usage because we may be storing larger objects than needed. 
 Memory limitations and heap fragmentation can both cause random crashes, but I have choosen to limit fragmentation more.
-If you really need to optimize your memory usage, you can alwaysResizeObjPS to true.
+If you really need to optimize your memory usage, you can alwaysResizeObj_PS to true.
 
-Changing alwaysResizeObjPS will effect:
+Changing alwaysResizeObj_PS will effect:
     Any dynamically sized array or struct created by an effect,
     this includes things like patterns, particleSets, etc
 */

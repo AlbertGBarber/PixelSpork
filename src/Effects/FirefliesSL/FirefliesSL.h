@@ -21,7 +21,7 @@ to an external color variable. By default it is bound to bgColorOrig, which is s
 If you have a non-zero background color be sure to set fillBG to true!!
 
 The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
-passing in a SegmentSet with only one segment containing the whole strip.
+passing in a SegmentSetPS with only one segment containing the whole strip.
 
 Due to the way the effect is programmed, if two flies meet each other, by default one will overwrite the other
 You can adjust this behavior by turning on "blend", which will add particle colors together as they pass by each other
@@ -76,8 +76,8 @@ Example calls:
     CRGB(*colorCode*), ex CRGB(CRGB::Red)
     Otherwise it will get confused and call the random palette constructor
 
-    FirefliesSL fireflies(mainSegments, cybPnkPal, 5, 20, 3000, 4000, 6, 14, 70);
-    Will do a set of fireflies using colors from cybPnkPal
+    FirefliesSL fireflies(mainSegments, cybPnkPal_PS, 5, 20, 3000, 4000, 6, 14, 70);
+    Will do a set of fireflies using colors from cybPnkPal_PS
     There are a maximum of 5 fireflies active at one time, and each has a 20 percent chance of spawning per cycle
     The fireflies have a base life of 3000ms, with a range of 4000ms (for a max life of 7000ms)
     The fireflies have a base speed of 6, with a range of 14 (for a max speed of 20)
@@ -133,29 +133,29 @@ Reference Vars:
 class FirefliesSL : public EffectBasePS {
     public:
         //Constructor for effect with palette
-        FirefliesSL(SegmentSet &SegSet, palettePS &Palette, uint8_t MaxNumFireflies, uint8_t SpawnChance, 
+        FirefliesSL(SegmentSetPS &SegSet, palettePS &Palette, uint8_t MaxNumFireflies, uint8_t SpawnChance,
                     uint16_t LifeBase, uint16_t LifeRange, uint16_t SpeedBase, uint16_t SpeedRange, uint16_t Rate);
 
         //Constructor for effect with palette of random colors
-        FirefliesSL(SegmentSet &SegSet, uint8_t numColors, uint8_t MaxNumFireflies, uint8_t SpawnChance, 
-                    uint16_t LifeBase, uint16_t LifeRange, uint16_t SpeedBase, uint16_t SpeedRange, uint16_t Rate); 
-
-        //constructor for effect with single color
-        //!!If using pre-build FastLED colors you need to pass them as CRGB( *color code* ) 
-        FirefliesSL(SegmentSet &SegSet, CRGB Color, uint8_t MaxNumFireflies, uint8_t SpawnChance, 
+        FirefliesSL(SegmentSetPS &SegSet, uint8_t numColors, uint8_t MaxNumFireflies, uint8_t SpawnChance,
                     uint16_t LifeBase, uint16_t LifeRange, uint16_t SpeedBase, uint16_t SpeedRange, uint16_t Rate);
 
-        ~FirefliesSL(); 
+        //constructor for effect with single color
+        //!!If using pre-build FastLED colors you need to pass them as CRGB( *color code* )
+        FirefliesSL(SegmentSetPS &SegSet, CRGB Color, uint8_t MaxNumFireflies, uint8_t SpawnChance,
+                    uint16_t LifeBase, uint16_t LifeRange, uint16_t SpeedBase, uint16_t SpeedRange, uint16_t Rate);
+
+        ~FirefliesSL();
 
         uint8_t
             spawnChance,
             colorMode = 0,
             bgColorMode = 0,
             fadeThresh = 50,
-            maxNumFireflies = 0; //For reference only!, call setupFireflies() to change
-        
+            maxNumFireflies = 0;  //For reference only!, call setupFireflies() to change
+
         uint16_t
-            lifeBase, 
+            lifeBase,
             lifeRange,
             speedBase,
             speedRange,
@@ -166,23 +166,23 @@ class FirefliesSL : public EffectBasePS {
             blend = false,
             flicker = true;
 
-        CRGB 
-            bgColorOrig = 0, //default background color (blank)
-            *bgColor = &bgColorOrig, //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
-            *trailEndColors = nullptr; //used to store the last colors of each trail, so the background color can be set
-            
+        CRGB
+            bgColorOrig = 0,            //default background color (blank)
+            *bgColor = &bgColorOrig,    //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+            *trailEndColors = nullptr;  //used to store the last colors of each trail, so the background color can be set
+
         palettePS
             *palette = nullptr,
-            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
+            paletteTemp = {nullptr, 0};  //Must init structs w/ pointers set to null for safety
 
-        particleSetPS 
-            *particleSet = nullptr, //the particle set used in the effect
-            particleSetTemp = {nullptr, 0}; //storage for self created particle sets (init to an empty set for safety)
+        particleSetPS
+            *particleSet = nullptr,          //the particle set used in the effect
+            particleSetTemp = {nullptr, 0};  //storage for self created particle sets (init to an empty set for safety)
 
-        void 
+        void
             setupFireflies(uint8_t newMaxNumFireflies),
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
@@ -195,7 +195,7 @@ class FirefliesSL : public EffectBasePS {
             fadeType,
             dimRatio;
 
-        uint16_t 
+        uint16_t
             partLife,
             partPos,
             deltaTime,
@@ -203,17 +203,17 @@ class FirefliesSL : public EffectBasePS {
             numSegs,
             pixelNum,
             longestSeg;
-        
+
         particlePS
             *particlePtr = nullptr;
-            
-        CRGB 
+
+        CRGB
             colorFinal,
             colorOut,
             bgCol;
-        
+
         void
-            init(uint8_t maxNumFireflies, SegmentSet &SegSet, uint16_t Rate),
+            init(uint8_t maxNumFireflies, SegmentSetPS &SegSet, uint16_t Rate),
             moveParticle(particlePS *particlePtr, uint16_t partNum),
             drawParticlePixel(particlePS *particlePtr, uint16_t partNum),
             spawnFirefly(uint8_t fireflyNum);

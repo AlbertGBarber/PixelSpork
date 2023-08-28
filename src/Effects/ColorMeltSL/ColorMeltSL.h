@@ -42,7 +42,7 @@ I have given you to option to invert the brightness, which swaps the brightness,
 (In my opinion, the effect looks better with them inverted)
 
 The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
-passing in a SegmentSet with only one segment containing the whole strip.
+passing in a SegmentSetPS with only one segment containing the whole strip.
 
 Example calls: 
 
@@ -52,9 +52,9 @@ Example calls:
     The brightness waves will be inverted for more color
     The effect updates at 80ms
 
-    ColorMeltSL colorMelt(mainSegments, cybPnkPal, 9, 0, true, 80);
+    ColorMeltSL colorMelt(mainSegments, cybPnkPal_PS, 9, 0, true, 80);
     Will do a melt with a meltFreq of 9 and a phaseFreq of 0
-    Colors from cybPnkPal will be used
+    Colors from cybPnkPal_PS will be used
     Because the phaseFreq is 0, phaseEnable will be set false as part of the constructor
     The brightness waves will be inverted for more color
     The effect updates at 80ms
@@ -90,22 +90,24 @@ Other Settings:
 class ColorMeltSL : public EffectBasePS {
     public:
         //Constructor for rainbow mode
-        ColorMeltSL(SegmentSet &SegSet, uint8_t MeltFreq, uint8_t PhaseFreq, bool BriInvert, uint16_t Rate);  
+        ColorMeltSL(SegmentSetPS &SegSet, uint8_t MeltFreq, uint8_t PhaseFreq, bool BriInvert, uint16_t Rate);
 
         //Constructor for colors from palette
-        ColorMeltSL(SegmentSet &SegSet, palettePS &Palette, uint8_t MeltFreq, uint8_t PhaseFreq, bool BriInvert, uint16_t Rate);
+        ColorMeltSL(SegmentSetPS &SegSet, palettePS &Palette, uint8_t MeltFreq, uint8_t PhaseFreq, bool BriInvert,
+                    uint16_t Rate);
 
         //Constructor for a randomly created palette
-        ColorMeltSL(SegmentSet &SegSet, uint8_t numColors, uint8_t MeltFreq, uint8_t PhaseFreq, bool BriInvert, uint16_t Rate);
+        ColorMeltSL(SegmentSetPS &SegSet, uint8_t numColors, uint8_t MeltFreq, uint8_t PhaseFreq, bool BriInvert,
+                    uint16_t Rate);
 
         ~ColorMeltSL();
-        
+
         uint8_t
             meltFreq,
             phaseFreq,
             phase = 0,
             hlDiv = 2;
-        
+
         bool
             briInvert = true,
             rainbowMode = false,
@@ -113,36 +115,36 @@ class ColorMeltSL : public EffectBasePS {
 
         palettePS
             *palette = nullptr,
-            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
-        
-        void 
+            paletteTemp = {nullptr, 0};  //Must init structs w/ pointers set to null for safety
+
+        void
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
             prevTime = 0;
-        
+
         uint8_t
             t1,
             t2,
             v,
-            c1, 
+            c1,
             c2,
             c3;
-        
+
         uint16_t
             hl,
             pixelNum,
             numLines,
             numSegs,
             blendLength;
-    
-        CRGB 
+
+        CRGB
             colorOut;
-        
-        void 
-            init(SegmentSet &SegSet, uint16_t Rate);
+
+        void
+            init(SegmentSetPS &SegSet, uint16_t Rate);
 };
 
 #endif

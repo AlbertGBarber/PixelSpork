@@ -28,7 +28,7 @@ Please note that this effect will not work with the colorModes of segDrawUtils::
 But you can find a non-rainbow version of the effect in ShiftingSeaPS.h
 
 The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
-passing in a SegmentSet with only one segment containing the whole strip.
+passing in a SegmentSetPS with only one segment containing the whole strip.
 
 Also note that the class needs a uint16_t array the length of the number of pixels in the segment in order to work
 So if you are short on ram, you might not be able to run this!
@@ -80,8 +80,8 @@ class ShiftingRainbowSeaSL : public EffectBasePS {
         //Constructor for the effect. Note that by passing a gradLength of 0, you will set the effect to sMode 0
         //In sMode 0 the gradLength isn't used, but to make sure that if you set it back to sMode 0,
         //the gradLength will be set to random value between 20 - 40
-        ShiftingRainbowSeaSL(SegmentSet &SegSet, uint8_t GradLength, uint8_t Grouping, uint16_t Rate);
-        
+        ShiftingRainbowSeaSL(SegmentSetPS &SegSet, uint8_t GradLength, uint8_t Grouping, uint16_t Rate);
+
         //destructor
         ~ShiftingRainbowSeaSL();
 
@@ -90,24 +90,24 @@ class ShiftingRainbowSeaSL : public EffectBasePS {
             val = 255,
             shiftThreshold = 15,
             shiftStep = 1,
-            grouping, //for reference, set this using setGrouping()
-            sMode, //for reference, set this using setMode()
-            gradLength; //for reference, set this using setGradLength()
-        
+            grouping,    //for reference, set this using setGrouping()
+            sMode,       //for reference, set this using setMode()
+            gradLength;  //for reference, set this using setGradLength()
+
         uint16_t
             *offsets = nullptr,
-            cycleNum = 0; //tracks how many update's we've done, max value of 255
-        
+            cycleNum = 0;  //tracks how many update's we've done, max value of 255
+
         bool
             randomShift = false;
-        
+
         void
             setGradLength(uint8_t newGradLength),
             setMode(uint8_t newMode),
             setGrouping(uint16_t newGrouping),
             resetOffsets(),
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
@@ -118,13 +118,13 @@ class ShiftingRainbowSeaSL : public EffectBasePS {
 
         uint8_t
             step;
-        
+
         uint16_t
             numLines,
-            numLinesMax = 0; //used for tracking the memory size of the offset array
-        
+            numLinesMax = 0;  //used for tracking the memory size of the offset array
+
         void
-            init(SegmentSet &SegSet, uint16_t Rate);
+            init(SegmentSetPS &SegSet, uint16_t Rate);
 };
 
 #endif

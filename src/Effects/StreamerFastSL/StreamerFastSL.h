@@ -46,12 +46,12 @@ that automate the pattern creation, so you don't have to do it yourself (see con
 Note that while each entry in the pattern is a uint8_t,
 if you have a lot of colors, with long streamers, your patterns may be quite large
 so watch your memory usage. Likewise, if you re-size the waves, the pattern may also be dynamically re-sized.
-(see alwaysResizeObjPS in Include_Lists -> GlobalVars, and the Effects Advanced Wiki Page -> Managing Memory Fragmentation)
+(see alwaysResizeObj_PS in Include_Lists -> GlobalVars, and the Effects Advanced Wiki Page -> Managing Memory Fragmentation)
 
 Example calls: 
     uint8_t pattern_arr = {0, 255, 255, 255, 1, 1, 255, 255};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
-    StreamerPS streamerFast(mainSegments, pattern, cybPnkPal, 0, 120);
+    StreamerPS streamerFast(mainSegments, pattern, cybPnkPal_PS, 0, 120);
     Will do a set of streamers using the first two colors in the palette
     The streamer will begin with 1 pixel of color 0, with three spaces after, followed by 2 pixels of color 1, followed by 2 spaces
     The bgColor is zero (off)
@@ -59,13 +59,13 @@ Example calls:
 
     uint8_t pattern_arr = {1, 2, 3};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
-    StreamerPS streamerFast(mainSegments, pattern, cybPnkPal, 3, 4, 0, 120);
+    StreamerPS streamerFast(mainSegments, pattern, cybPnkPal_PS, 3, 4, 0, 120);
     Will do a streamer using the first three colors of the palette (taken from the pattern)
     Each streamer will be length 3, followed by 4 spaces, bgColor is 0 (off)
     The effect updates at a rate of 120ms
 
-    StreamerPS streamerFast(mainSegments, cybPnkPal, 3, 4, CRGB::Red, 120);
-    Will do a streamer using all the colors in cybPnkPal, each streamer will be length 3, with 4 spaces in between
+    StreamerPS streamerFast(mainSegments, cybPnkPal_PS, 3, 4, CRGB::Red, 120);
+    Will do a streamer using all the colors in cybPnkPal_PS, each streamer will be length 3, with 4 spaces in between
     The bgColor is red
     The streamers will update at a 120ms rate
 
@@ -121,70 +121,73 @@ Notes:
 class StreamerFastSL : public EffectBasePS {
     public:
         //constructor for using the passed in pattern and palette for the streamer
-        StreamerFastSL(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint16_t Rate);
+        StreamerFastSL(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint16_t Rate);
 
         //constructor for building the streamer pattern from the passed in pattern and the palette, using the passed in colorLength and spacing
-        StreamerFastSL(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint16_t Rate);
-        
+        StreamerFastSL(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t ColorLength,
+                       uint8_t Spacing, CRGB BgColor, uint16_t Rate);
+
         //constructor for building a streamer using all the colors in the passed in palette, using the colorLength and spacing for each color
-        StreamerFastSL(SegmentSet &SegSet, palettePS &Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint16_t Rate);
+        StreamerFastSL(SegmentSetPS &SegSet, palettePS &Palette, uint8_t ColorLength, uint8_t Spacing,
+                       CRGB BgColor, uint16_t Rate);
 
         //constructor for doing a single colored streamer, using colorLength and spacing
-        StreamerFastSL(SegmentSet &SegSet, CRGB Color, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint16_t Rate);  
-    
+        StreamerFastSL(SegmentSetPS &SegSet, CRGB Color, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor,
+                       uint16_t Rate);
+
         ~StreamerFastSL();
 
         uint8_t
             randMode = 0;
-        
+
         uint16_t
             cycleNum = 0;
-            
+
         bool
             initFillDone = false;
 
-        CRGB 
+        CRGB
             bgColorOrig,
-            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
-        
+            *bgColor = nullptr;  //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+
         patternPS
             *pattern = nullptr,
-            patternTemp = {nullptr, 0, 0}; //Must init structs w/ pointers set to null for safety
-        
+            patternTemp = {nullptr, 0, 0};  //Must init structs w/ pointers set to null for safety
+
         palettePS
             *palette = nullptr,
-            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
-        
-        void 
+            paletteTemp = {nullptr, 0};  //Must init structs w/ pointers set to null for safety
+
+        void
             setPatternAsPattern(patternPS &inputPattern, uint8_t colorLength, uint8_t spacing),
             setPaletteAsPattern(uint8_t colorLength, uint8_t spacing),
             reset(),
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
             prevTime = 0;
-        
+
         uint8_t
             nextPattern,
             nextPatternRand,
             prevPattern;
-        
+
         uint16_t
             numLines,
             numLinesLim,
             longestSeg,
             pixelNum;
 
-        CRGB 
+        CRGB
             nextColor,
             randColor = 0,
             pickStreamerColor(uint8_t nextPatternTemp);
-        
+
         void
             initalFill(),
-            init(CRGB BgColor, SegmentSet &SegSet, uint16_t Rate);
-};  
+            init(CRGB BgColor, SegmentSetPS &SegSet, uint16_t Rate);
+};
 
 #endif

@@ -65,14 +65,14 @@ randModes:
 Example calls: 
     uint8_t pattern_arr = {0, 1, 2};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
-    BreathEyeSL breathEye(mainSegments, pattern, cybPnkPal, 0, 10, true, true, 10, 50);
-    Does a breathing cycle using the colors from cybPnkPal, following the pattern above
+    BreathEyeSL breathEye(mainSegments, pattern, cybPnkPal_PS, 0, 10, true, true, 10, 50);
+    Does a breathing cycle using the colors from cybPnkPal_PS, following the pattern above
     The background is blank
     The eyeHalfSize is 10, the eye wraps, and the eye position will be set randomly for each cycle.
     The breathFreq is 10, the effect updates at 50ms
 
-    BreathEyeSL breathEye(mainSegments, cybPnkPal, 0, 8, true, false, 5, 50);
-    Does a breathing cycle using the colors from cybPnkPal in order
+    BreathEyeSL breathEye(mainSegments, cybPnkPal_PS, 0, 8, true, false, 5, 50);
+    Does a breathing cycle using the colors from cybPnkPal_PS in order
     The background is blank
     The eyeHalfSize is 8, the eye wraps,
     The eye position will be fixed (defaulting to the center point of the longest segment),
@@ -145,85 +145,89 @@ Reference vars:
 class BreathEyeSL : public EffectBasePS {
     public:
         //Constructor for using a pattern and palette
-        BreathEyeSL(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint16_t EyeHalfSize, bool Wrap, bool RandEyePos, uint8_t BreathFreq, uint16_t Rate);
+        BreathEyeSL(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor,
+                    uint16_t EyeHalfSize, bool Wrap, bool RandEyePos, uint8_t BreathFreq, uint16_t Rate);
 
         //Constructor for using palette as pattern
-        BreathEyeSL(SegmentSet &SegSet, palettePS &Palette, CRGB BgColor, uint16_t EyeHalfSize, bool Wrap, bool RandEyePos, uint8_t BreathFreq, uint16_t Rate);
+        BreathEyeSL(SegmentSetPS &SegSet, palettePS &Palette, CRGB BgColor, uint16_t EyeHalfSize, bool Wrap,
+                    bool RandEyePos, uint8_t BreathFreq, uint16_t Rate);
 
         //Constructor for a single color breath (pass in 0 as the color to trigger randMode 2, fully random)
-        BreathEyeSL(SegmentSet &SegSet, CRGB color, CRGB BgColor, uint8_t MaxBreath, uint16_t EyeHalfSize, bool Wrap, bool RandEyePos, uint8_t BreathFreq, uint16_t Rate); 
+        BreathEyeSL(SegmentSetPS &SegSet, CRGB color, CRGB BgColor, uint8_t MaxBreath, uint16_t EyeHalfSize,
+                    bool Wrap, bool RandEyePos, uint8_t BreathFreq, uint16_t Rate);
 
         //Constructor for rainbow mode
-        BreathEyeSL(SegmentSet &SegSet, CRGB BgColor, uint8_t RainbowRate, uint16_t EyeHalfSize, bool Wrap, bool RandEyePos, uint8_t BreathFreq, uint16_t Rate);
+        BreathEyeSL(SegmentSetPS &SegSet, CRGB BgColor, uint8_t RainbowRate, uint16_t EyeHalfSize, bool Wrap,
+                    bool RandEyePos, uint8_t BreathFreq, uint16_t Rate);
 
-        ~BreathEyeSL(); 
-        
-        int8_t 
+        ~BreathEyeSL();
+
+        int8_t
             dimPow = 80;
 
         uint8_t
             breathFreqOrig,
-            *breathFreq = nullptr, //pointer to the breath frequency (dby default it's bound to the the Rate)
-            minBreath = 60, //The minimum breath fade amount (0 is min, should be less than maxBreath)
-            maxBreath = 255, //How far the breath color will fade towards the background (255 is max)
-            breathEndOffset = 5, //The offset from maxBreath after which a new color is chosen (see comments in update() code)
+            *breathFreq = nullptr,  //pointer to the breath frequency (dby default it's bound to the the Rate)
+            minBreath = 60,         //The minimum breath fade amount (0 is min, should be less than maxBreath)
+            maxBreath = 255,        //How far the breath color will fade towards the background (255 is max)
+            breathEndOffset = 5,    //The offset from maxBreath after which a new color is chosen (see comments in update() code)
             rainbowSat = 255,
             rainbowVal = 255,
             rainbowRate = 20,
-            randMode = 0; //see description above
-        
+            randMode = 0;  //see description above
+
         uint16_t
             eyePos,
             eyeHalfSize,
             eyeHalfSizeMax,
             eyeCenterSize = 0,
-            breathCount = 0; //How many total breath cycles we've gone through
-        
+            breathCount = 0;  //How many total breath cycles we've gone through
+
         bool
-            fillBG = false, //sets if the background is to be filled before after each fade, 
-                            //only needed if your maxBreath isn't 255 and you have multiple colors
+            fillBG = false,  //sets if the background is to be filled before after each fade,
+                             //only needed if your maxBreath isn't 255 and you have multiple colors
             wrap,
             randEyePos,
             randEyeSize = false;
-        
-        CRGB 
+
+        CRGB
             bgColorOrig,
-            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+            *bgColor = nullptr;  //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
 
         palettePS
             *palette = nullptr,
-            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
-        
+            paletteTemp = {nullptr, 0};  //Must init structs w/ pointers set to null for safety
+
         patternPS
             *pattern = nullptr,
-            patternTemp = {nullptr, 0, 0}; //Must init structs w/ pointers set to null for safety
-        
-        void 
+            patternTemp = {nullptr, 0, 0};  //Must init structs w/ pointers set to null for safety
+
+        void
             setPaletteAsPattern(),
             reset(void),
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
             prevTime = 0;
-        
-        CRGB 
+
+        CRGB
             colorOut,
             dimColor,
             getEyeColor(uint16_t lineNum),
-            breathColor; //the color we are fading to
-        
+            breathColor;  //the color we are fading to
+
         uint8_t
-            hue = 0, //for rainbow mode
+            hue = 0,  //for rainbow mode
             ratio,
             bWave,
             breathEndVal,
             breath;
-        
+
         uint16_t
             numLines,
-            eyeHalf, //Stores eyeHalfSize or a randomized eyeHalfSize
+            eyeHalf,  //Stores eyeHalfSize or a randomized eyeHalfSize
             lineNumFor,
             lineNumRev,
             palIndex = 0,
@@ -231,10 +235,10 @@ class BreathEyeSL : public EffectBasePS {
 
         bool
             lockColor = false;
-        
+
         void
             getNextColor(),
-            init(CRGB BgColor, uint8_t BreathFreq, SegmentSet &SegSet, uint16_t Rate);
+            init(CRGB BgColor, uint8_t BreathFreq, SegmentSetPS &SegSet, uint16_t Rate);
 };
 
 #endif

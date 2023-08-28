@@ -8,8 +8,8 @@
 //groups are formed between consecutive leds and vary randomly from 1 to grouping in size
 namespace shiftingSeaUtilsPS {
 
-    void 
-        genOffsetArray(uint16_t *offsets, uint16_t numPixels, uint8_t gradLength, uint16_t grouping, uint16_t totalCycleLength, uint8_t mode );
+    void
+        genOffsetArray(uint16_t *offsets, uint16_t numPixels, uint8_t gradLength, uint16_t grouping, uint16_t totalCycleLength, uint8_t mode);
 
 }
 #endif

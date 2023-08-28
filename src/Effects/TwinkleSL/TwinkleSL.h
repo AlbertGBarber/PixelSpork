@@ -12,7 +12,7 @@ Please note that the total number of lines colored at one time will be numTwinkl
 Just run an example and you'll see what I mean
 
 The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
-passing in a SegmentSet with only one segment containing the whole strip.
+passing in a SegmentSetPS with only one segment containing the whole strip.
 
 This effect is fully compatible with color modes, and the bgColor is a pointer, so you can bind it
 to an external color variable
@@ -24,7 +24,7 @@ Example call:
     Will choose 2 lines each cycle to fade to/from red each cycle, using a blue background, 
     with 4 fade in and out steps, at a rate of 70ms
 
-    TwinkleSL twinkle(mainSegments, cybPnkPal, 0, 3, 1, 6, 60);
+    TwinkleSL twinkle(mainSegments, cybPnkPal_PS, 0, 3, 1, 6, 60);
     Will choose 3 lines each cycle to fade to/from colors chosen from the palette, using a blank background,
     with 1 fade in and 6 fade out steps, at a rate of 60ms
 
@@ -81,42 +81,45 @@ Notes:
 class TwinkleSL : public EffectBasePS {
     public:
         //Constructor for a full palette effect
-        TwinkleSL(SegmentSet &SegSet, palettePS &Palette, CRGB BgColor, uint16_t numTwinkles, uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate);  
-        
+        TwinkleSL(SegmentSetPS &SegSet, palettePS &Palette, CRGB BgColor, uint16_t numTwinkles, uint8_t FadeInSteps,
+                  uint8_t FadeOutSteps, uint16_t Rate);
+
         //Constructor for a using a single color
-        TwinkleSL(SegmentSet &SegSet, CRGB Color, CRGB BgColor, uint16_t numTwinkles, uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate);
-        
+        TwinkleSL(SegmentSetPS &SegSet, CRGB Color, CRGB BgColor, uint16_t numTwinkles, uint8_t FadeInSteps,
+                  uint8_t FadeOutSteps, uint16_t Rate);
+
         //Constructor for choosing all colors at random
-        TwinkleSL(SegmentSet &SegSet, CRGB BgColor, uint16_t numTwinkles, uint8_t FadeInSteps, uint8_t FadeOutSteps, uint16_t Rate);
+        TwinkleSL(SegmentSetPS &SegSet, CRGB BgColor, uint16_t numTwinkles, uint8_t FadeInSteps,
+                  uint8_t FadeOutSteps, uint16_t Rate);
 
         //destructor
-        ~TwinkleSL(); 
-        
-        uint8_t 
+        ~TwinkleSL();
+
+        uint8_t
             randMode = 0,
             colorMode = 0,
             bgColorMode = 0;
-        
+
         //step vars
-        uint8_t 
-            fadeInSteps = 0, //Set using setSteps(), for reference only!!
-            fadeOutSteps = 0; //Set using setSteps(), for reference only!!
+        uint8_t
+            fadeInSteps = 0,   //Set using setSteps(), for reference only!!
+            fadeOutSteps = 0;  //Set using setSteps(), for reference only!!
 
         uint16_t
-            numTwinkles; //for reference, set with setNumTwinkles()
+            numTwinkles;  //for reference, set with setNumTwinkles()
 
-        CRGB 
+        CRGB
             bgColorOrig,
-            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+            *bgColor = nullptr;  //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
 
-        bool 
+        bool
             fillBG = false;
-        
+
         palettePS
             *palette = nullptr,
-            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
-        
-        void 
+            paletteTemp = {nullptr, 0};  //Must init structs w/ pointers set to null for safety
+
+        void
             setSteps(uint8_t newFadeInSteps, uint8_t newFadeOutSteps),
             setSingleColor(CRGB Color),
             reset(),
@@ -124,17 +127,17 @@ class TwinkleSL : public EffectBasePS {
             initTwinkleArrays(),
             deleteTwinkleArrays(),
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
             prevTime = 0;
-        
+
         uint8_t
             paletteLength,
             step,
             totalSteps = 0,
-            totFadeStepsMax = 0, //used for tracking the memory size of the led and color index arrays
+            totFadeStepsMax = 0,  //used for tracking the memory size of the led and color index arrays
             totFadeSteps;
 
         uint16_t
@@ -142,12 +145,12 @@ class TwinkleSL : public EffectBasePS {
             numLines,
             lineNum,
             pixelNum,
-            numTwinklesMax = 0, //used for tracking the memory size of the led and color index arrays
+            numTwinklesMax = 0,  //used for tracking the memory size of the led and color index arrays
             **ledArray = nullptr;
 
         bool
             startUpDone = false;
-        
+
         CRGB
             **colorIndexArr = nullptr,
             twinkleColor,
@@ -155,7 +158,7 @@ class TwinkleSL : public EffectBasePS {
             pickColor();
 
         void
-            init(uint8_t FadeInSteps, uint8_t FadeOutSteps, CRGB BgColor, SegmentSet &SegSet, uint16_t Rate),
+            init(uint8_t FadeInSteps, uint8_t FadeOutSteps, CRGB BgColor, SegmentSetPS &SegSet, uint16_t Rate),
             incrementTwinkleArrays();
 };
 

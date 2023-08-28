@@ -1,7 +1,7 @@
 #ifndef ParticlesSL_h
 #define ParticlesSL_h
 
-//KNOWN BUG (seems to be fixed in current FastLED code) 
+//KNOWN BUG (seems to be fixed in current FastLED code)
 //          -- The first led in the segment set will be set to a static color
 //             This bug is very inconsistent, and seems to depend on a memory issue somewhere
 //             It seems to mainly affect effects using particles, but exhaustive testing has not been done
@@ -31,7 +31,7 @@ This effect is fully compatible with color modes, and the bgColor is a pointer, 
 to an external color variable
 
 The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
-passing in a SegmentSet with only one segment containing the whole strip. For 2D segments
+passing in a SegmentSetPS with only one segment containing the whole strip. For 2D segments
 particles move along segment lines, with the particle being replicated across all the segments
 ie like a wave.
 
@@ -76,7 +76,7 @@ Making a particle set:
     The created particle set will be bound to the particleSet pointer in the effect, so you can manipulate it from outside
 
     Please note the following bounce behavior of particles:
-    For a particle to bounce, it must reverse it's direction once it hits either end of the SegmentSet
+    For a particle to bounce, it must reverse it's direction once it hits either end of the SegmentSetPS
     However, how/when it bounces is a matter of opinion. I have opted for the following:
     The particle only bounces when it's main body (not trail) reaches an end point.
     Both the front and rear trails wrap back on themselves as the particle bounces
@@ -92,17 +92,17 @@ Making a particle set:
 
 Example calls: 
     using the particleSet defined above:
-    ParticlesSL particles(mainSegments, particleSet, cybPnkPal, CRGB::Red);
+    ParticlesSL particles(mainSegments, particleSet, cybPnkPal_PS, CRGB::Red);
     Will animate the single particle as described above, placing it on a red background
 
-    ParticlesSL particles(mainSegments, cybPnkPal, 0, 3, 2, 60, 50, 1, 3, 2, 3, 0, 2, cybPnkPal.length, true);
+    ParticlesSL particles(mainSegments, cybPnkPal_PS, 0, 3, 2, 60, 50, 1, 3, 2, 3, 0, 2, cybPnkPal_PS.length, true);
     Creates a set of three particles that will run on a blank background with the following properties:
     The particle directions will be chosen at random
     They will have a maximum speed of 60ms, up to 110ms (60 + 50)
     The will have a minimum size of 1, up to 4 (1 + 3)
     They will have two trails of length 3 and no variations in length
     Their bounce properties will be chosen at random
-    Their colors will be chosen at random from cybPnkPal
+    Their colors will be chosen at random from cybPnkPal_PS
 
 Constructor inputs for creating a particle set:
     palette -- The palette than will be used for the particle colors 
@@ -171,48 +171,48 @@ Notes:
 class ParticlesSL : public EffectBasePS {
     public:
         //Constructor for having the effect generate a set of particles
-        ParticlesSL(SegmentSet &SegSet, palettePS &Palette, CRGB BgColor, uint8_t numParticles, uint8_t direction, 
-                    uint16_t baseSpeed, uint16_t speedRange, uint16_t size, uint16_t sizeRange, uint8_t trailType, 
-                    uint8_t trailSize, uint8_t trailRange, uint8_t bounce, uint8_t colorIndex, bool randColor);  
+        ParticlesSL(SegmentSetPS &SegSet, palettePS &Palette, CRGB BgColor, uint8_t numParticles, uint8_t direction,
+                    uint16_t baseSpeed, uint16_t speedRange, uint16_t size, uint16_t sizeRange, uint8_t trailType,
+                    uint8_t trailSize, uint8_t trailRange, uint8_t bounce, uint8_t colorIndex, bool randColor);
 
         //Constructor for using a passed in set of particles
-        ParticlesSL(SegmentSet &SegSet, particleSetPS &ParticleSet, palettePS &Palette, CRGB BgColor);
+        ParticlesSL(SegmentSetPS &SegSet, particleSetPS &ParticleSet, palettePS &Palette, CRGB BgColor);
 
         ~ParticlesSL();
 
         int8_t
-            dimPow = 80; //80 range -127 -> 127 -80 good for colored bg's
+            dimPow = 80;  //80 range -127 -> 127 -80 good for colored bg's
 
         uint8_t
             colorMode = 0,
             bgColorMode = 0;
-        
+
         bool
-            blend = false, //sets if particles should add onto one another
+            blend = false,  //sets if particles should add onto one another
             fillBG = false;
 
-        CRGB 
-            *trailEndColors = nullptr, //used to store the last colors of each trail, so the background color can be set
+        CRGB
+            *trailEndColors = nullptr,  //used to store the last colors of each trail, so the background color can be set
             bgColorOrig,
-            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
-        
+            *bgColor = nullptr;  //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+
         palettePS
             *palette = nullptr;
 
-        particleSetPS 
-            *particleSet = nullptr, //the particle set used in the effect
-            particleSetTemp = {nullptr, 0}; //storage for self created particle sets, init to empty for safety.
+        particleSetPS
+            *particleSet = nullptr,          //the particle set used in the effect
+            particleSetTemp = {nullptr, 0};  //storage for self created particle sets, init to empty for safety.
 
-        void 
+        void
             reset(),
             setParticleSet(particleSetPS &newParticleSet),
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
             prevTime = 0;
-            
+
         //most of these vars are storage for particle properties
         int8_t
             trailDirectionAdj,
@@ -225,9 +225,9 @@ class ParticlesSL : public EffectBasePS {
             sizeAdj,
             dimRatio;
 
-        uint16_t 
+        uint16_t
             speed,
-            updateRate = 0, //initialized to 0 to ensure an initial update
+            updateRate = 0,  //initialized to 0 to ensure an initial update
             position,
             size,
             maxPosition,
@@ -238,22 +238,22 @@ class ParticlesSL : public EffectBasePS {
             numSegs,
             pixelNum,
             getTrailLedLoc(bool trailDirect, uint8_t trailPixelNum, uint16_t maxPosition);
-        
+
         bool
             direction,
             bounce,
             movePart;
-        
+
         particlePS
             *particlePtr = nullptr;
 
-        CRGB 
+        CRGB
             colorTarget,
             partColor,
             colorFinal;
-        
+
         void
-            init(CRGB BgColor, SegmentSet &SegSet),
+            init(CRGB BgColor, SegmentSetPS &SegSet),
             moveParticle(particlePS *particlePtr),
             setTrailColor(uint16_t trailLineNum, uint8_t segNum, uint8_t trailPixelNum);
 };

@@ -1,7 +1,7 @@
 #ifndef NoiseSL_h
 #define NoiseSL_h
 
-//TODO: inoise8() has it's real range limited to 0-128, 
+//TODO: inoise8() has it's real range limited to 0-128,
 //      use inoise16() instead, but shift out the extra bits: uint8_t n = inoise16(x << 8, y << 8) >> 8;?
 
 #include "Effects/EffectBasePS.h"
@@ -52,7 +52,7 @@ Inputs guide:
             This avoids color "jumps" by keeping the transition gradual. 
             Once the target is reached, a new target value is picked and the process begins again.
             If you don't want any shifting, simply set scaleRange = 0.
-            The values for scaleBase and scaleRange will vary based on the size of your SegmentSet
+            The values for scaleBase and scaleRange will vary based on the size of your SegmentSetPS
             But I recommend starting with a scaleBase of 10 - 20, and a scaleRange of 80.
 
         Effect speed:
@@ -97,8 +97,8 @@ Example calls:
     cMode is 0
     The effect updates at 80ms
     
-    NoiseSL noiseSL(mainSegments, cybPnkPal, 40, 5, 95, 20, 0, 80);
-    Will produce a noise effect with using colors from cybPnkPal
+    NoiseSL noiseSL(mainSegments, cybPnkPal_PS, 40, 5, 95, 20, 0, 80);
+    Will produce a noise effect with using colors from cybPnkPal_PS
     There are 40 blend steps between each color
     A base scaling value of 5 will be applied with a range of 95 (max scale is 100)
     The speed is 20
@@ -128,7 +128,7 @@ Other settings:
 
 Functions:
     setupNoiseArray() -- Creates the array for storing the noise (will be matrix of uint8_t's, numLines x numSegs)
-                         Only call this if you change what SegmentSet the effect is on
+                         Only call this if you change what SegmentSetPS the effect is on
     update() -- updates the effect 
 
 Notes:
@@ -139,61 +139,63 @@ class NoiseSL : public EffectBasePS {
     public:
 
         //Constructor for randomly generated palette
-        NoiseSL(SegmentSet &SegSet, uint8_t numColors, uint16_t BlendSteps, uint16_t ScaleBase, uint16_t ScaleRange, uint16_t Speed, uint8_t CMode, uint16_t Rate);
+        NoiseSL(SegmentSetPS &SegSet, uint8_t numColors, uint16_t BlendSteps, uint16_t ScaleBase,
+                uint16_t ScaleRange, uint16_t Speed, uint8_t CMode, uint16_t Rate);
 
         //Constructor using palette
-        NoiseSL(SegmentSet &SegSet, palettePS &Palette, uint16_t BlendSteps, uint16_t ScaleBase, uint16_t ScaleRange, uint16_t Speed, uint8_t CMode, uint16_t Rate); 
+        NoiseSL(SegmentSetPS &SegSet, palettePS &Palette, uint16_t BlendSteps, uint16_t ScaleBase,
+                uint16_t ScaleRange, uint16_t Speed, uint8_t CMode, uint16_t Rate);
 
         ~NoiseSL();
-        
-        uint8_t 
+
+        uint8_t
             *noise = nullptr,
             cMode = 0,
             bgColorMode = 0;
-        
+
         uint16_t
             blendSteps,
             iHue = 0,
-            speed, 
+            speed,
             scaleBase,
             scaleRange;
-    
-        bool 
-            rotateHue = true;
-        
-        CRGB 
-            bgColorOrig = 0, //default background color (blank)
-            *bgColor = &bgColorOrig; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
-        
-        palettePS 
-            *palette = nullptr,
-            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
 
-        void 
+        bool
+            rotateHue = true;
+
+        CRGB
+            bgColorOrig = 0,          //default background color (blank)
+            *bgColor = &bgColorOrig;  //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+
+        palettePS
+            *palette = nullptr,
+            paletteTemp = {nullptr, 0};  //Must init structs w/ pointers set to null for safety
+
+        void
             setupNoiseArray(),
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
             prevTime = 0;
-        
-        int8_t 
+
+        int8_t
             scaleStep = 0;
-        
+
         uint8_t
             noiseData,
             oldData,
             newData,
             bri,
             dataSmoothing;
-        
+
         uint16_t
             totBlendLength,
             pixelNum,
             numLines,
             numSegs,
-            numPointsMax = 0, //used for tracking the memory size of the noise array
+            numPointsMax = 0,  //used for tracking the memory size of the noise array
             colorIndex,
             scale,
             scaleTarget,
@@ -204,13 +206,13 @@ class NoiseSL : public EffectBasePS {
             noiseIndex,
             j_offset,
             i_offset;
-        
-        CRGB 
+
+        CRGB
             colorTarget,
             colorOut;
-        
+
         void
-            init(SegmentSet &SegSet, uint16_t Rate),
+            init(SegmentSetPS &SegSet, uint16_t Rate),
             fillNoise8(),
             mapNoiseSegsWithPalette(),
             setShiftScale();

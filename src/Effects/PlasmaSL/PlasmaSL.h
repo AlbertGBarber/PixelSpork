@@ -22,7 +22,7 @@ I've pre-set these to a pair of values that seem to work ok at lower brightnesse
 But you may need to adjust them. Andrew Tuline defaults are 9 and 96 respectively
 
 The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
-passing in a SegmentSet with only one segment containing the whole strip.
+passing in a SegmentSetPS with only one segment containing the whole strip.
 
 Shifting Phases with Time:
     To produce a more varied effect you can opt to have the wave phases shift with time
@@ -67,8 +67,8 @@ Example calls:
     and the freqs and phases being randomized 
     It will update every 80ms
 
-    PlasmaSL plasma(mainSegments, cybPnkPal, 80, false, 40);
-    Will do a PlasmaSL effect using colors from cybPnkPal
+    PlasmaSL plasma(mainSegments, cybPnkPal_PS, 80, false, 40);
+    Will do a PlasmaSL effect using colors from cybPnkPal_PS
     with 80 blend steps between each color
     and the freqs and phases are not randomized
     It will update every 40ms
@@ -103,55 +103,55 @@ class PlasmaSL : public EffectBasePS {
     public:
 
         //Constructor for effect with palette
-        PlasmaSL(SegmentSet &SegSet, palettePS &Palette, uint16_t BlendSteps, bool Randomize, uint16_t Rate); 
+        PlasmaSL(SegmentSetPS &SegSet, palettePS &Palette, uint16_t BlendSteps, bool Randomize, uint16_t Rate);
 
         //Constructor for effect with randomly chosen palette
-        PlasmaSL(SegmentSet &SegSet, uint8_t numColors, uint16_t BlendSteps, bool Randomize, uint16_t Rate);
+        PlasmaSL(SegmentSetPS &SegSet, uint8_t numColors, uint16_t BlendSteps, bool Randomize, uint16_t Rate);
 
         ~PlasmaSL();
 
         uint8_t
-            freq1 = 23, 
-            freq2 = 15, 
+            freq1 = 23,
+            freq2 = 15,
             pAdj1 = 0,
             pAdj2 = 0;
 
         //brightness vars
         uint8_t
-            briFreq = 15, //9
-            briRange = 75; //96
-        
+            briFreq = 15,   //9
+            briRange = 75;  //96
+
         //vars for shifting phase
         uint8_t
             phase1Base = 0,
             phase2Base = 0,
             phase1Range = 255,
             phase2Range = 255;
-        
+
         uint16_t
             blendSteps;
-        
-        bool 
+
+        bool
             randomize;
-        
+
         palettePS
             *palette = nullptr,
-            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
+            paletteTemp = {nullptr, 0};  //Must init structs w/ pointers set to null for safety
 
-        void 
+        void
             randomizeFreq(uint8_t freqMin, uint8_t freqMax),
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
             prevTime = 0,
             holdStartTime = 0;
-        
-        int8_t 
+
+        int8_t
             phase1Step = 0,
             phase2Step = 0;
-        
+
         uint8_t
             phaseWave1,
             phaseWave2,
@@ -160,19 +160,19 @@ class PlasmaSL : public EffectBasePS {
             phase1Target,
             phase2Target,
             brightness;
-        
+
         uint16_t
             numLines,
             lineNum,
             colorIndex,
             totBlendLength;
-        
-        CRGB 
+
+        CRGB
             colorOut;
 
         void
             shiftPhase(uint8_t *phase, uint8_t *phaseTarget, int8_t *phaseStep, uint8_t phaseBase, uint8_t phaseRange),
-            init(SegmentSet &SegSet, uint16_t Rate);
+            init(SegmentSetPS &SegSet, uint16_t Rate);
 };
 
 #endif

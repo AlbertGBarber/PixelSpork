@@ -1,8 +1,8 @@
 #include "CrossFadeCycleRandPS.h"
 
 //same as CrossFadeCycle but it chooses a random color to fade to each time
-CrossFadeCycleRandPS::CrossFadeCycleRandPS(SegmentSet &SegmentSet, uint16_t NumCycles, uint8_t Steps, uint16_t Rate):
-    segmentSet(SegmentSet), numCycles(NumCycles), steps(Steps)
+CrossFadeCycleRandPS::CrossFadeCycleRandPS(SegmentSetPS &SegmentSetPS, uint16_t NumCycles, uint8_t Steps, uint16_t Rate):
+    segmentSet(SegmentSetPS), numCycles(NumCycles), steps(Steps)
     {    
         //bind the rate and segmentSet pointer vars since they are inherited from BaseEffectPS
         bindSegPtrPS();

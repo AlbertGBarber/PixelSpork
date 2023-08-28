@@ -39,8 +39,8 @@ Example calls:
     There is a similar constructor for using a single color, just replace the palette with a color in th
     constructor
 
-    RainSeg rainSeg(mainSegments, cybPnkPal, CRGB::Red, true, 10, 4, 1, 1, 5, 80);
-    Will spawn drops on the mainSegment set, picking colors from cybPnkPal
+    RainSeg rainSeg(mainSegments, cybPnkPal_PS, CRGB::Red, true, 10, 4, 1, 1, 5, 80);
+    Will spawn drops on the mainSegment set, picking colors from cybPnkPal_PS
     The background is red, and it will be pre-filled before the drops spawn
     The drops have a spawn chance of 10/100 (10% chance of spawning each update cycle)
     There is a maximum of 4 drops running concurrently on each segment
@@ -145,80 +145,80 @@ Notes:
 class RainSeg : public EffectBasePS {
     public:
         //constructor for palette colors, no range options
-        RainSeg(SegmentSet &SegSet, palettePS &Palette, CRGB BgColor, bool BgPrefill, uint8_t SpawnChance, 
-                    uint8_t MaxNumDrops, uint16_t Size, uint8_t TrailMode, uint8_t TrailSize, uint16_t Rate);
-        
-        //constructor for palette colors with range and trail options
-        RainSeg(SegmentSet &SegSet, palettePS &Palette, CRGB BgColor, bool BgPrefill, uint8_t SpawnChance, 
-                    uint8_t MaxNumDrops, uint16_t Size, uint16_t SizeRange, uint8_t TrailSize,
-                    uint8_t TrailRange, bool NoTrails, bool OneTrail, bool TwoTrail, bool RevTrail, 
-                    bool InfTrail, uint16_t Rate, uint16_t SpeedRange);
-        
-        //constructor for single color, no range options
-        RainSeg(SegmentSet &SegSet, CRGB Color, CRGB BgColor, bool BgPrefill, uint8_t SpawnChance, 
-                    uint8_t MaxNumDrops, uint16_t Size, uint8_t TrailType, uint8_t TrailSize, uint16_t Rate);
+        RainSeg(SegmentSetPS &SegSet, palettePS &Palette, CRGB BgColor, bool BgPrefill, uint8_t SpawnChance,
+                uint8_t MaxNumDrops, uint16_t Size, uint8_t TrailMode, uint8_t TrailSize, uint16_t Rate);
 
-        //constructor for single colors with range and trail options        
-        RainSeg(SegmentSet &SegSet, CRGB Color, CRGB BgColor, bool BgPrefill, uint8_t SpawnChance, 
-                    uint8_t MaxNumDrops, uint16_t Size, uint16_t SizeRange, uint8_t TrailSize,
-                    uint8_t TrailRange, bool NoTrails, bool OneTrail, bool TwoTrail, bool RevTrail, 
-                    bool InfTrail, uint16_t Rate, uint16_t SpeedRange);
-        
-        ~RainSeg(); 
+        //constructor for palette colors with range and trail options
+        RainSeg(SegmentSetPS &SegSet, palettePS &Palette, CRGB BgColor, bool BgPrefill, uint8_t SpawnChance,
+                uint8_t MaxNumDrops, uint16_t Size, uint16_t SizeRange, uint8_t TrailSize,
+                uint8_t TrailRange, bool NoTrails, bool OneTrail, bool TwoTrail, bool RevTrail,
+                bool InfTrail, uint16_t Rate, uint16_t SpeedRange);
+
+        //constructor for single color, no range options
+        RainSeg(SegmentSetPS &SegSet, CRGB Color, CRGB BgColor, bool BgPrefill, uint8_t SpawnChance,
+                uint8_t MaxNumDrops, uint16_t Size, uint8_t TrailType, uint8_t TrailSize, uint16_t Rate);
+
+        //constructor for single colors with range and trail options
+        RainSeg(SegmentSetPS &SegSet, CRGB Color, CRGB BgColor, bool BgPrefill, uint8_t SpawnChance,
+                uint8_t MaxNumDrops, uint16_t Size, uint16_t SizeRange, uint8_t TrailSize,
+                uint8_t TrailRange, bool NoTrails, bool OneTrail, bool TwoTrail, bool RevTrail,
+                bool InfTrail, uint16_t Rate, uint16_t SpeedRange);
+
+        ~RainSeg();
 
         int8_t
-            dimPow = 80; //80 range -127 -> 127 -80 good for colored bg's
-        
+            dimPow = 80;  //80 range -127 -> 127 -80 good for colored bg's
+
         uint8_t
-            maxNumDrops = 0, //for reference only, set using setupDrops()
+            maxNumDrops = 0,  //for reference only, set using setupDrops()
             spawnChance,
             colorMode = 0,
             bgColorMode = 0,
             trailType,
             trailSize,
             trailRange = 0;
-        
+
         uint16_t
             speedRange = 0,
             size,
             sizeRange = 0;
-        
+
         bool
             bgPrefill,
             fillBG = false,
             blend = false,
             *partActive = nullptr;
-        
+
         //trail type flags
         bool
             noTrails = false,
             oneTrail = false,
-            twoTrail = false, 
-            revTrail = false, 
+            twoTrail = false,
+            revTrail = false,
             infTrail = false;
 
-        CRGB 
-            *trailEndColors = nullptr, //used to store the last colors of each trail, so the background color can be set 
+        CRGB
+            *trailEndColors = nullptr,  //used to store the last colors of each trail, so the background color can be set
             bgColorOrig,
-            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
-        
-        palettePS   
+            *bgColor = nullptr;  //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+
+        palettePS
             *palette = nullptr,
-            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
+            paletteTemp = {nullptr, 0};  //Must init structs w/ pointers set to null for safety
 
-        particleSetPS 
-            *particleSet = nullptr, //the particle set used in the effect
-            particleSetTemp = {nullptr, 0}; //storage for self created particle sets, init to empty for safety
+        particleSetPS
+            *particleSet = nullptr,          //the particle set used in the effect
+            particleSetTemp = {nullptr, 0};  //storage for self created particle sets, init to empty for safety
 
-        void 
+        void
             setupDrops(uint8_t newMaxNumDrops),
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
             prevTime = 0;
-            
+
         int8_t
             trailDirectionAdj;
 
@@ -229,8 +229,8 @@ class RainSeg : public EffectBasePS {
             sizeAdj,
             dimRatio;
 
-        uint16_t 
-            numSegs = 0, //for first init function call
+        uint16_t
+            numSegs = 0,  //for first init function call
             pixelPosTemp,
             particleIndex,
             totPartSize,
@@ -244,22 +244,22 @@ class RainSeg : public EffectBasePS {
             sectionEnd,
             sectionStart = 0,
             getTrailLedLoc(bool trailDirect, uint8_t trailPixelNum, uint16_t maxPosition);
-        
+
         bool
-            bgFilled = false,  //flag for if the background has been filled in already
-            spawnOkTest = true, //flag for if a particle is able to spawn
-            movePart; //flag for if a particle should move this cycle
-        
+            bgFilled = false,    //flag for if the background has been filled in already
+            spawnOkTest = true,  //flag for if a particle is able to spawn
+            movePart;            //flag for if a particle should move this cycle
+
         particlePS
             *particlePtr = nullptr;
 
-        CRGB 
+        CRGB
             colorEnd,
             colorOut,
             colorTemp;
-        
+
         void
-            init(uint8_t MaxNumDrops, CRGB BgColor, SegmentSet &SegSet, uint16_t Rate),
+            init(uint8_t MaxNumDrops, CRGB BgColor, SegmentSetPS &SegSet, uint16_t Rate),
             setDropSpawnPos(particlePS *particlePtr, uint8_t segNum),
             moveParticle(particlePS *particlePtr),
             drawParticlePixel(uint16_t trailLedLocation, uint8_t trailPixelNum, uint8_t trailSize, uint8_t segNum, bool bodyPixel),

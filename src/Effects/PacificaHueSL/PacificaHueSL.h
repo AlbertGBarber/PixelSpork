@@ -93,36 +93,36 @@ Reference vars:
 class PacificaHueSL : public EffectBasePS {
     public:
         //Normal constructor
-        PacificaHueSL(SegmentSet &SegSet, uint16_t Rate);  
+        PacificaHueSL(SegmentSetPS &SegSet, uint16_t Rate);
 
         //constructor with addWhiteCaps setting
-        PacificaHueSL(SegmentSet &SegSet, bool AddWhiteCaps, uint8_t Hue, uint16_t Rate);
+        PacificaHueSL(SegmentSetPS &SegSet, bool AddWhiteCaps, uint8_t Hue, uint16_t Rate);
 
         //constructor with addWhiteCaps and hue rate settings
         //The hue will be the initial hue of the palette
-        PacificaHueSL(SegmentSet &SegSet, bool AddWhiteCaps, uint8_t Hue, uint16_t HueRate, uint16_t Rate);
+        PacificaHueSL(SegmentSetPS &SegSet, bool AddWhiteCaps, uint8_t Hue, uint16_t HueRate, uint16_t Rate);
 
         ~PacificaHueSL();
 
         PacificaHuePalPS
             *PacificaPalette = nullptr;
-        
+
         bool
             addWhiteCaps = false;
-        
-        uint8_t 
-            hue, //for reference, call setHue() to change the hue (defaulted to 130 in PacificaHuePalPS.h)
-            numSteps, //probably shouldn't change this
-            thresholdMax = 230; //cap on light level for addWhiteCaps(), stops colors from going full white
+
+        uint8_t
+            hue,                 //for reference, call setHue() to change the hue (defaulted to 130 in PacificaHuePalPS.h)
+            numSteps,            //probably shouldn't change this
+            thresholdMax = 230;  //cap on light level for addWhiteCaps(), stops colors from going full white
 
         uint16_t
-            hueRateOrig, //Will be set to the inital hue rate as passed into constructors
-            *hueRate = nullptr; //Is initially pointed to hueRateOrig, but can be pointed to an external variable if wanted
+            hueRateOrig,         //Will be set to the inital hue rate as passed into constructors
+            *hueRate = nullptr;  //Is initially pointed to hueRateOrig, but can be pointed to an external variable if wanted
 
-        void 
+        void
             setHue(uint8_t newHue),
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
@@ -132,7 +132,7 @@ class PacificaHueSL : public EffectBasePS {
             deltaTime1,
             deltaTime2,
             deltaTime21;
-        
+
         uint8_t
             baseThreshold,
             wave,
@@ -141,14 +141,14 @@ class PacificaHueSL : public EffectBasePS {
             overage,
             overage2;
 
-        uint16_t 
+        uint16_t
             numLines,
             numSegs,
-            totBlendLength = 240, //use a value of 240 taken from the original pacifica code, changing this is tricky
+            totBlendLength = 240,  //use a value of 240 taken from the original pacifica code, changing this is tricky
             pixelNum,
             sCIStart1,
             sCIStart2,
-            sCIStart3, 
+            sCIStart3,
             sCIStart4,
             speedFactor1,
             speedFactor2,
@@ -159,14 +159,14 @@ class PacificaHueSL : public EffectBasePS {
             cs,
             index,
             sIndex16;
-        
+
         CRGB
-            *bgColor = nullptr, //bgColor is a pointer, it is tied to the bgColor in the PacificaHuePalPS
+            *bgColor = nullptr,  //bgColor is a pointer, it is tied to the bgColor in the PacificaHuePalPS
             colorOut;
-        
-        void 
-            init(uint16_t HueRate, SegmentSet &SegSet, uint16_t Rate),
-            doOneLayer( palettePS *palette, uint16_t ciStart, uint16_t waveScale, uint8_t bri, uint16_t iOff),
+
+        void
+            init(uint16_t HueRate, SegmentSetPS &SegSet, uint16_t Rate),
+            doOneLayer(palettePS *palette, uint16_t ciStart, uint16_t waveScale, uint8_t bri, uint16_t iOff),
             addWhitecaps();
 };
 

@@ -13,9 +13,9 @@ The base constructor takes two colors, but you can optionally pass in a pattern 
 The are a few options for randomly choosing the strobe colors from the pattern.
 
 Strobe Modes:
-    0: Pulse half the SegmentSet in each color (alternating halves and colors), then pulse each color on the whole SegmentSet
-    1: Pulse half the SegmentSet in each color (alternating halves and colors)
-    2: Pulse the whole SegmentSet in each color (alternating colors)
+    0: Pulse half the SegmentSetPS in each color (alternating halves and colors), then pulse each color on the whole SegmentSetPS
+    1: Pulse half the SegmentSetPS in each color (alternating halves and colors)
+    2: Pulse the whole SegmentSetPS in each color (alternating colors)
 
 The strobe of each color will continue for a set number of on/off cycles (ie making the strobe)
 
@@ -23,7 +23,7 @@ If using a pattern, all the pattern indexes will be cycled through before resett
 For mode 0, this means all the colors will be strobe'd in halves, then strobe'd on the full strip
 
 The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
-passing in a SegmentSet with only one segment containing the whole strip.
+passing in a SegmentSetPS with only one segment containing the whole strip.
 ie depending on the mode, halve the segment lines will be pulsed at a time.
 
 Also see StrobeSeg for a segment based strobe effect. Lets you create more complex strobe patterns.
@@ -58,16 +58,16 @@ Example calls:
     The background is blank
     There is no pause between the cycles
 
-    PoliceStrobeSL policeStrobe(mainSegments, cybPnkPal, CRGB:Purple, 4, 500, 0, 50);
+    PoliceStrobeSL policeStrobe(mainSegments, cybPnkPal_PS, CRGB:Purple, 4, 500, 0, 50);
     A more dynamic strobe
-    Will strobe all the colors in the cybPnkPal, with 4 pulses at 50ms each
+    Will strobe all the colors in the cybPnkPal_PS, with 4 pulses at 50ms each
     strobe mode 0 is used, so the strobe will alternate between strobing halfs of the strip and the whole strip
     There is a 500ms pause between cycles
     The background color is purple
 
     uint8_t pattern_arr = {0, 1, 2};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
-    PoliceStrobeSL policeStrobe(mainSegments, pattern, cybPnkPal, CRGB:green, 6, 300, 0, 50);
+    PoliceStrobeSL policeStrobe(mainSegments, pattern, cybPnkPal_PS, CRGB:green, 6, 300, 0, 50);
     Will strobe colors from the palette based on the pattern (ie colors 0, 1, and 4 in order), with 6 pulses at 50ms each
     strobe mode 0 is used, so the strobe will alternate between strobing halfs of the strip and the whole strip
     There is a 300ms pause between cycles
@@ -110,13 +110,16 @@ class PoliceStrobeSL : public EffectBasePS {
     public:
 
         //Constructor for a traditional two color strobe
-        PoliceStrobeSL(SegmentSet &SegSet, CRGB ColorOne, CRGB ColorTwo, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, uint8_t PulseMode, bool SegMode, uint16_t Rate);  
+        PoliceStrobeSL(SegmentSetPS &SegSet, CRGB ColorOne, CRGB ColorTwo, CRGB BgColor, uint8_t NumPulses,
+                       uint16_t PauseTime, uint8_t PulseMode, bool SegMode, uint16_t Rate);
 
         //Constructor using both pattern and palette
-        PoliceStrobeSL(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, uint8_t PulseMode, bool SegMode, uint16_t Rate);
+        PoliceStrobeSL(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor,
+                       uint8_t NumPulses, uint16_t PauseTime, uint8_t PulseMode, bool SegMode, uint16_t Rate);
 
         //Constructor for using palette as the pattern
-        PoliceStrobeSL(SegmentSet &SegSet, palettePS &Palette, CRGB BgColor, uint8_t NumPulses, uint16_t PauseTime, uint8_t PulseMode, bool SegMode, uint16_t Rate);
+        PoliceStrobeSL(SegmentSetPS &SegSet, palettePS &Palette, CRGB BgColor, uint8_t NumPulses,
+                       uint16_t PauseTime, uint8_t PulseMode, bool SegMode, uint16_t Rate);
 
         ~PoliceStrobeSL();
 
@@ -126,37 +129,37 @@ class PoliceStrobeSL : public EffectBasePS {
             paused = false,
             pauseEvery = false,
             segMode;
-        
-        uint8_t 
+
+        uint8_t
             randMode = 0,
             pulseMode,
             numPulses,
             colorMode = 0,
             bgColorMode = 0;
-        
+
         uint16_t
-            colorNum = 0; //pattern index of the color currently being pulsed
-            
+            colorNum = 0;  //pattern index of the color currently being pulsed
+
         unsigned long
             pauseTime;
-        
-        CRGB 
+
+        CRGB
             bgColorOrig,
-            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
-        
+            *bgColor = nullptr;  //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+
         palettePS
-            *palette = nullptr, //the palette used for the strobe colors
-            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
+            *palette = nullptr,          //the palette used for the strobe colors
+            paletteTemp = {nullptr, 0};  //Must init structs w/ pointers set to null for safety
 
         patternPS
-            *pattern = nullptr, //pattern of strobe colors (taken from the palette)
-            patternTemp = {nullptr, 0, 0}; //Must init structs w/ pointers set to null for safety
-        
-        void 
+            *pattern = nullptr,             //pattern of strobe colors (taken from the palette)
+            patternTemp = {nullptr, 0, 0};  //Must init structs w/ pointers set to null for safety
+
+        void
             reset(),
             setPaletteAsPattern(),
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
@@ -173,18 +176,18 @@ class PoliceStrobeSL : public EffectBasePS {
             lightEnd,
             halfLength,
             numLines;
-        
-        bool 
+
+        bool
             pulseBG = false,
             firstHalf = true,
             flashHalf;
-        
+
         CRGB
             colorOut,
             colorTemp;
-        
+
         void
-            init(CRGB BgColor, SegmentSet &SegSet, uint16_t Rate),
+            init(CRGB BgColor, SegmentSetPS &SegSet, uint16_t Rate),
             startPause(),
             pickColor();
 };

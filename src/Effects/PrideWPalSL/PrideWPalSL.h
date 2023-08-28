@@ -11,7 +11,7 @@ It has been adapted to work with segments
 This version of the effect draws bands of color and brightness along segment lines,
 creating ever-changing waves of color that shift and blend.
 This is basically the same as the original Pride 2015, even though it works with segment lines
-Passing in a SegmentSet with one segment with all your leds in order will produce the original effect
+Passing in a SegmentSetPS with one segment with all your leds in order will produce the original effect
 (set briDirect = true and randomBriInc = false)
 
 The effect is different from PrideWPalSL because the colors move along the segment lines, rather then along the segments
@@ -83,14 +83,14 @@ Example calls:
     The brightness wave values will be randomized, see init() for the ranges
     The effect updates at 80ms
 
-    PrideWPalSL prideWPal(mainSegments, cybPnkPal, true, true, 80);
-    Will do an effect using colors from cybPnkPal
+    PrideWPalSL prideWPal(mainSegments, cybPnkPal_PS, true, true, 80);
+    Will do an effect using colors from cybPnkPal_PS
     The brightness waves will move with the colors
     The brightness wave values will be randomized, see init() for the ranges
     The effect updates at 80ms
 
-    PrideWPalSL prideWPal(mainSegments, cybPnkPal, true, 20, 120, 250, 350, 20, 40, 3, 7, 60);
-    Will do an effect using colors from cybPnkPal
+    PrideWPalSL prideWPal(mainSegments, cybPnkPal_PS, true, 20, 120, 250, 350, 20, 40, 3, 7, 60);
+    Will do an effect using colors from cybPnkPal_PS
     The brightness waves will move with the colors
     Colors will shift using 20 steps to blend the colors
     The brightnessThetaInc16 will vary from 120 to 250
@@ -134,64 +134,64 @@ Other Settings (see Inputs Guide for more info on most vars):
 class PrideWPalSL : public EffectBasePS {
     public:
         //constructor for rainbow mode
-        PrideWPalSL(SegmentSet &SegSet, bool BriDirect, bool RandomBriInc, uint16_t Rate);
+        PrideWPalSL(SegmentSetPS &SegSet, bool BriDirect, bool RandomBriInc, uint16_t Rate);
 
         //constructor for palette input
-        PrideWPalSL(SegmentSet &SegSet, palettePS &Palette, bool BriDirect, bool RandomBriInc, uint16_t Rate);  
+        PrideWPalSL(SegmentSetPS &SegSet, palettePS &Palette, bool BriDirect, bool RandomBriInc, uint16_t Rate);
 
         //constructor for making a random palette
-        PrideWPalSL(SegmentSet &SegSet, uint8_t numColors, bool BriDirect, bool RandomBriInc, uint16_t Rate);
+        PrideWPalSL(SegmentSetPS &SegSet, uint8_t numColors, bool BriDirect, bool RandomBriInc, uint16_t Rate);
 
         //constructor with inputs for all main variables
-        PrideWPalSL(SegmentSet &SegSet, palettePS &Palette, bool BriDirect, uint8_t GradLength, 
-                              uint8_t BrightDepthMin, uint8_t BrightDepthMax, uint16_t BriThetaFreq, 
-                              uint8_t BriThetaInc16Min, uint8_t BriThetaInc16Max, uint8_t HueChangeMin, 
-                              uint8_t HueChangeMax, uint16_t Rate);
+        PrideWPalSL(SegmentSetPS &SegSet, palettePS &Palette, bool BriDirect, uint8_t GradLength,
+                    uint8_t BrightDepthMin, uint8_t BrightDepthMax, uint16_t BriThetaFreq,
+                    uint8_t BriThetaInc16Min, uint8_t BriThetaInc16Max, uint8_t HueChangeMin,
+                    uint8_t HueChangeMax, uint16_t Rate);
 
         ~PrideWPalSL();
-        
+
         //commented values are values from Mark's code
         uint8_t
-            brightDepthMin = 100, //96 //how much the brightness varies by, min sets how long we stay in a flat color
-            brightDepthMax = 224, //224
-            briThetaInc16Min = 25, //How many "waves" we have
+            brightDepthMin = 100,   //96 //how much the brightness varies by, min sets how long we stay in a flat color
+            brightDepthMax = 224,   //224
+            briThetaInc16Min = 25,  //How many "waves" we have
             briThetaInc16Max = 40,
-            hueChangeMin = 5, //5 //sets how fast the colors shift
-            hueChangeMax = 9; //9
+            hueChangeMin = 5,  //5 //sets how fast the colors shift
+            hueChangeMax = 9;  //9
 
-        uint16_t 
-            gradLength = 20, //How many gradient steps to shift colors
-            briThetaFreq = 203; //203 //how long we spend transitioning through waves
-        
+        uint16_t
+            gradLength = 20,     //How many gradient steps to shift colors
+            briThetaFreq = 203;  //203 //how long we spend transitioning through waves
+
         bool
             briDirect,
             prideMode = false;
-        
+
         palettePS
             *palette = nullptr,
-            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
+            paletteTemp = {nullptr, 0};  //Must init structs w/ pointers set to null for safety
 
-        void 
-            randomizeBriInc(uint8_t briThetaMinMin, uint8_t briThetaMinMax, uint8_t briThetaMaxMin, uint8_t briThetaMaxMax ),
-            randomizeBriFreq( uint16_t briFreqMin, uint16_t briFreqMax ),
+        void
+            randomizeBriInc(uint8_t briThetaMinMin, uint8_t briThetaMinMax, uint8_t briThetaMaxMin, uint8_t briThetaMaxMax),
+            randomizeBriFreq(uint16_t briFreqMin, uint16_t briFreqMax),
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
             prevTime = 0;
-        
-        int8_t 
+
+        int8_t
             briDirectMult;
-        
-         uint8_t
+
+        uint8_t
             sat8,
             bri8,
             hue8,
             brightDepth,
             index,
             msMultiplier;
-        
+
         uint16_t
             numSteps,
             deltaTime,
@@ -208,13 +208,13 @@ class PrideWPalSL : public EffectBasePS {
             lineNum,
             numSegs,
             numLines;
-    
+
         CRGB
             newColor,
             colorOut;
-        
+
         void
-            init(bool RandomBriInc, SegmentSet &SegSet, uint16_t Rate);
+            init(bool RandomBriInc, SegmentSetPS &SegSet, uint16_t Rate);
 };
 
 #endif

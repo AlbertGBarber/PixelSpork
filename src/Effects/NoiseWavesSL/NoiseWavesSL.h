@@ -56,8 +56,8 @@ Example calls:
     (even at the slowest the waves still move pretty quick)
     The effect updates at 80ms
     
-    NoiseWavesSL noiseWaves(mainSegments, cybPnkPal, 0, 10, 2, 10, 80);
-    Will produce an effect using colors from cybPnkPal
+    NoiseWavesSL noiseWaves(mainSegments, cybPnkPal_PS, 0, 10, 2, 10, 80);
+    Will produce an effect using colors from cybPnkPal_PS
     The background is blank
     The blend scale is 30, while the phaseScale is 5 and the freqScale is 7
     The produces large waves that shift quickly
@@ -84,34 +84,36 @@ Functions:
 class NoiseWavesSL : public EffectBasePS {
     public:
         //Constructor with palette
-        NoiseWavesSL(SegmentSet &SegSet, palettePS &Palette, CRGB BgColor, uint16_t BlendScale, uint8_t PhaseScale, uint8_t FreqScale, uint16_t Rate);  
-        
-        //Constructor with randomly generated palette
-        NoiseWavesSL(SegmentSet &SegSet, uint8_t numColors, CRGB BgColor, uint16_t BlendScale, uint8_t PhaseScale, uint8_t FreqScale, uint16_t Rate);
+        NoiseWavesSL(SegmentSetPS &SegSet, palettePS &Palette, CRGB BgColor, uint16_t BlendScale,
+                     uint8_t PhaseScale, uint8_t FreqScale, uint16_t Rate);
 
-        ~NoiseWavesSL(); 
-        
-        uint8_t 
+        //Constructor with randomly generated palette
+        NoiseWavesSL(SegmentSetPS &SegSet, uint8_t numColors, CRGB BgColor, uint16_t BlendScale,
+                     uint8_t PhaseScale, uint8_t FreqScale, uint16_t Rate);
+
+        ~NoiseWavesSL();
+
+        uint8_t
             bgColorMode = 0,
-            phaseScale, 
-            freqScale, 
+            phaseScale,
+            freqScale,
             blendSpeed = 10;
-        
+
         uint16_t
-            blendScale, 
+            blendScale,
             blendSteps = 30;
 
-        CRGB 
+        CRGB
             bgColorOrig,
-            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
-        
-        palettePS 
-            *palette = nullptr,
-            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
+            *bgColor = nullptr;  //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
 
-        void 
+        palettePS
+            *palette = nullptr,
+            paletteTemp = {nullptr, 0};  //Must init structs w/ pointers set to null for safety
+
+        void
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
@@ -130,13 +132,13 @@ class NoiseWavesSL : public EffectBasePS {
             colorIndex,
             pixelNum,
             totBlendLength;
-        
-        CRGB 
+
+        CRGB
             colorTarget,
             colorOut;
-        
-        void 
-            init(CRGB BgColor, SegmentSet &SegSet, uint16_t Rate);
+
+        void
+            init(CRGB BgColor, SegmentSetPS &SegSet, uint16_t Rate);
 };
 
 #endif

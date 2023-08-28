@@ -63,8 +63,8 @@ Example calls:
     };
     shiftPatternPS basicPattern(mainSegments, patternSegs, basicPattern_arr, SIZE(basicPattern_arr));
 
-    PatternShifterSL patternShifterSL(basicPattern, cybPnkPal, 0, false, 100);
-    Will shift the "basicPattern" across its segment set using colors from cybPnkPal
+    PatternShifterSL patternShifterSL(basicPattern, cybPnkPal_PS, 0, false, 100);
+    Will shift the "basicPattern" across its segment set using colors from cybPnkPal_PS
     The background is blank
     The pattern is not repeated
     The effect updates at 100ms
@@ -96,44 +96,44 @@ Reference Vars:
 */
 class PatternShifterSL : public EffectBasePS {
     public:
-        PatternShifterSL(shiftPatternPS &ShiftPattern, palettePS &Palette, CRGB BgColor, bool Repeat, uint16_t Rate);  
-        
+        PatternShifterSL(shiftPatternPS &ShiftPattern, palettePS &Palette, CRGB BgColor, bool Repeat, uint16_t Rate);
+
         uint8_t
             colorMode = 0,
             bgColorMode = 0;
-        
+
         uint16_t
-            cycleNum = 0; //for reference only
-        
+            cycleNum = 0;  //for reference only
+
         bool
-            repeat; //for reference only, set using setRepeat()
-        
-        CRGB 
+            repeat;  //for reference only, set using setRepeat()
+
+        CRGB
             bgColorOrig,
-            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
-        
+            *bgColor = nullptr;  //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+
         shiftPatternPS
             *shiftPattern = nullptr;
-        
+
         palettePS
             *palette = nullptr;
 
-        void 
+        void
             setShiftPattern(shiftPatternPS &newShiftPattern),
             setRepeat(bool newRepeat),
             reset(),
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
             prevTime = 0;
-        
+
         uint8_t
             modeOut,
             colorIndex;
 
-        uint16_t 
+        uint16_t
             numPatSegs,
             numLines,
             pixelNum,
@@ -147,8 +147,8 @@ class PatternShifterSL : public EffectBasePS {
             curRepeatNum,
             prevLine = 65535,
             repeatCount = 1;
-        
-        CRGB 
+
+        CRGB
             colorOut;
 };
 

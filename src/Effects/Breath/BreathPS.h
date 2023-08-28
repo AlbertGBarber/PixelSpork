@@ -44,13 +44,13 @@ randModes:
 Example calls: 
     uint8_t pattern_arr = {0, 1, 2};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
-    BreathPS breath(mainSegments, pattern, cybPnkPal, 0, 10, 50);
-    Does a breathing cycle using the colors from cybPnkPal, following the pattern above
+    BreathPS breath(mainSegments, pattern, cybPnkPal_PS, 0, 10, 50);
+    Does a breathing cycle using the colors from cybPnkPal_PS, following the pattern above
     The background is blank
     The breathFreq is 10, the effect updates at 50ms
 
-    BreathPS breath(mainSegments, cybPnkPal, 0, 5, 50);
-    Does a breathing cycle using the colors from cybPnkPal in order
+    BreathPS breath(mainSegments, cybPnkPal_PS, 0, 5, 50);
+    Does a breathing cycle using the colors from cybPnkPal_PS in order
     The background is blank
     The breathFreq is 5, the effect updates at 50ms
 
@@ -112,75 +112,76 @@ class BreathPS : public EffectBasePS {
     public:
 
         //Constructor for using a pattern and palette
-        BreathPS(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint8_t BreathFreq, uint16_t Rate);
+        BreathPS(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint8_t BreathFreq,
+                 uint16_t Rate);
 
         //Constructor for using palette as pattern
-        BreathPS(SegmentSet &SegSet, palettePS &Palette, CRGB BgColor, uint8_t BreathFreq, uint16_t Rate);
+        BreathPS(SegmentSetPS &SegSet, palettePS &Palette, CRGB BgColor, uint8_t BreathFreq, uint16_t Rate);
 
         //Constructor for a single color breath (pass in 0 as the color to trigger randMode 2, fully random)
-        BreathPS(SegmentSet &SegSet, CRGB color, CRGB BgColor, uint8_t MaxBreath, uint8_t BreathFreq, uint16_t Rate); 
+        BreathPS(SegmentSetPS &SegSet, CRGB color, CRGB BgColor, uint8_t MaxBreath, uint8_t BreathFreq, uint16_t Rate);
 
         //Constructor for rainbow mode
-        BreathPS(SegmentSet &SegSet, CRGB BgColor, uint8_t RainbowRate, uint8_t BreathFreq, uint16_t Rate);
+        BreathPS(SegmentSetPS &SegSet, CRGB BgColor, uint8_t RainbowRate, uint8_t BreathFreq, uint16_t Rate);
 
         ~BreathPS();
-        
+
         uint8_t
             breathFreqOrig,
-            *breathFreq = nullptr, //pointer to the breath frequency (dby default it's bound to the the Rate)
-            minBreath = 60, //The minimum breath fade amount (0 is min, should be less than maxBreath)
-            maxBreath = 255, //How far the breath color will fade towards the background (255 is max)
-            breathEndOffset = 5, //The offset from maxBreath after which a new color is chosen (see comments in update() code)
+            *breathFreq = nullptr,  //pointer to the breath frequency (dby default it's bound to the the Rate)
+            minBreath = 60,         //The minimum breath fade amount (0 is min, should be less than maxBreath)
+            maxBreath = 255,        //How far the breath color will fade towards the background (255 is max)
+            breathEndOffset = 5,    //The offset from maxBreath after which a new color is chosen (see comments in update() code)
             rainbowSat = 255,
             rainbowVal = 255,
             rainbowRate = 20,
-            randMode = 0; //see description above
-        
+            randMode = 0;  //see description above
+
         uint16_t
-            breathCount = 0; //How many total breath cycles we've gone through
-        
-        CRGB 
+            breathCount = 0;  //How many total breath cycles we've gone through
+
+        CRGB
             bgColorOrig,
-            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+            *bgColor = nullptr;  //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
 
         palettePS
             *palette = nullptr,
-            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
-        
+            paletteTemp = {nullptr, 0};  //Must init structs w/ pointers set to null for safety
+
         patternPS
             *pattern = nullptr,
-            patternTemp = {nullptr, 0, 0}; //Must init structs w/ pointers set to null for safety;
-        
-        void 
+            patternTemp = {nullptr, 0, 0};  //Must init structs w/ pointers set to null for safety;
+
+        void
             setPaletteAsPattern(),
             reset(void),
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
             prevTime = 0;
-        
-        CRGB 
+
+        CRGB
             colorOut,
-            breathColor; //the color we are fading to
-        
+            breathColor;  //the color we are fading to
+
         uint8_t
-            hue = 0, //for rainbow mode
+            hue = 0,  //for rainbow mode
             bWave,
             breathEndVal,
             breath;
-        
+
         uint16_t
             palIndex = 0,
             patternIndex = 0;
-        
+
         bool
             lockColor = false;
-        
+
         void
             getNextColor(),
-            init(CRGB BgColor, uint8_t BreathFreq, SegmentSet &SegSet, uint16_t Rate);
+            init(CRGB BgColor, uint8_t BreathFreq, SegmentSetPS &SegSet, uint16_t Rate);
 };
 
 #endif

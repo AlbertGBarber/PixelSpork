@@ -6,7 +6,7 @@
 
 /* 
 Not a full effect, but could be used as one
-Fills in the Segment Set using the specified colorMode (see segDrawUtils::getPixelColor()) at the specified rate
+Fills in the segment Set using the specified colorMode (see segDrawUtils::getPixelColor()) at the specified rate
 Useful for drawing simple rainbow shifting effects on the segment set using the color modes 
 or filling in a background before drawing an effect 
 
@@ -27,17 +27,17 @@ Other Settings:
 */
 class ColorModeFillPS : public EffectBasePS {
     public:
-        ColorModeFillPS(SegmentSet &SegSet, uint8_t ColorMode, uint16_t Rate);  
-        
-        uint8_t 
+        ColorModeFillPS(SegmentSetPS &SegSet, uint8_t ColorMode, uint16_t Rate);
+
+        uint8_t
             colorMode;
-        
-        CRGB 
+
+        CRGB
             color = 0;
-        
-        void 
+
+        void
             update(void);
-    
+
     private:
         unsigned long
             currentTime,

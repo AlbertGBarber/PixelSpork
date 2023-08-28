@@ -43,19 +43,19 @@ Functions:
 */
 class PacificaPS : public EffectBasePS {
     public:
-        PacificaPS(SegmentSet &SegSet, uint16_t Rate);  
-        
-        uint8_t 
+        PacificaPS(SegmentSetPS &SegSet, uint16_t Rate);
+
+        uint8_t
             //Produces a total blend length of 240 for the whole palette, matches the original code
-            numSteps = 240 / pacificaPal1PS.length;
-        
-        CRGB 
-            bgColorOrig = CRGB( 2, 6, 10 ), //CRGB(10, 0, 0); for lava colors? Messing with this is tricky.
-            *bgColor = &bgColorOrig; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
-        
-        void 
+            numSteps = 240 / pacificaPal1_PS.length;
+
+        CRGB
+            bgColorOrig = CRGB(2, 6, 10),  //CRGB(10, 0, 0); for lava colors? Messing with this is tricky.
+            *bgColor = &bgColorOrig;       //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+
+        void
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
@@ -64,7 +64,7 @@ class PacificaPS : public EffectBasePS {
             deltaTime1,
             deltaTime2,
             deltaTime21;
-        
+
         uint8_t
             baseThreshold,
             wave,
@@ -73,14 +73,14 @@ class PacificaPS : public EffectBasePS {
             overage,
             overage2;
 
-        uint16_t 
+        uint16_t
             totBlendLength,
             totSegLen,
             numSegs,
             pixelNum,
             sCIStart1,
             sCIStart2,
-            sCIStart3, 
+            sCIStart3,
             sCIStart4,
             speedFactor1,
             speedFactor2,
@@ -91,12 +91,12 @@ class PacificaPS : public EffectBasePS {
             cs,
             index,
             sIndex16;
-        
+
         CRGB
             colorOut;
-        
-        void 
-            doOneLayer( palettePS *palette, uint16_t ciStart, uint16_t waveScale, uint8_t bri, uint16_t iOff),
+
+        void
+            doOneLayer(palettePS *palette, uint16_t ciStart, uint16_t waveScale, uint8_t bri, uint16_t iOff),
             addWhitecaps(),
             deepenColors();
 };

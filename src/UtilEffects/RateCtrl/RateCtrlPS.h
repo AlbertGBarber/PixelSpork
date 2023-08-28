@@ -50,26 +50,26 @@ Flags:
 Reference Vars:
     direct -- Shows what direction the rate is moving (either decreasing or increasing)
 */
-class RateCtrlPS : public EffectBasePS{
+class RateCtrlPS : public EffectBasePS {
     public:
         RateCtrlPS(uint16_t StartRate, uint16_t EndRate, bool Easing, bool Cycle, uint16_t Rate);
 
-    uint16_t
-        startRate,
-        endRate,
-        pauseTime = 0,
-        outputRate;
-    
-    bool
-        looped,
-        rateReached,
-        easing,
-        direct; //for reference only, don't set this!!
-    
-    void 
-        update(),
-        reset(uint16_t StartRate, uint16_t EndRate, uint16_t  Rate),
-        reset();
+        uint16_t
+            startRate,
+            endRate,
+            pauseTime = 0,
+            outputRate;
+
+        bool
+            looped,
+            rateReached,
+            easing,
+            direct;  //for reference only, don't set this!!
+
+        void
+            update(),
+            reset(uint16_t StartRate, uint16_t EndRate, uint16_t Rate),
+            reset();
 
     private:
         unsigned long
@@ -78,12 +78,12 @@ class RateCtrlPS : public EffectBasePS{
 
         int8_t
             stepDirect;
-        
+
         uint8_t
             ratio;
-        
+
         uint16_t
             rateTemp;
-};  
+};
 
 #endif

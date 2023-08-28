@@ -50,7 +50,7 @@ Examples below use a palette of  {blue, red, green}
     6 -- Same as mode 3, but the next color is chosen completely randomly (not from the palette)
 
 Example calls: 
-    PaletteSingleCyclePS palSingleCycle(cybPnkPal, 0, 50, true, 80);
+    PaletteSingleCyclePS palSingleCycle(cybPnkPal_PS, 0, 50, true, 80);
     Blends the palette using blend mode 0
     Each blend takes 50 steps, with 80ms between each step
     The palette will be blended forward.
@@ -84,56 +84,56 @@ Reference Vars:
 class PaletteSingleCyclePS : public EffectBasePS {
     public:
         //Constructor with custom direction setting
-        PaletteSingleCyclePS(palettePS &InputPalette, uint8_t BlendMode, uint8_t TotalSteps, bool Direct, uint16_t Rate);
+        PaletteSingleCyclePS(palettePS &InputPalette, uint8_t BlendMode, uint8_t TotalSteps, bool Direct,
+                             uint16_t Rate);
 
         ~PaletteSingleCyclePS();
-        
+
         uint8_t
             blendMode,
-            cycleNum = 0, //the current cycle of the blend we're on (max value of palette length), for reference only
+            cycleNum = 0,  //the current cycle of the blend we're on (max value of palette length), for reference only
             getTotalSteps();
-        
-        bool 
+
+        bool
             direct;
-        
-        CRGB 
-            *paletteColorArr1 = nullptr, //storage for the start/end palette colors
+
+        CRGB
+            *paletteColorArr1 = nullptr,  //storage for the start/end palette colors
             *paletteColorArr2 = nullptr;
-                                 
+
         palettePS
             *inputPalette = nullptr,
-            cyclePalette = {nullptr, 0}; //ouput palette (is filled in during the first update cycle)
-        
-        palettePS
-            currentPalette  = {nullptr, 0}, //starting palette for the current blend (is filled in during class construction)
-            nextPalette  = {nullptr, 0}; //ending palette for the current blend (is filled in during class construction)
-        
-        PaletteBlenderPS
-            *PB = nullptr; //PaletteBlenderPS instance
+            cyclePalette = {nullptr, 0};  //ouput palette (is filled in during the first update cycle)
 
-        void 
+        palettePS
+            currentPalette = {nullptr, 0},  //starting palette for the current blend (is filled in during class construction)
+            nextPalette = {nullptr, 0};     //ending palette for the current blend (is filled in during class construction)
+
+        PaletteBlenderPS
+            *PB = nullptr;  //PaletteBlenderPS instance
+
+        void
             switchPalette(),
             setTotalSteps(uint8_t newTotalSteps),
             setPauseTime(uint16_t newPauseTime),
             reset(),
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
             prevTime = 0;
-        
-        int8_t 
+
+        int8_t
             stepDirect;
-        
-        uint8_t 
+
+        uint8_t
             paletteLength = 0,
             paletteLenMax = 0,
             prevMode = 0;
-        
+
         uint16_t
             currentIndex;
-        
 };
 
 #endif

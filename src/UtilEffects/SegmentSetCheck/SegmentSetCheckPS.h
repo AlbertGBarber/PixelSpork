@@ -38,35 +38,35 @@ Functions:
 */
 class SegmentSetCheckPS : public EffectBasePS {
     public:
-        SegmentSetCheckPS(SegmentSet &SegSet, uint8_t TestMode);  
+        SegmentSetCheckPS(SegmentSetPS &SegSet, uint8_t TestMode);
 
-        SegmentSetCheckPS(SegmentSet &SegSet, uint8_t TestMode, uint16_t Rate);  
-        
+        SegmentSetCheckPS(SegmentSetPS &SegSet, uint8_t TestMode, uint16_t Rate);
+
         uint8_t
             testMode;
-        
-        void 
+
+        void
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
             prevTime = 0;
-        
+
         uint8_t
             mode;
-        
+
         uint16_t
             numSegs,
             segNum = 0,
             numLines,
             pixelCount = 1,
             totSegLen;
-        
+
         bool
             testStart = true;
-        
-        void 
+
+        void
             nextStage();
 };
 

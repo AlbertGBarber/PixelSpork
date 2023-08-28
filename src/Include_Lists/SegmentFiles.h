@@ -1,5 +1,5 @@
-#include "./Segment_Stuff/segmentSections.h"
-#include "./Segment_Stuff/Segment.h"
-#include "./Segment_Stuff/SegmentSet.h"
+#include "./Segment_Stuff/segmentSectionsPS.h"
+#include "./Segment_Stuff/SegmentPS.h"
+#include "./Segment_Stuff/SegmentSetPS.h"
 #include "./Segment_Stuff/segDrawUtils.h"
 #include "./Segment_Stuff/pixelInfoPS.h"

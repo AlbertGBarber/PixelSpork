@@ -1,37 +1,38 @@
 #include "GradientCycleSL.h"
 
 //constructor with pattern
-GradientCycleSL::GradientCycleSL(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t GradLength, uint16_t Rate):
-    pattern(&Pattern), palette(&Palette), gradLength(GradLength)
-    {    
-        init(SegSet, Rate);
-	}
+GradientCycleSL::GradientCycleSL(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette,
+                                 uint8_t GradLength, uint16_t Rate)
+    : pattern(&Pattern), palette(&Palette), gradLength(GradLength)  //
+{
+    init(SegSet, Rate);
+}
 
 //constructor with palette as pattern
-GradientCycleSL::GradientCycleSL(SegmentSet &SegSet, palettePS &Palette, uint8_t GradLength, uint16_t Rate):
-    palette(&Palette), gradLength(GradLength)
-    {    
-        setPaletteAsPattern();
-        init(SegSet, Rate);
-	}
+GradientCycleSL::GradientCycleSL(SegmentSetPS &SegSet, palettePS &Palette, uint8_t GradLength, uint16_t Rate)
+    : palette(&Palette), gradLength(GradLength)  //
+{
+    setPaletteAsPattern();
+    init(SegSet, Rate);
+}
 
 //constructor with random colors
-GradientCycleSL::GradientCycleSL(SegmentSet &SegSet, uint8_t NumColors, uint8_t GradLength, uint16_t Rate):
-    gradLength(GradLength)
-    {    
-        paletteTemp = paletteUtilsPS::makeRandomPalette(NumColors);
-        palette = &paletteTemp;
-        setPaletteAsPattern();
-        init(SegSet, Rate);
-	}
+GradientCycleSL::GradientCycleSL(SegmentSetPS &SegSet, uint8_t NumColors, uint8_t GradLength, uint16_t Rate)
+    : gradLength(GradLength)  //
+{
+    paletteTemp = paletteUtilsPS::makeRandomPalette(NumColors);
+    palette = &paletteTemp;
+    setPaletteAsPattern();
+    init(SegSet, Rate);
+}
 
-GradientCycleSL::~GradientCycleSL(){
+GradientCycleSL::~GradientCycleSL() {
     free(paletteTemp.paletteArr);
     free(patternTemp.patternArr);
 }
 
 //inits core variables for the effect
-void GradientCycleSL::init(SegmentSet &SegSet, uint16_t Rate){
+void GradientCycleSL::init(SegmentSetPS &SegSet, uint16_t Rate) {
     //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
     bindSegSetPtrPS();
     bindClassRatesPS();
@@ -41,22 +42,22 @@ void GradientCycleSL::init(SegmentSet &SegSet, uint16_t Rate){
 
 //sets the gradLength
 //we need to change the totalCycleLength to match
-void GradientCycleSL::setGradLength(uint8_t newGradLength){
+void GradientCycleSL::setGradLength(uint8_t newGradLength) {
     gradLength = newGradLength;
     setTotalEffectLength();
 }
 
 //sets a new pattern for the effect
 //we need to change the totalCycleLength to match
-void GradientCycleSL::setPattern(patternPS &newPattern){
+void GradientCycleSL::setPattern(patternPS &newPattern) {
     pattern = &newPattern;
     setTotalEffectLength();
 }
 
 //sets the pattern to match the current palette
-//ie for a palette length 5, the pattern would be 
+//ie for a palette length 5, the pattern would be
 //{0, 1, 2, 3, 4}
-void GradientCycleSL::setPaletteAsPattern(){
+void GradientCycleSL::setPaletteAsPattern() {
     generalUtilsPS::setPaletteAsPattern(patternTemp, *palette);
     pattern = &patternTemp;
     setTotalEffectLength();
@@ -64,7 +65,7 @@ void GradientCycleSL::setPaletteAsPattern(){
 
 //calculates the totalCycleLength, which represents the total number of possible colors a pixel can have
 //ie the total length of all the color gradients combined
-void GradientCycleSL::setTotalEffectLength(){
+void GradientCycleSL::setTotalEffectLength() {
     // the number of steps in a full cycle (fading through all the colors)
     totalCycleLength = pattern->length * gradLength;
 }
@@ -74,10 +75,10 @@ void GradientCycleSL::setTotalEffectLength(){
 //The cycleNum varies from 0 to totalCycleLength, so each led will go through each color in all the gradients one time per cycle
 //based on the cycleNum, we work out the color we started at, and which gradient step we're on
 //Then we compute the blended color and output it
-void GradientCycleSL::update(){
+void GradientCycleSL::update() {
     currentTime = millis();
 
-    if( ( currentTime - prevTime ) >= *rate ) {
+    if( (currentTime - prevTime) >= *rate ) {
         prevTime = currentTime;
 
         //we set the segment vars here since the pixel locations depend on them
@@ -87,12 +88,12 @@ void GradientCycleSL::update(){
         //due to cycleNum, blendStep is not always 0 for the first pixel
         //so we need to pre-pick colors for it (otherwise the colors from the previous update cycle would be used)
         setNextColors(0);
-       
-        for (uint16_t i = 0; i < numLines; i++) {
 
-            blendStep = addmod8(cycleNum, i, gradLength);// what step we're on between the current and next color
+        for( uint16_t i = 0; i < numLines; i++ ) {
+
+            blendStep = addmod8(cycleNum, i, gradLength);  // what step we're on between the current and next color
             //If the blendStep is 0, then a gradient has finished, and we need to choose the next color
-            if( blendStep == 0 ){
+            if( blendStep == 0 ) {
                 setNextColors(i);
             }
 
@@ -109,9 +110,9 @@ void GradientCycleSL::update(){
 }
 
 //sets the current and next colors for the gradient based on the line number, and how many cycles we've gone through
-void GradientCycleSL::setNextColors(uint16_t lineNum){
-    step = addMod16PS(lineNum, cycleNum, totalCycleLength);// where we are in the cycle of all the colors
-    currentColorIndex = step / gradLength; // what color we've started from (integers always round down)
+void GradientCycleSL::setNextColors(uint16_t lineNum) {
+    step = addMod16PS(lineNum, cycleNum, totalCycleLength);  // where we are in the cycle of all the colors
+    currentColorIndex = step / gradLength;                   // what color we've started from (integers always round down)
     //the color we're at based on the current index
     currentPattern = patternUtilsPS::getPatternVal(*pattern, currentColorIndex);
     currentColor = paletteUtilsPS::getPaletteColor(*palette, currentPattern);

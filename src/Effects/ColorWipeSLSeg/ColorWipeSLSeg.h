@@ -107,8 +107,8 @@ You can adjust most of the effect variables (wipeDirect, simult, etc) on the fly
 The only restriction are the wipeLength and segMode, which must be set using setWipeLength(), and setSegMode().
 
 Example calls: 
-    ColorWipeSLSeg colorWipeSL(mainSegments, cybPnkPal, 0, 1, false, false, true, false, 140);
-    Will do a color wipe along mainSegment's lines using colors from cybPnkPal
+    ColorWipeSLSeg colorWipeSL(mainSegments, cybPnkPal_PS, 0, 1, false, false, true, false, 140);
+    Will do a color wipe along mainSegment's lines using colors from cybPnkPal_PS
     (A pattern will be generated to match the palette)
     Only one wipe will happen, it is the full length of the segment set
     (passing 0 in as the wipe length automatically sets the wipe length to the number of lines in the segment set)
@@ -118,8 +118,8 @@ Example calls:
    
     uint8_t pattern_arr = {0, 1, 2};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
-    ColorWipeSLSeg colorWipeSL(mainSegments, cybPnkPal, pattern, 8, 0, true, false, false, false, 140);
-    Will do a color wipe along mainSegment's lines using colors from cybPnkPal, according to pattern1
+    ColorWipeSLSeg colorWipeSL(mainSegments, cybPnkPal_PS, pattern, 8, 0, true, false, false, false, 140);
+    Will do a color wipe along mainSegment's lines using colors from cybPnkPal_PS, according to pattern1
     The wipe length is 8 (assumed to be shorter than the segment set num lines)
     The style is 0, each wipe will alternate colors according to the pattern.
     The wipes will occur simultaneously with each wipe being in the same direction
@@ -189,37 +189,37 @@ Flags:
 class ColorWipeSLSeg : public EffectBasePS {
     public:
         //Constructor using pattern and palette
-        ColorWipeSLSeg(SegmentSet &SegSet, palettePS &Palette, patternPS &Pattern, uint16_t WipeLength, uint8_t Style,
-                       bool Simult, bool Alternate, bool WipeDirect, bool SegMode, uint16_t Rate);  
-        
-        //Constructor using palette alone 
-        ColorWipeSLSeg(SegmentSet &SegSet, palettePS &Palette, uint16_t WipeLength, uint8_t Style,
-                       bool Simult, bool Alternate, bool WipeDirect, bool SegMode, uint16_t Rate); 
+        ColorWipeSLSeg(SegmentSetPS &SegSet, palettePS &Palette, patternPS &Pattern, uint16_t WipeLength, uint8_t Style,
+                       bool Simult, bool Alternate, bool WipeDirect, bool SegMode, uint16_t Rate);
+
+        //Constructor using palette alone
+        ColorWipeSLSeg(SegmentSetPS &SegSet, palettePS &Palette, uint16_t WipeLength, uint8_t Style,
+                       bool Simult, bool Alternate, bool WipeDirect, bool SegMode, uint16_t Rate);
 
         //Constructor for a single color wipe
-        ColorWipeSLSeg(SegmentSet &SegSet, CRGB WipeColor, uint16_t WipeLength, uint8_t Style,
-                       bool Simult, bool Alternate, bool WipeDirect, bool SegMode, uint16_t Rate); 
-                
+        ColorWipeSLSeg(SegmentSetPS &SegSet, CRGB WipeColor, uint16_t WipeLength, uint8_t Style,
+                       bool Simult, bool Alternate, bool WipeDirect, bool SegMode, uint16_t Rate);
+
         ~ColorWipeSLSeg();
 
-        CRGB 
-            bgColorOrig = 0, //default background color (blank)
-            *bgColor = &bgColorOrig; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color) 
-        
+        CRGB
+            bgColorOrig = 0,          //default background color (blank)
+            *bgColor = &bgColorOrig;  //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+
         uint8_t
             style,
             colorMode = 0,
             bgColorMode = 0;
-        
+
         uint16_t
-            wipeLength, //for reference
-            loopCount = 0, //for reference
-            patOffset = 0, //for reference
+            wipeLength,     //for reference
+            loopCount = 0,  //for reference
+            patOffset = 0,  //for reference
             lineWipeLen = 0,
             segWipeLen = 0;
-        
+
         int16_t
-            segRateAdj = 0; //Max of +/-32,767. Be careful if you set this negative!!!!, must be less than rate.
+            segRateAdj = 0;  //Max of +/-32,767. Be careful if you set this negative!!!!, must be less than rate.
 
         //General bools
         bool
@@ -231,7 +231,7 @@ class ColorWipeSLSeg : public EffectBasePS {
 
         //segMode settings
         bool
-            segMode; //for reference
+            segMode;  //for reference
 
         //loop settings
         bool
@@ -239,23 +239,23 @@ class ColorWipeSLSeg : public EffectBasePS {
             altSegDirLoop = false,
             altWipeDirLoop = false,
             bgLoop = false,
-            bgAltLoop = false, //only matters if altWipeDirLoop is true
+            bgAltLoop = false,  //only matters if altWipeDirLoop is true
             shiftPatLoop = false,
             altSegModeLoop = false;
-        
+
         uint8_t
-            loopFreq = 1, //min value 1
-            bgLoopFreq = 2; //min value 2
-        
+            loopFreq = 1,    //min value 1
+            bgLoopFreq = 2;  //min value 2
+
         palettePS
             *palette = nullptr,
-            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
-        
+            paletteTemp = {nullptr, 0};  //Must init structs w/ pointers set to null for safety
+
         patternPS
             *pattern = nullptr,
-            patternTemp = {nullptr, 0, 0}; //Must init structs w/ pointers set to null for safety
-        
-        void 
+            patternTemp = {nullptr, 0, 0};  //Must init structs w/ pointers set to null for safety
+
+        void
             reset(),
             setPaletteAsPattern(),
             setWipeLength(uint16_t newLength),
@@ -264,16 +264,16 @@ class ColorWipeSLSeg : public EffectBasePS {
             setUpLoop(bool nLooped, uint8_t nBgLoopFreq, bool nBgLoop, uint8_t nLoopFreq, bool nShiftPatLoop,
                       bool nAltWipeDirLoop, bool nBgAltLoop, bool nAltSegDirLoop, bool nAltSegModeLoop),
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
             prevTime = 0;
-        
-        uint8_t 
+
+        uint8_t
             palIndex,
             modeOut;
-        
+
         uint16_t
             numLines,
             numSegs,
@@ -283,16 +283,16 @@ class ColorWipeSLSeg : public EffectBasePS {
             numWipes,
             wipeStep,
             wipeNumSeq;
-        
+
         bool
             startingDirect,
             bgWipe = false;
-        
-        CRGB 
+
+        CRGB
             colorOut;
-        
-        void 
-            init(SegmentSet &SegSet, uint16_t Rate),
+
+        void
+            init(SegmentSetPS &SegSet, uint16_t Rate),
             doLineWipe(uint16_t wipeNum, uint16_t wipeStep, uint16_t lineNum),
             doSegWipe(uint16_t wipeNum, uint16_t wipeStep, uint16_t segNum);
 };

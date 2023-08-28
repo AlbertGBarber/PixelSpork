@@ -25,7 +25,7 @@ while the last color will be used for the hottest
 
 Palettes can be of any length, although 3 - 4 colors seems to work best for normal fires
 There are several built-in palettes that work well (see paletteList.h)
-Try firePal for a traditional fire, firePalPink for a pink/purple fire, and firePalBlue for a green/blue fire
+Try firePal_PS for a traditional fire, firePalPink_PS for a pink/purple fire, and firePalBlue_PS for a green/blue fire
 
 To produce a smoother fire, the palette colors can be blended between based on temperature
 This does take more processing power, and can be turned off using the "blend" flag
@@ -47,8 +47,8 @@ so watch your memory usage
 
 Example calls: 
 
-    Fire2012SL fire2012SL(mainSegments, firePal, 0, 50, 90, true, 70, true);
-    Does a blended fire using the built-in firePal (see paletteList.h) with a blank background
+    Fire2012SL fire2012SL(mainSegments, firePal_PS, 0, 50, 90, true, 70, true);
+    Does a blended fire using the built-in firePal_PS (see paletteList.h) with a blank background
     cooling is set to 50 and sparking is set to 90
     The fire updates at 70ms
     Fire will start at the first segment and end at the last segment
@@ -71,30 +71,31 @@ Functions:
 */
 class Fire2012SL : public EffectBasePS {
     public:
-        Fire2012SL(SegmentSet &SegSet, palettePS &Palette, CRGB BgColor, uint8_t Cooling, uint8_t Sparking, bool Blend, bool Direct, uint16_t Rate);  
-        
+        Fire2012SL(SegmentSetPS &SegSet, palettePS &Palette, CRGB BgColor, uint8_t Cooling, uint8_t Sparking,
+                   bool Blend, bool Direct, uint16_t Rate);
+
         ~Fire2012SL();
 
         uint8_t
             *heat = nullptr,
             cooling,
             sparking;
-        
+
         bool
             direct,
             blend;
-        
-        CRGB 
+
+        CRGB
             bgColorOrig,
-            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
-        
+            *bgColor = nullptr;  //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+
         palettePS
             *palette = nullptr;
 
-        void 
+        void
             reset(),
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
@@ -105,18 +106,18 @@ class Fire2012SL : public EffectBasePS {
             paletteLength,
             paletteSecLen,
             sparkPoint;
-        
+
         uint16_t
             numLines,
             numSegs,
             segNum,
             heatSecStart,
             heatIndex,
-            maxNumPoints = 0, //used for tracking the memory size of the heat array
+            maxNumPoints = 0,  //used for tracking the memory size of the heat array
             ledLoc;
-        
-        CRGB 
+
+        CRGB
             colorOut;
-};  
+};
 
 #endif

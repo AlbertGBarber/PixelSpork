@@ -14,9 +14,9 @@ If the total length of the gradients is longer than the segment set, they will s
 whatever fits onto the segment set will be drawn at one time
 
 The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
-passing in a SegmentSet with only one segment containing the whole strip.
+passing in a SegmentSetPS with only one segment containing the whole strip.
 
-Note that this effect should not be run alongside other effects on the same SegmentSet
+Note that this effect should not be run alongside other effects on the same SegmentSetPS
 since it needs to use the existing colors of the leds
 
 This effect is the same as GradientCyclePS, but should need fewer calculations per cycle
@@ -38,11 +38,11 @@ This is controlled by the randMode setting
 Example calls: 
     uint8_t pattern_arr = {0, 1, 2};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
-    GradientCycleFastSL gradientCycleFast(mainSegments, pattern, cybPnkPal, 10, 100);
+    GradientCycleFastSL gradientCycleFast(mainSegments, pattern, cybPnkPal_PS, 10, 100);
     Will do a gradient cycle from color 0, to color 1, to color 4, of the palette
     with 10 steps to each gradient, and a 100ms update rate
 
-    GradientCycleFastSL gradientCycleFast(mainSegments, cybPnkPal, 10, 100);
+    GradientCycleFastSL gradientCycleFast(mainSegments, cybPnkPal_PS, 10, 100);
     Will do a gradient cycle using the colors in the palette, with 10 steps to each gradient,and a 100ms update rate
 
     GradientCycleFastSL gradientCycleFast(mainSegments, 3, 15, 80);
@@ -81,39 +81,39 @@ Flags:
 class GradientCycleFastSL : public EffectBasePS {
     public:
         //Constructor for using pattern
-        GradientCycleFastSL(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t GradLength, uint16_t Rate); 
+        GradientCycleFastSL(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t GradLength, uint16_t Rate);
 
         //Constructor for using the palette as the pattern
-        GradientCycleFastSL(SegmentSet &SegSet, palettePS &Palette, uint8_t GradLength, uint16_t Rate);
+        GradientCycleFastSL(SegmentSetPS &SegSet, palettePS &Palette, uint8_t GradLength, uint16_t Rate);
 
         //Constructor for using a random palette as the pattern
-        GradientCycleFastSL(SegmentSet &SegSet, uint8_t NumColors, uint8_t GradLength, uint16_t Rate);
+        GradientCycleFastSL(SegmentSetPS &SegSet, uint8_t NumColors, uint8_t GradLength, uint16_t Rate);
 
         ~GradientCycleFastSL();
 
         uint8_t
             randMode = 0,
             gradLength;
-        
-        uint16_t 
-            cycleNum = 0; // tracks what how many patterns we've gone through
+
+        uint16_t
+            cycleNum = 0;  // tracks what how many patterns we've gone through
 
         bool
             initFillDone = false;
 
         patternPS
             *pattern = nullptr,
-            patternTemp  = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
+            patternTemp = {nullptr, 0};  //Must init structs w/ pointers set to null for safety
 
         palettePS
             *palette = nullptr,
-            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
-        
-        void 
+            paletteTemp = {nullptr, 0};  //Must init structs w/ pointers set to null for safety
+
+        void
             setPaletteAsPattern(),
             reset(),
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
@@ -123,22 +123,22 @@ class GradientCycleFastSL : public EffectBasePS {
             longestSeg,
             currentPattern,
             nextPattern;
-        
+
         uint16_t
             numLines,
             numLinesLim,
             pixelNum,
             patternCount = 0;
 
-        CRGB 
+        CRGB
             currentColor,
             nextColor,
             colorOut;
-        
-        void 
-            init(SegmentSet &SegSet, uint16_t Rate),
+
+        void
+            init(SegmentSetPS &SegSet, uint16_t Rate),
             pickNextColor(),
-            initalFill();    
+            initalFill();
 };
 
 #endif

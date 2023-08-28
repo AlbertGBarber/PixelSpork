@@ -80,8 +80,8 @@ Example call:
     There are 3 fade in and 4 fade out steps with ranges of 2 and 5 respectively
     The effect updates at a rate of 70ms
 
-    Twinkle2SLSeg twinkle2(mainSegments, cybPnkPal, 0, 8, 100, 2, 0, 6, 0, 1, 60);
-    Will choose 8 segments (segMode 1) each cycle to fade to/from colors from cybPnkPal, using a blank background, 
+    Twinkle2SLSeg twinkle2(mainSegments, cybPnkPal_PS, 0, 8, 100, 2, 0, 6, 0, 1, 60);
+    Will choose 8 segments (segMode 1) each cycle to fade to/from colors from cybPnkPal_PS, using a blank background, 
     There is a 100% chance an inactive segment will become active each cycle
     There are 2 fade in and 6 fade out steps with ranges of 0 and 0 respectively
     The effect updates at a rate of 60ms
@@ -138,17 +138,17 @@ Notes:
 class Twinkle2SLSeg : public EffectBasePS {
     public:
         //Constructor for a full palette effect
-        Twinkle2SLSeg(SegmentSet &SegSet, palettePS &Palette, CRGB BgColor, uint16_t NumTwinkles, uint8_t SpawnChance, 
+        Twinkle2SLSeg(SegmentSetPS &SegSet, palettePS &Palette, CRGB BgColor, uint16_t NumTwinkles, uint8_t SpawnChance, 
                       uint8_t FadeInSteps, uint8_t FadeInRange, uint8_t FadeOutSteps, uint8_t FadeOutRange, 
                       uint8_t SegMode, uint16_t Rate); 
 
         //Constructor for a using a single color
-        Twinkle2SLSeg(SegmentSet &SegSet, CRGB Color, CRGB BgColor, uint16_t NumTwinkles, uint8_t SpawnChance,
+        Twinkle2SLSeg(SegmentSetPS &SegSet, CRGB Color, CRGB BgColor, uint16_t NumTwinkles, uint8_t SpawnChance,
                       uint8_t FadeInSteps, uint8_t FadeInRange, uint8_t FadeOutSteps, uint8_t FadeOutRange,
                       uint8_t SegMode, uint16_t Rate);
         
         //Constructor for choosing all colors at random
-        Twinkle2SLSeg(SegmentSet &SegSet, CRGB BgColor, uint16_t NumTwinkles, uint8_t SpawnChance, 
+        Twinkle2SLSeg(SegmentSetPS &SegSet, CRGB BgColor, uint16_t NumTwinkles, uint8_t SpawnChance, 
                       uint8_t FadeInSteps, uint8_t FadeInRange, uint8_t FadeOutSteps, uint8_t FadeOutRange, 
                       uint8_t SegMode, uint16_t Rate);
 
@@ -239,7 +239,7 @@ class Twinkle2SLSeg : public EffectBasePS {
             drawLineTwinkle(),
             drawSegTwinkle(),
             drawPixelTwinkle(),
-            init(uint8_t FadeInSteps, uint8_t FadeOutSteps, CRGB BgColor, SegmentSet &SegSet, uint16_t Rate);
+            init(uint8_t FadeInSteps, uint8_t FadeOutSteps, CRGB BgColor, SegmentSetPS &SegSet, uint16_t Rate);
 };
 
 #endif

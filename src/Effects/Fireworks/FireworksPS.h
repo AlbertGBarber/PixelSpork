@@ -37,13 +37,13 @@ If you have a non-zero background color be sure to set fillBG to true!!
 Due to the way the effect is programmed, if two sparks meet each other, by default one will overwrite the other
 You can adjust this behavior by turning on "blend", which will add particle colors together as they pass by each other
 However this does have two draw backs:
-1: Due to the way particle trails are drawn, this forces the background to be re-drawn each update cycle,
-  which may have a performance impact depending on your strip length, update rate, etc
-2: For colored backgrounds, the particles colors are added to the background colors.
-  This will in most cases significantly change the particle colors 
-  For example, blue particles running on a red background will appear purple (blue +  red = purple)
-  This can be used to create some nice effects, (like ocean-ish of lava-ish looking things),
-  But overall I do not recommend using blend for colored backgrounds
+    1: Due to the way particle trails are drawn, this forces the background to be re-drawn each update cycle,
+       which may have a performance impact depending on your strip length, update rate, etc
+    2: For colored backgrounds, the particles colors are added to the background colors.
+       This will in most cases significantly change the particle colors 
+       For example, blue particles running on a red background will appear purple (blue +  red = purple)
+       This can be used to create some nice effects, (like ocean-ish of lava-ish looking things),
+       But overall I do not recommend using blend for colored backgrounds
 
 Note that this effect does require three separate arrays: 
     A bool array fireworks[maxNumFireworks] that stores if a firework is active or not
@@ -96,8 +96,8 @@ Example calls:
     The spark's speed decays at 10 percent per update
     The fastest particles will update at 40ms, while the slowest will be 40 + 300ms
 
-    FireworksPS fireworks(mainSegments, cybPnkPal, 3, 20, 10, 4000, 5, 40, 500);
-    Will do a set of fireworks using colors from a cybPnkPal
+    FireworksPS fireworks(mainSegments, cybPnkPal_PS, 3, 20, 10, 4000, 5, 40, 500);
+    Will do a set of fireworks using colors from a cybPnkPal_PS
     There is a maximum of 3 fireworks active at one time.
     Each firework has 20 sparks
     There is a 10% chance a new firework spawns during an update
@@ -162,64 +162,64 @@ Other Settings:
 class FireworksPS : public EffectBasePS {
     public:
         //Constructor for fireworks using a palette
-        FireworksPS(SegmentSet &SegSet, palettePS &Palette, uint8_t MaxNumFireworks, uint8_t MaxNumSparks, 
-                    uint8_t SpawnChance, uint16_t LifeBase, uint8_t SpeedDecay, uint16_t Rate, uint16_t SpeedRange); 
+        FireworksPS(SegmentSetPS &SegSet, palettePS &Palette, uint8_t MaxNumFireworks, uint8_t MaxNumSparks,
+                    uint8_t SpawnChance, uint16_t LifeBase, uint8_t SpeedDecay, uint16_t Rate, uint16_t SpeedRange);
 
         //Constructor for fireworks using a palette of random colors
-        FireworksPS(SegmentSet &SegSet, uint16_t numColors, uint8_t MaxNumFireworks, uint8_t MaxNumSparks, 
+        FireworksPS(SegmentSetPS &SegSet, uint16_t numColors, uint8_t MaxNumFireworks, uint8_t MaxNumSparks,
                     uint8_t SpawnChance, uint16_t LifeBase, uint8_t SpeedDecay, uint16_t Rate, uint16_t SpeedRange);
 
         //Constructor for fireworks of a single color
         //!!If using pre-build FastLED colors you need to pass them as CRGB( *color code* )
-        FireworksPS(SegmentSet &SegSet, CRGB Color, uint8_t MaxNumFireworks, uint8_t MaxNumSparks, 
+        FireworksPS(SegmentSetPS &SegSet, CRGB Color, uint8_t MaxNumFireworks, uint8_t MaxNumSparks,
                     uint8_t SpawnChance, uint16_t LifeBase, uint8_t SpeedDecay, uint16_t Rate, uint16_t SpeedRange);
-                
+
         ~FireworksPS();
 
         uint8_t
             spawnChance,
-            spawnRangeDiv = 5, //sets what range of the strip fireworks spawn in: from numLEDs / spawnRangeDiv to (numLEDs - numLEDs / spawnRangeDiv)
+            spawnRangeDiv = 5,  //sets what range of the strip fireworks spawn in: from numLEDs / spawnRangeDiv to (numLEDs - numLEDs / spawnRangeDiv)
             colorMode = 0,
             bgColorMode = 0,
             maxNumFireworks,
             maxNumSparks,
             burstBlendLimit = 100,
-            speedDecay; 
-        
+            speedDecay;
+
         uint16_t
-            lifeBase, 
+            lifeBase,
             lifeRange = 500,
-            centerLife, //set to lifeBase/10 + 100 in init()
+            centerLife,  //set to lifeBase/10 + 100 in init()
             speedRange,
             size = 1,
             sizeRange = 0,
-            centerSize = 3; //how large the center "bomb" burst is 
-        
+            centerSize = 3;  //how large the center "bomb" burst is
+
         bool
             fillBG = false,
             blend = false,
             randSparkColors = false,
             *fireWorkActive = nullptr;
-        
-        CRGB 
-            *trailEndColors = nullptr, //used to store the last colors of each trail, so the background color can be set
-            burstColOrig = CRGB::White, //default burst color
-            *burstColor = &burstColOrig, //the burstColor is a pointer, so it can be tied to and external var if needed
-            bgColorOrig = 0, //default background color
-            *bgColor = &bgColorOrig; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+
+        CRGB
+            *trailEndColors = nullptr,    //used to store the last colors of each trail, so the background color can be set
+            burstColOrig = CRGB::White,   //default burst color
+            *burstColor = &burstColOrig,  //the burstColor is a pointer, so it can be tied to and external var if needed
+            bgColorOrig = 0,              //default background color
+            *bgColor = &bgColorOrig;      //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
 
         palettePS
             *palette = nullptr,
-            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
+            paletteTemp = {nullptr, 0};  //Must init structs w/ pointers set to null for safety
 
-        particleSetPS 
-            *particleSet = nullptr, //the particle set used in the effect
-            particleSetTemp = {nullptr, 0}; //storage for self created particle sets (init to an empty set for safety)
+        particleSetPS
+            *particleSet = nullptr,          //the particle set used in the effect
+            particleSetTemp = {nullptr, 0};  //storage for self created particle sets (init to an empty set for safety)
 
-        void 
+        void
             setupFireworks(uint8_t newMaxNumFireworks, uint8_t newMaxNumSparks),
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
@@ -234,7 +234,7 @@ class FireworksPS : public EffectBasePS {
             dimRatio,
             randColorIndex;
 
-        uint16_t 
+        uint16_t
             particleIndex,
             partMaxLife,
             partLife,
@@ -246,25 +246,25 @@ class FireworksPS : public EffectBasePS {
             deltaTime,
             numLEDs,
             getTrailLedLoc(uint8_t trailPixelNum);
-        
+
         bool
             partDirect,
             firstPart,
-            movePart; //flag for if a particle should move this cycle
-        
+            movePart;  //flag for if a particle should move this cycle
+
         particlePS
             *particlePtr = nullptr;
 
         pixelInfoPS
             pixelInfo = {0, 0, 0, 0};
 
-        CRGB 
+        CRGB
             colorFinal,
             colorOut,
             colorTemp;
-        
+
         void
-            init(uint8_t maxNumFireworks, uint8_t maxNumSparks, SegmentSet &SegSet, uint16_t Rate),
+            init(uint8_t maxNumFireworks, uint8_t maxNumSparks, SegmentSetPS &SegSet, uint16_t Rate),
             moveParticle(particlePS *particlePtr),
             drawParticlePixel(particlePS *particlePtr, uint16_t trailLedLocation),
             spawnFirework(uint8_t fireworkNum);

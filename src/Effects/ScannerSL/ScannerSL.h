@@ -109,10 +109,10 @@ Example calls:
     they will bounce at each segment set end, and blend together when they meet
     The particles move at 80ms
 
-    ScannerSL scanner(mainSegments, cybPnkPal, 0, 3, 2, 4, 2, true, false, false, false, true, false, 80);
+    ScannerSL scanner(mainSegments, cybPnkPal_PS, 0, 3, 2, 4, 2, true, false, false, false, true, false, 80);
     Will do a scanner, automatically creating a set of 3 evenly spaced scanner particles
     There will be 3 particles spaced evenly on the segment set (makeEndWave is false)
-    The particles will take their colors from cybPnkPal, with a blank background.
+    The particles will take their colors from cybPnkPal_PS, with a blank background.
     Each particle will have 2 trails of length 4, with a body size of 2
     The particles will start in the forward direction (not set to alternate)
     The particles will not bounce at each end of the segment set, and will wrap instead
@@ -156,64 +156,64 @@ Other Settings:
 */
 class ScannerSL : public EffectBasePS {
     public:
-        
-        ScannerSL(SegmentSet &SegSet, CRGB Color, CRGB BGColor, uint16_t numWaves, uint8_t TrailType, uint16_t TrailSize, 
-                    uint16_t Size, bool direction, bool alternate, bool makeEndWave, bool Bounce,
-                    bool Blend, uint16_t Rate);
+
+        ScannerSL(SegmentSetPS &SegSet, CRGB Color, CRGB BGColor, uint16_t numWaves, uint8_t TrailType, uint16_t TrailSize,
+                  uint16_t Size, bool direction, bool alternate, bool makeEndWave, bool Bounce,
+                  bool Blend, uint16_t Rate);
 
         //Constructor for using a pattern with a custom set of repeating waves
-        ScannerSL(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BGColor, uint16_t numWaves,
-                  uint8_t TrailType, uint16_t TrailSize, uint16_t Size, bool direction, bool alternate, bool makeEndWave, 
+        ScannerSL(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BGColor, uint16_t numWaves,
+                  uint8_t TrailType, uint16_t TrailSize, uint16_t Size, bool direction, bool alternate, bool makeEndWave,
                   bool Bounce, bool BounceChange, bool Blend, uint16_t Rate);
 
         //Constructor for using the palette as the pattern with a custom set of repeating waves
-        ScannerSL(SegmentSet &SegSet, palettePS &Palette, CRGB BGColor, uint16_t numWaves, uint8_t TrailType,   
-                  uint16_t TrailSize, uint16_t Size, bool direction, bool alternate, bool makeEndWave, 
+        ScannerSL(SegmentSetPS &SegSet, palettePS &Palette, CRGB BGColor, uint16_t numWaves, uint8_t TrailType,
+                  uint16_t TrailSize, uint16_t Size, bool direction, bool alternate, bool makeEndWave,
                   bool Bounce, bool BounceChange, bool Blend, uint16_t Rate);
-        
+
         ~ScannerSL();
 
         int8_t
-            dimPow = 80; //80 range -127 -> 127 -80 good for colored bg's
+            dimPow = 80;  //80 range -127 -> 127 -80 good for colored bg's
 
         uint8_t
             colorMode = 0,
             bgColorMode = 0,
             randMode = 0,
             trailType,
-            trailSize; //min value of 1
-        
+            trailSize;  //min value of 1
+
         uint16_t
             size;
-        
+
         bool
-            blend = false, //sets if particles should add onto one another
-            fillBG = false, 
+            blend = false,  //sets if particles should add onto one another
+            fillBG = false,
             bounce,
             bounceChange;
 
-        CRGB 
-            *trailEndColors = nullptr, //used to store the last colors of each trail, so the background color can be set
+        CRGB
+            *trailEndColors = nullptr,  //used to store the last colors of each trail, so the background color can be set
             bgColorOrig,
-            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
-        
+            *bgColor = nullptr;  //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+
         palettePS
             *palette = nullptr,
-            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety 
-        
+            paletteTemp = {nullptr, 0};  //Must init structs w/ pointers set to null for safety
+
         patternPS
             *pattern = nullptr,
-            patternTemp = {nullptr, 0, 0}; //Must init structs w/ pointers set to null for safety 
+            patternTemp = {nullptr, 0, 0};  //Must init structs w/ pointers set to null for safety
 
-        particleSetPS 
-            particleSet = {nullptr, 0}; //Must init structs w/ pointers set to null for safety 
+        particleSetPS
+            particleSet = {nullptr, 0};  //Must init structs w/ pointers set to null for safety
 
-        void 
+        void
             reset(),
             setPaletteAsPattern(),
             makeWaveSet(uint16_t numWaves, bool direction, bool alternate, bool makeEndWave),
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
@@ -229,7 +229,7 @@ class ScannerSL : public EffectBasePS {
             dimRatio,
             nextPalletIndex;
 
-        uint16_t 
+        uint16_t
             position,
             patternIndexCount = 0,
             maxPosition,
@@ -240,7 +240,7 @@ class ScannerSL : public EffectBasePS {
             numSegs,
             pixelNum,
             getTrailLocAndColor(bool trailDirect, uint8_t trailPixelNum, uint16_t maxPosition);
-        
+
         bool
             direction,
             startDirect;
@@ -248,17 +248,17 @@ class ScannerSL : public EffectBasePS {
         particlePS
             *particlePtr = nullptr;
 
-        CRGB 
-           colorTarget,
+        CRGB
+            colorTarget,
             partColor,
             nextColor,
             prevColor,
             trailBgColor,
             colorFinal,
             getPartPixelColor(uint16_t partPixelLoc, bool trailDirect);
-        
+
         void
-            init(CRGB BgColor, SegmentSet &SegSet, uint16_t Rate),
+            init(CRGB BgColor, SegmentSetPS &SegSet, uint16_t Rate),
             moveParticle(particlePS *particlePtr),
             setPartColor(particlePS *particlePtr),
             setTrailColor(uint16_t trailLineNum, uint8_t segNum, uint8_t trailPixelNum);

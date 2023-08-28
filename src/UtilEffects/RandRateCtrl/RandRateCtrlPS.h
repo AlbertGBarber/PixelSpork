@@ -67,22 +67,22 @@ class RandRateCtrlPS : public EffectBasePS {
     public:
         RandRateCtrlPS(uint16_t BaseRate, int16_t RateRangeMin, int16_t RateRangeMax, bool Easing, uint16_t Rate);
 
-        ~RandRateCtrlPS();  
-        
+        ~RandRateCtrlPS();
+
         uint16_t
             pauseTime = 0,
             *outputRate = nullptr;
-        
+
         bool
             paused = false;
-        
+
         RateRandomizerPS
             *RR = nullptr;
-        
+
         RateCtrlPS
             *RC = nullptr;
-        
-        void 
+
+        void
             setRangeMin(int16_t newRangeMin),
             setRangeMax(int16_t newRangeMax),
             setBaseRate(uint16_t newBaseRate),
@@ -90,7 +90,7 @@ class RandRateCtrlPS : public EffectBasePS {
             setEasing(bool newEasing),
             reset(),
             update(void);
-    
+
     private:
         unsigned long
             currentTime,

@@ -128,50 +128,51 @@ Other Settings:
 class PaletteNoisePS : public EffectBasePS {
     public:
         //Constructor with hueRate of 0 and default satMin/valMin values
-        PaletteNoisePS(uint8_t numColors, uint8_t HueBase, uint8_t HueMax, bool Compliment, uint16_t BlendSpeed, uint16_t Rate);  
+        PaletteNoisePS(uint8_t numColors, uint8_t HueBase, uint8_t HueMax, bool Compliment, uint16_t BlendSpeed,
+                       uint16_t Rate);
 
         //Constructor with hueRate setting and default satMin/valMin values
-        PaletteNoisePS(uint8_t numColors, uint8_t HueBase, uint8_t HueMax, bool Compliment, uint16_t BlendSpeed, 
-                       uint16_t HueRate, uint16_t Rate);  
+        PaletteNoisePS(uint8_t numColors, uint8_t HueBase, uint8_t HueMax, bool Compliment, uint16_t BlendSpeed,
+                       uint16_t HueRate, uint16_t Rate);
 
         //Constructor with saturation and value min settings and  hueRate setting
         PaletteNoisePS(uint8_t numColors, uint8_t HueBase, uint8_t HueMax, uint8_t SatMin, uint8_t ValMin, bool Compliment,
-                       uint16_t BlendSpeed, uint16_t HueRate, uint16_t Rate); 
+                       uint16_t BlendSpeed, uint16_t HueRate, uint16_t Rate);
 
         ~PaletteNoisePS();
-    
+
         uint8_t
-            satMin = 220, //how light the colors get (higher is less bright) 150
-            valMin = 180, //how dark the colors get (higher is less dark) 100
+            satMin = 220,  //how light the colors get (higher is less bright) 150
+            valMin = 180,  //how dark the colors get (higher is less dark) 100
             hueBase,
             hueMax;
-        
+
         uint16_t
             colorScale = 200,
             briScale = 100,
-            blendSpeed, //higher -> slower blend
+            blendSpeed,  //higher -> slower blend
             briSpeed = 10;
-        
+
         uint16_t
-            hueRateOrig = 0, //Will be set to the inital hue rate as passed into constructors
-            *hueRate = &hueRateOrig; //Is initially pointed to hueRateOrig, but can be pointed to an external variable if wanted
-        
+            hueRateOrig = 0,          //Will be set to the inital hue rate as passed into constructors
+            *hueRate = &hueRateOrig;  //Is initially pointed to hueRateOrig, but can be pointed to an external variable if wanted
+
         bool
             compliment;
 
-        palettePS //The output palette for the util
-            noisePalette = {nullptr, 0}; //Must init structs w/ pointers set to null for safety, will be filled in during construction
+        palettePS                         //The output palette for the util
+            noisePalette = {nullptr, 0};  //Must init structs w/ pointers set to null for safety, will be filled in during construction
 
         void
             setupPalette(uint8_t numColors),
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
             prevTime = 0,
             prevHueTime = 0;
-        
+
         uint8_t
             paletteLenMax = 0,
             compStep,
@@ -180,7 +181,7 @@ class PaletteNoisePS : public EffectBasePS {
             hueAdj,
             sat,
             val;
-        
+
         void
             init(uint16_t numColors, uint16_t HueRate, uint16_t Rate);
 };

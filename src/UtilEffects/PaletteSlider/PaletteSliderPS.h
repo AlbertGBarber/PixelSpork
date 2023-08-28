@@ -44,17 +44,17 @@ manually reduce it's length by setting its length property.
 The update rate is a pointer, and can be bound externally, like in other effects.
 
 Example calls: 
-    PaletteSliderPS paletteSlider(cybPnkPal, 2, 20, true, 80);
-    Creates a slider palette of length 2, using cybPnkPal as the target palette
-    The pattern will match the cybPnkPal in order.
+    PaletteSliderPS paletteSlider(cybPnkPal_PS, 2, 20, true, 80);
+    Creates a slider palette of length 2, using cybPnkPal_PS as the target palette
+    The pattern will match the cybPnkPal_PS in order.
     Each transition will take 20 blend steps
     The colors will be cycled in singles (see single shift explanation above)
     The blend will update at 80ms
 
     uint8_t pattern_arr = {0, 1, 3, 2};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
-    PaletteSliderPS paletteSlider(cybPnkPal, pattern, 2, 20, false, 80);
-    Creates a slider palette of length 2, using cybPnkPal as the target palette
+    PaletteSliderPS paletteSlider(cybPnkPal_PS, pattern, 2, 20, false, 80);
+    Creates a slider palette of length 2, using cybPnkPal_PS as the target palette
     The pattern will match the pattern above.
     Each transition will take 20 blend steps
     The colors will be cycled in whole palette lengths (see single shift explanation above)
@@ -90,59 +90,61 @@ Flags:
 */
 class PaletteSliderPS : public EffectBasePS {
     public:
-        PaletteSliderPS(palettePS &PaletteTarget, patternPS &Pattern, uint16_t SliderPalLen, uint16_t BlendSteps, bool SingleShift, uint16_t Rate);  
+        PaletteSliderPS(palettePS &PaletteTarget, patternPS &Pattern, uint16_t SliderPalLen, uint16_t BlendSteps,
+                        bool SingleShift, uint16_t Rate);
 
-        PaletteSliderPS(palettePS &PaletteTarget, uint16_t SliderPalLen, uint16_t BlendSteps, bool SingleShift, uint16_t Rate);
+        PaletteSliderPS(palettePS &PaletteTarget, uint16_t SliderPalLen, uint16_t BlendSteps, bool SingleShift,
+                        uint16_t Rate);
 
         ~PaletteSliderPS();
 
         uint16_t
             blendSteps,
             pauseTime = 0,
-            patternIndex = 0; //How many full palette blends we've done, for reference only
-        
+            patternIndex = 0;  //How many full palette blends we've done, for reference only
+
         bool
             paused = false,
             singleShift;
-        
-        CRGB 
-            *sliderPalColArr = nullptr; //for reference only. Storage array for the slider palette colors
+
+        CRGB
+            *sliderPalColArr = nullptr;  //for reference only. Storage array for the slider palette colors
 
         palettePS
-            *paletteTarget = nullptr, //The palette being slid across
-            sliderPalette = {nullptr, 0}; //The output palette of the utility, is filled in during the inital update cycle
-        
+            *paletteTarget = nullptr,      //The palette being slid across
+            sliderPalette = {nullptr, 0};  //The output palette of the utility, is filled in during the inital update cycle
+
         patternPS
             *pattern = nullptr,
-            patternTemp = {nullptr, 0, 0}; //used when using the palette as the pattern, init as empty
- 
-        void 
+            patternTemp = {nullptr, 0, 0};  //used when using the palette as the pattern, init as empty
+
+        void
             setPaletteAsPattern(),
             makeSliderPalette(uint16_t paletteLength),
             reset(),
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
             prevTime = 0,
             pauseStartTime;
-        
-        uint8_t 
+
+        uint8_t
             sliderPalLenMax = 0,
             sliderPalLen,
             ratio,
             startIndex,
             endIndex;
-        
+
         uint16_t
             patternStep,
             blendStep = 0;
-        
-        CRGB 
+
+        CRGB
             startColor,
             endColor;
-        
+
         void
             init(uint16_t Rate);
 };

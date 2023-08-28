@@ -19,7 +19,7 @@ Both glimmerColor and bgColor are pointers, so you can bind them to external col
 By default, they are bound to colorOrig and bgColorOrig during construction.
 
 The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
-passing in a SegmentSet with only one segment containing the whole strip.
+passing in a SegmentSetPS with only one segment containing the whole strip.
 Or you can set lineMode to false, which makes each glimmer an individual pixel 
 (useful for using multi-segment color modes, while still only glimmering individual pixels)
 
@@ -80,14 +80,16 @@ Notes:
 class GlimmerSL : public EffectBasePS {
     public:
         //Constructor using default fade in and out values
-        GlimmerSL(SegmentSet &SegSet, uint16_t NumGlims, CRGB GlimmerColor, CRGB BgColor, bool TwoPixelSets, uint8_t FadeSteps, uint16_t Rate);  
-        
+        GlimmerSL(SegmentSetPS &SegSet, uint16_t NumGlims, CRGB GlimmerColor, CRGB BgColor,
+                  bool TwoPixelSets, uint8_t FadeSteps, uint16_t Rate);
+
         //Constructor for setting maximum fade in and out values
-        GlimmerSL(SegmentSet &SegSet, uint16_t NumGlims, CRGB GlimmerColor, CRGB BgColor, bool TwoPixelSets, uint8_t FadeSteps, uint8_t FadeMin, uint8_t FadeMax, uint16_t Rate);
+        GlimmerSL(SegmentSetPS &SegSet, uint16_t NumGlims, CRGB GlimmerColor, CRGB BgColor,
+                  bool TwoPixelSets, uint8_t FadeSteps, uint8_t FadeMin, uint8_t FadeMax, uint16_t Rate);
 
         ~GlimmerSL();
-        
-        uint8_t 
+
+        uint8_t
             colorMode = 0,
             bgColorMode = 0,
             fadeSteps,
@@ -98,53 +100,53 @@ class GlimmerSL : public EffectBasePS {
 
         uint16_t
             *fadePixelLocs = nullptr,
-            numGlims; //For reference only!, Set using setNumGlims()
-        
-        bool 
+            numGlims;  //For reference only!, Set using setNumGlims()
+
+        bool
             fadeIn,
             lineMode = true,
             fillBG = false,
             twoPixelSets;
-        
-        CRGB 
+
+        CRGB
             colorOrig,
-            *glimmerColor = nullptr, //glimmerColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+            *glimmerColor = nullptr,  //glimmerColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
             bgColorOrig,
-            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
-        
-        void 
+            *bgColor = nullptr;  //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+
+        void
             setupPixelArray(),
             fillPixelArray(),
             setNumGlims(uint16_t newNumGlims),
             setTwoSets(bool newSetting),
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
             prevTime = 0;
-        
+
         uint16_t
             glimArrLen,
-            glimArrLenMax = 0, //used for tracking the memory size of the glimmer arrays
+            glimArrLenMax = 0,  //used for tracking the memory size of the glimmer arrays
             numLines,
             numSegs,
             pixelNum;
-        
+
         bool
             firstFade = false;
 
         pixelInfoPS
             pixelInfo = {0, 0, 0, 0};
-        
-        CRGB 
+
+        CRGB
             startColor,
             targetColor,
             fadeColor,
             getFadeColor(uint8_t glimNum);
-        
-        void 
-            init(CRGB GlimmerColor, CRGB BgColor, SegmentSet &SegSet, uint16_t Rate),
+
+        void
+            init(CRGB GlimmerColor, CRGB BgColor, SegmentSetPS &SegSet, uint16_t Rate),
             advancePixelArray();
 };
 

@@ -63,41 +63,41 @@ Functions:
 Reference Vars:
     glitterNum -- The number of glitter particles, use setGlitterNum() to set
 */
-
 class AddGlitterPS : public EffectBasePS {
     public:
-        AddGlitterPS(SegmentSet &SegSet, CRGB GlitterColor, uint16_t GlitterNum, uint8_t GlitterMode, uint16_t GlitterRate, uint16_t Rate);  
+        AddGlitterPS(SegmentSetPS &SegSet, CRGB GlitterColor, uint16_t GlitterNum, uint8_t GlitterMode,
+                     uint16_t GlitterRate, uint16_t Rate);
 
         ~AddGlitterPS();
-        
-        uint8_t    
+
+        uint8_t
             glitterMode;
-        
-        uint16_t 
-            glitterNum, //for reference, use setGlitterNum() to set
+
+        uint16_t
+            glitterNum,  //for reference, use setGlitterNum() to set
             *glitterRate = nullptr,
             glitterRateOrig,
             *glitterLocs = nullptr;
 
-        CRGB 
+        CRGB
             glitterColorOrig,
             *glitterColor = nullptr;
 
-        void 
+        void
             setGlitterNum(uint16_t newNum),
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
             prevGlitterTime = 0,
             prevTime = 0;
-        
+
         uint16_t
             glitterNumMax = 0,
             pixelNum,
             numLeds;
-        
+
         void
             advanceGlitterArr(),
             fillGlitterArr();

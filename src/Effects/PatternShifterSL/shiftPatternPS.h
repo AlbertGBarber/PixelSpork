@@ -2,11 +2,11 @@
 #define shiftPatternPS_h
 
 #if ARDUINO >= 100
-#include "Arduino.h"
+    #include "Arduino.h"
 #else
-#include "WConstants.h"
-#include "WProgram.h"
-#include "pins_arduino.h"
+    #include "WConstants.h"
+    #include "WProgram.h"
+    #include "pins_arduino.h"
 #endif
 
 /* 
@@ -22,9 +22,9 @@ The array has a very specific structure, and is usually created to work with a s
 This is most easily shown with an example:
 
 Lets say I have an 8x8 matrix and I want to draw an arrow shifting horizontally across it
-I've already defined a SegmentSet with 8 segments, each representing a horizontal line on the matrix.
+I've already defined a SegmentSetPS with 8 segments, each representing a horizontal line on the matrix.
 This means that the segment lines will be the vertical lines on the matrix:
-(see SegmentSet.h for more info on segments)
+(see SegmentSetPS.h for more info on segments)
     0  *  *  *  *  *  *  * <- Seg 0
     *  0  *  *  *  *  *  * <- Seg 1
     *  *  0  *  *  *  *  * <- Seg 2
@@ -34,9 +34,9 @@ This means that the segment lines will be the vertical lines on the matrix:
     *  0  *  *  *  *  *  * <- Seg 6
     0  *  *  *  *  *  *  * <- Seg 7
     |  |  |  |  |  |  |  |
-    0  1  2  3  4  5  6  7 <- Segment Lines
+    0  1  2  3  4  5  6  7 <- segment Lines
 
-I have called the SegmentSet horzLines.
+I have called the SegmentSetPS horzLines.
 
 The 0's in the above diagram represent the arrow we want to draw (with all of the pixels being part of the background)
 To create the arrow as a shiftPattern I would represent it as:
@@ -109,7 +109,7 @@ This should be similar for most other patterns:
 
 With all this info, we can create the shiftPattern using its constructor:
 
-shiftPatternPS(SegmentSet &SegSet, uint16_t PatRowLength, uint16_t *PatternArr, uint16_t Length)
+shiftPatternPS(SegmentSetPS &SegSet, uint16_t PatRowLength, uint16_t *PatternArr, uint16_t Length)
 
 Where:
     * SegSet is the segment set we want to draw the pattern on: horzLines
@@ -119,7 +119,7 @@ Where:
       (which we use SIZE() to set automatically)
 
 To summarize:
-shiftPatterns are usually specific to a SegmentSet
+shiftPatterns are usually specific to a SegmentSetPS
 For the pattern array:
     Part 1 is how many segment lines the pattern line spans (up to, but not including the final line).
     Part 2 is the color pattern on the segments. 
@@ -139,16 +139,16 @@ Final gotchas:
 
 //See above for explanation of shiftPatterns
 struct shiftPatternPS {
-    SegmentSet *segSet; //pointer to the segment set for the shift pattern
-    uint16_t *patternArr = nullptr; //pointer to the pattern array
-    uint16_t length; //length of the pattern array
-    uint16_t patRowLength; //how many long each line color pattern "row" is (not including the +2 for the lines span)
-  
-    uint16_t numRows; //how many "rows" are in the pattern array
-    uint16_t patLineLength; //How many total lines in the segment set the pattern spans, ie "from segment line 0 to 8"
+    SegmentSetPS *segSet;            //pointer to the segment set for the shift pattern
+    uint16_t *patternArr = nullptr;  //pointer to the pattern array
+    uint16_t length;                 //length of the pattern array
+    uint16_t patRowLength;           //how many long each line color pattern "row" is (not including the +2 for the lines span)
+
+    uint16_t numRows;        //how many "rows" are in the pattern array
+    uint16_t patLineLength;  //How many total lines in the segment set the pattern spans, ie "from segment line 0 to 8"
 
     //Constructor
-    shiftPatternPS(SegmentSet &SegSet, uint16_t PatRowLength, uint16_t *PatternArr, uint16_t Length){
+    shiftPatternPS(SegmentSetPS &SegSet, uint16_t PatRowLength, uint16_t *PatternArr, uint16_t Length) {
         //bind the SegSet address to the segSet pointer
         bindSegSetPtrPS();
 
@@ -159,64 +159,63 @@ struct shiftPatternPS {
         numRows = length / (2 + patRowLength);
 
         //Temp vars used to find the total number of lines spanned by the shiftPattern
-        uint16_t startLine = 65535; //We want to find the lowest startLine so we need to start it at uint16_t max
-        uint16_t endLine = 0;//We want to find the highest endLine so we need to start it at 0
+        uint16_t startLine = 65535;  //We want to find the lowest startLine so we need to start it at uint16_t max
+        uint16_t endLine = 0;        //We want to find the highest endLine so we need to start it at 0
         uint16_t startLineTemp, endLineTemp;
 
         //We want to find the total number of lines spanned by the shiftPattern
         //To do this we want to find the pattern's minimum and maximum start and end lines
         //So we search the shift pattern and record the lines in startLine and endLine
         //(this search assumes that end lines are always greater than start lines, which is required as part of the shiftPattern setup)
-        for(uint16_t i = 0; i < numRows; i++){
+        for( uint16_t i = 0; i < numRows; i++ ) {
 
             startLineTemp = getLineStartOrEnd(i, false);
             endLineTemp = getLineStartOrEnd(i, true);
 
-            if(startLineTemp < startLine){
-                startLine = startLineTemp ;
+            if( startLineTemp < startLine ) {
+                startLine = startLineTemp;
             }
 
-            if(endLineTemp > endLine){
+            if( endLineTemp > endLine ) {
                 endLine = endLineTemp;
             }
         }
 
         //The total line length of the pattern
-        patLineLength = endLine - startLine; 
+        patLineLength = endLine - startLine;
     };
 
     //-----------------------------------------------------------
     //Helper functions
 
     //Returns the first index of the specified "row" in the patternArr
-    uint16_t getPatRowStartIndex(uint16_t patternRow){
+    uint16_t getPatRowStartIndex(uint16_t patternRow) {
         return patternRow * (2 + patRowLength);
     };
 
     //Returns either the start or end segment line for the specified "row" in the patternArr
     //isLineEnd = true will return the end line for the row
-    uint16_t getLineStartOrEnd(uint16_t patternRow, bool isLineEnd){
+    uint16_t getLineStartOrEnd(uint16_t patternRow, bool isLineEnd) {
         uint16_t patRowStartIndex = getPatRowStartIndex(patternRow);
         //The starting line is always the first index in each "row"
         //while the end line is always the second index
         //so we can use the isLineEnd bool to shift to the correct index (0 for the start line, 1 for the end line)
         //by casing the bool to an int, making it 0 or 1
-        return patternArr[ patRowStartIndex + (uint8_t)isLineEnd ];
+        return patternArr[patRowStartIndex + (uint8_t)isLineEnd];
     };
 
     //returns the color index for the specified "row" in the patternArr at the specified segNum
-    uint16_t getLineColorIndex(uint16_t patternRow, uint16_t segNum){
+    uint16_t getLineColorIndex(uint16_t patternRow, uint16_t segNum) {
         uint16_t patRowStartIndex = getPatRowStartIndex(patternRow);
-        return patternArr[ patRowStartIndex + 2 + segNum ];
+        return patternArr[patRowStartIndex + 2 + segNum];
     };
 
     //returns the color index based on the "row" start index and the specified segNum
     //Is faster than getLineColorIndex(), but you need to already know the "row" starting index
     //( found using getPatRowStartIndex() )
-    uint16_t getLineColorIndexQuick(uint16_t patRowStartIndex, uint16_t segNum){
-        return patternArr[ patRowStartIndex + 2 + segNum ];
-    }; 
-
-} ;
+    uint16_t getLineColorIndexQuick(uint16_t patRowStartIndex, uint16_t segNum) {
+        return patternArr[patRowStartIndex + 2 + segNum];
+    };
+};
 
 #endif

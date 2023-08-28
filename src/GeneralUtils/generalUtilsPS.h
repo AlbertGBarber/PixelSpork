@@ -2,14 +2,14 @@
 #define generalUtilsPS_h
 
 #if ARDUINO >= 100
-#include "Arduino.h"
+    #include "Arduino.h"
 #else
-#include "WConstants.h"
-#include "WProgram.h"
-#include "pins_arduino.h"
+    #include "WConstants.h"
+    #include "WProgram.h"
+    #include "pins_arduino.h"
 #endif
 
-#include "./Include_Lists/GlobalVars/GlobalVars.h" //need alwaysResizeObjPS
+#include "./Include_Lists/GlobalVars/GlobalVars.h"  //need alwaysResizeObj_PS
 #include "Include_Lists/PaletteFiles.h"
 #include "Include_Lists/PatternFiles.h"
 #include "ColorUtils/colorUtilsPS.h"

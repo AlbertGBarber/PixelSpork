@@ -47,12 +47,12 @@ For any of the constructors with a waveThickness input, just pass in 0, and a si
 Note that while each entry in the pattern is a uint8_t,
 if you have a lot of colors, with long waves, your patterns may be quite large
 so watch your memory usage. Likewise, if you re-size the waves, the pattern may also be dynamically re-sized.
-(see alwaysResizeObjPS in Include_Lists -> GlobalVars, and the Effects Advanced Wiki Page -> Managing Memory Fragmentation)
+(see alwaysResizeObj_PS in Include_Lists -> GlobalVars, and the Effects Advanced Wiki Page -> Managing Memory Fragmentation)
 
 Example calls: 
     uint8_t pattern_arr = {0, 255, 255, 255, 1, 1, 255, 255};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
-    SegWavesFast segWavesFast(mainSegments, pattern, cybPnkPal, 0, true, 120);
+    SegWavesFast segWavesFast(mainSegments, pattern, cybPnkPal_PS, 0, true, 120);
     Will do a set of waves using the first two colors in the palette
     The wave will begin with 1 segment of color 0, with three spaces after, followed by 2 pixels of color 1, followed by 2 spaces
     The bgColor is zero (off)
@@ -61,13 +61,13 @@ Example calls:
 
     uint8_t pattern_arr = {1, 2, 3};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
-    SegWavesFast segWavesFast(mainSegments, pattern, cybPnkPal, 3, 4, 0, false, 120);
+    SegWavesFast segWavesFast(mainSegments, pattern, cybPnkPal_PS, 3, 4, 0, false, 120);
     Will do a wave using the first three colors of the palette (taken from the pattern)
     Each wave will be length 3, followed by 4 spaces, bgColor is 0 (off)
     The waves will move from the first to last segment.
     The effect updates at a rate of 120ms
 
-    SegWavesFast segWavesFast(mainSegments, cybPnkPal, 3, 4, CRGB::Red, true, 120);
+    SegWavesFast segWavesFast(mainSegments, cybPnkPal_PS, 3, 4, CRGB::Red, true, 120);
     Will do a wave using all the colors in palette, each wave will be length 3, with 4 spaces in between
     The bgColor is red
     The waves will move from the last segment to the first
@@ -131,79 +131,83 @@ Notes:
 class SegWavesFast : public EffectBasePS {
     public:
         //constructor for using the passed in pattern and palette for the wave
-        SegWavesFast(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, bool Direct, uint16_t Rate);
+        SegWavesFast(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, bool Direct,
+                     uint16_t Rate);
 
         //constructor for building the wave pattern from the passed in pattern and the palette, using the passed in colorLength and spacing
-        SegWavesFast(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t WaveThickness, uint8_t Spacing, CRGB BgColor, bool Direct, uint16_t Rate);
-        
+        SegWavesFast(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t WaveThickness,
+                     uint8_t Spacing, CRGB BgColor, bool Direct, uint16_t Rate);
+
         //constructor for building a wave using all the colors in the passed in palette, using the colorLength and spacing for each color
-        SegWavesFast(SegmentSet &SegSet, palettePS &Palette, uint8_t WaveThickness, uint8_t Spacing, CRGB BgColor, bool Direct, uint16_t Rate);
+        SegWavesFast(SegmentSetPS &SegSet, palettePS &Palette, uint8_t WaveThickness, uint8_t Spacing, CRGB BgColor,
+                     bool Direct, uint16_t Rate);
 
         //constructor for doing a single colored wave, using colorLength and spacing
-        SegWavesFast(SegmentSet &SegSet, CRGB Color, uint8_t WaveThickness, uint8_t Spacing, CRGB BgColor, bool Direct, uint16_t Rate);  
-    
+        SegWavesFast(SegmentSetPS &SegSet, CRGB Color, uint8_t WaveThickness, uint8_t Spacing, CRGB BgColor,
+                     bool Direct, uint16_t Rate);
+
         ~SegWavesFast();
 
         uint8_t
             randMode = 0;
-        
+
         uint16_t
-            cycleNum = 0; // tracks what how many patterns we've gone through, for reference
-            
+            cycleNum = 0;  // tracks what how many patterns we've gone through, for reference
+
         bool
             initFillDone = false,
             direct;
 
-        CRGB 
+        CRGB
             bgColorOrig,
-            *bgColor = nullptr; //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color) 
-        
+            *bgColor = nullptr;  //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
+
         patternPS
             *pattern = nullptr,
-            patternTemp = {nullptr, 0, 0}; //Must init structs w/ pointers set to null for safety 
-        
+            patternTemp = {nullptr, 0, 0};  //Must init structs w/ pointers set to null for safety
+
         palettePS
             *palette = nullptr,
-            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety 
-        
-        void 
+            paletteTemp = {nullptr, 0};  //Must init structs w/ pointers set to null for safety
+
+        void
             setPatternAsPattern(patternPS &inputPattern, uint8_t waveThickness, uint8_t spacing),
             setPaletteAsPattern(uint8_t waveThickness, uint8_t spacing),
             reset(),
             makeSingleWave(),
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
             prevTime = 0;
-        
+
         int8_t
             loopStep;
-        
+
         uint8_t
             nextPattern,
             prevPattern,
             nextPatternRand;
-        
+
         uint16_t
             numSegs,
             startLimit,
             coloredSeg,
             pixelNum;
-        
+
         int32_t
             endLimit;
 
-        CRGB 
+        CRGB
             nextColor,
             randColor,
             pickStreamerColor(uint8_t patternIndex);
-        
+
         void
             initalFill(),
             getDirection(),
-            init(CRGB BgColor, SegmentSet &SegSet, uint16_t Rate);
-};  
+            init(CRGB BgColor, SegmentSetPS &SegSet, uint16_t Rate);
+};
 
 #endif

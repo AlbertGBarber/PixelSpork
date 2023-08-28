@@ -37,8 +37,8 @@ Other Settings:
 */
 class RateRandomizerPS : public EffectBasePS {
     public:
-        RateRandomizerPS(uint16_t BaseRate, int16_t RateRangeMin, int16_t RateRangeMax, uint16_t Rate);  
-        
+        RateRandomizerPS(uint16_t BaseRate, int16_t RateRangeMin, int16_t RateRangeMax, uint16_t Rate);
+
         int16_t
             rateRangeMin,
             rateRangeMax;
@@ -47,22 +47,22 @@ class RateRandomizerPS : public EffectBasePS {
             baseRateOrig,
             *baseRate = nullptr,
             outputRate;
-        
+
         bool
             active = true;
 
-        void 
+        void
             resetToBaseRate(),
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
             prevTime = 0;
-        
-        int8_t 
+
+        int8_t
             direct;
-        
+
         int32_t
             tempOut;
 };

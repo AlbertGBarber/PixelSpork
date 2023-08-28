@@ -2,11 +2,11 @@
 #define EffectFaderPS_h
 
 #if ARDUINO >= 100
-#include "Arduino.h"
+    #include "Arduino.h"
 #else
-#include "WConstants.h"
-#include "WProgram.h"
-#include "pins_arduino.h"
+    #include "WConstants.h"
+    #include "WProgram.h"
+    #include "pins_arduino.h"
 #endif
 
 #include "Effects/EffectBasePS.h"
@@ -87,50 +87,50 @@ class EffectFaderPS {
         ~EffectFaderPS();
 
         bool
-            direct, //true -> increasing brightness
-            done = false, //is the fade finished?
-            started = false; //has a fade been started?
+            direct,           //true -> increasing brightness
+            done = false,     //is the fade finished?
+            started = false;  //has a fade been started?
 
         uint8_t
             minBrightness = 5;
-        
+
         uint16_t
-            runTime, //If you change this, it will only be reflected when you reset()
-            rateOrig = 60, //The default update rate (ms)
-            *rate = &rateOrig; //The update rate is a pointer, so it can be tied to and external var if needed, 
-                               //by default it's tied to rateOrig
-        
+            runTime,            //If you change this, it will only be reflected when you reset()
+            rateOrig = 60,      //The default update rate (ms)
+            *rate = &rateOrig;  //The update rate is a pointer, so it can be tied to and external var if needed,
+                                //by default it's tied to rateOrig
+
         void
             reset(),
             resetBrightness(),
             reset(EffectSetPS &EffectSet, bool newDirect),
             update();
-        
+
         EffectSetPS
-            *effectSet; //Pointer to the effect set, shouldn't need to mess with this, but is public just in case
+            *effectSet;  //Pointer to the effect set, shouldn't need to mess with this, but is public just in case
 
     private:
         unsigned long
-            startTime,  
+            startTime,
             currentTime,
             prevTime = 0;
-        
+
         uint8_t
             *numEffects,
             maxBrightness,
             totalBriChng = 0,
             *origBrightness_arr = nullptr;
 
-        int16_t 
+        int16_t
             briChng;
-        
+
         float
             stepRate;
-        
-        SegmentSet
+
+        SegmentSetPS
             *getSegPtr(uint8_t effectNum),
             *segSet = nullptr;
-        
+
         void
             resetSegVars();
 };

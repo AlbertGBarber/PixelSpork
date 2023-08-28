@@ -10,10 +10,10 @@ This is mostly the same as TwinkleSL, but uses much less ram, and has a few rest
 Like, TwinkleSL, the color of the pixels can be set to a single color, chosen randomly, or picked from a palette 
 However, the pixels can either be set to fade out, or switch to a background color, but not both
 so if you choose to fade out the background will be set to 0
-(this is because the whole SegmentSet is faded each cycle)
+(this is because the whole SegmentSetPS is faded each cycle)
 
 The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
-passing in a SegmentSet with only one segment containing the whole strip.
+passing in a SegmentSetPS with only one segment containing the whole strip.
 
 This effect is fully compatible with color modes, and the bgColor is a pointer, so you can bind it
 to an external color variable
@@ -46,17 +46,20 @@ Other Settings:
 class TwinkleFastSL : public EffectBasePS {
     public:
         //Constructor for a full palette effect
-        TwinkleFastSL(SegmentSet &SegSet, palettePS &Palette, uint16_t NumTwinkles, CRGB BgColor, bool Sparkle, uint8_t FadeOutRate, uint16_t Rate);  
-        
+        TwinkleFastSL(SegmentSetPS &SegSet, palettePS &Palette, uint16_t NumTwinkles, CRGB BgColor,
+                      bool Sparkle, uint8_t FadeOutRate, uint16_t Rate);
+
         //Constructor for a using a single color
-        TwinkleFastSL(SegmentSet &SegSet, CRGB Color, uint16_t NumTwinkles, CRGB BgColor, bool Sparkle, uint8_t FadeOutRate, uint16_t Rate);
-        
+        TwinkleFastSL(SegmentSetPS &SegSet, CRGB Color, uint16_t NumTwinkles, CRGB BgColor, bool Sparkle,
+                      uint8_t FadeOutRate, uint16_t Rate);
+
         //Constructor for choosing all colors at random
-        TwinkleFastSL(SegmentSet &SegSet, uint16_t NumTwinkles, CRGB BgColor, bool Sparkle, uint8_t FadeOutRate, uint16_t Rate);
-        
+        TwinkleFastSL(SegmentSetPS &SegSet, uint16_t NumTwinkles, CRGB BgColor, bool Sparkle, uint8_t FadeOutRate,
+                      uint16_t Rate);
+
         //destructor
         ~TwinkleFastSL();
-        
+
         uint8_t
             randMode = 0,
             colorMode = 0,
@@ -65,40 +68,40 @@ class TwinkleFastSL : public EffectBasePS {
 
         uint16_t
             numTwinkles;
-        
+
         bool
             fillBG = true,
             sparkle;
 
-        CRGB 
+        CRGB
             bgColorOrig,
             *bgColor = nullptr;
 
         palettePS
             *palette = nullptr,
-            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
-        
-        void 
+            paletteTemp = {nullptr, 0};  //Must init structs w/ pointers set to null for safety
+
+        void
             setSingleColor(CRGB Color),
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
             prevTime = 0;
-        
-        uint8_t 
+
+        uint8_t
             paletteLength;
-        
+
         uint16_t
             numLines,
             randLine;
 
         CRGB
             color;
-        
+
         void
-            init(CRGB BgColor, SegmentSet &SegSet, uint16_t Rate);
+            init(CRGB BgColor, SegmentSetPS &SegSet, uint16_t Rate);
 };
 
 #endif

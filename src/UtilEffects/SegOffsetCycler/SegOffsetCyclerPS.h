@@ -2,11 +2,11 @@
 #define SegOffsetCyclerPS_h
 
 #if ARDUINO >= 100
-  #include "Arduino.h"
+    #include "Arduino.h"
 #else
-  #include "WProgram.h"
-  #include "pins_arduino.h"
-  #include "WConstants.h"
+    #include "WProgram.h"
+    #include "pins_arduino.h"
+    #include "WConstants.h"
 #endif
 
 #include "Include_Lists/SegmentFiles.h"
@@ -27,13 +27,13 @@ for this Util, colorMode is a pointer, so you can point it to your effect's colo
 ie colorMode = &yourEffectsColorMode;
 To change colorMode directly, use colorModeOrig --> ie colorModeOrig = yourColorMode;
 
-The Util can be specified to work on a single SegmentSet
+The Util can be specified to work on a single SegmentSetPS
 or an array of segmentSets, see class constructors below for details
-specify a SegmentSet array like:
-SegmentSet *setArray[] = {&segmentSet1, &segmentSet2, etc}
+specify a SegmentSetPS array like:
+SegmentSetPS *setArray[] = {&segmentSet1, &segmentSet2, etc}
 you may rebind the segmentSets using the setGroup() functions
 
-By default all the SegmentSet will have their offsetRates bound to the Util's 
+By default all the SegmentSetPS will have their offsetRates bound to the Util's 
 so changing the offsetRate of the Util will also change it for all the segments
 
 Make sure you use the Util's functions for adjusting the settings. They will set the settings for all the 
@@ -46,13 +46,13 @@ Example calls:
     Sets the offset using colorMode 1 in the forward direction at a rate of 30ms
     for a single segmentSet
 
-    SegmentSet *setArray[] = {&segmentSet1, &segmentSet2} //You'd have to define segmentSets 1 and 2 separately
+    SegmentSetPS *setArray[] = {&segmentSet1, &segmentSet2} //You'd have to define segmentSets 1 and 2 separately
     SegOffsetCyclerPS SegOffsetCycler(setArray, SIZE(setArray), 4, false, 50);
     Sets the offset using colorMode 4 in the backwards direction at a rate of 50ms
     for an array of segmentSets (containing segmentSet1 and segmentSet2)
 
 Constructor Inputs:
-    SegmentSet (optional, see constructors) -- A single SegmentSet whose offset will be changed
+    SegmentSetPS (optional, see constructors) -- A single SegmentSetPS whose offset will be changed
     segmentSetArr (optional, see constructors) -- An array of segmentSets whose offsets will be changed
     colorMode -- The colorMode used for the offset
     direction -- The direction of the offset (true is forward)
@@ -63,8 +63,8 @@ Functions:
     setDirect(newDirect) -- Sets the offset direction
     setOffsetActive(newRunOffset) -- Turns the offset on or off
     setRate(newRate) -- Changes the offset rate (also changes it for all the segmentSets)
-    setGroup(SegmentSet** SegmentSetArr, NumSegSets) -- Sets the Util to act on the passed in SegmentSet array
-    setGroup(SegmentSet &SegSet) -- Sets the Util to act on the passed in SegmentSet only
+    setGroup(SegmentSetPS** SegmentSetArr, NumSegSets) -- Sets the Util to act on the passed in SegmentSetPS array
+    setGroup(SegmentSetPS &SegSet) -- Sets the Util to act on the passed in SegmentSetPS only
     update() -- updates the effect
 
 Other Settings:
@@ -76,51 +76,51 @@ Other Settings:
 class SegOffsetCyclerPS : public EffectBasePS {
     public:
         //two constructors, for single and multiple segmentSets
-        SegOffsetCyclerPS(SegmentSet &SegSet, uint8_t ColorMode, bool direction, uint16_t Rate);
+        SegOffsetCyclerPS(SegmentSetPS &SegSet, uint8_t ColorMode, bool direction, uint16_t Rate);
 
-        SegOffsetCyclerPS(SegmentSet **SegmentSetArr, uint8_t NumSegSets, uint8_t ColorMode, bool direction, uint16_t Rate);
+        SegOffsetCyclerPS(SegmentSetPS **SegmentSetArr, uint8_t NumSegSets, uint8_t ColorMode, bool direction,
+                          uint16_t Rate);
 
         ~SegOffsetCyclerPS();
 
-        uint8_t 
-            colorModeOrig, //local storage of the colorMode, by default colorMode points to this
+        uint8_t
+            colorModeOrig,  //local storage of the colorMode, by default colorMode points to this
             *colorMode = nullptr;
-        
-        bool 
-            runOffset = true, //turns the cycle on/off, default is on
-            direct; //direction the offset moves
-    
+
+        bool
+            runOffset = true,  //turns the cycle on/off, default is on
+            direct;            //direction the offset moves
+
         void
-            setCycle(bool newDirect, bool newRunOffset), //defines a new set of cycle parameters
-            setDirect(bool newDirect), //sets the shift direction, 
+            setCycle(bool newDirect, bool newRunOffset),  //defines a new set of cycle parameters
+            setDirect(bool newDirect),                    //sets the shift direction,
             setRate(uint16_t newRate),
             setOffsetActive(bool newRunOffset),
-            setGroup(SegmentSet **SegmentSetArr, uint8_t NumSegSets), //sets a new group of segmentSets to act on
-            setGroup(SegmentSet &SegSet), //sets a new SegmentSet to act on
+            setGroup(SegmentSetPS **SegmentSetArr, uint8_t NumSegSets),  //sets a new group of segmentSets to act on
+            setGroup(SegmentSetPS &SegSet),                              //sets a new SegmentSetPS to act on
             update();
-        
+
     private:
 
-        void 
+        void
             bindSegRates();
 
         uint8_t
             numSegSets;
-        
+
         uint16_t
             offsetMax;
-        
+
         unsigned long
             currentTime,
             prevTime;
 
-        SegmentSet
-            **segGroupTemp = nullptr, //temp pointer used for setting up single segmentSets, separate from group to allow safe deletion
+        SegmentSetPS
+            **segGroupTemp = nullptr,  //temp pointer used for setting up single segmentSets, separate from group to allow safe deletion
             **segGroup = nullptr;
-        
+
         void
             init(bool direction, uint8_t ColorMode, uint16_t rate);
-
 };
 
 #endif

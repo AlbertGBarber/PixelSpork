@@ -1,25 +1,25 @@
-#ifndef SegmentSet_h
-#define SegmentSet_h
+#ifndef SegmentSetPS_h
+#define SegmentSetPS_h
 
 #include "FastLED.h"
-#include "segmentSections.h"
-#include "Segment.h"
+#include "segmentSectionsPS.h"
+#include "SegmentPS.h"
 #include "Palette_Stuff/palettePS.h"
 #include "MathUtils/mathUtilsPS.h"
 
 //TODO:
-//-- Add function somewhere to automatically sync a rainbow or gradient across multiple segment sets 
+//-- Add function somewhere to automatically sync a rainbow or gradient across multiple segment sets
 //	(sets offsets and lengths to sync them up, more complicated to match lines)
 
 /*
 An explanation of segment structure:
 	Basic hierarchy:
-			SegmentSet--->Segment{}--->Segment--->segmentSection{}--->segmentSecCont(struct stored in PROGMEM)
+			SegmentSetPS--->SegmentPS{}--->SegmentPS--->segmentSection{}--->segmentSecCont(struct stored in PROGMEM)
 																|---->segmentSecMix(struct stored in PROGMEM)
 			where {} indicate an array and ---> indicate a pointer,
-			so, in words; a SegmentSet points to an array of Segment pointers. These pointers
-			point to individual segments, which are each pointers to an array of segmentSections.
-			segmentSections come in two flavors:
+			so, in words; a SegmentSetPS points to an array of SegmentPS pointers. These pointers
+			point to individual segments, which are each pointers to an array of segmentSectionsPS.
+			segmentSectionsPS come in two flavors:
 				segmentSecCont is a set of continuous pixels, represented as a starting pixel and a length.
 				segmentSecMix contains an array of pixel addresses, and the length of the array
 			Each segment can only have one type of segment section.
@@ -118,7 +118,7 @@ An explanation of segment structure:
 			Remember that segments can only have one section type, so some shapes may be tricky to represent as single pixels
 			(something like a sun with rays sticking out will be tricky to get working this way)
 			
-			@ Segment
+			@ SegmentPS
 				Description:
 					A segment is a group of sections considered to be one continuous string. 
 					Segments are useful for creating regions of grouped pixels that are in geometric shapes, like rings, spheres, cubes, etc. 
@@ -129,11 +129,11 @@ An explanation of segment structure:
 					while a direction of false will start the segment at 15, going down. 
 					A segment is declared with a segmentSecCont array or a segmentSecMix and
 					the length of segmentSecCont array/segmentSecMix. Typically this is done as 
-					< Segment segmentNum = {SIZE(x), x} > where x is a segmentSection array.
+					< SegmentPS segmentNum = {SIZE(x), x} > where x is a segmentSection array.
 					Note that a segment can only have one section type, not both.
 					
 				Data representation:
-					Segment is a class, either constructed with a segmentSecCont{} or a segmentSecMix
+					SegmentPS is a class, either constructed with a segmentSecCont{} or a segmentSecMix
 					(see segment.h for full constructors)
 					It gives access to four data points:
 						numSec; A uint8_t equal to the number of sections in the passed in array.
@@ -151,34 +151,34 @@ An explanation of segment structure:
 						getSecLength( uint8_t secNum ); same as above, but returns the section length (will return 1 if the section is "single")
 						getSecTrueLength( uint8_t secNum ); Returns the real section length, disregarding any single status
 						
-			@Segment{}	
+			@SegmentPS{}	
 				Description:
-					An array of segment pointers, used for arranging segments in groups (see SegmentSet for details).
+					An array of segment pointers, used for arranging segments in groups (see SegmentSetPS for details).
 					The order of the segments in the array is important, as they will be animated in order.
 					It is important to note that it's an array of pointers to segments, not an array of
 					segments themselves. This is done to save memory, but the array must use the following 
 					syntax: 
-					Segment{} must be written as Segment *array[] = { &segment0, &segment1, &segment2, etc...}
+					SegmentPS{} must be written as SegmentPS *array[] = { &segment0, &segment1, &segment2, etc...}
 					where array, segment0, segment1, segment2, etc, are variable names of your choosing.
 				
 				Data representation:
 					It's an array of Segments.
 			
-			@ SegmentSet:
+			@ SegmentSetPS:
 				Description:
 					Container for an array of segments. All animation functions operate using a set of segments. 
 					The order of the segment array matters: the segments will be treated as being ordered to match the array. 
-					A SegmentSet is declared with a segment array and the length of the segment array (number of segments). 
-					Typically this is done as < SegmentSet segment_setx = {SIZE(x), x} > where x is a segment array. 
+					A SegmentSetPS is declared with a segment array and the length of the segment array (number of segments). 
+					Typically this is done as < SegmentSetPS segment_setx = {SIZE(x), x} > where x is a segment array. 
 					
 				Data representation (needs updating!);
-					SegmentSet is a class constructed using the number of segments, and a pointer to the segment array.
+					SegmentSetPS is a class constructed using the number of segments, and a pointer to the segment array.
 					It gives access to three data points:
 						numSegs; A uint8_t equal to the segment array length passed to the constructor.
 						numLines; A uint16_t equaling the maximum segment length of the segments in the segment array.
 						segNumMaxNumLines; A uint8_t equaling the number of the segment that has the maximum length
 						ie, if the segment array has one segment of length 8, and one of length 12, 12 will be the numLines.
-						segArr; a double pointer of type Segment, used to access the segment array.
+						segArr; a double pointer of type SegmentPS, used to access the segment array.
 					It also gives access to a number of functions:
 						getTotalSegLength(uint16_t segNum): returns the totalLength of the segment specified by the array index (segNum is the section's position in the segment array)
 						getTotalNumSec(uint16_t segNum): returns the total number of sections in the segment specified by the array index.
@@ -190,7 +190,7 @@ An explanation of segment structure:
 						getSecLength(uint16_t segNum, uint8_t secNum): returns the length of the specified section in the specified segment. Will return 1 if the segment is "single"
 						getSecTrueLength(uint16_t segNum, uint8_t secNum): returns the real length of the section, ignoring if the segment is "single"
 						getSegDirection(uint16_t segNum): returns a bool direction of the specified segment
-						setAllSegDirection(bool direct): sets all the segments in the SegmentSet to the specified direction
+						setAllSegDirection(bool direct): sets all the segments in the SegmentSetPS to the specified direction
 						setSegDirection(uint16_t segNum, bool direct): sets the direction of the specified segment to the specified direction 
 						flipSegDirects(): Flips the direction of all the segments in the segment set, ie all segments with direct = true become false, and visa versa
 						flipSegDirectionEvery(uint8_t freq, bool startAtFirst): flips the direction of every freq segment, starting with the first segment according to startAtFirst
@@ -198,13 +198,13 @@ An explanation of segment structure:
 						getSegHasSingle(uint16_t segNum): Returns true if the segment has any "single" sections
 						getSecIsSingle(uint16_t segNum, uint8_t secNum); Returns true if the passed in section is "single"
 		
-	Segment sets also have a number of variables for effecting color modes, and also a gradient palette
+	SegmentPS sets also have a number of variables for effecting color modes, and also a gradient palette
 	See Rainbows and Gradients section below for info.
 */
 //=====================================================================
 /*
-Example of a typical SegmentSet definition:
-This SegmentSet will consist of four segments with two sections each. 
+Example of a typical SegmentSetPS definition:
+This SegmentSetPS will consist of four segments with two sections each. 
 Segment3 is defined using a mixed section, while all others use continuous sections
 
 (size is defined as  "SIZE(x) (sizeof((x)) / sizeof((x)[0]))" in the library)
@@ -216,18 +216,18 @@ ie sec0 = {0,5} , sec1 = {10, 5}, const PROGMEM segmentSection sec0_array[] = { 
 This takes up more ram memory, and should only be used if you need to reuse sections in multiple segment sets.
 
 const PROGMEM segmentSecCont sec0_array[] = { {0, 5}, {10, 5} };
-Segment segment0 = { SIZE(sec0_array), sec0_array, true };
+SegmentPS segment0 = { SIZE(sec0_array), sec0_array, true };
 
 const PROGMEM segmentSecCont sec1_array[] = { {5, 5}, {15, 5} };
-Segment segment1 = { SIZE(sec1_array), sec1_array, false };
+SegmentPS segment1 = { SIZE(sec1_array), sec1_array, false };
 
 const PROGMEM segmentSecCont sec2_array[] = { {20, 5}, {30, 5} };
-Segment segment2 = { SIZE(sec2_array), sec2_array, true };
+SegmentPS segment2 = { SIZE(sec2_array), sec2_array, true };
 
 //segment 3 is defined using a mixed section, so all the led addresses are held in an array
 const PROGMEM uint16_t sec3_arr[] = {25, 26, 27, 28, 29, 35, 36, 37, 38, 39};
 const PROGMEM segmentSecMix segmentSec3 = { sec3_arr, SIZE(sec3_arr) };
-Segment segment3 = { SIZE(segmentSec3), &segmentSec3, true };
+SegmentPS segment3 = { SIZE(segmentSec3), &segmentSec3, true };
 
 //If you have multiple mixed sections you'd need to stick them in an array like:
 //You should only need multiple mixed sections if you're setting them as single pixels (see section notes above)
@@ -240,18 +240,18 @@ Segment segment3 = { SIZE(segmentSec3), &segmentSec3, true };
 																						|
 //Put the sections in an array															|
 //const PROGMEM segmentSecMix segSec3Arr[] = { segmentSec3_1, segmentSec3_2 };			|
-//Segment segment3 = { SIZE(segSec3Arr), segSec3Arr, true }; <-The final segment		|
+//SegmentPS segment3 = { SIZE(segSec3Arr), segSec3Arr, true }; <-The final segment		|
 //--------------------------------------------------------------------------------------|
 
 //Alternate definition of segment 3 using continuous sections
 //----------------------------------------------------------------------|
 //const PROGMEM segmentSecCont sec3_array[] = { {25, 5}, {35, 5} };		|
-//Segment segment3 = { SIZE(sec3_array), sec3_array, false };			|
+//SegmentPS segment3 = { SIZE(sec3_array), sec3_array, false };			|
 //----------------------------------------------------------------------|
 
-//define the segment array and the SegmentSet (must include the * and the &'s)
-Segment *segment_array[] = { &segment0 , &segment1, &segment2, &segment3 };
-SegmentSet segmentSet0 = {leds, numLeds, segment_array, SIZE(segment_array)};
+//define the segment array and the SegmentSetPS (must include the * and the &'s)
+SegmentPS *segment_array[] = { &segment0 , &segment1, &segment2, &segment3 };
+SegmentSetPS segmentSet0 = {leds, numLeds, segment_array, SIZE(segment_array)};
 
 //Note: leds is your FastLED array of leds, numLeds is it's length
 
@@ -261,30 +261,30 @@ SegmentSet segmentSet0 = {leds, numLeds, segment_array, SIZE(segment_array)};
 
 //==============================================================
 
-//Rainbows and Gradients
-//Many effects support the color modes used in segDrawUtils::getPixelColor() 
-//These modes allow you to easily set effects to use a rainbow of colors or a specific palette gradient
-//The variables that control the rainbow/gradient are specific to each SegmentSet:
+Rainbows and Gradients
+	Many effects support the color modes used in segDrawUtils::getPixelColor() 
+	These modes allow you to easily set effects to use a rainbow of colors or a specific palette gradient
+	The variables that control the rainbow/gradient are specific to each SegmentSetPS:
 
-	gradPalette --The palette of colors used for the gradient. Set this to what ever palette you like.
-				 By default it is tied to paletteTemp, which is a palette of green and purple
-	gradLenVal -- The gradient length for color modes 1 & 6 (default val is the number of leds in the segment set)
-	gradSegVal -- The gradient length for color modes 2 & 7 (default val is the number of segments in the SegmentSet)
-	gradLineVal -- The gradient length for color modes 3 & 8 (defaulted val is the length of the longest segment (numLines) )
-	rainbowVal -- (default 255) HSV style value for the rainbows drawn on the SegmentSet
-	rainbowSatur -- (default 255) HSV style saturation for the rainbows drawn on the SegmentSet
+		gradPalette --The palette of colors used for the gradient. Set this to what ever palette you like.
+					By default it is tied to paletteTemp, which is a palette of green and purple
+		gradLenVal -- The gradient length for color modes 1 & 6 (default val is the number of leds in the segment set)
+		gradSegVal -- The gradient length for color modes 2 & 7 (default val is the number of segments in the SegmentSetPS)
+		gradLineVal -- The gradient length for color modes 3 & 8 (defaulted val is the length of the longest segment (numLines) )
+		rainbowVal -- (default 255) HSV style value for the rainbows drawn on the SegmentSetPS
+		rainbowSatur -- (default 255) HSV style saturation for the rainbows drawn on the SegmentSetPS
 
 The gradient lengths are separated by mode to make it easy to switch between color modes
 By changing these vars you can change how the rainbow or gradient looks.
 
 You can reset to defaults by calling resetGradVals()
 
-Lets say you your using color mode 1, and you SegmentSet is length 50.
+Lets say you your using color mode 1, and your SegmentSetPS is length 50.
 But you set gradLenVal to 100.
 This means that only half the rainbow or gradient would show up on the strip
 This is where offsets come in.
 
-Each SegmentSet has a gradOffset variable. This is defaulted to 0.
+Each SegmentSetPS has a gradOffset variable. This is defaulted to 0.
 This sets a constant offset for rainbows and gradients, which is added to the color mode input var. 
 This offset is out of 255 for rainbows and gradOffsetMax for custom gradients (default 255)
 So, based on the previous example, lets say you set the offset to 50
@@ -296,10 +296,10 @@ So, to shift the gradient across half the strip you would set the offset to 255/
 Now, this isn't super useful by itself, but what if we could shift the offset over time. That 
 way the whole gradient could cycle across the strip.
 Helpfully this functionality is build right into all segmentSets (with some help from segDrawUtils)
-We can set up a constantly shifting offset using the following SegmentSet vars:
+We can set up a constantly shifting offset using the following SegmentSetPS vars:
 
 	offsetRateOrig -- (default 30ms) the base offset rate, this is tied to offsetRate on startup
-	*offsetRate -- (ms) The offset rate used for the SegmentSet. This is pointer, which by default is bound to
+	*offsetRate -- (ms) The offset rate used for the SegmentSetPS. This is pointer, which by default is bound to
 				   offsetRateOrig, but can be rebound to point to an external variable for easy rate control
 				   (ie offsetRate = &yourExternalRate)
 	runOffset (default false) -- Sets if the shifting offset should be active or not
@@ -330,103 +330,100 @@ This should not be common. And in the case you'd like to do this, just use two s
 
 //================================================================
 
-//Brightness:
-//"brightness" sets the brightness of the SegmentSet (relative to the overall strip brightness) 
-//255 -> same brightness as all the global FastLED brightness setting 
-(so a segment set brightness setting of 127 would be 1/2 as bright as the rest of the strip)
-//DO NOT use this in effects, it is meant as a set-up once type of control
-//Note that effectFader will change this value during fades (but should reset to the original once done)
+Brightness:
+	"brightness" sets the brightness of the SegmentSetPS (relative to the overall strip brightness) 
+	255 -> same brightness as all the global FastLED brightness setting 
+	(so a segment set brightness setting of 127 would be 1/2 as bright as the rest of the strip)
+	DO NOT use this in effects, it is meant as a set-up once type of control
+	Note that effectFader will change this value during fades (but should reset to the original once done)
 */
 
-class SegmentSet {
-	public:
-		SegmentSet(struct CRGB *Leds, uint16_t LedArrSize, Segment **SegArr, uint16_t NumSegs);
-		
-	    uint8_t
-			rainbowVal = 255, 	//HSV style value for the rainbows drawn on the SegmentSet
-			rainbowSatur = 255, //HSV style saturation for the rainbows drawn on the SegmentSet
-	  		brightness = 255, 	//brightness of the segment (**relative** to the overall strip brightness) 
-		  				  		//255 = same brightness as strip
-						  		//DO NOT use this in effects, it is meant as a set-up once type of control
-						  		//Note that effectFader will change this value during fades (but should reset to the original once done)
-			offsetStep = 3; 	//The number of gradient offset steps applied when the gradOffset is updated 
+class SegmentSetPS {
+    public:
+        SegmentSetPS(struct CRGB *Leds, uint16_t LedArrSize, SegmentPS **SegArr, uint16_t NumSegs);
 
-		//segment set vars
-		uint16_t
-			numSegs,	 		//Total number of segments in the segment set
-			numLines, 			//the length of the longest segment in the set
-			segNumMaxNumLines, 	//The number of the seg with the maximum length
-			ledArrSize, 		//The size of the FastLED array (total number of pixels, including any extras for dummy or duplicate pixels)
-			numLeds, 			//the total number of pixels in the segment set (treating isSingle segments as one pixel)
-			getTotalSegLength(uint16_t segNum),
-			getSecStartPixel(uint16_t segNum, uint8_t secNum), 					//only works with continuous sections!!
-			getSecMixPixel(uint16_t segNum, uint8_t secNum, uint16_t pixelNum), //only works with mixed sections!!
-			getTotalNumSec(uint16_t segNum);
-		
-	  	int16_t
-			getSecLength(uint16_t segNum, uint8_t secNum), 	   //Returns the length of the section, "single" sections will be returned as 1
-			getSecTrueLength(uint16_t segNum, uint8_t secNum); //Returns the length of the section, disregards the section's "single" setting
+        uint8_t
+            rainbowVal = 255,    //HSV style value for the rainbows drawn on the SegmentSetPS
+            rainbowSatur = 255,  //HSV style saturation for the rainbows drawn on the SegmentSetPS
+            brightness = 255,    //brightness of the segment (**relative** to the overall strip brightness)
+                                 //255 = same brightness as strip
+                                 //DO NOT use this in effects, it is meant as a set-up once type of control
+                                 //Note that effectFader will change this value during fades (but should reset to the original once done)
+            offsetStep = 3;      //The number of gradient offset steps applied when the gradOffset is updated
 
-		//color mode vars
-		uint16_t
-			offsetRateOrig = 30,//default setting for color mode 5 and 6 of segDrawUtils::setPixelColor in ms
-			*offsetRate = &offsetRateOrig, //The rate of change of the gradient offset, by default bound to offsetRateOrig
-			gradOffset = 0, 	//This adjusts the start step of any rainbow drawn or gradient on the SegmentSet
-						   		//Is adjusted automatically when runOffset is true.
-			gradOffsetMax = 256,//The maximum value of gradOffset + 1, ONLY APPLIES for custom gradients
-			gradLenVal, 		//The gradient length for linear color mode gradients. (Color modes 1 & 6)
-			gradLineVal, 		//The gradient length for radial color mode gradients. (Color Modes 2 & 7)
-			gradSegVal; 		//The gradient length for linear segment line color mode gradients. (Color Modes 3 & 8)
-								
-		unsigned long
-			offsetUpdateTime = 0; //The last time (in ms) the gradOffset value was automatically updated
-		
-	  	bool
-		  	runOffset = false,
-			offsetDirect = true, 
-			getSegDirection(uint16_t segNum),
-			getSegHasSingle(uint16_t segNum),
-			getSecIsSingle(uint16_t segNum, uint8_t secNum);
-	
-	  	const segmentSecCont 
-			*getSecContArrPtr(uint16_t segNum); //Returns a pointer to the segment's segmentSecCont section, returns null if there isn't one
-		
-		const segmentSecMix 
-			*getSecMixArrPtr(uint16_t segNum); //Returns a pointer to the segment's segmentSecMix section, returns null if there isn't one
-		
-	  	Segment
-			**segArr = nullptr;
+        //segment set vars
+        uint16_t
+            numSegs,            //Total number of segments in the segment set
+            numLines,           //the length of the longest segment in the set
+            segNumMaxNumLines,  //The number of the seg with the maximum length
+            ledArrSize,         //The size of the FastLED array (total number of pixels, including any extras for dummy or duplicate pixels)
+            numLeds,            //the total number of pixels in the segment set (treating isSingle segments as one pixel)
+            getTotalSegLength(uint16_t segNum),
+            getSecStartPixel(uint16_t segNum, uint8_t secNum),                   //only works with continuous sections!!
+            getSecMixPixel(uint16_t segNum, uint8_t secNum, uint16_t pixelNum),  //only works with mixed sections!!
+            getTotalNumSec(uint16_t segNum);
 
-	  	Segment
-	  		*getSegPtr(uint16_t segNum);
-	  
-	    CRGB
-	  	 	*leds = nullptr; //pointer to the FastLed leds array
-		
-		palettePS //palettes for gradients
-			paletteTemp,
-			*gradPalette = nullptr;
-		
-		//Functions for setting core segment set properties based on the segments
-		//These are called when the segment set is created, but if you change any of the segments
-		//You should re-call them
-		void 
-			setNumLines(void),
-			setNumLeds(void);
+        int16_t
+            getSecLength(uint16_t segNum, uint8_t secNum),      //Returns the length of the section, "single" sections will be returned as 1
+            getSecTrueLength(uint16_t segNum, uint8_t secNum);  //Returns the length of the section, disregards the section's "single" setting
 
-		//Functions for setting general segment set and individual segment properties
-	  	void
-		  	resetGradVals(),
-			//flipSetOrder(),
-			flipSegDirects(),
-			setAllSegDirection(bool direction),
-			setSegDirection(uint16_t segNum, bool direct),
-			flipSegDirectionEvery(uint8_t freq, bool startAtFirst),
-			setSegDirectionEvery(uint8_t freq, bool direction, bool startAtFirst);
-	  
-	private:		
-		bool
-			checkSegFreq(uint8_t freq, uint16_t segNum, bool startAtFirst);
+        //color mode vars
+        uint16_t
+            offsetRateOrig = 30,            //default setting for color mode 5 and 6 of segDrawUtils::setPixelColor in ms
+            *offsetRate = &offsetRateOrig,  //The rate of change of the gradient offset, by default bound to offsetRateOrig
+            gradOffset = 0,                 //This adjusts the start step of any rainbow drawn or gradient on the SegmentSetPS
+                                            //Is adjusted automatically when runOffset is true.
+            gradOffsetMax = 256,            //The maximum value of gradOffset + 1, ONLY APPLIES for custom gradients
+            gradLenVal,                     //The gradient length for linear color mode gradients. (Color modes 1 & 6)
+            gradLineVal,                    //The gradient length for radial color mode gradients. (Color Modes 2 & 7)
+            gradSegVal;                     //The gradient length for linear segment line color mode gradients. (Color Modes 3 & 8)
+
+        unsigned long
+            offsetUpdateTime = 0;  //The last time (in ms) the gradOffset value was automatically updated
+
+        bool
+            runOffset = false,
+            offsetDirect = true,
+            getSegDirection(uint16_t segNum),
+            getSegHasSingle(uint16_t segNum),
+            getSecIsSingle(uint16_t segNum, uint8_t secNum);
+
+        const segmentSecCont *getSecContArrPtr(uint16_t segNum);  //Returns a pointer to the segment's segmentSecCont section, returns null if there isn't one
+
+        const segmentSecMix *getSecMixArrPtr(uint16_t segNum);  //Returns a pointer to the segment's segmentSecMix section, returns null if there isn't one
+
+        SegmentPS
+            **segArr = nullptr;
+
+        SegmentPS *getSegPtr(uint16_t segNum);
+
+        CRGB
+            *leds = nullptr;  //pointer to the FastLed leds array
+
+        palettePS  //palettes for gradients
+            paletteTemp,
+            *gradPalette = nullptr;
+
+        //Functions for setting core segment set properties based on the segments
+        //These are called when the segment set is created, but if you change any of the segments
+        //You should re-call them
+        void
+            setNumLines(void),
+            setNumLeds(void);
+
+        //Functions for setting general segment set and individual segment properties
+        void
+            resetGradVals(),
+            //flipSetOrder(),
+            flipSegDirects(),
+            setAllSegDirection(bool direction),
+            setSegDirection(uint16_t segNum, bool direct),
+            flipSegDirectionEvery(uint8_t freq, bool startAtFirst),
+            setSegDirectionEvery(uint8_t freq, bool direction, bool startAtFirst);
+
+    private:
+        bool
+            checkSegFreq(uint8_t freq, uint16_t segNum, bool startAtFirst);
 };
 
-#endif                
+#endif

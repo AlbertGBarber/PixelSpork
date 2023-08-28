@@ -32,7 +32,7 @@ An effect based on the RainbowFonts pattern in PixelBlaze that rainbow waves tha
 The effect is largely the same as the original, but I've added the ability to change the frequency of the waves
 
 The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
-passing in a SegmentSet with only one segment containing the whole strip.
+passing in a SegmentSetPS with only one segment containing the whole strip.
 
 Example calls: 
 
@@ -50,32 +50,32 @@ Functions:
 */
 class RainbowFontsSL : public EffectBasePS {
     public:
-        RainbowFontsSL(SegmentSet &SegSet, uint8_t WaveFreq, uint16_t Rate);  
-        
+        RainbowFontsSL(SegmentSetPS &SegSet, uint8_t WaveFreq, uint16_t Rate);
+
         uint8_t
             waveFreq;
 
-        void 
+        void
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
             prevTime = 0;
-        
-        
+
+
         uint8_t
             t1,
             c;
-        
+
         uint16_t
             hl,
             pixelNum,
             lineNum,
             numSegs,
             numLines;
-    
-        CRGB 
+
+        CRGB
             colorOut;
 };
 

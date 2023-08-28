@@ -89,13 +89,13 @@ Notes:
 class GradientCycleFastSegPS : public EffectBasePS {
     public:
         //Constructor for using pattern
-        GradientCycleFastSegPS(SegmentSet &SegmentSet, patternPS *Pattern, palettePS *Palette, uint8_t GradLength, bool Direct, uint16_t Rate); 
+        GradientCycleFastSegPS(SegmentSetPS &SegmentSetPS, patternPS *Pattern, palettePS *Palette, uint8_t GradLength, bool Direct, uint16_t Rate); 
 
         //Constructor for using the palette as the pattern
-        GradientCycleFastSegPS(SegmentSet &SegmentSet, palettePS *Palette, uint8_t GradLength, bool Direct, uint16_t Rate);
+        GradientCycleFastSegPS(SegmentSetPS &SegmentSetPS, palettePS *Palette, uint8_t GradLength, bool Direct, uint16_t Rate);
 
         //Constructor for using a random palette as the pattern
-        GradientCycleFastSegPS(SegmentSet &SegmentSet, uint8_t NumColors, uint8_t GradLength, bool Direct, uint16_t Rate);
+        GradientCycleFastSegPS(SegmentSetPS &SegmentSetPS, uint8_t NumColors, uint8_t GradLength, bool Direct, uint16_t Rate);
 
         ~GradientCycleFastSegPS();
 
@@ -118,7 +118,7 @@ class GradientCycleFastSegPS : public EffectBasePS {
             paletteTemp,
             *palette;
 
-        SegmentSet 
+        SegmentSetPS 
             &segmentSet; 
         
         void 

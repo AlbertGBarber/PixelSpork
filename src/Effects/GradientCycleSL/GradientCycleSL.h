@@ -16,16 +16,16 @@ There is a version of this effect that takes less CPU power (GradientCycleSLFast
 It has a few restrictions, but should run faster than this effect
 
 The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
-passing in a SegmentSet with only one segment containing the whole strip.
+passing in a SegmentSetPS with only one segment containing the whole strip.
 
 Example calls: 
     uint8_t pattern_arr = {0, 1, 2};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
-    GradientCycleSL gradientCycle(mainSegments, pattern, cybPnkPal, 10, 100);
+    GradientCycleSL gradientCycle(mainSegments, pattern, cybPnkPal_PS, 10, 100);
     Will do a gradient cycle from color 0, to color 1, to color 4, of the palette
     with 10 steps to each gradient, and a 100ms update rate
 
-    GradientCycleSL gradientCycle(mainSegments, cybPnkPal, 10, 100);
+    GradientCycleSL gradientCycle(mainSegments, cybPnkPal_PS, 10, 100);
     Will do a gradient cycle using the colors in the palette, with 10 steps to each gradient,and a 100ms update rate
 
     GradientCycleSL gradientCycle(mainSegments, 3, 15, 80);
@@ -61,62 +61,62 @@ Notes:
 class GradientCycleSL : public EffectBasePS {
     public:
         //Constructor for using pattern
-        GradientCycleSL(SegmentSet &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t GradLength, uint16_t Rate); 
+        GradientCycleSL(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t GradLength,
+                        uint16_t Rate);
 
         //Constructor for using the palette as the pattern
-        GradientCycleSL(SegmentSet &SegSet, palettePS &Palette, uint8_t GradLength, uint16_t Rate);
+        GradientCycleSL(SegmentSetPS &SegSet, palettePS &Palette, uint8_t GradLength, uint16_t Rate);
 
         //Constructor for using a random palette as the pattern
-        GradientCycleSL(SegmentSet &SegSet, uint8_t NumColors, uint8_t GradLength, uint16_t Rate);
+        GradientCycleSL(SegmentSetPS &SegSet, uint8_t NumColors, uint8_t GradLength, uint16_t Rate);
 
         ~GradientCycleSL();
 
         uint8_t
             gradLength;
-        
-        uint16_t 
-            totalCycleLength, //total length of all the gradients combined, for reference
-            cycleNum = 0; // tracks what how many patterns we've gone through, resets every totalCycleLength cycles
+
+        uint16_t
+            totalCycleLength,  //total length of all the gradients combined, for reference
+            cycleNum = 0;      // tracks what how many patterns we've gone through, resets every totalCycleLength cycles
 
         patternPS
             *pattern = nullptr,
-            patternTemp = {nullptr, 0, 0}; //Must init structs w/ pointers set to null for safety
+            patternTemp = {nullptr, 0, 0};  //Must init structs w/ pointers set to null for safety
 
         palettePS
             *palette = nullptr,
-            paletteTemp = {nullptr, 0}; //Must init structs w/ pointers set to null for safety
-        
-        void 
+            paletteTemp = {nullptr, 0};  //Must init structs w/ pointers set to null for safety
+
+        void
             setGradLength(uint8_t newGradLength),
             setPattern(patternPS &newPattern),
             setPaletteAsPattern(),
             setTotalEffectLength(),
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
             prevTime = 0;
-        
+
         uint8_t
-            nextPattern, 
+            nextPattern,
             currentPattern,
             currentColorIndex,
             blendStep;
-        
+
         uint16_t
             step,
             numLines;
 
-        CRGB 
+        CRGB
             currentColor,
             nextColor,
             colorOut;
-        
-        void 
-            init(SegmentSet &SegSet, uint16_t Rate),
+
+        void
+            init(SegmentSetPS &SegSet, uint16_t Rate),
             setNextColors(uint16_t pixelNum);
-        
 };
 
 #endif

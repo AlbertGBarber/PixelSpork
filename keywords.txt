@@ -6,11 +6,11 @@
 # One tab does bold orange, 2+ -> light orange.
 # Currently I'm using bold for classes and light for everything else
 #######################################
-# Segment Classes and Structs
+# SegmentPS Classes and Structs
 #######################################
 
-SegmentSet	KEYWORD1
-Segment	KEYWORD1
+SegmentSetPS	KEYWORD1
+SegmentPS	KEYWORD1
 segmentSecCont		KEYWORD3
 segmentSecMix		KEYWORD3
 pixelInfoPS		KEYWORD3
@@ -130,8 +130,8 @@ twinkleSetPS		KEYWORD3
 
 addMod16PS		KEYWORD2
 mod16PS			KEYWORD2
-max			KEYWORD2
-min			KEYWORD2
+maxPS		KEYWORD2
+minPS		KEYWORD2
 SIZE			KEYWORD2
 qsubd			KEYWORD2
 qsuba			KEYWORD2
@@ -140,21 +140,21 @@ qsuba			KEYWORD2
 # Constants (in GlobalVars.h)
 #######################################
 
-D_LED			LITERAL1
+D_LED_PS			LITERAL1
 
 #######################################
 # Global Variables and Constants (in GlobalVars.h)
 #######################################
 
-alwaysResizeObjPS	LITERAL1
+alwaysResizeObj_PS	LITERAL1
 
 #######################################
 # Palettes (Structs) (in paletteListPS.h)
 #######################################
 
 pacificaPalettePS		KEYWORD3
-firePal		KEYWORD3
-firePalPink		KEYWORD3
-firePalBlue		KEYWORD3
-lavaPal		KEYWORD3
-cybPnkPal		KEYWORD3
+firePal_PS		KEYWORD3
+firePalPink_PS		KEYWORD3
+firePalBlue_PS		KEYWORD3
+lavaPal_PS		KEYWORD3
+cybPnkPal_PS		KEYWORD3

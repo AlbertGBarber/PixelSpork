@@ -14,12 +14,12 @@ using namespace fire2012SegUtilsPS;
 //this produces a more nuanced fire
 //Palettes scale from coldest to hottest, so the last color in a palette will match the highest temperature
 //We do additional adjustments to include the background color, which is for the coldest temperature (0th palette index)
-//(The background is usually blank, which palettes don't usually include, so 
+//(The background is usually blank, which palettes don't usually include, so
 //separating it as a separate color makes it easier to use pre-made palettes)
 //Since blending takes a bit of processing power
 //it can be turned off using the blend flag to speed up the effect
 //this creates a more blocky fire
-CRGB fire2012SegUtilsPS::getPixelHeatColorPalette(palettePS *palette, uint8_t paletteLength, uint8_t paletteSecLen, CRGB *bgColor, uint8_t temperature,  bool blend) {
+CRGB fire2012SegUtilsPS::getPixelHeatColorPalette(palettePS *palette, uint8_t paletteLength, uint8_t paletteSecLen, CRGB *bgColor, uint8_t temperature, bool blend) {
 
     //scale the temperature to match it to a palette index
     colorIndex = scale8(temperature, paletteLength);
@@ -31,33 +31,33 @@ CRGB fire2012SegUtilsPS::getPixelHeatColorPalette(palettePS *palette, uint8_t pa
     //if the we're in the background index, we need to set a set of flags
     //the background is always the coldest color, ie the 0th index zone
     //since the background color is not in the palette and needs to be handled separately
-    if(colorIndex == 0){
+    if( colorIndex == 0 ) {
         doBg = true;
     } else {
         doBg = false;
         //we do colorIndex-- to adjust it to match the palette color index
-        colorIndex--; 
+        colorIndex--;
     }
-    
+
     //if we're not blending, or we're at the last color in the palette
     //There's nothing to blend towards, so just set the color
-    if(!blend || colorIndex == (paletteLength - 1) ){
-        if(doBg){
+    if( !blend || colorIndex == (paletteLength - 1) ) {
+        if( doBg ) {
             //use the background color if we need to set the background
             targetColor = *bgColor;
         } else {
-            targetColor = paletteUtilsPS::getPaletteColor( *palette, colorIndex );
+            targetColor = paletteUtilsPS::getPaletteColor(*palette, colorIndex);
         }
     } else {
         //if we are blending, we need to get the starting and ending colors
-        if(doBg){
+        if( doBg ) {
             //for the background, we're blending from the background to the first color in the palette
             startColor = *bgColor;
-            targetColor = paletteUtilsPS::getPaletteColor( *palette, 0 );
+            targetColor = paletteUtilsPS::getPaletteColor(*palette, 0);
         } else {
             //in general we're blending from the current color to the next in the palette
-            startColor = paletteUtilsPS::getPaletteColor( *palette, colorIndex );
-            targetColor = paletteUtilsPS::getPaletteColor( *palette, colorIndex + 1 );
+            startColor = paletteUtilsPS::getPaletteColor(*palette, colorIndex);
+            targetColor = paletteUtilsPS::getPaletteColor(*palette, colorIndex + 1);
         }
         //get the blended color
         //The blend amount is the temperature - secHeatLimit
@@ -112,5 +112,5 @@ void fire2012SegUtilsPS::setPixelHeatColorPaletteOrig(uint16_t pixelLoc, uint8_t
             break;
         }
     }
-    segDrawUtils::setPixelColor(SegmentSet, pixelLoc, colorOut, 0, 0, 0);
+    segDrawUtils::setPixelColor(SegmentSetPS, pixelLoc, colorOut, 0, 0, 0);
 } */

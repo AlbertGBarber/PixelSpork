@@ -98,42 +98,43 @@ Flags:
 */
 class PaletteCyclePS : public EffectBasePS {
     public:
-        PaletteCyclePS(paletteSetPS &PaletteSet, bool Looped, bool RandomizePal, bool Shuffle, uint8_t TotalSteps, uint16_t Rate);  
+        PaletteCyclePS(paletteSetPS &PaletteSet, bool Looped, bool RandomizePal, bool Shuffle, uint8_t TotalSteps,
+                       uint16_t Rate);
 
         ~PaletteCyclePS();
-        
+
         uint8_t
-            cycleNum = 0, //for reference
+            cycleNum = 0,  //for reference
             getTotalSteps();
 
-        bool 
+        bool
             randomizePal,
             shuffle,
             compliment = false,
             done = false,
             looped;
-        
+
         paletteSetPS
             *paletteSet = nullptr;
-                                 
-        palettePS
-            *cyclePalette = nullptr; //ouput palette
-        
-        PaletteBlenderPS
-            *PB = nullptr; //PaletteBlenderPS instance
 
-        void 
+        palettePS
+            *cyclePalette = nullptr;  //ouput palette
+
+        PaletteBlenderPS
+            *PB = nullptr;  //PaletteBlenderPS instance
+
+        void
             reset(),
             reset(paletteSetPS &newPaletteSet),
             setTotalSteps(uint8_t newTotalSteps),
             setPauseTime(uint16_t newPauseTime),
             update(void);
-    
+
     private:
         unsigned long
             currentTime,
             prevTime = 0;
-        
+
         uint8_t
             paletteSetLen,
             maxPaletteLength = 0,

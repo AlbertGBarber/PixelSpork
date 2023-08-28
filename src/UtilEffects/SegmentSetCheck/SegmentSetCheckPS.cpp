@@ -1,46 +1,46 @@
 #include "SegmentSetCheckPS.h"
 
-SegmentSetCheckPS::SegmentSetCheckPS(SegmentSet &SegSet, uint8_t TestMode):
-    testMode(TestMode)
-    {    
-        //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
-        uint16_t Rate = 500; //set a default rate of 500ms
-        bindSegSetPtrPS();
-        bindClassRatesPS();
-	}
+SegmentSetCheckPS::SegmentSetCheckPS(SegmentSetPS &SegSet, uint8_t TestMode)
+    : testMode(TestMode)  //
+{
+    //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
+    uint16_t Rate = 500;  //set a default rate of 500ms
+    bindSegSetPtrPS();
+    bindClassRatesPS();
+}
 
-SegmentSetCheckPS::SegmentSetCheckPS(SegmentSet &SegSet, uint8_t TestMode, uint16_t Rate):
-    testMode(TestMode)
-    {  
-        //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
-        bindSegSetPtrPS();
-        bindClassRatesPS();
-    }
+SegmentSetCheckPS::SegmentSetCheckPS(SegmentSetPS &SegSet, uint8_t TestMode, uint16_t Rate)
+    : testMode(TestMode)  //
+{
+    //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
+    bindSegSetPtrPS();
+    bindClassRatesPS();
+}
 
-//A testing function used to check segment configuration
-//It has two modes:
-//  0: Goes through each segment in the segment set
-//     Sets the first and last pixels to red and blue respectively for each segment
-//     While the rest of the segment is lit up in green, one pixel at a time
-//  1: Colors the first and last segment line in red and blue respectively
-//     While the other lines are flashed in green, one by one
-//What modes are run is based on the testMode value:
-//  0: Only testing mode 0, repeating
-//  1: Only testing mode 1, repeating
-//  2+: Testing both modes, one after another, repeating
-void SegmentSetCheckPS::update(){
+/* A testing function used to check segment configuration
+It has two modes:
+    0: Goes through each segment in the segment set
+        Sets the first and last pixels to red and blue respectively for each segment
+        While the rest of the segment is lit up in green, one pixel at a time
+    1: Colors the first and last segment line in red and blue respectively
+        While the other lines are flashed in green, one by one
+What modes are run is based on the testMode value:
+    0: Only testing mode 0, repeating
+    1: Only testing mode 1, repeating
+    2+: Testing both modes, one after another, repeating */
+void SegmentSetCheckPS::update() {
     currentTime = millis();
 
-    if( ( currentTime - prevTime ) >= *rate ) {
+    if( (currentTime - prevTime) >= *rate ) {
         prevTime = currentTime;
-        
+
         //If we're starting a new test we need to clear the segment set
-        if(testStart){
+        if( testStart ) {
             segDrawUtils::turnSegSetOff(*segSet);
             testStart = false;
         }
-        
-        if(mode == 0 && testMode != 1){
+
+        if( mode == 0 && testMode != 1 ) {
             numSegs = segSet->numSegs;
             totSegLen = segSet->getTotalSegLength(segNum);
             //for each segment we set the first pixel to red, the last to blue,
@@ -51,14 +51,14 @@ void SegmentSetCheckPS::update(){
 
             pixelCount++;
             //if the we're at the end of the segment, we need to switch to the next segment
-            if(pixelCount >= totSegLen){
+            if( pixelCount >= totSegLen ) {
                 //reset the pixelCount and advance to the next segment
                 pixelCount = 1;
                 segNum++;
                 //if the next segment is inactive, we set the pixelCount to its length,
                 //so that we'll switch to the next segment on the next cycle
                 //if(segNum != numSegs && !segSet->getSegActive(segNum)){
-                    //pixelCount = segSet->getTotalSegLength(segNum);
+                //pixelCount = segSet->getTotalSegLength(segNum);
                 //}
                 //clear the segment set
                 segDrawUtils::turnSegSetOff(*segSet);
@@ -66,10 +66,10 @@ void SegmentSetCheckPS::update(){
 
             //if we've done all the segments we need to advance to the next testing mode
             //(segment lines)
-            if(segNum >= numSegs){
+            if( segNum >= numSegs ) {
                 nextStage();
             }
-        } else if(testMode != 0) {
+        } else if( testMode != 0 ) {
             //check the segment lines
             //The first and last segment line are colored red and blue respectively
             //while each other segment line is lit up in green one at a time
@@ -85,7 +85,7 @@ void SegmentSetCheckPS::update(){
 
             pixelCount++;
             //if we've drawn all the lines we need to advance to the next testing mode
-            if(pixelCount >= numLines){
+            if( pixelCount >= numLines ) {
                 nextStage();
             }
         }
@@ -97,8 +97,8 @@ void SegmentSetCheckPS::update(){
 //advances to the next testing mode based on the current mode
 //ie moving between mode 0 and 1, or just repeating the current mode
 //depending on the check mode
-void SegmentSetCheckPS::nextStage(){
-    if(testMode <= 1){
+void SegmentSetCheckPS::nextStage() {
+    if( testMode <= 1 ) {
         //if the testMode is 0 or 1, then we're only doing that mode
         //so we set the mode to match, so we repeat the mode
         mode = testMode;
