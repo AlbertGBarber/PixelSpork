@@ -21,7 +21,7 @@ The effect is adapted to work on segment lines for 2D use, but you can keep it 1
 passing in a SegmentSetPS with only one segment containing the whole strip.
 
 Example call: 
-    TheaterChaseSL theaterChase(mainSegments, CRGB::Red, CRGB::Green, 1, 2, 100)
+    TheaterChaseSL theaterChase(mainSegments, CRGB::Red, CRGB::Green, 1, 2, 100);
     Red spots of length 1, running on a green background, with 2 pixels in between each spot, updating at 100ms
     ie you'd get rggrgg, etc where r = red, g = green pixels
 

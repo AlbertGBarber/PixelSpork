@@ -11,7 +11,7 @@ For a given segment set, two tests can be performed (0 and 1):
     0: Goes through each segment in the segment set
         Sets the first and last pixels to red and blue respectively for each segment
         While the rest of the segment is lit up in green, one pixel at a time, in order of the segment direction
-    1: Colors the first and last segment line in red and blue respectively
+    1: Colors the first and last segment lines in red and blue respectively
         While the other lines are flashed in green, one by one
 What modes are run is based on the testMode value:
     0: Only testing mode 0, repeating
@@ -24,7 +24,7 @@ Example calls:
     The default update rate of 500ms will be used
 
     SegmentSetCheckPS(mainSegments, 1, 1000);
-    Does both test 1 on the mainSegments segment set 
+    Does test 1 on the mainSegments segment set 
     The update rate is set to 1000ms
 
 Constructor Inputs:
@@ -43,7 +43,8 @@ class SegmentSetCheckPS : public EffectBasePS {
         SegmentSetCheckPS(SegmentSetPS &SegSet, uint8_t TestMode, uint16_t Rate);
 
         uint8_t
-            testMode;
+            testMode, //Sets what test to run (2+ runs all tests)
+            mode = 0; //track what test mode we're running
 
         void
             update(void);
@@ -52,9 +53,6 @@ class SegmentSetCheckPS : public EffectBasePS {
         unsigned long
             currentTime,
             prevTime = 0;
-
-        uint8_t
-            mode;
 
         uint16_t
             numSegs,
@@ -67,7 +65,8 @@ class SegmentSetCheckPS : public EffectBasePS {
             testStart = true;
 
         void
-            nextStage();
+            init(SegmentSetPS &SegSet, uint16_t Rate),
+            nextTestMode();
 };
 
 #endif

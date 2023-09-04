@@ -3,18 +3,27 @@
 SegmentSetCheckPS::SegmentSetCheckPS(SegmentSetPS &SegSet, uint8_t TestMode)
     : testMode(TestMode)  //
 {
-    //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
     uint16_t Rate = 500;  //set a default rate of 500ms
-    bindSegSetPtrPS();
-    bindClassRatesPS();
+    init(SegSet, Rate);
 }
 
 SegmentSetCheckPS::SegmentSetCheckPS(SegmentSetPS &SegSet, uint8_t TestMode, uint16_t Rate)
     : testMode(TestMode)  //
 {
+    init(SegSet, Rate);
+}
+
+void SegmentSetCheckPS::init(SegmentSetPS &SegSet, uint16_t Rate) {
     //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
     bindSegSetPtrPS();
     bindClassRatesPS();
+
+    //Set the initial testing mode using nextTestMode()
+    //nextTestMode() either sets the current testing mode (mode) to testMode (if we only want to run one test)
+    //or advances to the next testing mode, 0 or 1, if we're doing both tests
+    //We want to start at test 0, so we set mode to 1 so that nextTestMode() wraps it back to 0
+    mode = 1;
+    nextTestMode();
 }
 
 /* A testing function used to check segment configuration
@@ -40,14 +49,14 @@ void SegmentSetCheckPS::update() {
             testStart = false;
         }
 
-        if( mode == 0 && testMode != 1 ) {
+        if( mode == 0 ) {
             numSegs = segSet->numSegs;
             totSegLen = segSet->getTotalSegLength(segNum);
             //for each segment we set the first pixel to red, the last to blue,
             //and then fill in the rest with green one by one from the start of the segment to the end
-            segDrawUtils::setPixelColor(*segSet, pixelCount, segNum, CRGB::Green, 0);
-            segDrawUtils::setPixelColor(*segSet, 0, segNum, CRGB::Red, 0);
-            segDrawUtils::setPixelColor(*segSet, totSegLen - 1, segNum, CRGB::Blue, 0);
+            segDrawUtils::setPixelColor(*segSet, pixelCount, CRGB::Green, 0, segNum);
+            segDrawUtils::setPixelColor(*segSet, 0, CRGB::Red, 0, segNum);
+            segDrawUtils::setPixelColor(*segSet, totSegLen - 1, CRGB::Blue, 0, segNum);
 
             pixelCount++;
             //if the we're at the end of the segment, we need to switch to the next segment
@@ -67,9 +76,9 @@ void SegmentSetCheckPS::update() {
             //if we've done all the segments we need to advance to the next testing mode
             //(segment lines)
             if( segNum >= numSegs ) {
-                nextStage();
+                nextTestMode();
             }
-        } else if( testMode != 0 ) {
+        } else if( mode == 1 ) {
             //check the segment lines
             //The first and last segment line are colored red and blue respectively
             //while each other segment line is lit up in green one at a time
@@ -86,8 +95,11 @@ void SegmentSetCheckPS::update() {
             pixelCount++;
             //if we've drawn all the lines we need to advance to the next testing mode
             if( pixelCount >= numLines ) {
-                nextStage();
+                nextTestMode();
             }
+        } else {
+            //If we're here, then something has bugged out, try to go to a new test mode
+            nextTestMode();
         }
 
         showCheckPS();
@@ -97,8 +109,8 @@ void SegmentSetCheckPS::update() {
 //advances to the next testing mode based on the current mode
 //ie moving between mode 0 and 1, or just repeating the current mode
 //depending on the check mode
-void SegmentSetCheckPS::nextStage() {
-    if( testMode <= 1 ) {
+void SegmentSetCheckPS::nextTestMode() {
+    if( testMode < 2 ) {
         //if the testMode is 0 or 1, then we're only doing that mode
         //so we set the mode to match, so we repeat the mode
         mode = testMode;
