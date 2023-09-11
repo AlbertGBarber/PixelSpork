@@ -46,9 +46,10 @@ void RainbowCyclePS::update() {
         prevTime = currentTime;
 
         //get the step amount based on the direction
-        //will be -1 if direct is false, 1 if direct is true
+        //will be 1 if direct is false, -1 if direct is true
+        //(This is reversed so that the rainbow moves forward when direct is true, found through trial an error :( )
         //we do this live so you can change the direct directly
-        stepDirect = direct - !direct;
+        stepDirect = !direct - direct;
 
         //we grab some segment info in case it's changed (It shouldn't have, but this is a safe guard)
         numLeds = segSet->numLeds;

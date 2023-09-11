@@ -6,10 +6,9 @@
 #include "MathUtils/mathUtilsPS.h"
 
 /*
-A classic effect
-Moves repeating rainbows of a set length along a SegmentSetPS
-shifts the rainbows in along the SegmentSetPS in the passed in direction at the passed in rate
-suggested min length is 5 (ie red, yellow, green, blue, indigo/violet)
+A classic effect.
+Moves repeating rainbows of a set length along a Segment Set in a set direction.
+Suggested min length is 5 (ie red, yellow, green, blue, indigo/violet).
 
 This is the 1D version of the effect. See RainbowCycleSL.h for a segment line 2D version.
 Comparing the two may help you learn how drawing on segment lines works.
