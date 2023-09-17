@@ -55,12 +55,6 @@ void LavaPS::update() {
     if( (currentTime - prevTime) >= *rate ) {
         prevTime = currentTime;
 
-        //if we're in rainbow mode and it's time to change the hue offset, do so
-        if( rainbowMode && (currentTime - prevHueTime) >= *hueRate ) {
-            hueOffset++;
-            prevHueTime = currentTime;
-        }
-
         pixelCount = 0;
         numSegs = segSet->numSegs;
 
@@ -71,6 +65,12 @@ void LavaPS::update() {
         } else {
             //in palette mode, the blend length is all the possible palette blend colors a pixel may have
             totBlendLength = blendSteps * palette->length;
+        }
+
+        //if we're in changing the hue, do so at the hueRate
+        if( hueCycle && (currentTime - prevHueTime) >= *hueRate ) {
+            hue = addMod16PS(hue, 1, totBlendLength);
+            prevHueTime = currentTime;
         }
 
         //run over each of the leds in the segment set and set a noise/color value
@@ -88,12 +88,13 @@ void LavaPS::update() {
                 //scale color index to be somewhere between 0 and totBlendLength to put it somewhere in the blended palette
                 index = scale16by8(totBlendLength, index);  //colorIndex * totBlendLength /255;
 
+                //Choose a color based on the noise, drawing from either the palette or a rainbow
                 if( rainbowMode ) {
                     //get the rainbow color at the noise value
-                    colorOut = colorUtilsPS::wheel(index, hueOffset);
+                    colorOut = colorUtilsPS::wheel(index, hue);
                 } else {
                     //get the blended color from the palette
-                    colorOut = paletteUtilsPS::getPaletteGradColor(*palette, index, 0, totBlendLength, blendSteps);
+                    colorOut = paletteUtilsPS::getPaletteGradColor(*palette, index, hue, totBlendLength, blendSteps);
                 }
 
                 //set the output color's brightness

@@ -35,8 +35,8 @@ BreathPS::BreathPS(SegmentSetPS &SegSet, CRGB color, CRGB BgColor, uint8_t MaxBr
 }
 
 //constructor for rainbow mode
-BreathPS::BreathPS(SegmentSetPS &SegSet, CRGB BgColor, uint8_t RainbowRate, uint8_t BreathFreq, uint16_t Rate)
-    : rainbowRate(RainbowRate) {
+BreathPS::BreathPS(SegmentSetPS &SegSet, CRGB BgColor, uint8_t HueRate, uint8_t BreathFreq, uint16_t Rate)
+    : hueRate(HueRate) {
     randMode = 4;  //set mode to 4 for rainbow mode
 
     //we still make a palette with a single random color in case we switch randMode away from the rainbow mode
@@ -91,7 +91,7 @@ randModes are:
     1: Colors will be chosen completely at random
     2: Colors will be chosen randomly from the palette (not allowing repeats)
     3: Colors will be chosen randomly from the palette (allowing repeats)
-    4: Colors will be from the rainbow (the hue is offset by rainbowRate each time a color is chosen) */
+    4: Colors will be from the rainbow (the hue is offset by hueRate each time a color is chosen) */
 void BreathPS::getNextColor() {
     //set the next color depending on the mode
     switch( randMode ) {
@@ -114,8 +114,8 @@ void BreathPS::getNextColor() {
             palIndex = patternUtilsPS::getPatternVal(*pattern, patternIndex);
             breathColor = paletteUtilsPS::getPaletteColor(*palette, palIndex);
             break;
-        case 4:  //Colors will be from the rainbow (the hue is offset by rainbowRate each time a color is chosen)
-            hue += rainbowRate;
+        case 4:  //Colors will be from the rainbow (the hue is offset by hueRate each time a color is chosen)
+            hue += hueRate;
             breathColor = CHSV(hue, rainbowSat, rainbowVal);
             break;
     }

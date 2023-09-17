@@ -22,10 +22,20 @@ Example calls:
     Blends from the start palette to the end palette once (no looping), using 50 steps, with 100ms between each step
     Note, you'll have to create your own start and end palettes
 
+    PaletteBlenderPS PaletteBlender(startPalette, endPalette, true, true, 50, 100);
+    Blends from the start palette to the end palette once, looping and randomizing the palettes with each loop cycle.
+    Uses 50 steps, with 100ms between each step.
+    Will produce a palette of ever-changing colors.
+    Note, you'll have to create your own start and end palettes
+
 Constructor Inputs:
     startPalette -- The palette the blendPalette will start as
     endPalette -- The palette that the blendPalette will end as
     looped -- set true, it will reset the blend once it has ended, switching the start and end palettes
+    randomize (optional, default false) --  Randomize will randomize the end palette.
+                                            Combine this with looped to produce constantly changing palettes.
+                                            Note that this will permanently modify the end palette 
+                                            so make sure you aren't using it elsewhere!               
     totalSteps (max 255) -- The total number of steps taken to blend between the palettes
     rate -- The update rate of the blend (ms)
 
@@ -39,9 +49,6 @@ Functions:
 Other Settings:
     pauseTime (default 0) -- Sets a time (ms) that the blendPalette will be pause at after finishing a transition before starting the next
                              Only relevant if looped is true
-    randomize (default false) --  Randomize will randomize the end palette note that this will permanently modify the end palette
-                                  so make sure you aren't using it elsewhere!
-                                  Combine this with looped, to produce constantly changing palettes
     compliment (default false) -- Only relevant when randomizing -
                                   If true, randomized palettes will only generate complimentary colors, 
                                   which means they will be equally spaced across the hue spectrum (see the HSV color space). 
@@ -64,8 +71,13 @@ Notes:
 */
 class PaletteBlenderPS : public EffectBasePS {
     public:
-        PaletteBlenderPS(palettePS &StartPalette, palettePS &EndPalette, bool looped, uint8_t TotalSteps,
+        //Base constructor
+        PaletteBlenderPS(palettePS &StartPalette, palettePS &EndPalette, bool Looped, uint8_t TotalSteps,
                          uint16_t Rate);
+
+        //Constructor including a randomize option
+        PaletteBlenderPS(palettePS &StartPalette, palettePS &EndPalette, bool Looped, bool Randomize,
+                         uint8_t TotalSteps, uint16_t Rate);
 
         ~PaletteBlenderPS();
 
@@ -94,10 +106,10 @@ class PaletteBlenderPS : public EffectBasePS {
             *endPalette = nullptr;
 
         void
-            reset(palettePS &StartPalette, palettePS &EndPalette), //resets just the colors (also starts the blend again)
-            reset(palettePS &StartPalette, palettePS &EndPalette, uint8_t TotalSteps, uint16_t Rate), //resets all vars
-            reset(), //resets the loop vars, restarting the blend from the beginning
-            setupBlendPalette(uint8_t blendPaletteLength), //used only by PaletteCycle, not for general use!
+            reset(palettePS &StartPalette, palettePS &EndPalette),                                     //resets just the colors (also starts the blend again)
+            reset(palettePS &StartPalette, palettePS &EndPalette, uint8_t TotalSteps, uint16_t Rate),  //resets all vars
+            reset(),                                                                                   //resets the loop vars, restarting the blend from the beginning
+            setupBlendPalette(uint8_t blendPaletteLength),                                             //used only by PaletteCycle, not for general use!
             update();
 
     private:

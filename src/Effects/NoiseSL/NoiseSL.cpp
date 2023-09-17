@@ -175,7 +175,7 @@ void NoiseSL::mapNoiseSegsWithPalette() {
                 default:
                     //For mode 0 we set the color from the palette
                     //Scale color index to be somewhere between 0 and totBlendLength to put it somewhere in the blended palette
-                    colorIndex = scale16by8(totBlendLength, colorIndex + iHue);  //colorIndex * totBlendLength /255;
+                    colorIndex = scale16by8(totBlendLength, colorIndex + hue);  //colorIndex * totBlendLength /255;
                     //get the resulting blended color and dim it by bri
                     colorOut = paletteUtilsPS::getPaletteGradColor(*palette, colorIndex, 0, totBlendLength, blendSteps);
                     //get background color info for the current pixel
@@ -186,10 +186,10 @@ void NoiseSL::mapNoiseSegsWithPalette() {
                     break;
                 case 1:
                     //For mode 0 we set the color from the palette, but want to mainly pick from one color at a time
-                    //so we map the colorIndex in the blendSteps, then use iHue to offset what color we're on
+                    //so we map the colorIndex in the blendSteps, then use hue to offset what color we're on
                     colorIndex = scale16by8(blendSteps, colorIndex);  //colorIndex * blendSteps /255;
                     //get the resulting blended color and dim it by bri
-                    colorOut = paletteUtilsPS::getPaletteGradColor(*palette, colorIndex, iHue, totBlendLength, blendSteps);
+                    colorOut = paletteUtilsPS::getPaletteGradColor(*palette, colorIndex, hue, totBlendLength, blendSteps);
                     //get background color info for the current pixel
                     colorTarget = segDrawUtils::getPixelColor(*segSet, pixelNum, *bgColor, bgColorMode, j, i);
                     //get the color blended towards the background and output it
@@ -199,16 +199,16 @@ void NoiseSL::mapNoiseSegsWithPalette() {
                 case 2:
                     //Produces colors of the rainbow mapped to the noise val
                     //Noise tends to "clump up" around the middle of the range
-                    //so we slowly offset the rainbow with iHue to produce all the colors more regularly
-                    colorOut = CHSV(colorIndex + iHue, 255, bri);
+                    //so we slowly offset the rainbow with hue to produce all the colors more regularly
+                    colorOut = CHSV(colorIndex + hue, 255, bri);
                     break;
                 case 3:
                     //An alternative rainbow function that cycles through each color one at a time
                     //So most of the strip will be one color fading towards the next
-                    //!!Make sure rotateHue is true!!
+                    //!!Make sure hueCycle is true!!
                     //Taken from https://github.com/FastLED/FastLED/blob/master/examples/Noise/Noise.ino
                     //We still use the colorIndex for the brightness here b/c I thought it looked better
-                    colorOut = CHSV(iHue + (colorIndex >> 2), 255, colorIndex);
+                    colorOut = CHSV(hue + (colorIndex >> 2), 255, colorIndex);
                     break;
             }
             segDrawUtils::setPixelColor(*segSet, pixelNum, colorOut, 0, 0, 0);
@@ -219,19 +219,19 @@ void NoiseSL::mapNoiseSegsWithPalette() {
     //helps deal with the fact that most noise tends to fall
     //in the middle of the range, so we have a shifting offset to help
     //expose all the colors in a palette/rainbow
-    if( rotateHue ) {
+    if( hueCycle ) {
         switch( cMode ) {
-            //For everything but case 1, we wrap the iHue at 255 (max possible noise value)
-            //For case 1, we're using iHue to offset what palette color we're on,
+            //For everything but case 1, we wrap the hue at 255 (max possible noise value)
+            //For case 1, we're using hue to offset what palette color we're on,
             //so we want to wrap it once we've gone through all the blended palette colors (totBlendLength)
             case 0:
             case 2:
             case 3:
             default:
-                iHue = addmod8(iHue, 1, 255);
+                hue = addmod8(hue, 1, 255);
                 break;
             case 1:
-                iHue = addMod16PS(iHue, 1, totBlendLength);
+                hue = addMod16PS(hue, 1, totBlendLength);
                 break;
         }
     }

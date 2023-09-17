@@ -9,47 +9,55 @@
 An effect based on the lava.ino code created by Scott Marley here: https://github.com/s-marley/FastLED-basics/tree/main/6.%20Noise/lava
 See more about noise here: https://github.com/s-marley/FastLED-basics/tree/main/6.%20Noise
 A fairly simple, but great looking effect that uses FastLED noise functions to produce a lava-esque effect
-You can also supply your own palette for the effect to add your own colors
-or choose to have a palette of random color be created.
+You can also supply your own palette for the effect to add your own colors, 
+choose to have a palette of random color be created, or use the rainbow for the colors.
 
 You can customize how the effect looks by adjusting the blendSteps and blendScale values
 I encourage playing with these, since they can change the effect a lot.
 
 Note that by default, the effect uses the lavaPal_PS palette from paletteList.h.
 
+Also note that this effect tends to look better at a higher refresh rate (lower rate),
+which may be hard to hit depending on your setup.
+
 For a similar effect with some more options, see NoiseSL.
 
 Rainbow Mode:
     The effect also has a rainbow mode, where the rainbow is used for the noise colors. 
     This is turned on/off using rainbowMode.
-    Because the noise function values tend to fall in the center of the noise range, the rainbow mode
-    cycles a hue offset over time to help show all the rainbow colors. 
-    By default the offset fully cycles once a minute, but you can change the rate using hueRate.
+
+hueCycle:
+    Because the noise function values tend to fall in the center of the noise range, you tend not to see 
+    the start/end colors of a palette/rainbow. 
+    To fix this, you can set hueCycle to true, which cycles a hue offset over time,
+    adjusting the center of the noise so you see all the colors.
+    By default the offset fully cycles once a minute (in rainbow mode), but you can change the rate using hueRate.
     Note that hueRate is a pointer, by default it's bound to hueRateOrig, but you can bind it to an external var if needed.
 
-    Note that it's not possible to fully halt the hue offset change (it really looks best if it shifts).
-    However, you can set the hueOffset manually, or set the hueRate to 65535, which will increase the hue once every 65 sec (very slow).
+    Note that if you want to change the offset, but don't want it to change over time 
+    you can set the offset directly by setting "hue". Note that for the rainbow the range is 0-255,
+    while for a palette the range is 0 to (<palette length> * blendSteps).
 
 Example calls: 
-    LavaPS lava(mainSegments, 10);
-    Will do a lava effect, updating at 10ms
+    LavaPS lava(mainSegments, 20);
+    Will do a lava effect, updating at 20ms
 
-    LavaPS lava(mainSegments, 40, 20, 10);
+    LavaPS lava(mainSegments, 40, 20, 20);
     Will do a lava effect, with 40 blendSteps
     and a blendScale of 20 (see inputs for info below)
     at an update rate of 10ms
 
-    LavaPS lava(mainSegments, cybPnkPal_PS, 40, 80, 10);
+    LavaPS lava(mainSegments, cybPnkPal_PS, 40, 80, 20);
     Will do a lava effect using cybPnkPal_PS for colors, 
     with 40 blendSteps
     and a blendScale of 80
-    at an update rate of 10ms
+    at an update rate of 20ms
 
-    LavaPS lava(mainSegments, 3, 40, 80, 10);
+    LavaPS lava(mainSegments, 3, 40, 80, 20);
     Will do a lava effect with a palette of 3 randomly chosen colors
     with 40 blendSteps
     and a blendScale of 80
-    at an update rate of 10ms
+    at an update rate of 20ms
 
 Constructor inputs: 
     palette (optional, see constructors) -- A custom palette passed to the effect, is a pointer. 
@@ -69,16 +77,17 @@ Functions:
 Other Settings:
     brightnessScale (default 150) -- Sets the noise range for the brightness
                                      It doesn't seem to change much in my testing 
-    rainbowMode (default false) --  If true, rainbow colors will be used for the lava (see rainbow mode notes above)
+    rainbowMode (default false) -- If true, rainbow colors will be used for the lava (see rainbow mode notes above)
     rainSat (default 255) -- Saturation value for rainbow mode
     rainVal (default 255) -- "value" value for rainbow mode
-    hueRateOrig (default 235) -- Default hue shifting time (ms), does a complete hue cycle ~every min (only relevant for rainbow mode)
-    *hueRate (default bound to hueRateOrig) -- The hue shifting time (ms). It's a pointer so you can bind it externally (only relevant for rainbow mode)
+    hueCycle (default false) -- If true, the center of the noise will shift over time (see hueCycle notes above)
+    hueRateOrig (default 235) -- Default hue shifting time (ms), does a complete hue cycle ~every min
+    *hueRate (default bound to hueRateOrig) -- The hue shifting time (ms). It's a pointer so you can bind it externally
     paletteTemp -- Storage for any randomly created palettes 
                    (will be bound to the effect palette if the random color constructor was used)
 
 Reference vars:
-    hueOffset -- The amount of offset during rainbow mode (resets at 255) (see rainbow mode notes above)
+    hue -- The amount to offset the noise center by, (see hueCycle notes above)
 
 */
 class LavaPS : public EffectBasePS {
@@ -99,17 +108,18 @@ class LavaPS : public EffectBasePS {
 
         uint8_t
             rainSat = 255,  //saturation value for rainbow mode
-            rainVal = 255,  //"value" value for rainbow mode
-            hueOffset = 0;  //offset for the hue in rainbow mode (helps keeps the colors)
+            rainVal = 255;  //"value" value for rainbow mode
 
         uint16_t
             blendSteps = 30,
             blendScale = 80,
             brightnessScale = 150,
             hueRateOrig = 235,        //Default hue shifting time (ms), does a complete hue cycle ~every min (only relevant for rainbow mode)
-            *hueRate = &hueRateOrig;  //The hue shifting time (ms), by default it's bound to hueRateOrig, but it's a pointer so you can bind it externally
+            *hueRate = &hueRateOrig,  //The hue shifting time (ms), by default it's bound to hueRateOrig, but it's a pointer so you can bind it externally
+            hue = 0;  //offset for center of the noise (see hueCycle notes in intro)
 
         bool
+            hueCycle = false,
             rainbowMode = false;
 
         palettePS

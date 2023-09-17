@@ -60,7 +60,7 @@ randModes:
     1: Colors will be chosen completely at random
     2: Colors will be chosen randomly from the palette (not allowing repeats)
     3: Colors will be chosen randomly from the palette (allowing repeats)
-    4: Colors will be from the rainbow (the hue is offset by rainbowRate each time a color is chosen)
+    4: Colors will be from the rainbow (the hue is offset by hueRate each time a color is chosen)
 
 Example calls: 
     uint8_t pattern_arr = {0, 1, 2};
@@ -89,7 +89,7 @@ Example calls:
     Does a breathing cycle using a rainbow
     The background is blank
     The rainbow hue advances 25 steps with each breath
-    (the rainbowRate is how the rainbow's color changes with each breath, out of 255)
+    (the hueRate is how the rainbow's color changes with each breath, out of 255)
     The eyeHalfSize is 5, the eye wraps, and the eye position will be set randomly for each cycle.
     The breathFreq is 10, the effect updates at 50ms
 
@@ -105,8 +105,8 @@ Constructor Inputs
                                          Only used as a constructor input when creating a single color breath
                                          Using lower than 255 with multiple colors causes the colors to jump with each breath.
                                          !!Must be greater than minBreath (default 60, see other settings below)
-    rainbowRate(optional, default 20) -- How the rainbow's color changes with each breath, out of 255
-                                         Only used for the rainbow randColor mode (4)
+    hueRate(optional, default 20) -- How much the rainbow's color changes with each breath, out of 255
+                                     Only used for the rainbow randColor mode (4)
     bgColor -- The color that the breaths will fade to (usually blank).
     eyeHalfSize -- How long each arm of the eye is (see effect description above)
     wrap -- If the eye wraps or is cut off at either end of the segment set
@@ -157,7 +157,7 @@ class BreathEyeSL : public EffectBasePS {
                     bool Wrap, bool RandEyePos, uint8_t BreathFreq, uint16_t Rate);
 
         //Constructor for rainbow mode
-        BreathEyeSL(SegmentSetPS &SegSet, CRGB BgColor, uint8_t RainbowRate, uint16_t EyeHalfSize, bool Wrap,
+        BreathEyeSL(SegmentSetPS &SegSet, CRGB BgColor, uint8_t HueRate, uint16_t EyeHalfSize, bool Wrap,
                     bool RandEyePos, uint8_t BreathFreq, uint16_t Rate);
 
         ~BreathEyeSL();
@@ -173,7 +173,7 @@ class BreathEyeSL : public EffectBasePS {
             breathEndOffset = 5,    //The offset from maxBreath after which a new color is chosen (see comments in update() code)
             rainbowSat = 255,
             rainbowVal = 255,
-            rainbowRate = 20,
+            hueRate = 20,  //How much the hue is incremented by for randMode 4
             randMode = 0;  //see description above
 
         uint16_t

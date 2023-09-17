@@ -1,8 +1,19 @@
 #include "PaletteBlenderPS.h"
 
+//Base constructor
 PaletteBlenderPS::PaletteBlenderPS(palettePS &StartPalette, palettePS &EndPalette, bool Looped, uint8_t TotalSteps,
                                    uint16_t Rate)
     : endPalette(&EndPalette), startPalette(&StartPalette), looped(Looped), totalSteps(TotalSteps)  //
+{
+    //bind the rate vars since they are inherited from BaseEffectPS
+    bindClassRatesPS();
+    reset(*startPalette, *endPalette);
+}
+
+//Constructor including a randomize option
+PaletteBlenderPS::PaletteBlenderPS(palettePS &StartPalette, palettePS &EndPalette, bool Looped, bool Randomize,
+                                   uint8_t TotalSteps, uint16_t Rate)
+    : endPalette(&EndPalette), startPalette(&StartPalette), looped(Looped), randomize(Randomize), totalSteps(TotalSteps)  //
 {
     //bind the rate vars since they are inherited from BaseEffectPS
     bindClassRatesPS();

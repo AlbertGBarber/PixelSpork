@@ -39,7 +39,7 @@ randModes:
     1: Colors will be chosen completely at random
     2: Colors will be chosen randomly from the palette (not allowing repeats)
     3: Colors will be chosen randomly from the palette (allowing repeats)
-    4: Colors will be from the rainbow (the hue is offset by rainbowRate each time a color is chosen)
+    4: Colors will be from the rainbow (the hue is offset by hueRate each time a color is chosen)
 
 Example calls: 
     uint8_t pattern_arr = {0, 1, 2};
@@ -64,7 +64,7 @@ Example calls:
     Does a breathing cycle using a rainbow
     The background is blank
     The rainbow hue advances 25 steps with each breath
-    (the rainbowRate is how the rainbow's color changes with each breath, out of 255)
+    (the hueRate is how the rainbow's color changes with each breath, out of 255)
     The breathFreq is 10, the effect updates at 50ms
 
 Constructor Inputs
@@ -79,8 +79,8 @@ Constructor Inputs
                                          Only used as a constructor input when creating a single color breath
                                          Using lower than 255 with multiple colors causes the colors to jump with each breath.
                                          !!Must be greater than minBreath (default 60, see other settings below)
-    rainbowRate(optional, default 20) -- How the rainbow's color changes with each breath, out of 255
-                                         Only used for the rainbow randColor mode (4)
+    hueRate(optional, default 20) -- How much the rainbow's color changes with each breath, out of 255
+                                     Only used for the rainbow randColor mode (4)
     bgColor -- The color that the breaths will fade to (usually blank).
     breathFreq -- The speed of the breathing, between 5 and 20 works well.
     Rate -- update rate (ms)
@@ -122,7 +122,7 @@ class BreathPS : public EffectBasePS {
         BreathPS(SegmentSetPS &SegSet, CRGB color, CRGB BgColor, uint8_t MaxBreath, uint8_t BreathFreq, uint16_t Rate);
 
         //Constructor for rainbow mode
-        BreathPS(SegmentSetPS &SegSet, CRGB BgColor, uint8_t RainbowRate, uint8_t BreathFreq, uint16_t Rate);
+        BreathPS(SegmentSetPS &SegSet, CRGB BgColor, uint8_t HueRate, uint8_t BreathFreq, uint16_t Rate);
 
         ~BreathPS();
 
@@ -134,7 +134,7 @@ class BreathPS : public EffectBasePS {
             breathEndOffset = 5,    //The offset from maxBreath after which a new color is chosen (see comments in update() code)
             rainbowSat = 255,
             rainbowVal = 255,
-            rainbowRate = 20,
+            hueRate = 20,  //How much the hue is incremented by for randMode 4
             randMode = 0;  //see description above
 
         uint16_t

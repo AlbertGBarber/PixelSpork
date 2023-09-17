@@ -8,6 +8,10 @@
 		"cSpell.words": [
 			"Leds",
 			"Randomizer"
-		]
+		],
+		"editor.tokenColorCustomizations": {
+			"comments": "",
+			"textMateRules": []
+		}
 	}
 }

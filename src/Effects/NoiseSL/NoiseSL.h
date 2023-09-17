@@ -68,25 +68,25 @@ Inputs guide:
                 0: Use the input palette for colors
                 1: Uses the palette for colors, but maps into roughly one color at a time.
                    So you'll get one-ish color across the whole strip, with the color blending towards the next color in palette
-                   To shift the colors make sure the rotateHue is on! 
+                   To shift the colors make sure the hueCycle is on! 
                    It may be helpful to set the blendSteps larger than normal to slow down the blending,
                    setting it so that the <<palette length>> * blendSteps ~= 250+ works well.
                 2: Noise is mapped directly to the rainbow
                    So any color can show up anywhere, but they will follow the rainbow gradient (red goes to orange to yellow, etc )
                 3: Noise is mapped to a limited section of the rainbow (like mode 1)
                    So you'll get one-ish color across the whole strip, with the color blending towards the next color in the rainbow, ie red to orange, etc
-                   To shift the colors make sure the rotateHue is on!
+                   To shift the colors make sure the hueCycle is on!
             Both rainbow modes were adapted from here: https://github.com/FastLED/FastLED/blob/master/examples/Noise/Noise.ino
 
-        rotateHue and iHue:
+        hueCycle and hue:
             The noise that FastLED produces tends to be grouped in the middle of the range 
             While the effect does try to stretch this out, it still doesn't usually hit colors at either end of the palette
             So, for example using cMode 1, you'll get more yellow, green, and blue than red and purple 
             because they're in the middle of the rainbow.
             To mitigate this we can slowly offset the color center over time,
             so our rainbow will slowly morph to being more red, yellow, green to more purple, red, yellow, etc
-            rotateHue controls if the offsetting is on or off, while iHue is the offset value (0 - 255)
-            rotateHue is on (true) by default, since it looks good with all modes.
+            hueCycle controls if the offsetting is on or off, while hue is the offset value (0 - 255)
+            hueCycle is on (true) by default, since it looks good with all modes.
 
 Example calls: 
     NoiseSL noiseSL(mainSegments, 4, 20, 20, 60, 10, 0, 80);
@@ -120,8 +120,8 @@ Constructor inputs:
 
 Other settings:
     bgColorMode (default 0) -- Sets the color mode for blend color target (background) (see segDrawUtils::setPixelColor)
-    rotateHue (default true) -- sets if the noise center will be offset over time (see inputs guide above)
-    iHue (default 0) -- The position of the noise center, is automatically adjusted if rotateHue is on
+    hueCycle (default true) -- sets if the noise center will be offset over time (see inputs guide above)
+    hue (default 0) -- The position of the noise center, is automatically adjusted if hueCycle is on
                         But you can also set if yourself to a specific value if needed (see inputs guide above)
     bgColorOrig (default 0) -- The default color of the background (bound to the bgColor pointer by default)
     *bgColor (default bound to bgColorOrig) -- The color of the background, is a pointer so it can be bound to an external variable
@@ -155,13 +155,13 @@ class NoiseSL : public EffectBasePS {
 
         uint16_t
             blendSteps,
-            iHue = 0,
+            hue = 0,
             speed,
             scaleBase,
             scaleRange;
 
         bool
-            rotateHue = true;
+            hueCycle = true;
 
         CRGB
             bgColorOrig = 0,          //default background color (blank)
