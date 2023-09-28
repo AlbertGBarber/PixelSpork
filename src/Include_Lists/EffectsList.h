@@ -54,3 +54,4 @@
 #include "Effects/ColorWipeSLSeg/ColorWipeSLSeg.h"
 #include "Effects/ColorWipeSeg/ColorWipeSeg.h"
 #include "Effects/ColorModeFill/ColorModeFillPS.h"
+#include "Effects/StillPatternSLSeg/StillPatternSLSeg.h"

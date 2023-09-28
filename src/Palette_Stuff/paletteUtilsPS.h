@@ -17,8 +17,8 @@ namespace paletteUtilsPS {
         reverse(palettePS &palette);
 
     CRGB  //Functions for getting colors from palettes
-        getBlendedPaletteColor(palettePS &palette, uint8_t startIndex, uint8_t endIndex, uint8_t step, uint8_t totalSteps),
         getPaletteColor(palettePS &palette, uint8_t index),
+        getBlendedPaletteColor(palettePS &palette, uint8_t startIndex, uint8_t endIndex, uint8_t step, uint8_t totalSteps),
         getShuffleColor(palettePS &palette, CRGB &currentPaletteVal),
         *getColorPtr(palettePS &palette, uint8_t index),
         getPaletteGradColor(palettePS &palette, uint16_t num, uint16_t offset, uint16_t totalLength),
