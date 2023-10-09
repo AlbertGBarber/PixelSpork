@@ -1,5 +1,5 @@
-#ifndef StillPatternSLSeg_h
-#define StillPatternSLSeg_h
+#ifndef DrawPatternSLSeg_h
+#define DrawPatternSLSeg_h
 
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
@@ -35,7 +35,7 @@ You can freely change any of the effect's variables during runtime.
 Example calls: 
     uint8_t pattern_arr = {0, 255, 255, 255, 1, 1, 255, 255};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
-    StillPatternSLSeg stillPattern(mainSegments, pattern, cybPnkPal_PS, 0, 0, 80);
+    DrawPatternSLSeg drawPat(mainSegments, pattern, cybPnkPal_PS, 0, 0, 80);
     Will do pattern using the first two colors in the palette (based on the pattern)
     The [pattern will begin with 1 pixel of color 0, with three spaces after, 
     followed by 2 pixels of color 1, followed by 2 spaces.
@@ -45,20 +45,20 @@ Example calls:
 
     uint8_t pattern_arr = {1, 2, 3};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
-    StillPatternSLSeg stillPattern(mainSegments, pattern, cybPnkPal_PS, 3, 4, 0, 1, 120);
+    DrawPatternSLSeg drawPat(mainSegments, pattern, cybPnkPal_PS, 3, 4, 0, 1, 120);
     Will draw a pattern using the first three colors of the palette (taken from the pattern)
     The pattern will have color bands of length 3, followed by 4 spaces, bgColor is 0 (off).
     The pattern will be drawn on segment lines (segMode is 1).
     The pattern will be re-drawn every 120ms.
 
-    StillPatternSLSeg stillPattern(mainSegments, cybPnkPal_PS, 3, 4, CRGB::Red, 2, 40);
+    DrawPatternSLSeg drawPat(mainSegments, cybPnkPal_PS, 3, 4, CRGB::Red, 2, 40);
     Will draw a pattern using all the colors in cybPnkPal_PS, 
     The pattern will have color bands of length 3, with 4 spaces in between.
     The bgColor is red.
     The pattern will be drawn on whole segments (segMode is 2).
     The pattern will be re-drawn every 40ms.
 
-    StillPatternSLSeg stillPattern(mainSegments, CRGB::Blue, 2, 2, CRGB::Red, 0, 140);
+    DrawPatternSLSeg drawPat(mainSegments, CRGB::Blue, 2, 2, CRGB::Red, 0, 140);
     Will do a pattern with blue color bands of length 2 and 2 spaces in between.
     The bgColor is red.
     The effect uses segMode 0, so the pattern will be drawn linearly (1D) on the segment set.
@@ -92,26 +92,26 @@ Other Settings:
     colorMode (default 0) -- sets the color mode for the streamer pixels (see segDrawUtils::setPixelColor)
     bgColorMode (default 0) -- sets the color mode for the spacing pixels (see segDrawUtils::setPixelColor)
 */
-class StillPatternSLSeg : public EffectBasePS {
+class DrawPatternSLSeg : public EffectBasePS {
     public:
         //Constructor for using the passed in pattern and palette
-        StillPatternSLSeg(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint8_t SegMode, uint16_t Rate);
+        DrawPatternSLSeg(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint8_t SegMode, uint16_t Rate);
 
         //Constructor for building the pattern from the passed in pattern and the palette,
         //using the passed in colorLength and spacing
-        StillPatternSLSeg(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t ColorLength, uint8_t Spacing,
+        DrawPatternSLSeg(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t ColorLength, uint8_t Spacing,
                       CRGB BgColor, uint8_t SegMode, uint16_t Rate);
 
         //Constructor for building the pattern using all the colors in the passed in palette,
         //using the colorLength and spacing for each color
-        StillPatternSLSeg(SegmentSetPS &SegSet, palettePS &Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor,
+        DrawPatternSLSeg(SegmentSetPS &SegSet, palettePS &Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor,
                       uint8_t SegMode, uint16_t Rate);
 
         //Constructor for doing a single colored pattern, using colorLength and spacing
-        StillPatternSLSeg(SegmentSetPS &SegSet, CRGB Color, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor,
+        DrawPatternSLSeg(SegmentSetPS &SegSet, CRGB Color, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor,
                       uint8_t SegMode, uint16_t Rate);
 
-        ~StillPatternSLSeg();
+        ~DrawPatternSLSeg();
 
         uint8_t
             segMode,

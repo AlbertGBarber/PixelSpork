@@ -1,7 +1,7 @@
-#include "StillPatternSLSeg.h"
+#include "DrawPatternSLSeg.h"
 
 //Constructor for using the passed in pattern and palette
-StillPatternSLSeg::StillPatternSLSeg(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor,
+DrawPatternSLSeg::DrawPatternSLSeg(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor,
                              uint8_t SegMode, uint16_t Rate)
     : pattern(&Pattern), palette(&Palette), segMode(SegMode)  //
 {
@@ -10,7 +10,7 @@ StillPatternSLSeg::StillPatternSLSeg(SegmentSetPS &SegSet, patternPS &Pattern, p
 
 //Constructor for building the pattern from the passed in pattern and the palette,
 //using the passed in colorLength and spacing
-StillPatternSLSeg::StillPatternSLSeg(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t ColorLength,
+DrawPatternSLSeg::DrawPatternSLSeg(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t ColorLength,
                              uint8_t Spacing, CRGB BgColor, uint8_t SegMode, uint16_t Rate)
     : palette(&Palette), segMode(SegMode)  //
 {
@@ -20,7 +20,7 @@ StillPatternSLSeg::StillPatternSLSeg(SegmentSetPS &SegSet, patternPS &Pattern, p
 
 //Constructor for building the pattern using all the colors in the passed in palette,
 //using the colorLength and spacing for each color
-StillPatternSLSeg::StillPatternSLSeg(SegmentSetPS &SegSet, palettePS &Palette, uint8_t ColorLength, uint8_t Spacing,
+DrawPatternSLSeg::DrawPatternSLSeg(SegmentSetPS &SegSet, palettePS &Palette, uint8_t ColorLength, uint8_t Spacing,
                              CRGB BgColor, uint8_t SegMode, uint16_t Rate)
     : palette(&Palette), segMode(SegMode)  //
 {
@@ -29,7 +29,7 @@ StillPatternSLSeg::StillPatternSLSeg(SegmentSetPS &SegSet, palettePS &Palette, u
 }
 
 //Constructor for doing a single colored pattern, using colorLength and spacing
-StillPatternSLSeg::StillPatternSLSeg(SegmentSetPS &SegSet, CRGB Color, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor,
+DrawPatternSLSeg::DrawPatternSLSeg(SegmentSetPS &SegSet, CRGB Color, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor,
                              uint8_t SegMode, uint16_t Rate)
     : segMode(SegMode)  //
 {
@@ -40,13 +40,13 @@ StillPatternSLSeg::StillPatternSLSeg(SegmentSetPS &SegSet, CRGB Color, uint8_t C
 }
 
 //destructor
-StillPatternSLSeg::~StillPatternSLSeg() {
+DrawPatternSLSeg::~DrawPatternSLSeg() {
     free(paletteTemp.paletteArr);
     free(patternTemp.patternArr);
 }
 
 //initialization of core variables and pointers
-void StillPatternSLSeg::init(CRGB BgColor, SegmentSetPS &SegSet, uint16_t Rate) {
+void DrawPatternSLSeg::init(CRGB BgColor, SegmentSetPS &SegSet, uint16_t Rate) {
     //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
     bindSegSetPtrPS();
     bindClassRatesPS();
@@ -60,7 +60,7 @@ void StillPatternSLSeg::init(CRGB BgColor, SegmentSetPS &SegSet, uint16_t Rate) 
 //ex : inputPattern is {1, 2, 4} with color length 2, and 1 spacing
 //the streamer pattern would be: {1, 1, 255, 2, 2, 255, 4, 4, 255}
 //(255 will be set to the background color)
-void StillPatternSLSeg::setPatternAsPattern(patternPS &inputPattern, uint8_t colorLength, uint8_t spacing) {
+void DrawPatternSLSeg::setPatternAsPattern(patternPS &inputPattern, uint8_t colorLength, uint8_t spacing) {
     generalUtilsPS::setPatternAsPattern(patternTemp, inputPattern, colorLength, spacing);
     pattern = &patternTemp;
 }
@@ -69,7 +69,7 @@ void StillPatternSLSeg::setPatternAsPattern(patternPS &inputPattern, uint8_t col
 //using the passed in colorLength and spacing
 //ex: for palette of length 3, and a colorLength of 2, and spacing of 1
 //the final streamer pattern would be : {0, 0, 255, 1, 1, 255, 2, 2, 255}
-void StillPatternSLSeg::setPaletteAsPattern(uint8_t colorLength, uint8_t spacing) {
+void DrawPatternSLSeg::setPaletteAsPattern(uint8_t colorLength, uint8_t spacing) {
     generalUtilsPS::setPaletteAsPattern(patternTemp, *palette, colorLength, spacing);
     pattern = &patternTemp;
 }
@@ -80,7 +80,7 @@ void StillPatternSLSeg::setPaletteAsPattern(uint8_t colorLength, uint8_t spacing
 //    0 -- The pattern will be drawn using segment lines (each line will be a single color)
 //    2 -- The pattern will be drawn using whole segment (each segment will be a single color)
 //    3 -- The pattern will be drawn linearly along the segment set (1D).
-void StillPatternSLSeg::update() {
+void DrawPatternSLSeg::update() {
     currentTime = millis();
 
     if( (currentTime - prevTime) >= *rate ) {
@@ -133,7 +133,7 @@ void StillPatternSLSeg::update() {
 //Sets colorOut to be the next color in the pattern
 //if the pattern value is 255, the background color will be used.
 //Also advances the patIndex tracker to the next pattern index.
-void StillPatternSLSeg::getNextPatColor() {
+void DrawPatternSLSeg::getNextPatColor() {
 
     //get the next pattern value and color (using the background color if the value is 255)
     patVal = patternUtilsPS::getPatternVal(*pattern, patIndex);
