@@ -9,7 +9,8 @@
 namespace shiftingSeaUtilsPS {
 
     void
-        genOffsetArray(uint16_t *offsets, uint16_t numPixels, uint8_t gradLength, uint16_t grouping, uint16_t totalCycleLength, uint8_t mode);
+        genOffsetArray(uint16_t *offsets, uint16_t numPixels, uint8_t gradLength, uint16_t grouping,
+                       uint16_t totalCycleLength, uint8_t shiftMode);
 
 }
 #endif

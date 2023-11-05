@@ -399,7 +399,7 @@ void ColorWipeSLSeg::doLineWipe(uint16_t wipeNum, uint16_t wipeStep, uint16_t li
         }
 
         //output the color to the pixel, note that if the color mode is non-zero, it will override the wipe style
-        pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, j, lineNum);
+        pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, j, lineNum);
         segDrawUtils::setPixelColor(*segSet, pixelNum, colorOut, modeOut, j, lineNum);
     }
 }
@@ -432,7 +432,7 @@ void ColorWipeSLSeg::doSegWipe(uint16_t wipeNum, uint16_t wipeStep, uint16_t seg
         }
 
         //output the color to the pixel, note that if the color mode is non-zero, it will override the wipe style
-        pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, segNum, j);
+        pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, segNum, j);
         segDrawUtils::setPixelColor(*segSet, pixelNum, colorOut, modeOut, segNum, j);
     }
 }

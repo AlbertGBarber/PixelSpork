@@ -148,7 +148,7 @@ void NoiseGradSL::update() {
             //color each segment pixel in the blended palette color
             for( uint16_t j = 0; j < numSegs; j++ ) {
                 //get the current pixel's location in the segment set
-                pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, j, i);
+                pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, j, i);
 
                 //get background color info for the current pixel
                 colorTarget = segDrawUtils::getPixelColor(*segSet, pixelNum, *bgColor, bgColorMode, j, i);

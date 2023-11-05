@@ -185,7 +185,7 @@ void StreamerFastSL::update() {
                 //To copy the color we always copy from the pixel on the longest segment,
                 //Since all the pixels on the longest segment are on separate lines
                 //(unlike shorter segments, where a single pixel can be in multiple lines, so it's color may not be what we expect)
-                pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, longestSeg, i - 1);
+                pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, longestSeg, i - 1);
                 nextColor = segSet->leds[pixelNum];
             }
             //write out the copied color to the whole line

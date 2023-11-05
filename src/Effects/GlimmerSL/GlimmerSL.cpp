@@ -207,7 +207,7 @@ void GlimmerSL::update() {
                 //we need to fill in all the segment pixels on the line
                 for( uint16_t j = 0; j < numSegs; j++ ) {
                     //get the physical pixel location
-                    pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, j, fadePixelLocs[i]);
+                    pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, j, fadePixelLocs[i]);
 
                     //get the background color for the pixel, we check this every cycle to account for color modes
                     startColor = segDrawUtils::getPixelColor(*segSet, pixelNum, *bgColor, bgColorMode, j, fadePixelLocs[i]);

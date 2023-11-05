@@ -47,7 +47,7 @@ void RainbowFontsSL::update() {
                 //get the physical pixel location based on the line and seg numbers
                 //and then write out the color
                 //Note that the actual line written to is offset and wraps
-                pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, j, lineNum);
+                pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, j, lineNum);
                 segDrawUtils::setPixelColor(*segSet, pixelNum, colorOut, 0, 0, 0);
             }
         }

@@ -53,8 +53,8 @@ Functions:
     update() -- updates the effect 
 
 Other Settings:
-    satur (default 255) -- rainbow saturation value
-    value (default 255) -- rainbow value value
+    sat (default 255) -- rainbow saturation value
+    val (default 255) -- rainbow "value" value
 
 Reference Vars:
     length -- The length of the rainbow. Set using setLength();
@@ -69,8 +69,8 @@ class RainbowCycleSLSeg : public EffectBasePS {
         RainbowCycleSLSeg(SegmentSetPS &SegSet, bool Direct, bool SegMode, uint16_t Rate);
 
         uint8_t
-            satur = 255,
-            value = 255;
+            sat = 255,
+            val = 255;
 
         uint16_t
             length;  //reference only, call setLength() to change the rainbow length

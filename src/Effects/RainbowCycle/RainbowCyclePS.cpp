@@ -83,7 +83,7 @@ void RainbowCyclePS::update() {
                 //(stepVal + ledCount) % length offsets our position, while keeping it between 0 and length
                 //while * (256 / length) shifts the counter in (256/length) steps
                 //so that we always finish a rainbow after length # of steps
-                color = colorUtilsPS::wheel((addMod16PS(stepVal, ledCount, maxCycleLength) * 256 / length), 0, satur, value);
+                color = colorUtilsPS::wheel((addMod16PS(stepVal, ledCount, maxCycleLength) * 256 / length), 0, sat, val);
 
                 //get the actual pixel address, and set it
                 //color mode is 0 because we are working out the rainbow color ourselves

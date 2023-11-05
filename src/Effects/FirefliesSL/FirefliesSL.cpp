@@ -151,7 +151,7 @@ void FirefliesSL::update() {
 
                     //get the physical pixel location based on the line and seg numbers
                     //we always get the pixel in the line that's on the longest segment
-                    pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, longestSeg, particlePrevPos[i]);
+                    pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, longestSeg, particlePrevPos[i]);
                     //segDrawUtils::getPixelColor(segSet, &pixelInfo, *bgColor, bgColorMode, particlePrevPos[i]);
 
                     //only turn off the line if it hasn't been touched by another particle (or something else)
@@ -273,7 +273,7 @@ void FirefliesSL::drawParticlePixel(particlePS *particlePtr, uint16_t partNum) {
     for( uint16_t i = 0; i < numSegs; i++ ) {
         //get the pixel's physical location and adjust for any color modes
         //also fetch the background and particle color at this point
-        pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, i, partPos);
+        pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, i, partPos);
         //segDrawUtils::getPixelColor(segSet, &pixelInfo, colorOut, colorMode, particlePtr->position);
         bgCol = segDrawUtils::getPixelColor(*segSet, pixelNum, *bgColor, bgColorMode, i, partPos);
         colorFinal = segDrawUtils::getPixelColor(*segSet, pixelNum, colorOut, colorMode, i, partPos);

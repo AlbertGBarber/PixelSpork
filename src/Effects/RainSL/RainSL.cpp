@@ -437,7 +437,7 @@ uint16_t RainSL::getParticlePixelLoc(uint16_t trailLedLocation, uint8_t lineNum)
         trailLedLocation = numSegs - trailLedLocation - 1;
     }
 
-    return segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, trailLedLocation, lineNum);
+    return segDrawUtils::getPixelNumFromLineNum(*segSet, trailLedLocation, lineNum);
 }
 
 //returns the position of a trail pixel(local to the segment) based on the trail direction, and the mod amount

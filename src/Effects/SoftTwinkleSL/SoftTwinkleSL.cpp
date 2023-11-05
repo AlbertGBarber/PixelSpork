@@ -28,7 +28,7 @@ void SoftTwinkleSL::update() {
             //To do this we get the color of the pixel on the longest seg in the line
             //b/c that pixel will not be shared with another line, and so should not have had its color modified
             //since the last update
-            pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, longestSeg, i);
+            pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, longestSeg, i);
             color = segSet->leds[pixelNum];
             if( !color )
                 continue;             // skip black pixels
@@ -48,7 +48,7 @@ void SoftTwinkleSL::update() {
             //like before, we always use the line pixel on the longest segment
             //since it's not shared with any other lines, so it's color won't have been overwritten
             lineNum = random16(numLines);
-            pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, longestSeg, lineNum);
+            pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, longestSeg, lineNum);
             color = segSet->leds[pixelNum];
             if( !color ) {
                 segDrawUtils::drawSegLine(*segSet, lineNum, lightColor, 0);

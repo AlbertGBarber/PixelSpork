@@ -1,14 +1,16 @@
 #include "segDrawUtils.h"
 
 using namespace segDrawUtils;
-
-//!!!!  Function inputs distinguish between pixel addresses local to the segment set
-//      and the pixel's physical address on the strip by using pixelNum and segPixelNum vars
-//          segPixelNum is the location local to the segment set, not the led's physical address.
-//          ex: The 25th pixel in the segment set, it's segPixelNum is 25.
-//          pixelNum is the phyiscal address of the led
-//          ex: The 25th pixel in the segment set has a physical address of 10 so it's pixelNum is 10
-//      The input vars of functions tell you what type of pixel location it wants
+/*
+Function inputs distinguish between pixel locations local to the segment set
+and the pixel's physical address on the strip by using "segPixelNum" and "pixelNum" vars.
+Note that counting starts from 0 for both cases!!
+    * segPixelNum is the location local to the segment set, not the led's physical address.
+       ex: The 25th pixel in the segment set, it's segPixelNum is 25.
+    * pixelNum is the phyiscal address of the led
+    ex: The 25th pixel in the segment set has a physical address of 10 so it's pixelNum is 10
+The input vars of functions tell you what type of pixel location it wants
+*/
 
 //returns the physical number of the nth pixel in the segment set
 //ie I want the 10th pixel as measured from the start of the segment set, this is actually the 25th pixel on the strip
@@ -17,36 +19,37 @@ uint16_t segDrawUtils::getSegmentPixel(SegmentSetPS &SegSet, uint16_t segPixelNu
     return getSegmentPixel(SegSet, locData1[0], locData1[1]);
 }
 
-//returns the segment number and the pixel number of that segment for the nth pixel
-//data is package is passed into the passed in locData1[2] array
-//locData1[0] is the segment number
-//locData1[1] is the pixel number in the segment
+//Returns the segment number and the pixel number of that segment for the nth pixel
+//The data is stored in a uint16_t "locData" array of length 2, which you have to supply.
+//A pointer to the array is passed to the function, which the function then fills in.
+//locData[0] is the segment number
+//locData[1] is the pixel number in the segment
 //ex we want the 12th pixel in the segment set. This is the 8th pixel of the second segment in the set
-//so locData1[0] = 2 and locData1[1] = 8.
+//so locData[0] = 2 and locData[1] = 8.
 //If the passed in pixel number isn't on the segment (it's greater than the total segment set length)
-//Then the locData1[1] pixel number will be passed back as SegSet.numLeds + 1, which will prevent it being drawn
-void segDrawUtils::getSegLocationFromPixel(SegmentSetPS &SegSet, uint16_t segPixelNum, uint16_t locData1[2]) {
+//Then the locData[1] pixel number will be passed back as D_LED_PS, which will prevent it being drawn
+void segDrawUtils::getSegLocationFromPixel(SegmentSetPS &SegSet, uint16_t segPixelNum, uint16_t *locData) {
     lengthSoFar = 0;
-    //Before we search for the segment pixel we set default values for locData1 array
+    //Before we search for the segment pixel we set default values for locData array
     //These act as a safeguard incase the segPixelNum is off the end of the segment set
     //In which case we want to avoid trying to draw to it
     //so we set the led location to D_LED_PS, which will be ignored when trying to write out any colors
-    locData1[0] = 0;
-    locData1[1] = D_LED_PS;
+    locData[0] = 0;
+    locData[1] = D_LED_PS;
     for( uint16_t i = 0; i < SegSet.numSegs; i++ ) {
         lengthSoFar += SegSet.getTotalSegLength(i);
         if( (lengthSoFar - 1) >= segPixelNum ) {
-            locData1[0] = i;
-            locData1[1] = segPixelNum - (lengthSoFar - SegSet.getTotalSegLength(i));
+            locData[0] = i;
+            locData[1] = segPixelNum - (lengthSoFar - SegSet.getTotalSegLength(i));
             break;
         }
     }
 }
 
 //IF YOU'RE GONNA OPTIMIZE ANYTHING OPTIMIZE THIS FUNCTION
-//finds the pixel number of the pixel at a given position in a segment
-//ie we want to find the pixel number of the 5th pixel in the second segment
-//if the segment is in the reverse direction we want the pixel for the end of the segment
+//finds the address of the pixel at a given position in a segment
+//ie we want to find the address of the 5th pixel in the second segment.
+//note, if the segment is in the reverse direction we want the pixel from the end of the segment
 uint16_t segDrawUtils::getSegmentPixel(SegmentSetPS &SegSet, uint16_t segNum, uint16_t segPixelNum) {
     if( segPixelNum >= SegSet.getTotalSegLength(segNum) ) {
         return D_LED_PS;
@@ -242,20 +245,23 @@ void segDrawUtils::drawSegLine(SegmentSetPS &SegSet, uint16_t lineNum, const CRG
 //Draws a segment line of one color between startSeg and endSeg (including endSeg)
 void segDrawUtils::drawSegLineSection(SegmentSetPS &SegSet, uint16_t startSeg, uint16_t endSeg, uint16_t lineNum, const CRGB &color, uint8_t colorMode) {
     for( uint16_t i = startSeg; i <= endSeg; i++ ) {  // for each segment, set the color, if we're in rainbow mode, set the rainbow color
-        pixelNum = getPixelNumFromLineNum(SegSet, SegSet.numLines, i, lineNum);
+        pixelNum = getPixelNumFromLineNum(SegSet, i, lineNum);
         setPixelColor(SegSet, pixelNum, color, colorMode, i, lineNum);
     }
 }
 
-//Retuns the pixel number located on segment segNum located along line lineNum where the total number of lines matches the pixels in the longest segment
-//in other words, will return a pixel such that you can draw a straight line across all segments, using the longest segment as the basis
-uint16_t segDrawUtils::getPixelNumFromLineNum(SegmentSetPS &SegSet, uint16_t numLines, uint16_t segNum, uint16_t lineNum) {
+//This function is the basis for 2D segment sets.
+//Will return a pixel such that you can draw a "straight" line across all segments, using the longest segment as the basis.
+//The pixels are mapped to the closest line, so some pixels may exist in multiple lines. 
+//Retuns the pixel number located on segment "segNum" located along line "lineNum" where the total number of lines is the length of the longest segment
+//Note that it returns the physical address of the Pixel
+uint16_t segDrawUtils::getPixelNumFromLineNum(SegmentSetPS &SegSet, uint16_t segNum, uint16_t lineNum) {
     //This formula dedicated to my father, who saved me from many hours of head-scratching in an instant
-    return getSegmentPixel(SegSet, segNum, ((lineNum * SegSet.getTotalSegLength(segNum)) / numLines));
+    return getSegmentPixel(SegSet, segNum, ((lineNum * SegSet.getTotalSegLength(segNum)) / SegSet.numLines));
 }
 
 //returns the line number (based on the max segment length) of a pixel in a segment set
-//(pixel num is local to the segment set)
+//(segPixelNum is local to the segment set)
 uint16_t segDrawUtils::getLineNumFromPixelNum(SegmentSetPS &SegSet, uint16_t segPixelNum) {
     //get the segment number and led number of where the pixel is located in the strip
     getSegLocationFromPixel(SegSet, segPixelNum, locData1);
@@ -263,7 +269,7 @@ uint16_t segDrawUtils::getLineNumFromPixelNum(SegmentSetPS &SegSet, uint16_t seg
 }
 
 //returns the line number (based on the max segment length) of a pixel in a segment
-//(pixel num is local to the segment number)
+//(segPixelNum is local to the segment)
 uint16_t segDrawUtils::getLineNumFromPixelNum(SegmentSetPS &SegSet, uint16_t segPixelNum, uint16_t segNum) {
     //the formula below is the same as the one in getPixelNumFromLineNum
     //but solving for lineNum instead of pixelNum
@@ -300,7 +306,9 @@ void segDrawUtils::setPixelColor(SegmentSetPS &SegSet, uint16_t pixelNum, const 
     handleBri(SegSet, pixelNum);
 }
 
-/* !!!You must call this whenever you set a pixel color!!!
+/* !!!This must be called whenever a pixel color is set!!! 
+(it is called automatically by other color setting functions, but you 
+must call it manually if you set a color manually, ie segSet.led[3] = CRGB::Red)
 Fades an individual pixel to match the brightness of the segment set
 Note that FastLED doesn't track each pixel's brightness directly,
 so calling this twice on the same pixel will fade it twice

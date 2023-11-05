@@ -9,17 +9,17 @@
     If the randomShift is on, then with each cycle we do a random check to see if we should change the pixel's offset
     if so, then we increment it by a random amount up to shiftStep. */
 
-//Constructor for the effect. Note that by passing a gradLength of 0, you will set the effect to sMode 0
-//In sMode 0 the gradLength isn't used, but to make sure that if you set it back to sMode 0,
-//the gradLength will be set to random value between 20 - 40
+//Constructor for the effect. Note that by passing a gradLength of 0, you will set the effect to shiftMode 0
+//In shift mode 0 the gradLength isn't used, but if you set it back to shift mode 0,
+//the gradLength will be set to random value between 20 - 40 to prevent crashing.
 ShiftingRainbowSeaSL::ShiftingRainbowSeaSL(SegmentSetPS &SegSet, uint8_t GradLength, uint8_t Grouping, uint16_t Rate)
     : grouping(Grouping), gradLength(GradLength)  //
 {
     if( GradLength == 0 ) {
-        sMode = 0;
+        shiftMode = 0;
         gradLength = random8(20, 40);
     } else {
-        sMode = 1;
+        shiftMode = 1;
     }
     init(SegSet, Rate);
 }
@@ -40,14 +40,14 @@ void ShiftingRainbowSeaSL::init(SegmentSetPS &SegSet, uint16_t Rate) {
 //since changing the gradLength doesn't do anything without changing the offset array
 void ShiftingRainbowSeaSL::setGradLength(uint8_t newGradLength) {
     gradLength = newGradLength;
-    if( sMode == 1 ) {
+    if( shiftMode == 1 ) {
         resetOffsets();
     }
 }
 
 //changes the mode, also resets the offset array, since it depends on the mode
-void ShiftingRainbowSeaSL::setMode(uint8_t newMode) {
-    sMode = newMode;
+void ShiftingRainbowSeaSL::setShiftMode(uint8_t newMode) {
+    shiftMode = newMode;
     resetOffsets();
 }
 
@@ -73,10 +73,10 @@ void ShiftingRainbowSeaSL::resetOffsets() {
 
     //255 is the maximum length of the rainbow
     uint8_t gradLengthTemp = gradLength;
-    if( sMode == 0 ) {
+    if( shiftMode == 0 ) {
         gradLengthTemp = 255;
     }
-    shiftingSeaUtilsPS::genOffsetArray(offsets, numLines, gradLengthTemp, grouping, 255, sMode);
+    shiftingSeaUtilsPS::genOffsetArray(offsets, numLines, gradLengthTemp, grouping, 255, shiftMode);
 }
 
 //updates the effect

@@ -146,7 +146,7 @@ void PacificaHueSL::doOneLayer(palettePS *palette, uint16_t ciStart, uint16_t wa
         //Since the colors are additive, pixels in multiple lines will be brighter than those in single lines
         //This is more or less equivalent to doing addWhitecaps()
         for( uint16_t j = 0; j < numSegs; j++ ) {
-            pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, j, i);
+            pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, j, i);
             segSet->leds[pixelNum] += colorOut;
 
             //Need to check to dim the pixel color manually
@@ -173,7 +173,7 @@ void PacificaHueSL::addWhitecaps() {
         threshold = scale8(sin8(wave), 20) + baseThreshold;
         wave += 7;
         for( uint16_t j = 0; j < numSegs; j++ ) {
-            pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, j, i);
+            pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, j, i);
             lightLvl = segSet->leds[pixelNum].getAverageLight();
             if( lightLvl > threshold && lightLvl < thresholdMax ) {
                 overage = lightLvl - threshold;

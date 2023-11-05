@@ -176,7 +176,7 @@ void PrideWPalSL2::update() {
                 }
 
                 //get the physical pixel location based on the line and seg numbers
-                pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, segOut, numLines - j - 1);
+                pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, segOut, numLines - j - 1);
 
                 //output a the color
                 nblend(segSet->leds[pixelNum], colorOut, 128);

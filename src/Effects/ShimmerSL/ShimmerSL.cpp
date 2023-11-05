@@ -76,7 +76,7 @@ void ShimmerSL::update() {
             color = pickColor();
 
             for( uint16_t j = 0; j < numSegs; j++ ) {
-                pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, j, i);
+                pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, j, i);
 
                 //If we're not in line mode, then each individual pixel is to have it's own shimmer brightness
                 if( !lineMode ) {

@@ -40,7 +40,7 @@ namespace segDrawUtils {
         setPixelColor(SegmentSetPS &SegSet, uint16_t pixelNum, const CRGB &color, uint8_t colorMode, uint16_t segNum, uint16_t lineNum),
         setGradOffset(SegmentSetPS &SegSet, uint16_t offsetMax);  //Handles updating the rainbow offset vals in the segment set.
 
-    void  //Functions for getting the color that a pixel will be based on the color mode.
+    void  //Functions for determining the color that a pixel will be based on the color mode.
         getPixelColor(SegmentSetPS &SegSet, uint16_t segPixelNum, pixelInfoPS *pixelInfo, const CRGB &color, uint8_t colorMode);
     CRGB
         getPixelColor(SegmentSetPS &SegSet, uint16_t pixelNum, const CRGB &color, uint8_t colorMode, uint16_t segNum, uint16_t lineNum);
@@ -55,7 +55,7 @@ namespace segDrawUtils {
         fadeSegSecToBlackBy(SegmentSetPS &SegSet, uint16_t segNum, uint16_t secNum, uint8_t val);
 
     void  //Functions for finding what segment or line number your pixel is on the segment set
-        getSegLocationFromPixel(SegmentSetPS &SegSet, uint16_t segPixelNum, uint16_t locData[2]);
+        getSegLocationFromPixel(SegmentSetPS &SegSet, uint16_t segPixelNum, uint16_t *locData);
     uint16_t
         getLineNumFromPixelNum(SegmentSetPS &SegSet, uint16_t segPixelNum),
         getLineNumFromPixelNum(SegmentSetPS &SegSet, uint16_t segPixelNum, uint16_t segNum);
@@ -63,8 +63,8 @@ namespace segDrawUtils {
     //Functions for finding where the pixel is on the segment set, for different levels of knowledge about where your pixel is.
     uint16_t
         getSegmentPixel(SegmentSetPS &SegSet, uint16_t segPixelNum),
-        getSegmentPixel(SegmentSetPS &SegSet, uint16_t segNum, uint16_t num),
-        getPixelNumFromLineNum(SegmentSetPS &SegSet, uint16_t numLines, uint16_t segNum, uint16_t lineNum);
+        getSegmentPixel(SegmentSetPS &SegSet, uint16_t segNum, uint16_t segPixelNum),
+        getPixelNumFromLineNum(SegmentSetPS &SegSet, uint16_t segNum, uint16_t lineNum);
 
     //pre-allocated space for function variables
     //Since these functions are all called a lot, it reduce call times
@@ -76,7 +76,7 @@ namespace segDrawUtils {
         numSec;
 
     static uint16_t
-        locData1[2],
+        locData1[2], //{segment number, pixel number in segment}
         locData2[2],
         lineNum,
         lengthSoFar,

@@ -21,12 +21,13 @@ namespace paletteUtilsPS {
         getBlendedPaletteColor(palettePS &palette, uint8_t startIndex, uint8_t endIndex, uint8_t step, uint8_t totalSteps),
         getShuffleColor(palettePS &palette, CRGB &currentPaletteVal),
         *getColorPtr(palettePS &palette, uint8_t index),
-        getPaletteGradColor(palettePS &palette, uint16_t num, uint16_t offset, uint16_t totalLength),
-        getPaletteGradColor(palettePS &palette, uint16_t num, uint16_t offset, uint16_t totalLength, uint16_t gradLength);
+        getPaletteGradColor(palettePS &palette, uint16_t step, uint16_t offset, uint16_t totalSteps),
+        getPaletteGradColor(palettePS &palette, uint16_t step, uint16_t offset, uint16_t totalSteps, uint16_t gradLength);
 
     palettePS  //Functions for making quick new palettes
         makeSingleColorPalette(CRGB Color),
-        makeRandomPalette(uint8_t length, bool comp = false);
+        makeRandomPalette(uint8_t length, bool comp = false),
+        makeCompPalette(uint8_t length, uint8_t baseHue, uint8_t sat, uint8_t val);
 
     //Pre-allocated variables
     static uint8_t

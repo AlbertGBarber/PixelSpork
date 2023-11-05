@@ -157,7 +157,7 @@ void PrideWPalSL::update() {
 
             for( uint16_t j = 0; j < numSegs; j++ ) {
                 //get the physical pixel location based on the line and seg numbers
-                pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, j, lineNum);
+                pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, j, lineNum);
                 nblend(segSet->leds[pixelNum], newColor, 128);
 
                 //Need to check to dim the pixel color manually

@@ -129,7 +129,7 @@ void StreamerSL::update() {
 CRGB StreamerSL::getNextColor(uint16_t lineNum, uint16_t segNum) {
 
     //get the current pixel's location in the segment set
-    pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, segNum, lineNum);
+    pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, segNum, lineNum);
     if( nextPattern == 255 ) {
         return segDrawUtils::getPixelColor(*segSet, pixelNum, *bgColor, bgColorMode, segNum, lineNum);
     } else {

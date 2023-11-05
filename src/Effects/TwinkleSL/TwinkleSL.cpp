@@ -212,7 +212,7 @@ void TwinkleSL::update() {
                 //line color (colorIndexArr[i][j]) and the color mode
                 for( uint16_t k = 0; k < numSegs; k++ ) {
                     //get the physical pixel location based on the line and seg numbers
-                    pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, k, lineNum);
+                    pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, k, lineNum);
                     //grab the background color, accounting for color modes
                     colorTarget = segDrawUtils::getPixelColor(*segSet, pixelNum, *bgColor, bgColorMode, k, lineNum);
                     //get the twinkle color, accounting for color modes

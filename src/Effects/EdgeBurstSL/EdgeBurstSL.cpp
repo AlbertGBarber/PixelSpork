@@ -119,7 +119,7 @@ void EdgeBurstSL::update() {
                 //get the physical pixel location based on the line and seg numbers
                 //and then write out the color
                 //Note that the actual line written to is offset and wraps
-                pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, j, addMod16PS(i, offset, numLines));
+                pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, j, addMod16PS(i, offset, numLines));
                 segDrawUtils::setPixelColor(*segSet, pixelNum, colorOut, 0, 0, 0);
             }
         }

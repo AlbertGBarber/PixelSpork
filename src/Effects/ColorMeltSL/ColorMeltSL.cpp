@@ -121,7 +121,7 @@ void ColorMeltSL::update() {
             for( uint16_t j = 0; j < numSegs; j++ ) {
                 //get the physical pixel location based on the line and seg numbers
                 //and then write out the color
-                pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, j, numLines - i - 1);
+                pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, j, numLines - i - 1);
                 segDrawUtils::setPixelColor(*segSet, pixelNum, colorOut, 0, 0, 0);
             }
         }

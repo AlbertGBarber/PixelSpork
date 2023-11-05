@@ -102,7 +102,7 @@ void NoiseWavesSL::update() {
             //take the line color and brightness and apply it to all the seg pixels on the line
             for( uint16_t j = 0; j < numSegs; j++ ) {
                 //get the current pixel's location in the segment set
-                pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, j, i);
+                pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, j, i);
 
                 //get background color info for the current pixel
                 colorTarget = segDrawUtils::getPixelColor(*segSet, pixelNum, *bgColor, bgColorMode, j, i);

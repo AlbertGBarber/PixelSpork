@@ -303,7 +303,7 @@ void ScannerSL::update() {
                 }
 
                 //get the physical pixel location and the color it's meant to be
-                pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, longestSeg, trailLineNum);
+                pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, longestSeg, trailLineNum);
                 //only turn off the pixel if it hasn't been touched by another particle's trail (or something else)
                 //this prevents background holes from being placed in other particles
                 //For segments with multiple lines we use the particle pixel that's on the longest segment to check the background color
@@ -365,7 +365,7 @@ void ScannerSL::update() {
                     colorTarget = getPartPixelColor(trailLineNum, true);
 
                     //get the pixel location and color and set it
-                    pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, j, trailLineNum);
+                    pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, j, trailLineNum);
                     colorFinal = segDrawUtils::getPixelColor(*segSet, pixelNum, colorTarget, colorMode, j, trailLineNum);
 
                     if( blend ) {
@@ -477,7 +477,7 @@ void ScannerSL::setPartColor(particlePS *particlePtr) {
 //the trail is blended towards background color according to the trailSize
 void ScannerSL::setTrailColor(uint16_t trailLineNum, uint8_t segNum, uint8_t trailPixelNum) {
     //get the physical pixel location, it's color, and the target background color
-    pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, segNum, trailLineNum);
+    pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, segNum, trailLineNum);
 
     trailBgColor = segDrawUtils::getPixelColor(*segSet, pixelNum, *bgColor, bgColorMode, segNum, trailLineNum);
     colorTarget = segDrawUtils::getPixelColor(*segSet, pixelNum, colorTarget, colorMode, segNum, trailLineNum);

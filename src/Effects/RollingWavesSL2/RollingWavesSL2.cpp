@@ -224,7 +224,7 @@ void RollingWavesSL2::update() {
         //We need to get the pixel locations of the final segment line
         //(Which is the one the loop starts on)
         for( uint16_t j = 0; j < numSegs; j++ ) {
-            nextLine[j] = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, j, numLinesLim);
+            nextLine[j] = segDrawUtils::getPixelNumFromLineNum(*segSet, j, numLinesLim);
         }
 
         //Run backwards across all the segment lines and copy the color from the line before it
@@ -261,7 +261,7 @@ void RollingWavesSL2::update() {
                     //The pixel locations from the previous loop are now the current ones
                     //and we now need to fill in the next line locations
                     pixelNum = nextLine[j];
-                    nextLine[j] = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, j, i - 1);
+                    nextLine[j] = segDrawUtils::getPixelNumFromLineNum(*segSet, j, i - 1);
                     //copy the color of the next pixel in line into the current pixel
                     segSet->leds[pixelNum] = segSet->leds[nextLine[j]];
                 }

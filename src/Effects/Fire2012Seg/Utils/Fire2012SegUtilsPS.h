@@ -20,7 +20,6 @@ namespace fire2012SegUtilsPS {
 
     static uint8_t
         secHeatLimit,
-        palettelength,
         colorIndex;
 
     static bool

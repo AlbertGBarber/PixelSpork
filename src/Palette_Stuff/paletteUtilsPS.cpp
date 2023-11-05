@@ -100,47 +100,51 @@ CRGB paletteUtilsPS::getShuffleColor(palettePS &palette, CRGB &currentPaletteVal
 }
 
 //returns the blended result of two palette colors
+//startIndex and endIndex are the starting and ending Palette color indexes.
+//step is the blend amount, out of totalSteps. 
+//So a blend at step 5 out of 10 totalSteps would be 50% blended towards the endIndex color.
 CRGB paletteUtilsPS::getBlendedPaletteColor(palettePS &palette, uint8_t startIndex, uint8_t endIndex, uint8_t step, uint8_t totalSteps) {
     //colorOne = getPaletteColor(palette, startIndex);
     //colorTwo = getPaletteColor(palette, endIndex);
     return colorUtilsPS::getCrossFadeColor(*getColorPtr(palette, startIndex), *getColorPtr(palette, endIndex), step, totalSteps);
 }
 
-//returns a gradient color between palette colors based on several inputs: (see the next function below)
-//This version of getPaletteGradColor does not require the gradLength and instead works it out for you
-//Otherwise it's the same as the other version
-CRGB paletteUtilsPS::getPaletteGradColor(palettePS &palette, uint16_t num, uint16_t offset, uint16_t totalLength) {
+/*
+Returns a gradient color from a palette based on several inputs. Treats the whole palette as one large gradient.
+    step: The value of what you want to apply the gradient to (generally a pixel or segment number) out of totalSteps
+    offset: Any offset of step (used for shifting gradients over time)
+    totalSteps: The length the entire palette gradient is spread across (usually the length of a SegmentSetPS or similar) */
+CRGB paletteUtilsPS::getPaletteGradColor(palettePS &palette, uint16_t step, uint16_t offset, uint16_t totalSteps) {
 
     //gradient steps per color in the palette
     //this is a uint16_t to allow for gradients > 255
-    uint16One = totalLength / palette.length;  //gradLength
+    uint16One = totalSteps / palette.length;  //gradLength
 
     //divide by 0 protection
     if( !uint16One ) {
         uint16One = 1;
     }
 
-    return getPaletteGradColor(palette, num, offset, totalLength, uint16One);
+    return getPaletteGradColor(palette, step, offset, totalSteps, uint16One);
 }
 
 /* 
-returns a gradient color between palette colors based on several inputs:
-    num: The value of what you want to apply the gradient to (generally a pixel or segment number)
-    offset: Any offset of num (see SegmentSetPS gradOffset)
-    totalLength: The length the entire palette gradient is spread across (usually the length of a SegmentSetPS or similar)
-    gradLength: The length of the gradient between the palette colors (ie totalLength/paletteLength) */
-CRGB paletteUtilsPS::getPaletteGradColor(palettePS &palette, uint16_t num, uint16_t offset, uint16_t totalLength, uint16_t gradLength) {
+Returns a gradient color from a palette based on several inputs. Treats the whole palette as one large gradient.
+This function is the same as the other "getPaletteGradColor()", but includes the gradLength as an input.
+gradLength should always be totalSteps/palette.length. Using it as an argument allows you to pre-calculate it
+rather than have the function do it every time for faster execution.*/
+CRGB paletteUtilsPS::getPaletteGradColor(palettePS &palette, uint16_t step, uint16_t offset, uint16_t totalSteps, uint16_t gradLength) {
     //the actual gradient number we need based on the offset
-    uint16One = addMod16PS(num, offset, totalLength);  //(num + offset) % totalLength;
+    uint16One = addMod16PS(step, offset, totalSteps);  //(step + offset) % totalSteps;
 
     //the index of the palette color we're starting from (integer division always rounds down)
-    uint8One = uint16One / gradLength;  // (num + offset)/gradLength
+    uint8One = uint16One / gradLength;  // (step + offset)/gradLength
 
     // get the cross-fade step
     //uint8_t gradStep = locWOffset - (colorIndex * steps);
 
     //get the gradient step we're on between the two colors
-    uint16One = mod16PS(uint16One, gradLength);  // (num + offset) % gradLength
+    uint16One = mod16PS(uint16One, gradLength);  // (step + offset) % gradLength
 
     //get the blend ratio
     uint8Two = (uint16One * 255) / gradLength;
@@ -151,8 +155,7 @@ CRGB paletteUtilsPS::getPaletteGradColor(palettePS &palette, uint16_t num, uint1
 }
 
 //returns a palette of length 1 containing the passed in color
-//!!Make sure you delete the paletteArr when you're done with the palette
-//since it is created with new
+//!!Make sure you delete the paletteArr when you're done with the palette since it is created with new
 palettePS paletteUtilsPS::makeSingleColorPalette(CRGB Color) {
     palettePS newPalette;
     CRGB *newPalette_arr = (CRGB *)malloc(1 * sizeof(CRGB));
@@ -165,12 +168,28 @@ palettePS paletteUtilsPS::makeSingleColorPalette(CRGB Color) {
 //returns a palette of the specified length full of random colors
 //Colors can either be fully random, or made to be complementary with a random base hue (colors evenly spaced across the HSV spectrum)
 //The default is for fully random colors
-//!!Make sure you delete the paletteArr when you're done with the palette
-//since it is created with new
+//!!Make sure you delete the paletteArr when you're done with the palette since it is created with new
 palettePS paletteUtilsPS::makeRandomPalette(uint8_t length, bool comp) {
     palettePS newPalette;
     CRGB *newPalette_arr = (CRGB *)malloc(length * sizeof(CRGB));
     newPalette = {newPalette_arr, length};
     randomize(newPalette, comp);
+    return newPalette;
+}
+
+//Returns a palette with a set of complimentary colors, starting from a base hue value.
+//Allows you to easily make split, tri, and tetrad palettes. 
+//Note that the colors are HSV based. sat and val adjust the saturation and value of the resulting palette colors. 
+//!!Make sure you delete the paletteArr when you're done with the palette since it is created with new
+palettePS paletteUtilsPS::makeCompPalette(uint8_t length, uint8_t baseHue, uint8_t sat, uint8_t val) {
+    palettePS newPalette;
+    CRGB *newPalette_arr = (CRGB *)malloc(length * sizeof(CRGB));
+    newPalette = {newPalette_arr, length};
+
+    //Fill the palette with complimentary colors
+    for( uint8_t i = 0; i < length; i++ ) {
+        colorOne = colorUtilsPS::getCompColor(baseHue, length, i, sat, val);
+        setColor(newPalette, colorOne, i);
+    }
     return newPalette;
 }

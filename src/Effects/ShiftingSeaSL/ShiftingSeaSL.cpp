@@ -12,25 +12,25 @@ if so, then we increment it by a random amount up to shiftStep.
  */
 //Constructor for effect with pattern and palette
 ShiftingSeaSL::ShiftingSeaSL(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t GradLength,
-                             uint8_t Smode, uint8_t Grouping, uint16_t Rate)
-    : pattern(&Pattern), palette(&Palette), gradLength(GradLength), sMode(Smode), grouping(Grouping)  //
+                             uint8_t ShiftMode, uint8_t Grouping, uint16_t Rate)
+    : pattern(&Pattern), palette(&Palette), gradLength(GradLength), shiftMode(ShiftMode), grouping(Grouping)  //
 {
     init(SegSet, Rate);
 }
 
 //Constructor for effect with palette
-ShiftingSeaSL::ShiftingSeaSL(SegmentSetPS &SegSet, palettePS &Palette, uint8_t GradLength, uint8_t Smode,
-                             uint8_t Grouping, uint16_t Rate)
-    : palette(&Palette), gradLength(GradLength), sMode(Smode), grouping(Grouping)  //
+ShiftingSeaSL::ShiftingSeaSL(SegmentSetPS &SegSet, palettePS &Palette, uint8_t GradLength, uint8_t ShiftMode,
+                             uint8_t Grouping, uint8_t BgMode, uint16_t Rate)
+    : palette(&Palette), gradLength(GradLength), shiftMode(ShiftMode), grouping(Grouping), bgMode(BgMode)  //
 {
     setPaletteAsPattern();
     init(SegSet, Rate);
 }
 
 //Constructor for effect with randomly created palette
-ShiftingSeaSL::ShiftingSeaSL(SegmentSetPS &SegSet, uint8_t NumColors, uint8_t GradLength, uint8_t Smode,
-                             uint8_t Grouping, uint16_t Rate)
-    : gradLength(GradLength), sMode(Smode), grouping(Grouping)  //
+ShiftingSeaSL::ShiftingSeaSL(SegmentSetPS &SegSet, uint8_t NumColors, uint8_t GradLength, uint8_t ShiftMode,
+                             uint8_t Grouping, uint8_t BgMode, uint16_t Rate)
+    : gradLength(GradLength), shiftMode(ShiftMode), grouping(Grouping), bgMode(BgMode)  //
 {
     paletteTemp = paletteUtilsPS::makeRandomPalette(NumColors);
     palette = &paletteTemp;
@@ -54,19 +54,62 @@ void ShiftingSeaSL::init(SegmentSetPS &SegSet, uint16_t Rate) {
 }
 
 //sets the pattern to match the current palette
-//ie for a palette length 5, the pattern would be
-//{0, 1, 2, 3, 4}
+//ie for a palette length 5, the pattern would be {0, 1, 2, 3, 4}
+//Also injects "blank" spaces in the pattern depending on the bgMode setting.
+//The spaces are set to 255 in the pattern, which is recognized as the bgColor for the rest of the effect.
+//See setBgMode() below for the bgModes list
 void ShiftingSeaSL::setPaletteAsPattern() {
-    generalUtilsPS::setPaletteAsPattern(patternTemp, *palette);
+    uint8_t spacing = 0;
+
+    //Manage the bgMode
+    if( bgMode == 1 ) {
+        //We're going to build the pattern to match the palette automatically below,
+        //but for bgMode 1, we need an extra space in the pattern
+        //Unfortunately, this means we need to "trick" the code into thinking the is palette longer by adjusting its length
+        //So we increment the palette length here, and then decrement it once the pattern is made
+        //!!This is only ok because it's all being done in one function call. You shouldn't be manipulating palette lengths usually!
+        palette->length = palette->length + 1;
+    } else if( bgMode == 2 ) {
+        //For bgMode 2, we're adding a space between each palette color, we can do this by setting a spacing
+        //value of 1 for when we call setPaletteAsPattern() below
+        spacing = 1;
+    }
+
+    //Set patternTemp to match the palette, possibly with a single space in-between each color
+    generalUtilsPS::setPaletteAsPattern(patternTemp, *palette, 1, spacing);
+
+    //For bgMode 1, once the pattern is created, we need to revert the palette back to its original length
+    //and also set the final pattern value to 255 (so it's recognized as the background color)
+    if( bgMode == 1 ) {
+        palette->length = palette->length - 1;
+        patternUtilsPS::setVal(patternTemp, 255, patternTemp.length - 1);
+    }
+
     pattern = &patternTemp;
+
     setTotalCycleLen();
 }
 
 //changes the mode, also resets the offset array
 //since that's where the mode is expressed
-void ShiftingSeaSL::setMode(uint8_t newMode) {
-    sMode = newMode;
+void ShiftingSeaSL::setShiftMode(uint8_t newMode) {
+    shiftMode = newMode;
     resetOffsets();
+}
+
+//Changes the bgMode to add background spaces to the shift pattern
+//bgModes:
+//  0 -- No spaces (ex: {0, 1, 2, 3, 4}, where the values are palette indexes)
+//  1 -- One space added to the end of the pattern (ex: {0, 1, 2, 3, 4, 255})
+//  2 -- A space is added after each color (ex: {0, 255, 1, 255, 2, 255, 3, 255, 4, 255})
+//(background spaces are denoted by 255 in the patterns)
+//Note that changing the bgMode also changes the shift pattern to use patternTemp
+//and re-writes patternTemp to a new pattern for the bgMode.
+void ShiftingSeaSL::setBgMode(uint8_t newBgMode) {
+    if( newBgMode != bgMode ) {
+        bgMode = newBgMode;
+        setPaletteAsPattern();
+    }
 }
 
 //changes the grouping, also resets the offset array
@@ -92,24 +135,22 @@ void ShiftingSeaSL::resetOffsets() {
     }
 
     setTotalCycleLen();
-    shiftingSeaUtilsPS::genOffsetArray(offsets, numLines, gradLength, grouping, totalCycleLength, sMode);
+    shiftingSeaUtilsPS::genOffsetArray(offsets, numLines, gradLength, grouping, totalCycleLength, shiftMode);
 }
 
 //calculates the totalCycleLength, which represents the total number of possible offsets a pixel can hav
 void ShiftingSeaSL::setTotalCycleLen() {
     patternLen = pattern->length;
-    totalCycleLength = gradLength * (patternLen + (uint8_t)addBlank);  //addBlank is a bool, so will be either 0 or 1
+    totalCycleLength = gradLength * patternLen;
 }
 
 //Updates the effect
 //Runs through each pixel, calculates it's color based on the cycle number and the offset
 //and determines which colors from the palette it's in between
 //increments the offset based on the randomShift values
-//then writes it out
-//Note that if addBlank is true, then we want to add an extra blank color to the end of the cycle,
-//but we don't want to modify the existing palette (since it may be used in other effects)
-//So we have to artificially add the extra blank color by manipulating the total number of cycle steps
-//and then setting the colors manually at the end of the cycle (rather than just getting them from the palette)
+//then writes it out.
+//Note that the shift pattern allows for background colors between palette colors (bgModes)
+//These are marked in the pattern as 255.
 void ShiftingSeaSL::update() {
     currentTime = millis();
 
@@ -129,26 +170,24 @@ void ShiftingSeaSL::update() {
 
             //Get the palette index from the pattern then the color from the palette
             curColorIndex = patternUtilsPS::getPatternVal(*pattern, curPatIndex);
-            currentColor = paletteUtilsPS::getPaletteColor(*palette, curColorIndex);
+
+            //Get the current color based on the pattern value. If the value is 255, then we use the bgColor as a "space"
+            //otherwise we get the color from the palette
+            if( curColorIndex == 255 ) {
+                currentColor = *bgColor;
+            } else {
+                currentColor = paletteUtilsPS::getPaletteColor(*palette, curColorIndex);
+            }
 
             //Get the next pattern index, wrapping to the start of the pattern as needed, then the color from the palette
             nextColorIndex = patternUtilsPS::getPatternVal(*pattern, curPatIndex + 1);
-            nextColor = paletteUtilsPS::getPaletteColor(*palette, nextColorIndex);
 
-            //if we're adding a blank color at the end of the cycle, we need to to catch the end
-            //since the palette doesn't include the blank color
-            //so we have the case where we're transitioning from the last palette color to the blank color
-            //and the case after where we're transitioning from the blank color back to the start of the palette
-            if( addBlank ) {
-                if( curPatIndex + 1 == patternLen ) {
-                    //going from the end of the palette to the blank color
-                    nextColor = *blankColor;
-                } else if( curPatIndex == patternLen ) {
-                    //going from the blankColor to the start of the palette
-                    currentColor = *blankColor;
-                    nextColorIndex = patternUtilsPS::getPatternVal(*pattern, 0);
-                    nextColor = paletteUtilsPS::getPaletteColor(*palette, nextColorIndex);
-                }
+            //Get the next color based on the pattern value. If the value is 255, then we use the bgColor as a "space"
+            //otherwise we get the color from the palette
+            if( nextColorIndex == 255 ) {
+                nextColor = *bgColor;
+            } else {
+                nextColor = paletteUtilsPS::getPaletteColor(*palette, nextColorIndex);
             }
 
             //get the cross faded color and write it out

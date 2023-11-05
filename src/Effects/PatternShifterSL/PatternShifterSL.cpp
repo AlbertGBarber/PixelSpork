@@ -151,7 +151,7 @@ void PatternShifterSL::update() {
                         modeOut = colorMode;
                     }
                     //get the physical pixel location and output the color and colorMode
-                    pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, k, j);
+                    pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, k, j);
                     segDrawUtils::setPixelColor(*segSet, pixelNum, colorOut, modeOut, k, j);
                 }
             }

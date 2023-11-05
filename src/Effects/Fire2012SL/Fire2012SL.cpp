@@ -111,7 +111,7 @@ void Fire2012SL::update() {
                 }
 
                 //get the physical pixel location based on the line and seg numbers
-                ledLoc = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, segNum, i);
+                ledLoc = segDrawUtils::getPixelNumFromLineNum(*segSet, segNum, i);
                 //write out the temperature color
                 colorOut = fire2012SegUtilsPS::getPixelHeatColorPalette(palette, paletteLength, paletteSecLen,
                                                                         bgColor, heat[j + heatSecStart], blend);

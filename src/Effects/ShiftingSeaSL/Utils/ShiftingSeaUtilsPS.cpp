@@ -7,7 +7,7 @@ using namespace shiftingSeaUtilsPS;
 //  1: The offsets are chosen from 0 to gradLength
 //Min value fro grouping is 1
 void shiftingSeaUtilsPS::genOffsetArray(uint16_t *offsets, uint16_t numPixels, uint8_t gradLength, uint16_t grouping,
-                                        uint16_t totalCycleLength, uint8_t mode) {
+                                        uint16_t totalCycleLength, uint8_t shiftMode) {
 
     uint16_t groupSize;
 
@@ -23,12 +23,12 @@ void shiftingSeaUtilsPS::genOffsetArray(uint16_t *offsets, uint16_t numPixels, u
 
         // pick an offset for the first led in the group
         // and assign it to the rest of the leds in the group
-        // The offset range is based on the mode
-        if( mode == 0 ) {
-            // mode 0, groups of leds are assigned an offset between any value for totalCycleLength
+        // The offset range is based on the shiftMode
+        if( shiftMode == 0 ) {
+            // shiftMode 0, groups of leds are assigned an offset between any value for totalCycleLength
             offsets[i] = random16(totalCycleLength);
         } else {
-            // for mode 1, all the leds will start somewhere between the fade from the first to second colors
+            // for shiftMode 1, all the leds will start somewhere between the fade from the first to second colors
             offsets[i] = random8(gradLength);
         }
         //copy the offset to the grouped pixels

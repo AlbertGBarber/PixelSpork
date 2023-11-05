@@ -167,7 +167,7 @@ void NoiseSL::mapNoiseSegsWithPalette() {
             }
 
             //get the physical pixel location based on the line and seg numbers
-            pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, numLines, j, i);
+            pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, j, i);
 
             //Get the output color based on the noise value
             switch( cMode ) {
