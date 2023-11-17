@@ -183,7 +183,8 @@ class PaletteNoisePS : public EffectBasePS {
             val;
 
         void
-            init(uint16_t numColors, uint16_t HueRate, uint16_t Rate);
+            init(uint16_t numColors, uint16_t HueRate, uint16_t Rate),
+            getNoisePalColors();
 };
 
 #endif
