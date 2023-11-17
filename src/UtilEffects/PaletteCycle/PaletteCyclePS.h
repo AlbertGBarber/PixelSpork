@@ -9,21 +9,25 @@
 Takes an array of palettes and blends from one palette to the next
 the palettes are blended at the passed in rate (ms) in the passed in totalSteps steps
 the resulting palette can be accessed as "cyclePalette", it will be the length of the longest of the palettes in the array
+
 The blend can be looped (so it repeats), or just set to happen once. 
-A pause time can be set, that will pause the the cycle once a blend has finished before starting the next.
-While looping, the palettes can be set to be randomized, which will blend to a random palette each time.
+
+You can have the blend pause either at the beginning or end of the blend, with a configurable
+"pause time". This is mainly used when looping. When paused, the palettes will not be blended.
+
+When looping, the palettes can be set to be randomized, which will blend to a random palette each cycle.
 
 Create your array of palettes using a paletteSet (see palettePS.h)
 
-Pass cyclePalette to your effects to use the blended palette 
+Pass cyclePalette to your effects to use the blended palette. Note that it is a pointer (unlike in other palette utilities)
+So passing it will look slightly different, usually *<your PaletteCyclePS instance>.cyclePalette should work.
 
 The PaletteCyclePS update rate is a pointer, and can be bound externally, like in other effects
 
-Uses an instance of paletteBlenderPS to do the blends. 
-The instance is public and can be accessed as "PB"
-
-The hold time and totalSteps are variables of the PaletteBlenderPS instance
-so they use setter functions as shown below.
+The utility uses an instance of paletteBlenderPS to do the blends. 
+The instance is public and can be accessed as "PB". This is the only way to get certain settings.
+ie "<your PaletteCycle instance>.PB->totalSteps" fetches the total number of blend steps.  
+Note that the utility includes some functions for setting the more common paletteBlender settings.
 
 Notes:
     To make sure this works well with various effects, we manually set the length of the blendPalette to be the same each cycle
@@ -46,7 +50,7 @@ Notes:
 
     Most palettes aren't very long, so it shouldn't be a huge issue, but something to be aware of!
 
-    The PaletteBlendPS instance (PB) is public, but don't mess with it unless you know what you're doing 
+    The PaletteBlendPS instance (PB) is public, but don't mess with it unless you know what you're doing!
 
 Example calls: 
     To declare palette set, use the paletteSet struct (see palettePS.h):
@@ -54,14 +58,17 @@ Example calls:
     paletteSetPS paletteSet = {paletteArr, SIZE(paletteArr), SIZE(paletteArr)};
     Note you'll have to create your own palette1 and palette2
 
-    PaletteCyclePS paletteCycle(paletteSet, true, false, false, 50, 80);
+    PaletteCyclePS paletteCycle(paletteSet, true, false, false, false, 50, 80);
     Blends between each palette in the array in order, looping back to the first palette at the end
-    The palettes are not randomized or shuffled
+    The palettes are not randomized or shuffled, and the blend does not start paused
     each blend takes 50 steps, with 80ms between each step
 
-    PaletteCyclePS paletteCycle(paletteSet, true, true, false, 50, 80);
+    PaletteCyclePS paletteCycle(paletteSet, true, true, false, true, 50, 80);
+    paletteCycle.setPauseTime(6000); //Sets the pause time between each palette blend in ms.
     Blends between each palette in the array in order, looping back to the first palette at the end
-    The palettes are randomized, but not shuffled
+    The palettes are randomized, but not shuffled.
+    The palette blending will start paused, with a pause time of 3000ms,
+    so the initial palette will be constant until 3000ms have passed from the first update.
     each blend takes 50 steps, with 80ms between each step
 
 Constructor Inputs:
@@ -71,8 +78,10 @@ Constructor Inputs:
                  note that this will permanently modify palettes, so make sure you aren't using them elsewhere!
                  Combine this with looped, to produce constantly changing palettes.
     shuffle -- If true, a random palette from the set will be chosen for each blend (will not be the same as the current palette)
-               If looping is false, the number of palettes blended will still be the number of palettes in the set.\
+               If looping is false, the number of palettes blended will still be the number of palettes in the set.
                Works, with randomize, but isn't really useful.
+    startPaused -- If true, then the blend cycle will start paused, blocking the first palette blend for pauseTime time. 
+                   (see paletteBlenderPS for more)
     totalSteps (max 255) -- The total number of steps taken to blend between the palettes
     rate -- The update rate of the blend (ms)
 
@@ -80,8 +89,8 @@ Functions:
     reset(&newPaletteSet) -- Restarts the blend with a new palette set, with the same steps and update rate
     reset() -- Restarts the blend (all settings and palettes stay the same)
     setTotalSteps(newTotalSteps) -- changes the total number of steps used in the blends (set in the PB instance, see PaletteBlenderPS)
-    getTotalSteps() -- Returns the number of steps being used for the blend (set in the PB instance, see PaletteBlenderPS)
     setPauseTime(newPauseTime) -- Changes the pause between blends (set in the PB instance, see PaletteBlenderPS)
+    setStartPaused(bool newStartPaused) -- Changes the "startPaused" setting in the PB instance, see PaletteBlenderPS.
     update() -- updates the effect
 
 Other Settings:
@@ -98,14 +107,13 @@ Flags:
 */
 class PaletteCyclePS : public EffectBasePS {
     public:
-        PaletteCyclePS(paletteSetPS &PaletteSet, bool Looped, bool RandomizePal, bool Shuffle, uint8_t TotalSteps,
-                       uint16_t Rate);
+        PaletteCyclePS(paletteSetPS &PaletteSet, bool Looped, bool RandomizePal, bool Shuffle, bool StartPaused, 
+                       uint8_t TotalSteps, uint16_t Rate);
 
         ~PaletteCyclePS();
 
         uint8_t
-            cycleNum = 0,  //for reference
-            getTotalSteps();
+            cycleNum = 0;  //for reference
 
         bool
             randomizePal,
@@ -128,6 +136,7 @@ class PaletteCyclePS : public EffectBasePS {
             reset(paletteSetPS &newPaletteSet),
             setTotalSteps(uint8_t newTotalSteps),
             setPauseTime(uint16_t newPauseTime),
+            setStartPaused(bool newStartPaused),
             update(void);
 
     private:

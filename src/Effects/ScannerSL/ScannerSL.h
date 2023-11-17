@@ -206,7 +206,7 @@ class ScannerSL : public EffectBasePS {
             patternTemp = {nullptr, 0, 0};  //Must init structs w/ pointers set to null for safety
 
         particleSetPS
-            particleSet = {nullptr, 0};  //Must init structs w/ pointers set to null for safety
+            particleSet = {nullptr, 0, 0};  //Must init structs w/ pointers set to null for safety
 
         void
             reset(),

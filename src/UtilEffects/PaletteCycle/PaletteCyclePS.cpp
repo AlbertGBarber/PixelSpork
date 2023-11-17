@@ -1,7 +1,7 @@
 #include "PaletteCyclePS.h"
 
 PaletteCyclePS::PaletteCyclePS(paletteSetPS &PaletteSet, bool Looped, bool RandomizePal, bool Shuffle,
-                               uint8_t TotalSteps, uint16_t Rate)
+                               bool StartPaused, uint8_t TotalSteps, uint16_t Rate)
     : paletteSet(&PaletteSet), looped(Looped), randomizePal(RandomizePal), shuffle(Shuffle)  //
 {
     bindClassRatesPS();
@@ -11,6 +11,7 @@ PaletteCyclePS::PaletteCyclePS(paletteSetPS &PaletteSet, bool Looped, bool Rando
     currentIndex = 0;
     nextIndex = addmod8(currentIndex, 1, paletteSet->length);
     PB = new PaletteBlenderPS(*paletteSet->getPalette(currentIndex), *paletteSet->getPalette(nextIndex), false, TotalSteps, Rate);
+    PB->startPaused = StartPaused;
     //point the PB update rate to the same rate as the PaletteCyclePS instance, so they stay in sync
     PB->rate = rate;
     //setup the initial palette blend
@@ -55,19 +56,19 @@ void PaletteCyclePS::reset(paletteSetPS &newPaletteSet) {
     reset();
 }
 
-//sets the total steps used in the blends (see PaletteBlendPS)
+//sets the total steps used in the blends (see PaletteBlenderPS)
 void PaletteCyclePS::setTotalSteps(uint8_t newTotalSteps) {
     PB->totalSteps = newTotalSteps;
 }
 
-//sets the pause time between each palette blend (see PaletteBlendPS)
+//sets the pause time between each palette blend (see PaletteBlenderPS)
 void PaletteCyclePS::setPauseTime(uint16_t newPauseTime) {
     PB->pauseTime = newPauseTime;
 }
 
-//returns the current totalSteps in the PaletteBlendPS instance
-uint8_t PaletteCyclePS::getTotalSteps() {
-    return PB->totalSteps;
+//sets the "startPaused" property of the palette blender (see PaletteBlenderPS)
+void PaletteCyclePS::setStartPaused(bool newStartPaused) {
+    PB->startPaused = newStartPaused;
 }
 
 //updates the blend

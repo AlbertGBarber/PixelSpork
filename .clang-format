@@ -142,8 +142,8 @@ PointerAlignment: Right
 QualifierAlignment: Leave
 ReferenceAlignment: Pointer
 ReflowComments: false
-RemoveBracesLLVM: false
-RemoveParentheses: false
+# RemoveBracesLLVM: false
+RemoveParentheses: Leave
 RemoveSemicolon: false
 SeparateDefinitionBlocks: Leave
 ShortNamespaceLines: 0

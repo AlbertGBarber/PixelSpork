@@ -19,13 +19,13 @@ I suggest you look at the inputs guide below, or try out one of the constructor 
 Firework colors are picked randomly from a palette. 
 You have the option of having the constructor make a random palette for you
 By default all a firework's sparks are the same color, but you can set them all to be random (from the palette)
-using randSparkColors
+using randSparkColors.
 
 All fireworks "burst" as initially before fading to their spark color
 The burst color is stored as burstColor, which is a pointer, so you can bind it to an eternal variable
 By default it is bound to burstColOrig, which is set to white.
 
-In general you can change most variables on the fly except for maxFireworks and maxNumSparks
+In general you can change most variables on the fly except for maxFireworks and maxNumSparks.
 
 This effect is fully compatible with color modes.
 
@@ -76,14 +76,18 @@ So you can have low speeds and low ranges to make a slow, clumped up firework, o
 so that the sparks move quick and spread out more.
 I recommend starting with a rate of 40-60 and a speedRange of 300 - 600.
 
-The fade rate of the sparks is proportional to their speed, so faster sparks fade slower
-This seems produce a good look
+The fade rate of the sparks is proportional to their speed, so faster sparks fade slower.
+This seems produce a good look.
 
-For higher speed ranges, increasing the number of sparks will help "fill out" the firework
+For higher speed ranges, increasing the number of sparks will help "fill out" the firework.
 
-Fireworks also have a central "bomb" particle, which doesn't move, and decays quickly
-This makes the fireworks look more like an explosion
-The settings for this spark all use the "center" in their name
+Fireworks also have a central "bomb" particle, which doesn't move, and decays quickly.
+This makes the fireworks look more like an explosion.
+The settings for this spark all use the "center" in their name.
+
+Note that to help avoid fireworks from spawning very close to either end of the strip, 
+their spawn range is reduced by numLEDs / spawnRangeDiv from each end of the strip.
+By default, spawnRangeDiv is 5. Higher spawnRangeDiv will expand the spawn area.
 
 Example calls: 
 
@@ -157,7 +161,7 @@ Other Settings:
     *burstColor (default bound to burstColOrig) -- The color of the initial firework burst, is a pointer so it can be bound to an external variable 
     bgColorOrig (default 0) -- The default color of the background (bound to the bgColor pointer by default)
     *bgColor (default bound to bgColorOrig) -- The color of the background, is a pointer so it can be bound to an external variable 
-    spawnRangeDiv (default 5) -- Sets what range of the strip fireworks spawn in: from numLEDs / spawnRangeDiv to (numLEDs - numLEDs / spawnRangeDiv)
+    spawnRangeDiv (default 5) -- Sets what range of the strip fireworks spawn in: from numLEDs / spawnRangeDiv to ( numLEDs - (numLEDs / spawnRangeDiv) )
  */
 class FireworksPS : public EffectBasePS {
     public:

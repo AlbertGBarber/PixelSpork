@@ -12,8 +12,9 @@ The rate will smoothly transition from one rate to the next
 Ie with a base rate of 80 and and range of +/- 20, the target rate could be any number between 60 and 100
 the output rate will smoothly transition to the target, and then choose a new target rate
 
-Generally it's useful to use the same base number as the rate of your effect
-Picking any update rate for that is double or more that the base rate generally looks good
+Generally it's useful to use the same base number as the rate of your effect.
+
+Picking any update rate for the utility that is double or more that the base rate generally looks good.
 
 To produce the rates, the class uses an instance of both RateCtrl and RateRandomizer, called RC and RR respectively
 These are automatically set up when the RandRateCtrl is created

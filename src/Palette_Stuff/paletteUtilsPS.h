@@ -13,7 +13,7 @@ namespace paletteUtilsPS {
         setColor(palettePS &palette, CRGB color, uint8_t index),
         randomize(palettePS &palette, bool comp = false),
         randomizeCol(palettePS &palette, uint8_t index),
-        shuffle(palettePS &palette),
+        shuffle(palettePS &palette, uint8_t *indexOrder = nullptr),
         reverse(palettePS &palette);
 
     CRGB  //Functions for getting colors from palettes

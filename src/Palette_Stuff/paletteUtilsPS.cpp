@@ -67,21 +67,36 @@ void paletteUtilsPS::reverse(palettePS &palette) {
     }
 }
 
-//randomizes the order of colors in a palette
-void paletteUtilsPS::shuffle(palettePS &palette) {
-    uint8One = palette.length - 1;  //loopStart
-    // Start from the last element and swap
-    // one by one. We don't need to run for
-    // the first element that's why i > 0
+//Randomizes the order of colors in a palette.
+//Note that it does not check against the current order, so it's possible to get the same palette order back. 
+//The likely-hood of this is 1/(palette.length!), ie 1/3! => 1/6 for a palette length of 3. 
+//Also includes an optional indexOrder array input, which will be set to match the shuffled index order,
+//allowing you to track the palette changes over time without checking colors. 
+//ie for a palette of 3 colors, if the shuffled palette only swaps the last to colors, 
+//the indexOrder would be [0, 2, 1].
+//NOTE that indexOrder's length should be equal to palette.length, and it should be pre-filled
+//with the palette indexes (ie for a palette of length 3, it would be [0, 1, 2])
+void paletteUtilsPS::shuffle(palettePS &palette, uint8_t *indexOrder) {
+    uint8One = palette.length - 1; //loopStart
+    //Start from the last element and swap one by one at random 
+    //i > 0 is the loop limit b/c we don't need to swap the first element.
     for( uint8_t i = uint8One; i > 0; i-- ) {
-        // Pick a random index from 0 to i
+        //Pick a random index from 0 to i
         uint8Two = random8(i + 1);
-        // Swap arr[i] with the element
-        // at random index
+
+        //Swap arr[i] with the color at random index
         colorOne = getPaletteColor(palette, i);
         colorTwo = getPaletteColor(palette, uint8Two);  //random color
         setColor(palette, colorOne, uint8Two);
         setColor(palette, colorTwo, i);
+
+        //Get the new palette index order (if an indexOrder array has been supplied)
+        //by swapping the index values at the random index and the current loop index.
+        if(indexOrder){
+            uint8Three = indexOrder[uint8Two];
+            indexOrder[uint8Two] = indexOrder[i];
+            indexOrder[i] = uint8Three;
+        }
     }
 }
 

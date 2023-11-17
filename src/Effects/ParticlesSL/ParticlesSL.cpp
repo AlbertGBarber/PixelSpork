@@ -54,7 +54,8 @@ void ParticlesSL::init(CRGB BgColor, SegmentSetPS &SegSet) {
 //to avoid having left over trails, we'll redraw the background
 void ParticlesSL::setParticleSet(particleSetPS &newParticleSet) {
 
-    //We only need to make a new trail end color array if the current one isn't large enough
+    //We only need to make a new trail end color array if 
+    //the current ones aren't large enough
     //This helps prevent memory fragmentation by limiting the number of heap allocations
     //but this may use up more memory overall.
     if( alwaysResizeObj_PS || (newParticleSet.maxLength > particleSet->maxLength) ) {

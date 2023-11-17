@@ -2,16 +2,16 @@
 
 //Constructor for slider palette using a pattern
 PaletteSliderPS::PaletteSliderPS(palettePS &PaletteTarget, patternPS &Pattern, uint16_t SliderPalLen,
-                                 uint16_t BlendSteps, bool SingleShift, uint16_t Rate)
-    : paletteTarget(&PaletteTarget), pattern(&Pattern), sliderPalLen(SliderPalLen), blendSteps(BlendSteps), singleShift(SingleShift)  //
+                                 bool SingleShift, bool StartPaused, uint16_t BlendSteps, uint16_t Rate)
+    : paletteTarget(&PaletteTarget), pattern(&Pattern), sliderPalLen(SliderPalLen), blendSteps(BlendSteps), singleShift(SingleShift), startPaused(StartPaused)  //
 {
     init(Rate);
 }
 
 //Constructor for slider palette using the target palette as the pattern
-PaletteSliderPS::PaletteSliderPS(palettePS &PaletteTarget, uint16_t SliderPalLen, uint16_t BlendSteps,
-                                 bool SingleShift, uint16_t Rate)
-    : paletteTarget(&PaletteTarget), sliderPalLen(SliderPalLen), blendSteps(BlendSteps), singleShift(SingleShift)  //
+PaletteSliderPS::PaletteSliderPS(palettePS &PaletteTarget, uint16_t SliderPalLen, bool SingleShift,
+                                 bool StartPaused, uint16_t BlendSteps, uint16_t Rate)
+    : paletteTarget(&PaletteTarget), sliderPalLen(SliderPalLen), blendSteps(BlendSteps), singleShift(SingleShift), startPaused(StartPaused)  //
 {
     setPaletteAsPattern();
     init(Rate);
@@ -26,15 +26,20 @@ void PaletteSliderPS::init(uint16_t Rate) {
     //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
     bindClassRatesPS();
     makeSliderPalette(sliderPalLen);
-    reset();
 }
 
-//resets the slider palette back to it's original state
+//resets the slider palette back to its original state and fetches the inital slider palette
 void PaletteSliderPS::reset() {
     blendStep = 0;
+    ratio = 0;
     patternIndex = 0;
     paused = false;
-    prevTime = 0;
+    firstPauseDone = false;
+    cycleNum = 0;
+
+    blendPaletteColors();  //set the inital slider palette colors
+
+    setNumCycles();  //calculate how many blend cycles there are before repeating
 }
 
 //sets the pattern to match follow the colors in the target palette
@@ -48,7 +53,7 @@ void PaletteSliderPS::setPaletteAsPattern() {
 
 //Creates the ouput slider palette according to the passed in length
 //Note that a new palette will be created if the new length is greater than the memory length of the current palette
-//It also resets the effect and calls update() once to fill in the initial palette colors
+//It also resets the effect to fill in the initial palette colors
 void PaletteSliderPS::makeSliderPalette(uint16_t paletteLength) {
     //We only need to make a new slider palette if the current one isn't large enough
     //This helps prevent memory fragmentation by limiting the number of heap allocations
@@ -65,7 +70,6 @@ void PaletteSliderPS::makeSliderPalette(uint16_t paletteLength) {
     }
     //The new palette will be blank, so we need to call update() once to fill it with colors
     reset();
-    update();
 }
 
 /* updates the slider palette
@@ -97,55 +101,95 @@ void PaletteSliderPS::update() {
     if( (currentTime - prevTime) >= *rate ) {
         prevTime = currentTime;
 
+        if( startPaused && !firstPauseDone && !paused ) {
+            //Start a pause at the current time
+            paused = true;
+            pauseStartTime = currentTime;
+        }
+
+        //if we're paused, we check if the pause time has passed,
+        //if not, then we just jump out the update() using a return
         if( paused ) {
             if( (currentTime - pauseStartTime) >= pauseTime ) {
                 //If it's time to continue blending the colors we deactivate the pause
                 paused = false;
+                firstPauseDone = true;
             } else {
                 return;
             }
         }
 
         //We need to advance slider palette colors to their next steps
-        sliderPalLen = sliderPalette.length;
-        //If we're shifting the colors forward by 1 for each blend then
-        //the patternStep is only one. So that each color follows the one ahead of it
-        //Otherwise we doing whole pattern chunks, where all the colors need to jump forward by the
-        //length of the slider palette
-        if( singleShift ) {
-            patternStep = 1;
-        } else {
-            patternStep = sliderPalLen;
-        }
-        //advance the blend step
         //we do this here rather than at the end so that we catch hold times correctly
         blendStep++;
         //All the colors blend at the same rate so the blend ratio is the same for all of them
         ratio = blendStep * 255 / blendSteps;
 
-        //Loop over the sliderPalette and set it's blended colors
-        for( uint16_t i = 0; i < sliderPalLen; i++ ) {
+        //Blend the palettes colors
+        blendPaletteColors();
 
-            //Get the starting color offset by the patternIndex
-            startIndex = patternUtilsPS::getPatternVal(*pattern, i + patternIndex);
-            startColor = paletteUtilsPS::getPaletteColor(*paletteTarget, startIndex);
-            //get the target color. We offset it by the patternStep.
-            endIndex = patternUtilsPS::getPatternVal(*pattern, i + patternIndex + patternStep);
-            endColor = paletteUtilsPS::getPaletteColor(*paletteTarget, endIndex);
-            //get the blended color between the start and end colors
-            sliderPalColArr[i] = colorUtilsPS::getCrossFadeColor(startColor, endColor, ratio);
-        }
-
-        //If we're at the last blend step, then we need start a new blend with new colors
-        //(and also trigger a hold)
+        //If we're at the last blend step, then we need start a new blend with new colors,
+        //and also trigger a pause.
         if( blendStep == blendSteps ) {
             blendStep = 0;
             //Advance the patternIndex so the palette colors will advance
             //We advance by patternStep, which is either 1 or the sliderPalette length
             patternIndex = addMod16PS(patternIndex, patternStep, pattern->length);
-            //Start a hold at the current time
+
+            //Re-calculate how many cycles there are before repeating
+            //(incase the pattern, or "singleShift" have changed)
+            setNumCycles();
+
+            //Get the cycle number we're on out of the total number of loop cycles
+            cycleNum = addMod16PS(cycleNum, 1, numCycles);
+
+            //Start a pause at the current time
             paused = true;
             pauseStartTime = currentTime;
         }
+    }
+}
+
+//Blends the slider palette's colors according to the current blend ratio
+void PaletteSliderPS::blendPaletteColors() {
+
+    sliderPalLen = sliderPalette.length;
+    //If we're shifting the colors forward by 1 for each blend then
+    //the patternStep is only one. So that each color follows the one ahead of it
+    //Otherwise we doing whole pattern chunks, where all the colors need to jump forward by the
+    //length of the slider palette
+    if( singleShift ) {
+        patternStep = 1;
+    } else {
+        patternStep = sliderPalLen;
+    }
+
+    //Loop over the sliderPalette and set it's blended colors
+    for( uint16_t i = 0; i < sliderPalLen; i++ ) {
+        //Get the starting color offset by the patternIndex
+        startIndex = patternUtilsPS::getPatternVal(*pattern, i + patternIndex);
+        startColor = paletteUtilsPS::getPaletteColor(*paletteTarget, startIndex);
+        //get the target color. We offset it by the patternStep.
+        endIndex = patternUtilsPS::getPatternVal(*pattern, i + patternIndex + patternStep);
+        endColor = paletteUtilsPS::getPaletteColor(*paletteTarget, endIndex);
+        //get the blended color between the start and end colors
+        sliderPalColArr[i] = colorUtilsPS::getCrossFadeColor(startColor, endColor, ratio);
+    }
+}
+
+/*
+Get how many cycles the palette will go through before repeating.
+(not used by the utility, but may be helpful for external triggers)
+I worked this calc out by hand, basically, if the slider palette length (patternStep)
+fits evenly into the pattern, then the number of cycles is the "pattern length" / patternStep.
+ie for a pattern of length 4, and a pattern step of 2, there are two cycles before looping (cycles# 0 & 1)
+If the palette length doesn't fit evenly, then the number of cycles is the pattern length
+(each part of the palette hits each pattern step once) */
+void PaletteSliderPS::setNumCycles() {
+
+    if( mod16PS(pattern->length, patternStep) == 0 ) {
+        numCycles = pattern->length / patternStep;
+    } else {
+        numCycles = pattern->length;
     }
 }

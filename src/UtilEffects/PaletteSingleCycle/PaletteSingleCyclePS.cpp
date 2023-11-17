@@ -1,19 +1,16 @@
 #include "PaletteSingleCyclePS.h"
 
 //Constructor with custom direction setting
-PaletteSingleCyclePS::PaletteSingleCyclePS(palettePS &InputPalette, uint8_t BlendMode, uint8_t TotalSteps,
-                                           bool Direct, uint16_t Rate)
+PaletteSingleCyclePS::PaletteSingleCyclePS(palettePS &InputPalette, uint8_t BlendMode, bool Direct, 
+                                           bool StartPaused, uint8_t TotalSteps, uint16_t Rate)
     : inputPalette(&InputPalette), blendMode(BlendMode), direct(Direct)  //
 {
     bindClassRatesPS();
-    //make sure all the palette variables set so that new current/next palettes will be created
-    cycleNum = 0;
-    paletteLength = 0;
-    prevMode = 0;
     //create the initial current/next palettes based on the mode
     switchPalette();
     //create a PaletteBlenderPS instance
     PB = new PaletteBlenderPS(currentPalette, nextPalette, false, TotalSteps, Rate);
+    PB->startPaused = StartPaused;
     //point the PB update rate to the same rate as the PaletteSingleCyclePS instance, so they stay in sync
     PB->rate = rate;
     //bind the output palette of PB to the output of the SinglePaletteCycle
@@ -23,13 +20,16 @@ PaletteSingleCyclePS::PaletteSingleCyclePS(palettePS &InputPalette, uint8_t Blen
 PaletteSingleCyclePS::~PaletteSingleCyclePS() {
     free(paletteColorArr1);
     free(paletteColorArr2);
+    free(indexOrder);
     PB->~PaletteBlenderPS();
 }
 
 //restarts the palette blend
 void PaletteSingleCyclePS::reset() {
     cycleNum = 0;
-    switchPalette();
+    currentIndex = 0;
+    initPaletteColors(); //Resets the current and next palettes to a starting configuration
+    switchPalette(); //Sets up the next palette state
     PB->reset(currentPalette, nextPalette);
 }
 
@@ -38,14 +38,31 @@ void PaletteSingleCyclePS::setTotalSteps(uint8_t newTotalSteps) {
     PB->totalSteps = newTotalSteps;
 }
 
-//returns the total steps used in the PaletteBlenderPS instance
-uint8_t PaletteSingleCyclePS::getTotalSteps() {
-    return PB->totalSteps;
-}
-
 //sets the pause time used in the PaletteBlenderPS instance
 void PaletteSingleCyclePS::setPauseTime(uint16_t newPauseTime) {
     PB->pauseTime = newPauseTime;
+}
+
+//sets the "startPaused" property of the palette blender (see PaletteBlenderPS)
+void PaletteSingleCyclePS::setStartPaused(bool newStartPaused) {
+    PB->startPaused = newStartPaused;
+}
+
+//Resets the current and next blend palettes to an inital configuration.
+//For this, we just copy the input palette into both current and next palettes,
+//which acts as the starting point for any blend.
+//After the palettes are setup, switchPalette() can be called to advance to the next blend state (based on blend mode).
+void PaletteSingleCyclePS::initPaletteColors(){
+    paletteLength = inputPalette->length;
+    //Note that we can only setup the palettes if they exist
+    if( currentPalette.paletteArr && (paletteLength <= paletteLenMax) ) {
+        //Copy the colors from inputPalette into the new palettes
+        for( uint8_t i = 0; i < paletteLength; i++ ) {
+            paletteColorArr1[i] = paletteUtilsPS::getPaletteColor(*inputPalette, i);
+            paletteColorArr2[i] = paletteUtilsPS::getPaletteColor(*inputPalette, i);
+            indexOrder[i] = i; //set the inital palette order to match the palette
+        }
+    }
 }
 
 //sets the currentPalette and nextPalette depending on the cycleNum and the blendMode
@@ -67,11 +84,11 @@ void PaletteSingleCyclePS::switchPalette() {
         currentPalette = {paletteColorArr1, paletteLength};
         nextPalette = {paletteColorArr2, paletteLength};
 
-        //Copy the colors from inputPalette into the new palettes
-        for( uint8_t i = 0; i < paletteLength; i++ ) {
-            paletteColorArr1[i] = paletteUtilsPS::getPaletteColor(*inputPalette, i);
-            paletteColorArr2[i] = paletteUtilsPS::getPaletteColor(*inputPalette, i);
-        }
+        //Create any array to track the palette index order when shuffling (see blend modes)
+        free(indexOrder);
+        indexOrder = (uint8_t *)malloc(paletteLength * sizeof(uint8_t));
+        
+        initPaletteColors();
     }
 
     //set the current/next palette lengths
@@ -100,11 +117,13 @@ void PaletteSingleCyclePS::switchPalette() {
     //  2 -- Randomizes the whole palette each cycle for a palette with 3 random colors: {rand1, rand2, rand3} -> {rand4, rand5, rand6}, etc
     //  3 -- Shuffles the palette each cycle
     //       ie {blue, red, green} could go to {red, blue, green}, or {blue, green, red}, etc
+    //       Note that the same palette order can repeat, the likely-hood depends on the palette length.
+    //       DO not use this for a palette with only 2 colors!
     //       direct has no effect
     //  4 -- Makes the palette length 1, cycles through each color of the palette
     //       ie for direct = true and palette {blue, red, green} it will be {blue} => {red} => {green} => {blue}, etc
     //  5 -- Same as previous mode, but chooses the next color randomly from the palette (will not be the current color)
-    //  6 -- Same as mode 3, but the next color is chosen completely randomly (not from the palette)
+    //  6 -- Same as mode 4, but the next color is chosen completely randomly (not from the palette)
     switch( blendMode ) {
         case 0:
         default: {
@@ -130,23 +149,29 @@ void PaletteSingleCyclePS::switchPalette() {
 
             //We need to shift the colors according to the direct, so we change out loop direction to match
             //This prevents us from reading from an index that has already been set, and copying the same color down the whole palette
+            //When direct is true, we loop from the end of the palette to the start, shifting each color forward by one,
+            //and inserting a random color at the start of the palette.
+            //If direct is false, we do the same, but reversed. 
+
+            //Set the loop direction variables
             uint8_t loopStart = paletteLength - 1;
             uint8_t loopEnd = 0;
-
-            if( direct ) {
+            if( !direct ) {
                 loopStart = 0;
                 loopEnd = paletteLength - 1;
             }
 
             //Shift the array colors forward/backwards by 1
-            for( uint8_t i = loopStart; i != loopEnd; i += stepDirect ) {
-                currentIndex = i + (stepDirect + paletteLength);
+            //Note that we shift in the opposite of stepDirect, ie backwards if direct is true, and forwards if direct is false
+            //because we are copying the colors one at a time, ending with the final new random color
+            for( uint8_t i = loopStart; i != loopEnd; i -= stepDirect ) {
+                //get (i + stepDirect * -1), paletteLength is added to keep the value positive (doesn't effect the mod below)
+                currentIndex = i + (paletteLength - stepDirect);
                 paletteColorArr2[i] = paletteUtilsPS::getPaletteColor(nextPalette, mod8(currentIndex, paletteLength));
             }
 
             //randomize the start or end color
-            paletteUtilsPS::randomize(nextPalette, loopEnd);
-
+            paletteUtilsPS::randomizeCol(nextPalette, loopEnd);
             break;
         }
         case 2: {
@@ -159,23 +184,25 @@ void PaletteSingleCyclePS::switchPalette() {
 
             //Randomize the next palette
             paletteUtilsPS::randomize(nextPalette);
-
             break;
         }
         case 3: {
             //copy the next palette into the current palette
-            //then copy the input palette into the next palette (to account for any palette changes)
             for( uint8_t i = 0; i < paletteLength; i++ ) {
                 paletteColorArr1[i] = paletteUtilsPS::getPaletteColor(nextPalette, i);
-                paletteColorArr2[i] = paletteUtilsPS::getPaletteColor(*inputPalette, i);
             }
-            //since the next palette always ends up as the input palette again,
-            //when we shuffle we may end up as the current palette again,
-            //to reduce this chance we'll shuffle twice
-            //(An absolute solution would be to always copy and shuffle the input palette,
-            //but we want to avoid modifying the input)
-            paletteUtilsPS::shuffle(nextPalette);
-            paletteUtilsPS::shuffle(nextPalette);
+
+            //shuffle the next palette to get a new palette order
+            //We track the new order of the palette indexes using the indexOrder array
+            //(note that shuffle() does allow repeats, so you may get the same palette order back,
+            //with the likely-hood decreasing with longer palettes)
+            paletteUtilsPS::shuffle(nextPalette, indexOrder);
+            
+            //To account for any changes in the inputPalette, we copy it into the nextPalette
+            //using the indexOrder array to match the shuffled color indexes. 
+            for( uint8_t i = 0; i < paletteLength; i++ ) {
+                paletteColorArr2[i] = paletteUtilsPS::getPaletteColor(*inputPalette, indexOrder[i]);
+            }
             break;
         }
         case 4: {
@@ -202,7 +229,7 @@ void PaletteSingleCyclePS::switchPalette() {
             //a single color palette where the color is chosen randomly,
             //doesn't use the input palette at all
             paletteColorArr1[0] = paletteUtilsPS::getPaletteColor(nextPalette, 0);
-            paletteUtilsPS::randomize(nextPalette, 0);
+            paletteUtilsPS::randomizeCol(nextPalette, 0);
             break;
     }
 }

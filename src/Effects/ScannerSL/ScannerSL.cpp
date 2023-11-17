@@ -81,10 +81,11 @@ NOTE that we use each particle's "bounce" var to store its initial direction
 void ScannerSL::makeWaveSet(uint16_t numWaves, bool direction, bool alternate, bool makeEndWave) {
     numLines = segSet->numLines;
 
-    //We only need to make a new particle set if the current one isn't large enough
+    //We only need to make a new particle set if
+    //the current ones aren't large enough (or don't exist!)
     //This helps prevent memory fragmentation by limiting the number of heap allocations
     //but this may use up more memory overall.
-    if( numWaves > particleSet.maxLength ) {
+    if( alwaysResizeObj_PS || numWaves > particleSet.maxLength ) {
         //clear the memory of the existing particles (to prevent a memory leak)
         particleUtilsPS::freeParticleSet(particleSet);
         particleSet = particleUtilsPS::buildParticleSet(numWaves, numLines, direction, *rate, 0, size, 0, trailType, trailSize, 0, bounce, 0, false);

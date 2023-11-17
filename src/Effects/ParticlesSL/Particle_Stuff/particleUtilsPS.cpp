@@ -104,7 +104,7 @@ void particleUtilsPS::randomizeParticle(particleSetPS &particleSet, uint8_t part
 //For example: setParticleSetProp(particleSet, 0, 100, 0, 0);
 //calls setParticleSetPositions() using 100 as the "max" value. opt2 and opt3 are not used
 //Another example: setParticleSetProp(particleSet, 4, 1, 5, 2);
-//calls setParticleSetTrails() using  1 (opt1) as the trailType, 5 (opt2) ad the trailSize, and 2 (opt3) as the range
+//calls setParticleSetTrails() using 1 (opt1) as the trailType, 5 (opt2) ad the trailSize, and 2 (opt3) as the range
 void particleUtilsPS::setParticleSetProp(particleSetPS &particleSet, uint8_t propNum, uint16_t opt1, uint16_t opt2, uint16_t opt3) {
     particleSetLength = particleSet.length;
     randColor = false;

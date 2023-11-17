@@ -47,12 +47,13 @@ void patternUtilsPS::reverse(patternPS &pattern) {
     }
 }
 
-//randomizes the order of Vals in a pattern
+//Randomizes the order of values in a pattern.
+//Note that it does not check against the current order, so it's possible to get the same pattern order back. 
+//The likely-hood of this is 1/(pattern.length!), ie 1/3! => 1/6 for a pattern length of 3. 
 void patternUtilsPS::shuffle(patternPS &pattern) {
     uint16One = pattern.length - 1;  //loop starting val
-    // Start from the last element and swap
-    // one by one. We don't need to run for
-    // the first element that's why i > 0
+    //Start from the last element and swap one by one at random 
+    //i > 0 is the loop limit b/c we don't need to swap the first element.
     for( uint16_t i = uint16One; i > 0; i-- ) {
         // Pick a random index from 0 to i
         uint16Two = random16(i + 1);  //randIndex

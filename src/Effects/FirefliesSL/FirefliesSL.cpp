@@ -66,10 +66,11 @@ void FirefliesSL::setupFireflies(uint8_t newMaxNumFireflies) {
     }
     maxNumFireflies = newMaxNumFireflies;
 
-    //We only need to make a new particle set and accompanying arrays if the current ones aren't large enough
+    //We only need to make a new particle set and accompanying arrays if
+    //the current ones aren't large enough (or don't exist!)
     //This helps prevent memory fragmentation by limiting the number of heap allocations
     //but this may use up more memory overall.
-    if( alwaysResizeObj_PS || (maxNumFireflies > particleSet->maxLength) ) {
+    if( alwaysResizeObj_PS || !particleSet || (maxNumFireflies > particleSet->maxLength) ) {
 
         //delete and re-create all the arrays and the particle set
         free(trailEndColors);

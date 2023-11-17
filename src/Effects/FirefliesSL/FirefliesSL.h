@@ -40,29 +40,32 @@ Note that this effect does require three separate arrays:
 So watch your memory usage
 
 Inputs guide:
-To get a good variety of fireflies you want to add a good amount of range for each firefly's settings
-Fireflies rely on the FastLED noise functions for their movement, 
-They produce a noise output based on a few inputs, however, same inputs => same outputs, 
-so two fireflies with the same settings, we look and move exactly the same
-To prevent this fireflies are always spawned with a set of random values based on a set of range settings
-But using small ranges, will result in similar looking flies.
-A firefly has 5 core inputs:
-    spawnChance: How likely an inactive firefly is to spawn each update cycle (a percent out of 100)
-    lifeBase: The minimum time (in ms) a firefly will live for
-    lifeRange: Sets the maximum possible amount added to lifeBase. 
-              The overall firefly life is calculated as lifeBase + random(lifeRange);
-    speedBase: The slowest speed a particle will move (this is a multiplier, see more below)
-    speedRange: Sets the maximum possible amount added to speedBase. 
-              The overall firefly speed is calculated as speedBase + random(speedRange);
-There are some other, secondary variables listed in the Other Settings section below,
-but you probably won't need to tweak these initially
+    To get a good variety of fireflies you want to add a good amount of range for each firefly's settings
+    Fireflies rely on the FastLED noise functions for their movement, 
+    They produce a noise output based on a few inputs, however, same inputs => same outputs, 
+    so two fireflies with the same settings, we look and move exactly the same
+    To prevent this fireflies are always spawned with a set of random values based on a set of range settings
+    But using small ranges, will result in similar looking flies.
+    A firefly has 5 core inputs:
+        spawnChance: How likely an inactive firefly is to spawn each update cycle (a percent out of 100)
+        lifeBase: The minimum time (in ms) a firefly will live for
+        lifeRange: Sets the maximum possible amount added to lifeBase. 
+                   The overall firefly life is calculated as lifeBase + random(lifeRange);
+        speedBase: The slowest speed a particle will move (this is a multiplier, see more below)
+        speedRange: Sets the maximum possible amount added to speedBase. 
+                    The overall firefly speed is calculated as speedBase + random(speedRange);
+    There are some other, secondary variables listed in the Other Settings section below,
+    but you probably won't need to tweak these initially
 
-LifeBase is used to set minium limit on all the fireflies life, but you still want to give them time to move
-So lifeBase should probably be 2000+ (2 sec), while the range should be a bit larger than the base ie 3000ish
-A larger life range will help give your fireflies more variation.
-SpeedBase and speedRange do most of the work in separating fireflies, but the ranges for this is fairly small
-I recommend starting with a combined (speedBase + speedRange) of (1 - 15) Any higher, and your fireflies may move too fast
-I'd set my range to at least 5 to get a good variation. If you set it too low fireflies will tend to move together.
+    LifeBase is used to set minium limit on all the fireflies life, but you still want to give them time to move
+    So lifeBase should probably be 2000+ (2 sec), while the range should be a bit larger than the base ie 3000ish
+    A larger life range will help give your fireflies more variation.
+
+    SpeedBase and speedRange do most of the work in separating fireflies.
+    They work by multiplying the noise input, placing the fireflies on different noise paths. 
+    Unfortunately, the workable speed range is fairly small before the fireflies start to move too fast.
+    I recommend starting with a combined (speedBase + speedRange) of (1 - 15).
+    I'd set my range to at least 5 to get a good variation. If you set it too low fireflies will tend to move together.
 
 Example calls: 
 

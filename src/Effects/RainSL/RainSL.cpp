@@ -91,10 +91,11 @@ void RainSL::setupDrops(uint8_t newMaxNumDrops) {
     //We need to know how many particles we need to store all the possible active drops for each line
     uint16_t numParticles = numLines * newMaxNumDrops;
 
-    //We only need to make a new particle set and accompanying arrays if the current ones aren't large enough
+    //We only need to make a new particle set and accompanying arrays if
+    //the current ones aren't large enough (or don't exist!)
     //This helps prevent memory fragmentation by limiting the number of heap allocations
     //but this may use up more memory overall.
-    if( alwaysResizeObj_PS || (numParticles > particleSet->maxLength) ) {
+    if( alwaysResizeObj_PS || !particleSet || (numParticles > particleSet->maxLength) ) {
 
         free(trailEndColors);
         trailEndColors = (CRGB *)malloc(numParticles * sizeof(CRGB));
