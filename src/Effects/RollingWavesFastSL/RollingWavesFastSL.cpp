@@ -161,7 +161,7 @@ void RollingWavesFastSL::initalFill() {
         //Draw the colored line
         segDrawUtils::drawSegLine(*segSet, i, colorOut, 0);
 
-        cycleNum = addmod8(cycleNum, 1, blendLimit);  //track what step we're on in the wave
+        cycleNum = addMod16PS(cycleNum, 1, blendLimit);  //track what step we're on in the wave
     }
     initFillDone = true;
 }
@@ -206,7 +206,7 @@ void RollingWavesFastSL::update() {
 
             //if we're at the first line, pick a color, otherwise just copy the colors from the line before it
             if( i == 0 ) {
-                blendStep = addmod8(cycleNum, i, blendLimit);  // what step we're on between the current and next color
+                blendStep = addMod16PS(cycleNum, i, blendLimit);  // what step we're on between the current and next color
                 //If the blendStep is 0, then a wave has finished, and we need to choose the next color
                 if( blendStep == 0 ) {
                     //the color we're at based on the current index
@@ -242,7 +242,7 @@ After the gradLength we draw any spacing pixels
 At some point during the wave we will hit the midPoint, this is the "head" of the wave
 and is drawn at full brightness (so that the wave dimming can be non-linear, but the "head" is always full color)
 Once all the leds have been filled a cycle is complete and cycleNum is incremented */
-CRGB RollingWavesFastSL::getWaveColor(uint8_t step) {
+CRGB RollingWavesFastSL::getWaveColor(uint16_t step) {
 
     //draw the various parts of the wave
     //the limit vars are set by setTrailMode
@@ -254,7 +254,7 @@ CRGB RollingWavesFastSL::getWaveColor(uint8_t step) {
         //since we're doing the leading trail, we start at halfGrad
         stepTemp = halfGrad - step;
         setBg = false;
-    } else if( blendStep < gradLength ) {
+    } else if( step < gradLength ) {
         //For the ending trail we do the same as the first trail, but
         //we need to start at 0 (no dimming), and we need to adjust for the inital blendStep value
         stepTemp = halfGrad - (gradLength - step) + blendStepAdjust;
@@ -271,29 +271,14 @@ CRGB RollingWavesFastSL::getWaveColor(uint8_t step) {
             //if the blendStep is at the "head" led, we don't dim it
             colorOut = currentColor;
         } else {
-            colorOut = desaturate(currentColor, stepTemp, halfGrad);
+            //Get the dimmed wave color, note that we use the same function as particles use to get the color
+            //This produces a more non-linear fade (depending on the dimPow), for a better overall look
+            //See notes in particleUtils.h or particles.h for more
+            colorOut = particleUtilsPS::getTrailColor(currentColor, *bgColor, stepTemp, halfGrad, dimPow);
         }
     }
+
     return colorOut;
-}
-
-/* returns a dimmed color (towards 0) based on the input steps and totalSteps
-step == totalSteps is fully dimmed
-Note that we offset totalSteps by 1, so we never reach full dim (since it would produce blank pixels)
-the maximum brightness is scaled by dimPow
-dimPow 255 will produce a normal linear gradient, but for more shimmery waves we can dial the brightness down
-The "head" wave pixel will still be drawn at full brightness since it's drawn separately  */
-CRGB RollingWavesFastSL::desaturate(CRGB &color, uint8_t step, uint8_t totalSteps) {
-
-    dimRatio = (dimPow - (uint16_t)step * dimPow / (totalSteps + 1));
-
-    //ratio = dim8_video(ratio);
-    //uint8_t ratio = 255 - triwave8( 128 * (uint16_t)step / (totalSteps + 1) );
-
-    //quickly scales each of the color components by dimRatio
-    nscale8x3(color.r, color.g, color.b, dimRatio);
-
-    return color;
 }
 
 //For calling whenever a wave has finished

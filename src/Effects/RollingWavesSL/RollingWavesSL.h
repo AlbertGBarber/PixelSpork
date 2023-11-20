@@ -1,31 +1,50 @@
 #ifndef RollingWavesSL_h
 #define RollingWavesSL_h
 
-//TODO: -- Add options for patterning along segment lines?
+//TODO: -- Add options for patterning along segment lines? 
+//              -> Make it a new effect, work out each blend point once per seg, and copy the color to all points in the seg.
+//              -> Makes it incompatible with color modes, but that's what this effect is for. 
 
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
+#include "Effects/ParticlesSL/Particle_Stuff/particleUtilsPS.h" //We use the particle color dimming function to dim the waves
 #include "MathUtils/mathUtilsPS.h"
 
 /*
 Repeats a set of waves along the segment set according to the input pattern and palette
-Each wave is a gradient that shifts towards black (off)
-The waves are configured to rise and fall across a set length (the gradLength var)
-They can be set to only have a rise, fall, or both using the trailMode var
-How quickly the wave dims can be controlled by the dimPow var
-The default value of dimPow is 120, this gives a nice, water-like shimmer to the waves
-A spacing can be added between the waves, which can be set to a background color
+Each wave is a gradient that shifts towards a set background color.
+
+The waves are configured to rise and fall across a set length, "gradLength".
+For full waves, odd numbered gradLengths work the best.
+They can be set to only have a rise, fall, or both using "trailMode" (see info below)
+
+How quickly the wave dims can be controlled by "dimPow".
+The default value of dimPow is 120, this gives a nice, water-like shimmer to the waves.
+Note that this is the same method used in "particles.h"
+
+A spacing can be added between the waves, which can be set to a background color.
 
 This effect is fully compatible with color modes, and the bgColor is a pointer, so you can bind it
 to an external color variable
 
-Note that for full waves, odd numbered gradLengths work the best
-
 There is a version of this effect that takes less CPU power (RollingWavesFastSL)
-It has a few restrictions, but should run faster than this effect
+It has a few restrictions, but should run faster than this effect.
 
-The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
-passing in a SegmentSetPS with only one segment containing the whole strip.
+The effect is adapted to work on segment lines for 2D use.
+
+Trail Modes:
+    The waves can be drawn with a lead or trailing tail or both
+    The gradLength sets how long the waves will be
+    The same gradLength will be used for each wave type, so for double waves the wave lengths will be half the gradLength
+    The Modes:
+    0: Only ending trail will be drawn
+    1: Both ending and leading trails will be drawn (at half gradLength)
+    2: Only the leading trail will be drawn
+    For example, with a trail length of 7, the modes will produce:
+    (The trail head is *, - are the trail)
+    0: ------* 
+    1: ---*---
+    2: *------
 
 Example calls: 
     uint8_t pattern_arr = {0, 1, 2};
@@ -59,20 +78,6 @@ Constructor Inputs:
     trailMode -- They type of waves used (see trailMode section below)
     spacing -- The number of background spaces between each wave
     Rate -- The update rate (ms)
-
-Trail Modes:
-    The waves can be drawn with a lead or trailing tail or both
-    The gradLength sets how long the waves will be
-    The same gradLength will be used for each wave type, so for double waves the wave lengths will be half the gradLength
-    The Modes:
-    0: Only ending trail will be drawn
-    1: Both ending and leading trails will be drawn (at half gradLength)
-    2: Only the leading trail will be drawn
-    For example, with a trail length of 7, the modes will produce:
-    (The trail head is *, - are the trail)
-    0: ------* 
-    1: ---*---
-    2: *------
 
 Functions:
     setTotalEffectLength() -- Calculates the total length of all the waves in the pattern (incl spacing), you shouldn't need to call this
@@ -176,7 +181,6 @@ class RollingWavesSL : public EffectBasePS {
             setBg = false;
 
         CRGB
-            desaturate(CRGB &color, uint8_t step, uint8_t totalSteps),
             currentColor,
             colorOut;
 

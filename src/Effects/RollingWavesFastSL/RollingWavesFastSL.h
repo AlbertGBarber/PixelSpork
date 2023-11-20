@@ -3,34 +3,41 @@
 
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
+#include "Effects/ParticlesSL/Particle_Stuff/particleUtilsPS.h" //We use the particle color dimming function to dim the waves
 #include "MathUtils/mathUtilsPS.h"
 
 /*
 Repeats a set of waves along the segment set according to the input pattern and palette
-Each wave is a gradient that shifts towards black (off)
-The waves are configured to rise and fall across a set length (the gradLength var)
-They can be set to only have a rise, fall, or both using the trailMode var
-How quickly the wave dims can be controlled by the dimPow var
-The default value of dimPow is 120, this gives a nice, water-like shimmer to the waves
-A spacing can be added between the waves, which can be set to a background color
+Each wave is a gradient that shifts towards a set background color.
 
-The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
-passing in a SegmentSetPS with only one segment containing the whole strip.
+The waves are configured to rise and fall across a set length, "gradLength".
+For full waves, odd numbered gradLengths work the best.
+They can be set to only have a rise, fall, or both using "trailMode" (see info below)
 
-Note that this effect should not be run alongside other effects on the same SegmentSetPS
-since it needs to use the existing colors of the leds
+How quickly the wave dims can be controlled by "dimPow".
+The default value of dimPow is 120, this gives a nice, water-like shimmer to the waves.
+Note that this is the same method used in "particles.h"
 
-Note that for full waves, odd numbered gradLengths work the best
+A spacing can be added between the waves, which can be set to a background color.
+
+The effect is adapted to work on segment lines for 2D use.
 
 This effect is the same as RollingWavesPS, but should need fewer calculations per cycle
 because it only works out the colors once. It may take up more programming space.
-however it does have a few extra restrictions
-1: Changing the palette on the fly will have a delayed effect on the colors
-   The existing colors will shift off the strip before new ones shift on
-   This prevents this effect from playing well with paletteBlend functions
-2: The same restrictions as (1) apply to changing the pattern, the gradLength, the spacing, or trailModes
-3: Changing the direction of the segments or segment set mid-effect may break it temporarily
-4: Color modes are disabled
+however it does have a few extra restrictions:
+
+    1: Changing the palette on the fly will have a delayed effect on the colors
+    The existing colors will shift off the strip before new ones shift on
+    This prevents this effect from playing well with paletteBlend functions
+
+    2: The same restrictions as (1) apply to changing the pattern, the gradLength, the spacing, or trailModes
+
+    3: Changing the direction of the segments or segment set mid-effect may break it temporarily
+
+    4: Color modes are disabled
+
+Note that this effect should not be run alongside other effects on the same SegmentSetPS
+since it needs to use the existing colors of the leds.
 
 Basically the effect works by setting the color of the first pixel, then for each subsequent pixel,
 it copies the color of the next pixel in line
@@ -38,7 +45,23 @@ So any changes you make to colors will only show up at the first pixel, and will
 
 However, as a bonus, this effect supports random colored waves
 where the colors for the waves are chosen at random as the enter the strip
-This is controlled by the randMode setting
+This is controlled by the "randMode" setting.
+
+The bgColor is a pointer, so you can bind it to an external color variable.
+
+Trail Modes:
+    The waves can be drawn with a lead or trailing tail or both
+    The gradLength sets how long the waves will be
+    The same gradLength will be used for each wave type, so for double waves the wave lengths will be half the gradLength
+    The Modes:
+    0: Only ending trail will be drawn
+    1: Both ending and leading trails will be drawn (at half gradLength)
+    2: Only the leading trail will be drawn
+    For example, with a trail length of 7, the modes will produce:
+    (The trail head is *, - are the trail)
+    0: ------* 
+    1: ---*---
+    2: *------
 
 Example calls: 
     uint8_t pattern_arr = {0, 1, 2};
@@ -72,20 +95,6 @@ Constructor Inputs:
     trailMode -- They type of waves used (see trailMode section below)
     spacing -- The number of background spaces between each wave
     Rate -- The update rate (ms)
-
-Trail Modes:
-    The waves can be drawn with a lead or trailing tail or both
-    The gradLength sets how long the waves will be
-    The same gradLength will be used for each wave type, so for double waves the wave lengths will be half the gradLength
-    The Modes:
-    0: Only ending trail will be drawn
-    1: Both ending and leading trails will be drawn (at half gradLength)
-    2: Only the leading trail will be drawn
-    For example, with a trail length of 7, the modes will produce:
-    (The trail head is *, - are the trail)
-    0: ------* 
-    1: ---*---
-    2: *------
 
 Functions:
     setPalette(*newPalette) -- Sets the palette used for the waves
@@ -194,10 +203,9 @@ class RollingWavesFastSL : public EffectBasePS {
             setBg = false;
 
         CRGB
-            getWaveColor(uint8_t step),
-            desaturate(CRGB &color, uint8_t step, uint8_t totalSteps),
             currentColor,
-            colorOut;
+            colorOut,
+            getWaveColor(uint16_t step);
 
         void
             init(CRGB BgColor, SegmentSetPS &SegSet, uint16_t Rate),

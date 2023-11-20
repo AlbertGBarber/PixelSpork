@@ -167,7 +167,7 @@ void RollingWavesSL::update() {
 
         for( uint16_t i = 0; i < numLines; i++ ) {
 
-            blendStep = addmod8(cycleNum, i, blendLimit);  // what step of the wave we're on (incl spacing)
+            blendStep = addMod16PS(cycleNum, i, blendLimit);  // what step of the wave we're on (incl spacing)
             //If the blendStep is 0, then a wave has finished, and we need to choose the next color
             if( blendStep == 0 ) {
                 //the color we're at based on the current index
@@ -210,7 +210,10 @@ void RollingWavesSL::update() {
                     //Dim the color
                     //If the blendStep is at the "head" led, we don't dim it
                     if( blendStep != midPoint ) {
-                        colorOut = desaturate(colorOut, stepTemp, halfGrad);
+                        //Get the dimmed wave color, note that we use the same function as particles use to get the color
+                        //This produces a more non-linear fade (depending on the dimPow), for a better overall look
+                        //See notes in particleUtils.h or particles.h for more
+                        colorOut = particleUtilsPS::getTrailColor(currentColor, *bgColor, stepTemp, halfGrad, dimPow);
                     }
                 }
                 segDrawUtils::setPixelColor(*segSet, pixelNum, colorOut, 0, j, lineNum);
@@ -220,25 +223,6 @@ void RollingWavesSL::update() {
         cycleNum = addMod16PS(cycleNum, 1, totalCycleLength);
         showCheckPS();
     }
-}
-
-/* returns a dimmed color (towards 0) based on the input steps and totalSteps
-step == totalSteps is fully dimmed
-Note that we offset totalSteps by 1, so we never reach full dim (since it would produce blank pixels)
-the maximum brightness is scaled by dimPow
-dimPow 255 will produce a normal linear gradient, but for more shimmery waves we can dial the brightness down
-The "head" wave pixel will still be drawn at full brightness since it's drawn separately  */
-CRGB RollingWavesSL::desaturate(CRGB &color, uint8_t step, uint8_t totalSteps) {
-
-    dimRatio = (dimPow - (uint16_t)step * dimPow / (totalSteps + 1));
-
-    //ratio = dim8_video(ratio);
-    //uint8_t ratio = 255 - triwave8( 128 * (uint16_t)step / (totalSteps + 1) );
-
-    //quickly scales each of the color components by dimRatio
-    nscale8x3(color.r, color.g, color.b, dimRatio);
-
-    return color;
 }
 
 //sets the color for the passed in pixel number based on the cycleNum
