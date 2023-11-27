@@ -20,12 +20,22 @@ EdgeBurstSL::EdgeBurstSL(SegmentSetPS &SegSet, palettePS &Palette, uint8_t Burst
     init(SegSet, Rate);
 }
 
-//Constructor for a randomly created palette
-//RandomizePal = true will randomize the palette for each wave
-EdgeBurstSL::EdgeBurstSL(SegmentSetPS &SegSet, uint8_t numColors, bool RandomizePal, uint8_t BurstFreq, uint16_t Rate)
-    : burstFreq(BurstFreq), randomizePal(RandomizePal)  //
+//Constructor for all random options
+//(passing 0 for numColors turns on rainbowMode)
+EdgeBurstSL::EdgeBurstSL(SegmentSetPS &SegSet, uint8_t numColors, bool RandomizePal, bool RandomizeStart, uint8_t BurstFreq, uint16_t Rate)
+    : burstFreq(BurstFreq), randomizePal(RandomizePal), randomizeStart(RandomizeStart)  //
 {
     init(SegSet, Rate);
+
+    //Passing 0 as the numColors doesn't make sense,
+    //so we can use it as a shortcut for turing on rainbowMode
+    //Note that we create a random palette in case rainbow mode is turned off without setting a palette
+    //so we set numColors to 3, and make a random palette.
+    if(numColors == 0){
+       rainbowMode = true;
+       numColors = 3; 
+    }
+
     paletteTemp = paletteUtilsPS::makeRandomPalette(numColors);
     palette = &paletteTemp;
 }
@@ -90,9 +100,9 @@ void EdgeBurstSL::update() {
         //So we need to catch it after is passes through, but then only set the offset once
         //hence the flipFlop boolean, which stops us from setting the offset more than once each half cycle
         if( beatVal > 128 && !offsetFlipFlop ) {
-            pickRandStart();
+            pickStartPoint();
         } else if( beatVal < 128 && offsetFlipFlop ) {
-            pickRandStart();
+            pickStartPoint();
         }
 
         //set a color for each line and then color in all the pixels on the line
@@ -127,14 +137,22 @@ void EdgeBurstSL::update() {
     }
 }
 
-//randomizes the wave start point (the offset)
-//sets the flipFlop so we know not to set the offset more than once per wave cycle
+//Sets the wave start point (the offset), this is either picked at random, or is fixed to the center of the strip,
+//(based on the value of randomizeStart).
+//Also sets the flipFlop so we know not to set the offset more than once per wave cycle.
 //Also increments the burstCount var to track how many bursts we've done
 //If randomizePal is true, the colors in paletteTemp will be set randomly
-void EdgeBurstSL::pickRandStart() {
+void EdgeBurstSL::pickStartPoint() {
     offsetFlipFlop = !offsetFlipFlop;
     burstCount++;
-    offset = random16(numLines);
+
+    //either get the wave start point randomly, or at the mid point of the strip
+    if( randomizeStart ){
+        offset = random16(numLines);
+    } else {
+        offset = numLines / 2 + userOffset; //add a fixed userOffset so the user can set the start point manually
+    }
+
     if( randomizePal ) {
         paletteUtilsPS::randomize(paletteTemp);
     }
