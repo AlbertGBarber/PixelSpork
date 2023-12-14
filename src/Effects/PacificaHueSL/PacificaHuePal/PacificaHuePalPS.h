@@ -51,38 +51,38 @@ class PacificaHuePalPS {
             //(converting from the original pacifica colors isn't easy b/c FastLED's HSV spectrum is different from online color picker tools)
             //Hopefully these look good for most hues (except yellow, b/c the hue range is very small)
             setHue(uint8_t newHue) {
-            pfHue = newHue;
+                pfHue = newHue;
 
-            bgColor = CRGB(CHSV(pfHue + 21, 255, 30));  //10
+                bgColor = CRGB(CHSV(pfHue + 21, 255, 30));  //10
 
-            //palette 1 colors
-            paPal1_PS_arr[0] = CRGB(CHSV(pfHue + 10, 255, 80));
-            paPal1_PS_arr[1] = CRGB(CHSV(pfHue + 20, 255, 80));
-            paPal1_PS_arr[2] = CRGB(CHSV(pfHue + 27, 255, 100));
-            paPal1_PS_arr[3] = CRGB(CHSV(pfHue + 8, 255, 130));
-            paPal1_PS_arr[4] = CRGB(CHSV(pfHue, 255, 171));
+                //palette 1 colors
+                paPal1_PS_arr[0] = CRGB(CHSV(pfHue + 10, 255, 80));
+                paPal1_PS_arr[1] = CRGB(CHSV(pfHue + 20, 255, 80));
+                paPal1_PS_arr[2] = CRGB(CHSV(pfHue + 27, 255, 100));
+                paPal1_PS_arr[3] = CRGB(CHSV(pfHue + 8, 255, 130));
+                paPal1_PS_arr[4] = CRGB(CHSV(pfHue, 255, 171));
 
-            //palette 2 colors
-            paPal2_PS_arr[0] = CRGB(CHSV(pfHue + 10, 255, 80));
-            paPal2_PS_arr[1] = CRGB(CHSV(pfHue + 20, 255, 80));
-            paPal2_PS_arr[2] = CRGB(CHSV(pfHue + 27, 255, 100));
-            paPal2_PS_arr[3] = CRGB(CHSV(pfHue + 3, 255, 130));
-            paPal2_PS_arr[4] = CRGB(CHSV(pfHue + 6, 255, 230));
+                //palette 2 colors
+                paPal2_PS_arr[0] = CRGB(CHSV(pfHue + 10, 255, 80));
+                paPal2_PS_arr[1] = CRGB(CHSV(pfHue + 20, 255, 80));
+                paPal2_PS_arr[2] = CRGB(CHSV(pfHue + 27, 255, 100));
+                paPal2_PS_arr[3] = CRGB(CHSV(pfHue + 3, 255, 130));
+                paPal2_PS_arr[4] = CRGB(CHSV(pfHue + 6, 255, 230));
 
-            //palette 3 colors
-            paPal3_PS_arr[0] = CRGB(CHSV(pfHue + 12, 255, 80));
-            paPal3_PS_arr[1] = CRGB(CHSV(pfHue + 22, 255, 80));
-            paPal3_PS_arr[2] = CRGB(CHSV(pfHue + 18, 255, 100));
-            paPal3_PS_arr[3] = CRGB(CHSV(pfHue + 18, 255, 171));
-            paPal3_PS_arr[4] = CRGB(CHSV(pfHue + 17, 255, 255));
-        };
+                //palette 3 colors
+                paPal3_PS_arr[0] = CRGB(CHSV(pfHue + 12, 255, 80));
+                paPal3_PS_arr[1] = CRGB(CHSV(pfHue + 22, 255, 80));
+                paPal3_PS_arr[2] = CRGB(CHSV(pfHue + 18, 255, 100));
+                paPal3_PS_arr[3] = CRGB(CHSV(pfHue + 18, 255, 171));
+                paPal3_PS_arr[4] = CRGB(CHSV(pfHue + 17, 255, 255));
+            };
 
         void
             //Increments the current hue value by 1 and calculates new palette colors
             incHue() {
-            pfHue++;  //wraps automatically at 255 b/c it's uint8_t
-            setHue(pfHue);
-        };
+                pfHue++;  //wraps automatically at 255 b/c it's uint8_t
+                setHue(pfHue);
+            };
 };
 
 #endif

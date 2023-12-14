@@ -81,7 +81,7 @@ void PlasmaSL::update() {
             colorIndex = cubicwave8((i * freq1) + phaseWave1 + phase1) / 2 + cos8((i * freq2) + phaseWave2 + phase2) / 2;
             //qsub gives it a bit of 'black' dead space by setting sets a minimum value.
             //If colorIndex < current value of beatsin8(), then bright = 0. Otherwise, bright = colorIndex.
-            brightness = qsuba(colorIndex, beatsin8(briFreq, 0, briRange));
+            brightness = qSubA_PS(colorIndex, beatsin8(briFreq, 0, briRange));
 
             //scale color index to be somewhere between 0 and totBlendLength to put it somewhere in the blended palette
             colorIndex = scale16by8(totBlendLength, colorIndex);  //colorIndex * totBlendLength /255;

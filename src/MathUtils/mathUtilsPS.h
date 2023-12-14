@@ -19,16 +19,6 @@
     #define minPS(a, b) ((a) < (b) ? (a) : (b))
 #endif
 
-//Digital unsigned subtraction macro. if result <0, then => 0. Otherwise, take on fixed value.
-#if !defined(qsubd)
-    #define qsubd(x, b) ((x > b) ? b : 0)
-#endif
-
-//Analog Unsigned subtraction macro. if result <0, then => 0
-#if !defined(qsuba)
-    #define qsuba(x, b) ((x > b) ? x - b : 0)
-#endif
-
 //Returns the length of an array
 #if !defined(SIZE)
     #define SIZE(x) (sizeof((x)) / sizeof((x)[0]))
@@ -45,9 +35,20 @@ uint16_t mod16PS(uint16_t num1, uint16_t num2);
 //!!ONLY works with unsigned numbers
 uint16_t addMod16PS(uint16_t num1, uint16_t num2, uint16_t modNum);
 
-//Clamps the input to be between the input min and max
+//Clamps an 8 bit input to be between the input min and max
 //ie if the input is less than min you get min, if it's greater than max you get max
 //The input is an int16_t to allow negative numbers, but the min and max must be 0 - 255
 uint8_t clamp8PS(int16_t in, uint8_t min, uint8_t max);
+
+//Same as clamp8 above, but for 16 bit inputs. The min and max must be 0 - 65535
+uint16_t clamp16PS(int32_t in, uint16_t min, uint16_t max);
+
+//Digital unsigned subtraction, subtracting y from x. If y > x, the result is y, otherwise the result is 0.
+//For unsigned 8 or 16 bit numbers.
+uint16_t qSubD_PS(uint16_t x, uint16_t y);
+
+//Analog unsigned subtraction, subtracting y from x. If y > x, the result is x - y, otherwise the result is 0.
+//For unsigned 8 or 16 bit numbers.
+uint16_t qSubA_PS(uint16_t x, uint16_t y);
 
 #endif

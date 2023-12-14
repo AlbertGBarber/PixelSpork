@@ -27,12 +27,12 @@
         "nscale",
         "qadd",
         "qsub",
-        "qsuba",
+        "qSubA_PS",
         "triwave"
     ],
     "cSpell.words": [
         "PROGMEM",
-        "qsubd",
+        "qSubD_PS",
         "Randomizer",
         "Satur",
         "seperation",

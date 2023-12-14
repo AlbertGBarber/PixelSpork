@@ -134,8 +134,8 @@ mod16PS			KEYWORD2
 maxPS		KEYWORD2
 minPS		KEYWORD2
 SIZE			KEYWORD2
-qsubd			KEYWORD2
-qsuba			KEYWORD2
+qSubD_PS			KEYWORD2
+qSubA_PS			KEYWORD2
 
 #######################################
 # Constants (in GlobalVars.h)

@@ -63,7 +63,7 @@ Inputs guide:
             And a speed value of 10 - 50.
 
         Rainbows and shifting hues:
-            There are three color modes in the effect. 
+            There are three color modes in the effect (note that these are not the same as general Color Modes)
             These are set by cMode:
                 0: Use the input palette for colors
                 1: Uses the palette for colors, but maps into roughly one color at a time.
@@ -115,6 +115,7 @@ Constructor inputs:
     scaleBase -- Sets how "zoomed-in" the noise is
                  (test it out yourself to see what I mean) (see inputs guide above)
     scaleRange -- The range for the variation of the scale (see inputs guide above)
+    speed -- (See inputs guide above)
     cMode -- The color mode of the effect (see inputs guide above)
     Rate -- The update rate (ms) note that this is synced with all the particles.
 

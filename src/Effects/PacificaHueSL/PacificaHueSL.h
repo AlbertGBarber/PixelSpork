@@ -54,8 +54,8 @@ This keeps with the look of the original effect
 By default the hue is set to 130, which closely matches the colors from the original effect.
 
 You can also set the hue to cycle through colors over time at hueRate (ms) (see constructors below)
-A hue rate of 0 will stop the hue cycle
-The hue is updated as part of the effect, so the hueRate should be slower than the effect's update rate
+A hue rate of 0 will stop the hue cycle.
+The hue is updated as part of the effect, so the hueRate should be slower than the effect's update rate.
 Note that the hueRate is a pointer (like the overall effect Rate), so you can bind it to an external variable if wanted.
 The rate passed into the constructors is hueRateOrig
 
@@ -73,7 +73,7 @@ Example calls:
 
 Constructor inputs: 
     addWhiteCaps (optional, default false) -- If true, the addWhiteCaps() function will be called as part of the update cycle
-    hue (optional, default 130) -- The hue used in the effect (see hue notes above)
+    hue (optional, default 130, max 255) -- The hue used in the effect (see hue notes above)
     hueRate (optional, default 0) -- How quickly the hue shifts (ms)
     rate -- The update rate of the effect (ms)
 

@@ -52,6 +52,7 @@ Inputs guide:
         3) briThetaFreq: Has a default value of 250. Sets how quickly we cycle through the brightness waves. 
                          I give you the option to randomize this on effect creation to create a unique effect. 
                          You can find the ranges for this in init(), also see randomizeBriFreq().
+                         Higher -> faster.
         4) briDirect: Sets the direction of the brightness waves relative to the color waves. True will have the waves
                       rotate in the same direction, while false will have then reverse. This is a constructor option
                       so there's no default, but the true gives you the original look from Mark's code.
