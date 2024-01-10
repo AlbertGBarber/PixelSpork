@@ -53,7 +53,9 @@ class EffectBasePS {
             *rate = nullptr;
 
         bool
-            showNow = true;
+            showNow = true, //Sets if an effect "draws" when updating, ie if it calls FastLED.show()
+            active = true; //If false, the utility will be blocked from updating.
+                           //!!Currently only used in utilities!!
 
         //pointer to the SegmentSetPS the effect is using
         //defaults to null, because utility classes use the effectBase but don't use a SegmentSetPS

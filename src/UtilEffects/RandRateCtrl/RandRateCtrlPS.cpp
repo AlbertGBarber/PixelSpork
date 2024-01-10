@@ -64,7 +64,7 @@ void RandRateCtrlPS::reset() {
 void RandRateCtrlPS::update() {
     currentTime = millis();
 
-    if( (currentTime - prevTime) >= *rate ) {
+    if( active && (currentTime - prevTime) >= *rate ) {
         prevTime = currentTime;
         RC->update();
 

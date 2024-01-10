@@ -109,7 +109,7 @@ If the fade has started, and we're not past run time, and it's time to update
     We keep a running total of the amount of brightness change so far
     This is added to with each update according to how much time has passed
     ( totalBriChng += stepRate * (currentTime - prevTime) )
-    Then, we adjust the brightness of each segment set by the total brighness change so far
+    Then, we adjust the brightness of each segment set by the total brightness change so far
     capping the change to the max or min value if needed
     This means that if the effect set has multiple effects sharing the same segment set,
     the segment set's brightness is always set to one value,

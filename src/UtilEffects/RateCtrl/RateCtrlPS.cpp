@@ -44,7 +44,7 @@ void RateCtrlPS::update() {
     //if it's time to update the effect, do so
     //for rateTemp info see below
     //once rateReached is set, we're done
-    if( !rateReached && (currentTime - prevTime) >= rateTemp ) {
+    if( active && !rateReached && (currentTime - prevTime) >= rateTemp ) {
         prevTime = currentTime;
 
         //get the step amount based on the direction

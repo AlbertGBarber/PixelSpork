@@ -110,8 +110,6 @@ CRGB DissolveSL::pickColor() {
     } else if( randMode == 1 ) {
         //choose colors randomly
         color = colorUtilsPS::randColor();
-        //choose colors randomly from the pattern
-        color = paletteUtilsPS::getPaletteColor(*palette, patternUtilsPS::getRandVal(*pattern));
     } else if( randMode == 2 ) {
         //choose colors randomly from the pattern
         color = paletteUtilsPS::getPaletteColor(*palette, patternUtilsPS::getRandVal(*pattern));

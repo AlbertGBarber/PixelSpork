@@ -48,9 +48,6 @@ class RateRandomizerPS : public EffectBasePS {
             *baseRate = nullptr,
             outputRate;
 
-        bool
-            active = true;
-
         void
             resetToBaseRate(),
             update(void);

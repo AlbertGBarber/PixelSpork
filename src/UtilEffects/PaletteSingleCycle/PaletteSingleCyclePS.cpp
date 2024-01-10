@@ -238,7 +238,7 @@ void PaletteSingleCyclePS::switchPalette() {
 void PaletteSingleCyclePS::update() {
     currentTime = millis();
 
-    if( (currentTime - prevTime) >= *rate ) {
+    if( active && (currentTime - prevTime) >= *rate ) {
         prevTime = currentTime;
         //update the PaletteBlendPS instance
         PB->update();

@@ -79,26 +79,28 @@ It also assumes that the glitter rate is slower or equal to the other effect rat
 if glitter is the fastest, then it will keep filling the segment up with glitter */
 void AddGlitterPS::update() {
     currentTime = millis();
-
-    //Every glitterRate period we get new glitter locations
-    if( (currentTime - prevGlitterTime) >= *glitterRate ) {
-        prevGlitterTime = currentTime;
-        if( glitterMode == 0 ) {
-            fillGlitterArr();
-        } else {
-            advanceGlitterArr();
-        }
-    }
-
-    //Drawn the glitter on the strip at the effect's rate
-    if( (currentTime - prevTime) >= *rate ) {
-        prevTime = currentTime;
-
-        //Drawn the glitter on the strip
-        for( uint16_t i = 0; i < glitterNum; i++ ) {
-            segDrawUtils::setPixelColor(*segSet, glitterLocs[i], *glitterColor, 0, 0, 0);
+    
+    if(active){
+        //Every glitterRate period we get new glitter locations
+        if((currentTime - prevGlitterTime) >= *glitterRate ) {
+            prevGlitterTime = currentTime;
+            if( glitterMode == 0 ) {
+                fillGlitterArr();
+            } else {
+                advanceGlitterArr();
+            }
         }
 
-        showCheckPS();
+        //Drawn the glitter on the strip at the effect's rate
+        if( (currentTime - prevTime) >= *rate ) {
+            prevTime = currentTime;
+
+            //Drawn the glitter on the strip
+            for( uint16_t i = 0; i < glitterNum; i++ ) {
+                segDrawUtils::setPixelColor(*segSet, glitterLocs[i], *glitterColor, 0, 0, 0);
+            }
+
+            showCheckPS();
+        }
     }
 }

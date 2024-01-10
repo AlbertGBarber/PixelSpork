@@ -22,19 +22,17 @@ void RateRandomizerPS::resetToBaseRate() {
 void RateRandomizerPS::update() {
     currentTime = millis();
 
-    if( active ) {
-        if( (currentTime - prevTime) >= *rate ) {
-            prevTime = currentTime;
+    if( active && (currentTime - prevTime) >= *rate ) {
+        prevTime = currentTime;
 
-            tempOut = *baseRate + random(rateRangeMin, rateRangeMax);
+        tempOut = *baseRate + random(rateRangeMin, rateRangeMax);
 
-            if( tempOut < 0 ) {
-                tempOut = 0;
-            } else if( tempOut > 65536 ) {
-                tempOut = 65536;
-            }
-
-            outputRate = tempOut;
+        if( tempOut < 0 ) {
+            tempOut = 0;
+        } else if( tempOut > 65536 ) {
+            tempOut = 65536;
         }
+
+        outputRate = tempOut;
     }
 }

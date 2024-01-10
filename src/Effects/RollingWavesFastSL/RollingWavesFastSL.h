@@ -97,7 +97,6 @@ Constructor Inputs:
     Rate -- The update rate (ms)
 
 Functions:
-    setPalette(*newPalette) -- Sets the palette used for the waves
     setTotalEffectLength() -- Calculates the total length of all the waves in the pattern (incl spacing), you shouldn't need to call this
     setPattern(*newPattern) -- Sets the passed in pattern to be the effect pattern
                                Will force setTotalEffectLength() call, so may cause effect to jump

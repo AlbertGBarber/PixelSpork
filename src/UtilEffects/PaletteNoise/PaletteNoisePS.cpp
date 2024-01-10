@@ -70,7 +70,7 @@ void PaletteNoisePS::setupPalette(uint8_t numColors) {
 void PaletteNoisePS::update() {
     currentTime = millis();
 
-    if( (currentTime - prevTime) >= *rate ) {
+    if( active && (currentTime - prevTime) >= *rate ) {
         prevTime = currentTime;
 
         //increment the hue if needed

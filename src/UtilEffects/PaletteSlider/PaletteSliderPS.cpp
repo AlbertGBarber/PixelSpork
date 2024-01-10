@@ -98,7 +98,7 @@ Note that there are two modes of switching colors: using a single shift, and shi
 void PaletteSliderPS::update() {
     currentTime = millis();
 
-    if( (currentTime - prevTime) >= *rate ) {
+    if( active && (currentTime - prevTime) >= *rate ) {
         prevTime = currentTime;
 
         if( startPaused && !firstPauseDone && !paused ) {

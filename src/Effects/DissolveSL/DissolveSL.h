@@ -45,8 +45,8 @@ Example calls:
 
 randModes:
     0: Each dissolve is a solid color following the pattern
-    1: Each dissolve is a set of randomly chosen colors
-    2: Each dissolve is a set of random colors chosen from the pattern
+    1: Each dissolve is a set of randomly chosen colors (dif color for each pixel)
+    2: Each dissolve is a set of random colors chosen from the pattern (dif color for each pixel)
     3: Each dissolve is a solid color chosen at random
     4: Each dissolve is a solid color chosen randomly from the pattern
 

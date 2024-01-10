@@ -90,7 +90,7 @@ void SegOffsetCyclerPS::setOffsetActive(bool newRunOffset) {
 //basically 255 for all rainbow modes, then the SegmentSetPS gradOffsetMax for all others
 void SegOffsetCyclerPS::update() {
 
-    if( (currentTime - prevTime) >= *rate ) {
+    if( active && (currentTime - prevTime) >= *rate ) {
         prevTime = currentTime;
 
         for( uint8_t i = 0; i < numSegSets; i++ ) {

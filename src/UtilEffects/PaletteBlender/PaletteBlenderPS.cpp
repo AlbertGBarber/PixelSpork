@@ -98,7 +98,7 @@ void PaletteBlenderPS::update() {
     currentTime = millis();
 
     //if the blend is active, and enough time has passed, update the palette
-    if( (currentTime - prevTime) >= *rate ) {
+    if( active && (currentTime - prevTime) >= *rate ) {
         prevTime = currentTime;
 
         //If we're starting with a pause, we need to setup the pause on the first cycle ONLY

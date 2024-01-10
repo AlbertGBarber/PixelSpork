@@ -11,7 +11,7 @@ JustShowPS::JustShowPS(SegmentSetPS &SegSet, uint16_t Rate)  //
 void JustShowPS::update() {
     currentTime = millis();
 
-    if( (currentTime - prevTime) >= *rate ) {
+    if( active && (currentTime - prevTime) >= *rate ) {
         prevTime = currentTime;
         showCheckPS();
     }

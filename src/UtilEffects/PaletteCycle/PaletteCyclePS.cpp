@@ -80,7 +80,7 @@ void PaletteCyclePS::setStartPaused(bool newStartPaused) {
 void PaletteCyclePS::update() {
     currentTime = millis();
 
-    if( (!done || looped) && (currentTime - prevTime) >= *rate ) {
+    if( active && (!done || looped) && (currentTime - prevTime) >= *rate ) {
         prevTime = currentTime;
         PB->update();
 

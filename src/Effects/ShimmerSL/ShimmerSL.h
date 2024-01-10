@@ -44,7 +44,6 @@ Constructor Inputs:
 
 Functions:
     setSingleColor(Color) -- Sets the effect to use a single color for the pixels
-    setPalette(*newPalette) -- Sets the palette used
     update() -- updates the effect
 
 Other Settings:
