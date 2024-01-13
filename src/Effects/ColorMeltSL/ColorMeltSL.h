@@ -80,8 +80,8 @@ Functions:
 
 Other Settings:
     phaseEnable (default true) -- Allows the phase to shift over time at the phaseFreq
-    phase -- The phase offset. This is changed over time when phaseEnable is true, but you can 
-             set it to a specific value if you like.
+    phase (default 0) -- The phase offset. This is changed over time when phaseEnable is true, but you can 
+                         set it to a specific value if you like.
     rainbowMode (default false) -- If true, colors from the rainbow will be used. This is set automatically
                                    to true for the rainbow mode constructor.
     hlDiv (default 2) -- Sets the melt divisions, the default of 2 is taken from the original effect

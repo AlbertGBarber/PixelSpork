@@ -37,8 +37,8 @@ Does not work with color modes from segDrawUtils::setPixelColor().
 randModes:
     0: Colors will be chosen in order from the pattern (not random)
     1: Colors will be chosen completely at random
-    2: Colors will be chosen randomly from the palette (not allowing repeats)
-    3: Colors will be chosen randomly from the palette (allowing repeats)
+    2: Colors will be chosen randomly from the pattern (not allowing repeats)
+    3: Colors will be chosen randomly from the pattern (allowing repeats)
     4: Colors will be from the rainbow (the hue is offset by hueRate each time a color is chosen)
 
 Example calls: 
@@ -106,7 +106,7 @@ Other Settings:
     rainbowVal (default 255) -- The value of the rainbow mode (as part of setting the rainbow color)
 
 Reference vars:
-    breathCount -- The number of breath cycles we've gone through.
+    breathCount -- The number of breath cycles we've gone through. Does not have a capped value.
 */
 class BreathPS : public EffectBasePS {
     public:

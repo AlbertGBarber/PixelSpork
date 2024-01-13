@@ -89,8 +89,8 @@ Also advances the patternIndex to track where we are in the pattern
 randModes are:
     0: Colors will be chosen in order from the pattern (not random)
     1: Colors will be chosen completely at random
-    2: Colors will be chosen randomly from the palette (not allowing repeats)
-    3: Colors will be chosen randomly from the palette (allowing repeats)
+    2: Colors will be chosen randomly from the pattern (not allowing repeats)
+    3: Colors will be chosen randomly from the pattern (allowing repeats)
     4: Colors will be from the rainbow (the hue is offset by hueRate each time a color is chosen) */
 void BreathPS::getNextColor() {
     //set the next color depending on the mode
@@ -103,13 +103,14 @@ void BreathPS::getNextColor() {
         case 1:  //Colors will be chosen completely at random
             breathColor = colorUtilsPS::randColor();
             break;
-        case 2:  //Colors will be chosen randomly from the palette (not allowing repeats)
+        case 2:  //Colors will be chosen randomly from the pattern (not allowing repeats)
             //Note that we use the palIndex to keep track of what palette color we're doing
+            //(because patternIndex always advances each cycle)
             //So that we don't choose it twice
             palIndex = patternUtilsPS::getShuffleVal(*pattern, palIndex);
             breathColor = paletteUtilsPS::getPaletteColor(*palette, palIndex);
             break;
-        case 3:  //Colors will be chosen randomly from the palette (allowing repeats)
+        case 3:  //Colors will be chosen randomly from the pattern (allowing repeats)
             patternIndex = random16(pattern->length);
             palIndex = patternUtilsPS::getPatternVal(*pattern, patternIndex);
             breathColor = paletteUtilsPS::getPaletteColor(*palette, palIndex);

@@ -27,7 +27,8 @@ namespace paletteUtilsPS {
     palettePS  //Functions for making quick new palettes
         makeSingleColorPalette(CRGB Color),
         makeRandomPalette(uint8_t length, bool comp = false),
-        makeCompPalette(uint8_t length, uint8_t baseHue, uint8_t sat, uint8_t val);
+        makeCompPalette(uint8_t length, uint8_t baseHue, uint8_t sat, uint8_t val),
+        splitPalettePtr(palettePS &inputPalette, uint8_t startIndex, uint8_t splitLength);
 
     //Pre-allocated variables
     static uint8_t

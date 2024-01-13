@@ -17,7 +17,7 @@ CRGB paletteUtilsPS::getPaletteColor(palettePS &palette, uint8_t index) {
 
 //returns a pointer to the color in the palette array at the specified index (wrapping if needed)
 //useful for background color syncing
-//Note: maybe remove the wrapping?,
+//ie yourEffect.bgColor = paletteUtilsPS::getColorPtr(yourPalette, colorIndex);
 CRGB *paletteUtilsPS::getColorPtr(palettePS &palette, uint8_t index) {
     return &(palette.paletteArr[mod8(index, palette.length)]);
 }
@@ -206,5 +206,33 @@ palettePS paletteUtilsPS::makeCompPalette(uint8_t length, uint8_t baseHue, uint8
         colorOne = colorUtilsPS::getCompColor(baseHue, length, i, sat, val);
         setColor(newPalette, colorOne, i);
     }
+    return newPalette;
+}
+
+/* Returns a palette that is a subsection of the input palette
+The subsection starts at the startIndex of the input palette, and is splitLength colors long.
+So the ending color index is startIndex + (splitLength - 1) (because we include the start index color).
+Note that the output palette re-uses the pointer to the input palette's color array, but offset by the startIndex.
+This means that any changes to the original palette will be reflected in the split palette.
+Which is great for blending palettes, but if you ever change the original palette's color array pointer,
+you must update the split palette (most easily by calling the split function again)!
+    Ex: I have an input palette with 5 colors, I want a sub-palette with the last 3 colors
+        I would do splitPalette( inputPalette, 2, 3 ); to capture the input palette color indexes 2, 3, 4 (ie the last 3 colors)
+    EX 2: I want to capture only the first color in the input palette
+        I would do splitPalette( inputPalette, 0, 1 ); */
+palettePS paletteUtilsPS::splitPalettePtr(palettePS &inputPalette, uint8_t startIndex, uint8_t splitLength){
+    palettePS newPalette;
+
+    //A quick guard to make sure that the split palette doesn't run off the end of the input
+    if( (startIndex + splitLength) > inputPalette.length){
+        splitLength = startIndex + splitLength;
+    }
+
+    //Create the new palette by offsetting the starting index of the input's color array pointer.
+    //Basically telling the new palette to start at startIndex of the input's color array.
+    //ie we're doing colorArray[0 + startIndex]
+    //This works because the arrays in C just point to a block of memory starting with the array's address.
+    newPalette = { inputPalette.paletteArr + startIndex, splitLength };
+
     return newPalette;
 }

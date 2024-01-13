@@ -11,7 +11,7 @@ Similar to the classic breathing/heartbeat effect where segment set slowly fades
 But instead of the whole segment set being one color, a gradient is used from a central point.
 This creates something akin to a robotic glowing eye that fades in and out.
 Other than that, the effect is largely identical to BreathPS.
-With the addition of being able to set the eye's center position and how large it is.
+You can set the eye's center position and how large it is.
 The effect is set to use multiple colors based on a given pattern and palette.
 The effect will cycle through the colors with each "breath"
 There are also a few random color modes and a rainbow mode (more on those below)
@@ -58,8 +58,8 @@ Does not work with color modes from segDrawUtils::setPixelColor().
 randModes:
     0: Colors will be chosen in order from the pattern (not random)
     1: Colors will be chosen completely at random
-    2: Colors will be chosen randomly from the palette (not allowing repeats)
-    3: Colors will be chosen randomly from the palette (allowing repeats)
+    2: Colors will be chosen randomly from the pattern (not allowing repeats)
+    3: Colors will be chosen randomly from the pattern (allowing repeats)
     4: Colors will be from the rainbow (the hue is offset by hueRate each time a color is chosen)
 
 Example calls: 

@@ -7,22 +7,21 @@
 /*
 An effect that colors one segment pixel in after another until all segments in a set are colored. 
 This effect is similar to ColorWipeSLSeg.h, but instead of wiping whole lines or segments, it wipes
-each each segment in order.
+each pixel of each segment in order.
 
 ie for a set with five segments, the first would be wiped one pixel at a time, then the second segment, etc.
-Note that you really need a segment set with multiple segment for this effect to work well.
+Note that you really need a segment set with multiple segments for this effect to work well.
 
 Wipes have a direction, either starting from the first or last segment pixel. This can be set to alternate with each wipe.
 
 Likewise, you can set the wipe to start at either the first or last segment.
-You can's set this to alternate, instead change the order of the segments in the set.
+You can't set this to alternate, instead change the order of the segments in the set.
 
 The effect uses a pattern and palette for colors and various styles to display them:
 Styles:
-    0: The colors alternate with each wipe. Ie if you have 4 segments, each will be a different color from the pattern.
+    0: The colors alternate with each segment. Ie if you have 4 segments, each will be a different color from the pattern.
     1: The colors alternates with each segment pixel.
     2: The colors alternate with each segment line.
-The colors follow the pattern. To change the colors you have to either change the pattern or the palette.
 
 Note that the colors are set based on the number of segments and pixel's wiped, not by using the segment and pixel numbers directly.
 This prevents wipes from being the same for different wipe directions.
@@ -94,7 +93,6 @@ Example calls:
     Will do a color wipe along mainSegment's segments using CRGB::Red as the only color
     The style is 2, each segment line will alternate colors according to the pattern.
     (although this doesn't matter since the color is just red)
-    Alternate is true, so the wipes will alternate wipe directions for each segment.
     Alternate is false, so the wipes will all wipe in the same direction.
     Both the wipe direction and segWipeDir are false.
     So wipes will go from the last to first segment, starting at the end of each segment
@@ -109,7 +107,7 @@ Constructor Inputs:
     alternate -- If true, wipes will alternate directions (ie if one wipe is going forward, the next will reverse)
     wipeDirect -- The direction of the first wipe, true is forward
     segWipeDir -- The order the segments are wiped in, true is first to last
-    Rate -- The update rate of the effect (ms)
+    rate -- The update rate of the effect (ms)
 
 Functions:
     reset() -- Resets the effect vars, restarting the wipes

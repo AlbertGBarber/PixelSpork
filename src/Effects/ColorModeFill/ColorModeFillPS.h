@@ -11,6 +11,7 @@ Useful for drawing simple rainbow shifting effects on the segment set using the 
 or filling in a background before drawing an effect 
 
 Example call: 
+    mainSegments.runOffset = true; //Set the Segment Set to shift its color mode offset over time
     ColorModeFillPS colorModeFill(mainSegments, 7, 70);
     Will fill the segment using color mode 7 every 70ms
 

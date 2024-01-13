@@ -13,25 +13,26 @@ The effect can either be configured to wipe whole segments, or segment lines one
 
 Wipes have a direction. This can be set to alternate with each wipe.
 
-(If you're wipe length is the length of the segment set lines or segments, then you'll just have one wipe)
-
-The effect can also be set to loop, repeating the wipes continuously, with a variety of configuration options.
+The effect can also be set to loop, repeating the wipes continuously, with a variety of loop options. This allows you
+to create a complex set of wipes using just one effect.
 
 The effect uses a pattern and palette for colors and various styles to display them:
 Styles:
     0: The colors alternate with each wipe. Ie if you have 4 wipe sections, each will be a different color from the pattern
     1: The colors alternates with each segment line.
     2: The colors alternate with each segment.
-The colors follow the pattern. To change the colors you have to either change the pattern or the palette.
 
 The effect is compatible with colorModes. They will override the style setting.
 
-Once all the wipes are finished, the "done" flag will be set, and the effect is is over until it is reset.
+Once all the wipes are finished, the "done" flag will be set, and the effect is is over until it is reset or is looped.
+
+You can adjust most of the effect variables (wipeDirect, simult, etc) on the fly. 
+The only restriction are the wipeLength and segMode, which must be set using setWipeLength(), and setSegMode().
 
 SegMode, Wipe Lengths, and Update Rates:
-    segMode configures the effect to wipe whole segments, or segment lines one by one.
+    segMode (bool) configures the effect to wipe whole segments, or segment lines one by one.
     Each segMode has it's own wipeLength (segWipeLen or lineWipeLen).
-    When you first create the effect, depending on the segMode you pass in,
+    When you first create the effect, depending on the segMode you use,
     either segWipeLen or lineWipeLen will be set to wipeLength you pass in.
     The other length will be set to 0 (so that a whole wipe is done).
     When switching segModes, the wipeLength will be set to segWipeLen or lineWipeLen.
@@ -60,7 +61,7 @@ Looping:
     The number of full wipes completed is stored in loopCount. (ie if you have 4 wipes, loopCount will increment every time those 4 wipes are finished)
 
     There are a various of options for configuring how the wipe loops, allowing you to change the wipe direction, 
-    wipe a background color, etc when looping. You can configure these options all at once using setUpLoop().
+    wipe a background color, etc. You can configure these options all at once using setUpLoop().
     Or you can set them individually.
 
     The loop options give you a lot of flexibility in creating different effects, I encourage you to play with them!
@@ -69,8 +70,8 @@ Looping:
 
 The Loop Options: 
     looped -- Sets if the wipes loop or not. Looping wipes automatically restart every time a wipe is finished.
-              The other variables are only relevant if the wipe is looping, because they modify subsequent loops.
-    bgLoopFreq (min 2) -- Sets how often a bgWipe is done. ie 2 will be every other loop, 3, every 3 loops, etc
+              The other loop variables are only relevant if the wipe is looping, because they modify subsequent loops.
+    bgLoopFreq (min 2) -- Sets how often a background wipe (bgWipe) is done. ie 2 will be every other loop, 3, every 3 loops, etc
                           The minimum is 2, because wiping the background every loop (1) isn't useful.
                           Note that if bgLoop is false, no background wipes will be done!
                           I suggest starting with this at 2.
@@ -99,12 +100,6 @@ The Loop Options:
                       Note that altSegModeLoop triggers every loop. 
                       For me, this seemed like the best option rather than tying it to a freq. 
                       It seemed weird to want to switch segModes for multiple loops, you might as well just create two different ColorWipes.   
-                    
-The bgColor is a pointer, so you can bind it to an external color variable.
-By default it is bound to bgColorOrig, which is set to 0 (blank color).
-
-You can adjust most of the effect variables (wipeDirect, simult, etc) on the fly. 
-The only restriction are the wipeLength and segMode, which must be set using setWipeLength(), and setSegMode().
 
 Example calls: 
     ColorWipeSLSeg colorWipeSL(mainSegments, cybPnkPal_PS, 0, 1, false, false, true, false, 140);
@@ -177,7 +172,7 @@ Looping Settings:
     bgAltLoop (default false) -- (see intro looping notes)
 
 Reference Vars:
-    loopCount -- How many full wipe cycles we've done, useful for tracking wipes when looping
+    loopCount -- How many full wipe cycles we've done, useful for tracking wipes when looping.
     wipeLength -- The length of each wipe (set using setWipeLength())
     segMode -- (see segMode notes above) ( set using setSegMode() )
     patOffset -- The current offset of the pattern. Used to shift the pattern colors. Only used when looping.
