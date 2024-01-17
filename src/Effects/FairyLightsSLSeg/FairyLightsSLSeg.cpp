@@ -3,7 +3,7 @@
 //see update() for how the effect works
 
 //palette based constructor
-FairyLightsSLSeg::FairyLightsSLSeg(SegmentSetPS &SegSet, palettePS &Palette, uint8_t NumTwinkles, CRGB BGColor,
+FairyLightsSLSeg::FairyLightsSLSeg(SegmentSetPS &SegSet, palettePS &Palette, uint16_t NumTwinkles, CRGB BGColor,
                                    uint8_t Tmode, uint8_t SegMode, uint16_t Rate)
     : palette(&Palette), numTwinkles(NumTwinkles), tMode(Tmode), segMode(SegMode)  //
 {
@@ -11,7 +11,7 @@ FairyLightsSLSeg::FairyLightsSLSeg(SegmentSetPS &SegSet, palettePS &Palette, uin
 }
 
 //single color constructor
-FairyLightsSLSeg::FairyLightsSLSeg(SegmentSetPS &SegSet, CRGB Color, uint8_t NumTwinkles, CRGB BGColor,
+FairyLightsSLSeg::FairyLightsSLSeg(SegmentSetPS &SegSet, CRGB Color, uint16_t NumTwinkles, CRGB BGColor,
                                    uint8_t Tmode, uint8_t SegMode, uint16_t Rate)
     : numTwinkles(NumTwinkles), tMode(Tmode), segMode(SegMode)  //
 {
@@ -20,7 +20,7 @@ FairyLightsSLSeg::FairyLightsSLSeg(SegmentSetPS &SegSet, CRGB Color, uint8_t Num
 }
 
 //random colors constructor
-FairyLightsSLSeg::FairyLightsSLSeg(SegmentSetPS &SegSet, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode,
+FairyLightsSLSeg::FairyLightsSLSeg(SegmentSetPS &SegSet, uint16_t NumTwinkles, CRGB BGColor, uint8_t Tmode,
                                    uint8_t SegMode, uint16_t Rate)
     : numTwinkles(NumTwinkles), tMode(Tmode), segMode(SegMode)  //
 {
@@ -49,7 +49,7 @@ void FairyLightsSLSeg::init(CRGB BgColor, SegmentSetPS &SegSet, uint16_t Rate) {
 
 //changes the number of twinkles, re-spawns them, and clears out any old twinkles by filling in the background
 //also resets the twinkleSet storage if needed
-void FairyLightsSLSeg::setNumTwinkles(uint8_t newNumTwinkles) {
+void FairyLightsSLSeg::setNumTwinkles(uint16_t newNumTwinkles) {
     numTwinkles = newNumTwinkles;
 
     //must have at least one twinkle
@@ -133,7 +133,7 @@ void FairyLightsSLSeg::update() {
                 modeTwoSet();
                 break;
         }
-        cycleNum = addmod8(cycleNum, 1, numTwinkles);
+        cycleNum = addMod16PS(cycleNum, 1, numTwinkles);
         showCheckPS();
     }
 }
@@ -175,9 +175,25 @@ void FairyLightsSLSeg::spawnTwinkles() {
     }
 }
 
+//prototype code for pre-drawing a full set of twinkles on the first update
+//Not tested, needs firstUpdate flag added to update().
+//Won't work for mode 0 since all the pixels will be immediately turned off.
+//(Which is fine, since that's what that mode does)
+// void FairyLightsSLSeg::preFillTwinkles() {
+//     for( uint8_t i = 0; i < numTwinkles; i++ ) {
+//         //pick a twinkle color, this also gives us the twinkle location info
+//         color = pickColor();
+//         colorSet[i] = color;
+//         drawTwinkle(i, color, colorMode);
+//     } 
+
+//     cycleNum = 0;
+//     turnOff = true;
+// }
+
 //Draws the twinkle, either along the whole segment, segment line, or an individual pixel depending on segMode
 //Inputs are the index of the twinkle array of the twinkle, the twinkle color, and the color mode
-void FairyLightsSLSeg::drawTwinkle(uint8_t twinkleNum, CRGB &tColor, uint8_t cMode) {
+void FairyLightsSLSeg::drawTwinkle(uint16_t twinkleNum, CRGB &tColor, uint8_t cMode) {
     //if in segMode we draw the twinkles along segments, otherwise we draw the along segment lines
     switch( segMode ) {
         case 0:
@@ -215,7 +231,8 @@ void FairyLightsSLSeg::modeZeroSet() {
         if( reDrawAll ) {
             loopStart = 0;
         }
-        for( uint8_t i = loopStart; i <= cycleNum; i++ ) {
+
+        for( uint16_t i = loopStart; i <= cycleNum; i++ ) {
             //pick a twinkle color
             color = pickColor();
             //if we're re-drawing, then we need to get the color from the colorSet
@@ -228,6 +245,7 @@ void FairyLightsSLSeg::modeZeroSet() {
             //draw the twinkle
             drawTwinkle(i, color, colorMode);
         }
+
         //if we've reached the cycle limit, we need to turn off all the twinkles on the next cycle
         //we don't want the turn off step to count as a cycle (since turning on the first twinkle would be skipped)
         //so we decrement the cycleNum
@@ -235,9 +253,10 @@ void FairyLightsSLSeg::modeZeroSet() {
             turnOff = true;
             cycleNum--;
         }
+
     } else {
         //turn off all the twinkles, and make a new twinkle group to turn on
-        for( uint8_t i = 0; i <= cycleLimit; i++ ) {
+        for( uint16_t i = 0; i <= cycleLimit; i++ ) {
             drawTwinkle(i, *bgColor, bgColorMode);
         }
         spawnTwinkles();
@@ -268,12 +287,13 @@ void FairyLightsSLSeg::modeOneSet() {
             loopEnd = cycleLimit;
         }
 
-        for( uint8_t i = loopStart; i <= loopEnd; i++ ) {
+        for( uint16_t i = loopStart; i <= loopEnd; i++ ) {
             color = colorSet[i];  //since we're re-drawing, we get the color from the colorSet
             //draw the twinkle
             drawTwinkle(i, color, colorMode);
         }
     }
+
     if( !turnOff ) {
         //we're turning the twinkles on, so we pick and record a color
         //then set the twinkle
@@ -322,7 +342,7 @@ void FairyLightsSLSeg::modeTwoSet() {
         loopEnd = cycleLimit;
     }
 
-    for( uint8_t i = loopStart; i <= loopEnd; i++ ) {
+    for( uint16_t i = loopStart; i <= loopEnd; i++ ) {
         //pick a twinkle color, this also gives us the twinkle location info
         color = pickColor();
         //if we're re-drawing, then we need to get the color from the colorSet

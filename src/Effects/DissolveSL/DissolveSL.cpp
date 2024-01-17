@@ -170,7 +170,7 @@ void DissolveSL::update() {
         //try to spawn up to maxNumSpawn lines
         //the lines will either be spawned randomly, or in order along the strip
         //depending on if the threshold for setting all has been reached
-        for( uint8_t i = 0; i < maxNumSpawn; i++ ) {
+        for( uint16_t i = 0; i < maxNumSpawn; i++ ) {
             //if we're not passed the threshold for setting all the lines,
             //choose one randomly and try to set it
             if( numSpawned < setAllThreshold ) {

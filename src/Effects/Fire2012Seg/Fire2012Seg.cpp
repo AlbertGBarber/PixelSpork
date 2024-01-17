@@ -82,16 +82,16 @@ void Fire2012Seg::update() {
         prevTime = currentTime;
 
         //For each segment do the following:
-        for( uint16_t j = 0; j < numSegs; j++ ) {
+        for( uint16_t i = 0; i < numSegs; i++ ) {
             //get the length of the segment we're working on
-            segLength = segSet->getTotalSegLength(j);
+            segLength = segSet->getTotalSegLength(i);
 
-            heatSecStart = heatSegStarts[j];  // current segment's start index in the heat array
+            heatSecStart = heatSegStarts[i];  // current segment's start index in the heat array
 
             //Step 1. Cool down every cell a little
-            for( uint16_t i = 0; i < segLength; i++ ) {
+            for( uint16_t j = 0; j < segLength; j++ ) {
 
-                heatIndex = i + heatSecStart;  // adjusted index for heat array
+                heatIndex = j + heatSecStart;  // adjusted index for heat array
                 //subtract a random cooling factor from the current heat (qsub8 prevents running past 0)
                 heat[heatIndex] = qsub8(heat[heatIndex], random8(0, ((cooling * 10) / segLength) + 2));
                 //cooldown = random(0, ((cooling * 10) / segLength) + 2) ;
@@ -126,10 +126,10 @@ void Fire2012Seg::update() {
             }
 
             //Step 4. For each flame, convert heat to palette colors colors and output
-            for( uint16_t i = 0; i < segLength; i++ ) {
-                ledLoc = segDrawUtils::getSegmentPixel(*segSet, j, i);  //the physical location of the led
+            for( uint16_t k = 0; k < segLength; k++ ) {
+                ledLoc = segDrawUtils::getSegmentPixel(*segSet, i, k);  //the physical location of the led
                 colorOut = fire2012SegUtilsPS::getPixelHeatColorPalette(palette, paletteLength, paletteSecLen,
-                                                                        bgColor, heat[i + heatSecStart], blend);
+                                                                        bgColor, heat[k + heatSecStart], blend);
 
                 segDrawUtils::setPixelColor(*segSet, ledLoc, colorOut, 0, 0, 0);
             }

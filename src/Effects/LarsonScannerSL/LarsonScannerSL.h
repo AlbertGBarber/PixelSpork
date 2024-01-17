@@ -78,7 +78,7 @@ Reference Vars:
 class LarsonScannerSL : public EffectBasePS {
     public:
         LarsonScannerSL(SegmentSetPS &SegSet, uint8_t ScanType, CRGB ScanColor, CRGB BgColor,
-                        uint8_t EyeSize, uint8_t TrailLength, uint16_t Rate);
+                        uint16_t EyeSize, uint8_t TrailLength, uint16_t Rate);
 
         ~LarsonScannerSL();
 
@@ -110,7 +110,7 @@ class LarsonScannerSL : public EffectBasePS {
             setColor(CRGB color),
             setScanType(uint8_t newType),
             setTrailLength(uint8_t newTrailLength),
-            setEyeSize(uint8_t newEyeSize),
+            setEyeSize(uint16_t newEyeSize),
             setBounce(bool newBounce),
             update(void);
 

@@ -67,7 +67,7 @@ void Fire2012SL::update() {
         paletteSecLen = 255 / (paletteLength + 1);
 
         //For each segment line do the following:
-        for( uint8_t i = 0; i < numLines; i++ ) {
+        for( uint16_t i = 0; i < numLines; i++ ) {
 
             heatSecStart = i * numSegs;  // current segment line's start index in the heat array
 

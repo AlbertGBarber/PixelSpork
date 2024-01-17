@@ -27,10 +27,10 @@ Due to the way the effect is programmed, if two flies meet each other, by defaul
 You can adjust this behavior by turning on "blend", which will add particle colors together as they pass by each other
 However this does have one draw backs:
 1: For colored backgrounds, the particles colors are added to the background colors.
-  This will in most cases significantly change the particle colors 
+  This will, in most cases significantly change the particle colors 
   For example, blue particles running on a red background will appear purple (blue +  red = purple)
   Overall I do not recommend using blend for colored backgrounds
-2: Using blend on segment sets with lines of un-equal length may look weird, because
+2: Using blend on segment sets with lines of unequal length may look weird, because
   pixels may be added to many times where multiple lines converge/overlap
 
 Note that this effect does require three separate arrays: 
@@ -42,7 +42,7 @@ So watch your memory usage
 Inputs guide:
     To get a good variety of fireflies you want to add a good amount of range for each firefly's settings
     Fireflies rely on the FastLED noise functions for their movement, 
-    They produce a noise output based on a few inputs, however, same inputs => same outputs, 
+    The functions produce a noise output based on a few inputs, however, same inputs => same outputs, 
     so two fireflies with the same settings, we look and move exactly the same
     To prevent this fireflies are always spawned with a set of random values based on a set of range settings
     But using small ranges, will result in similar looking flies.
@@ -57,7 +57,7 @@ Inputs guide:
     There are some other, secondary variables listed in the Other Settings section below,
     but you probably won't need to tweak these initially
 
-    LifeBase is used to set minium limit on all the fireflies life, but you still want to give them time to move
+    LifeBase is used to set minimum limit on all the fireflies life, but you still want to give them time to move
     So lifeBase should probably be 2000+ (2 sec), while the range should be a bit larger than the base ie 3000ish
     A larger life range will help give your fireflies more variation.
 
@@ -125,7 +125,7 @@ Other Settings:
     *bgColor (default bound to bgColorOrig) -- The color of the background, is a pointer so it can be bound to an external variable 
     fadeThresh (default 50) -- The number of steps (out of 255) for the fireflies to fade in or out
                                The fireflies spend 255 steps in total fading in, staying at a peak color, then fading out
-                               The value of fadeThresh reduces how long the they will stay at peak color
+                               The value of `fadeThresh` sets how many steps they spend fading
                                Note that setting it to 255 will only doa fade in, and then the fireflies will disappear instantly
                                128 will cause them to fade in then out with no pause at the peak 
 
@@ -136,16 +136,16 @@ Reference Vars:
 class FirefliesSL : public EffectBasePS {
     public:
         //Constructor for effect with palette
-        FirefliesSL(SegmentSetPS &SegSet, palettePS &Palette, uint8_t MaxNumFireflies, uint8_t SpawnChance,
+        FirefliesSL(SegmentSetPS &SegSet, palettePS &Palette, uint16_t MaxNumFireflies, uint8_t SpawnChance,
                     uint16_t LifeBase, uint16_t LifeRange, uint16_t SpeedBase, uint16_t SpeedRange, uint16_t Rate);
 
         //Constructor for effect with palette of random colors
-        FirefliesSL(SegmentSetPS &SegSet, uint8_t numColors, uint8_t MaxNumFireflies, uint8_t SpawnChance,
+        FirefliesSL(SegmentSetPS &SegSet, uint8_t numColors, uint16_t MaxNumFireflies, uint8_t SpawnChance,
                     uint16_t LifeBase, uint16_t LifeRange, uint16_t SpeedBase, uint16_t SpeedRange, uint16_t Rate);
 
         //constructor for effect with single color
         //!!If using pre-build FastLED colors you need to pass them as CRGB( *color code* )
-        FirefliesSL(SegmentSetPS &SegSet, CRGB Color, uint8_t MaxNumFireflies, uint8_t SpawnChance,
+        FirefliesSL(SegmentSetPS &SegSet, CRGB Color, uint16_t MaxNumFireflies, uint8_t SpawnChance,
                     uint16_t LifeBase, uint16_t LifeRange, uint16_t SpeedBase, uint16_t SpeedRange, uint16_t Rate);
 
         ~FirefliesSL();
@@ -154,10 +154,10 @@ class FirefliesSL : public EffectBasePS {
             spawnChance,
             colorMode = 0,
             bgColorMode = 0,
-            fadeThresh = 50,
-            maxNumFireflies = 0;  //For reference only!, call setupFireflies() to change
+            fadeThresh = 50;
 
         uint16_t
+            maxNumFireflies = 0,  //For reference only!, call setupFireflies() to change
             lifeBase,
             lifeRange,
             speedBase,
@@ -183,7 +183,7 @@ class FirefliesSL : public EffectBasePS {
             particleSetTemp = {nullptr, 0};  //storage for self created particle sets (init to an empty set for safety)
 
         void
-            setupFireflies(uint8_t newMaxNumFireflies),
+            setupFireflies(uint16_t newMaxNumFireflies),
             update(void);
 
     private:
@@ -216,9 +216,9 @@ class FirefliesSL : public EffectBasePS {
             bgCol;
 
         void
-            init(uint8_t maxNumFireflies, SegmentSetPS &SegSet, uint16_t Rate),
+            init(uint16_t maxNumFireflies, SegmentSetPS &SegSet, uint16_t Rate),
             moveParticle(particlePS *particlePtr, uint16_t partNum),
             drawParticlePixel(particlePS *particlePtr, uint16_t partNum),
-            spawnFirefly(uint8_t fireflyNum);
+            spawnFirefly(uint16_t fireflyNum);
 };
 #endif

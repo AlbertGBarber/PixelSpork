@@ -28,8 +28,8 @@ Example call:
 Constructor Inputs:
     color-- The color of the running spots
     bgColor -- The color of the background, the color in between the spots
-    litLength (max 255, min 1) -- The size of the spots
-    spacing (max 255, min 1) -- The size of the space between the spots
+    litLength (min 1) -- The size of the spots
+    spacing (min 1) -- The size of the space between the spots
     rate -- The update rate (ms)
 
 Functions:
@@ -48,16 +48,16 @@ Reference Vars:
 */
 class TheaterChaseSL : public EffectBasePS {
     public:
-        TheaterChaseSL(SegmentSetPS &SegSet, CRGB Color, CRGB BgColor, uint8_t LitLength, uint8_t Spacing,
+        TheaterChaseSL(SegmentSetPS &SegSet, CRGB Color, CRGB BgColor, uint16_t LitLength, uint16_t Spacing,
                        uint16_t Rate);
 
         uint8_t
-            litLength = 1,  //min of 1
-            spacing = 1,    //min of 1
             colorMode = 0,
             bgColorMode = 0;
 
         uint16_t
+            litLength = 1,  //min of 1
+            spacing = 1,    //min of 1
             cycleNum = 0;  //How many update cycles have happened, for reference only
 
         CRGB
@@ -67,8 +67,8 @@ class TheaterChaseSL : public EffectBasePS {
             *bgColor = nullptr;  //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
 
         void
-            setLitLength(uint8_t newLitLength),
-            setSpacing(uint8_t newSpacing),
+            setLitLength(uint16_t newLitLength),
+            setSpacing(uint16_t newSpacing),
             update(void);
 
     private:

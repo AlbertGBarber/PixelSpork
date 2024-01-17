@@ -1,7 +1,7 @@
 #include "ParticlesSL.h"
 
 //constructor for automatically making a particle set according to the passed in options
-ParticlesSL::ParticlesSL(SegmentSetPS &SegSet, palettePS &Palette, CRGB BgColor, uint8_t numParticles, uint8_t direction,
+ParticlesSL::ParticlesSL(SegmentSetPS &SegSet, palettePS &Palette, CRGB BgColor, uint16_t numParticles, uint8_t direction,
                          uint16_t baseSpeed, uint16_t speedRange, uint16_t size, uint16_t sizeRange,
                          uint8_t trailType, uint8_t trailSize, uint8_t trailRange, uint8_t bounce,
                          uint8_t colorIndex, bool randColor)
@@ -135,7 +135,7 @@ void ParticlesSL::update() {
         For the longest segment the full particle will always be drawn (it may be truncated on shorted segments)
         so we know that if the trail pixel has not been over-written, it should not have been over-written on other segments
         In any case, this makes the programming much simpler, saves storage, and seems to work well in practice from what I can tell */
-        for( uint8_t i = 0; i < numParticles; i++ ) {
+        for( uint16_t i = 0; i < numParticles; i++ ) {
             //get the particle from the set, and record some vars locally for ease of access
             particlePtr = particleSet->particleArr[i];
             position = particlePtr->position;    //the current position of the particle
@@ -311,7 +311,7 @@ void ParticlesSL::moveParticle(particlePS *particlePtr) {
 
 //writes out the trail color according to the pixel number in the trail (ie 0 - trailSize)
 //the trail is blended towards background color according to the trailSize
-void ParticlesSL::setTrailColor(uint16_t trailLineNum, uint8_t segNum, uint8_t trailPixelNum) {
+void ParticlesSL::setTrailColor(uint16_t trailLineNum, uint16_t segNum, uint8_t trailPixelNum) {
     //get the physical pixel location, it's color, and the target background color
     pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, segNum, trailLineNum);
 

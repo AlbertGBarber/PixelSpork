@@ -224,12 +224,12 @@ class ScannerSL : public EffectBasePS {
             directStep;
 
         uint8_t
-            numParticles,
             sizeAdj,
             dimRatio,
             nextPalletIndex;
 
         uint16_t
+            numParticles,
             position,
             patternIndexCount = 0,
             maxPosition,
@@ -261,7 +261,7 @@ class ScannerSL : public EffectBasePS {
             init(CRGB BgColor, SegmentSetPS &SegSet, uint16_t Rate),
             moveParticle(particlePS *particlePtr),
             setPartColor(particlePS *particlePtr),
-            setTrailColor(uint16_t trailLineNum, uint8_t segNum, uint8_t trailPixelNum);
+            setTrailColor(uint16_t trailLineNum, uint16_t segNum, uint8_t trailPixelNum);
 };
 
 #endif

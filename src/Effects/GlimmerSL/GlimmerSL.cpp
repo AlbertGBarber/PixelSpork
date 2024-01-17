@@ -263,7 +263,7 @@ void GlimmerSL::update() {
 
 //Returns the cross faded output color depending on if we're fading in or out
 //NOTE that the color fading vars are set in the draw functions
-CRGB GlimmerSL::getFadeColor(uint8_t glimNum) {
+CRGB GlimmerSL::getFadeColor(uint16_t glimNum) {
     //determine final transition color for the fade
     //ie how far towards the glimmer color we're going
     fadeColor = colorUtilsPS::getCrossFadeColor(startColor, targetColor, totFadeSteps[glimNum], fadeMax);

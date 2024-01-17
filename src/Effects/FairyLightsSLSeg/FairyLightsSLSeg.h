@@ -1,19 +1,27 @@
 #ifndef FairyLightsSLSeg_h
 #define FairyLightsSLSeg_h
 
+
+
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
 
 /* 
-Colors a number of segment lines (or segments) on at a time, turning them off depending on the mode chosen
-Meant to be similar to classic twinkling fairy lights
-The color of the lines (twinkles) be set to a single color, chosen randomly, of picked from a palette 
+Colors a number of segment lines (or segments) one at a time, turning them off in sequence, depending on the mode chosen
+Meant to be similar to some classic fairy light twinkle modes.
+The color of the lines (twinkles) can be set to a single color, chosen randomly, of picked from a palette 
 Just run an example and you'll see what I mean
 
 tModes:
-    Mode 0: Turns one twinkle on after another and then resets them all at once
-    Mode 1: Turns on each twinkle one at a time, then off one at a time
-    Mode 2: Each cycle, a new twinkle is turned on while an old is turned off (first on first off)
+    tMode sets what order the twinkles will be drawn and turned off.
+    0: Turns one twinkle on after another and then resets them all at once
+    1: Turns on each twinkle one at a time, then off one at a time
+    2: Each cycle, a new twinkle is turned on while an old is turned off (first on first off)
+
+randModes:
+    randMode sets how each twinkle color will be set.
+    0: Picks colors from the palette
+    1: Picks colors at random
 
 segMode:
     The effect is adapted to work on segment lines, whole segments for 2D use, or on single pixels (1D)
@@ -22,14 +30,22 @@ segMode:
         1: Twinkles will be drawn on whole segments
         2: Twinkles will be drawn on individual pixels
 
-For segment sets with different segment lengths you may need to set fillBG to true
-otherwise you might end up with artifacts where multiple lines cross depending on the tMode
+`segmode` can be changed during runtime using `setSegMode( uint8_t newSegMode )`;
+
+When drawing on segment lines (`segMode` 0), for segment sets with varying segment lengths, 
+you may see "artifacts" where twinkles are not fully turned off. 
+This happens because of overlapping segment lines. 
+Thankfully you can fix this by setting `fillBG` to true, which forces all the twinkles to be re-drawn each update cycle.
+Note that if you turn `fillBG` off, make sure to also turn off `reDrawAll` (see Other Settings below for more info).
 
 This effect is fully compatible with color modes, and the bgColor is a pointer, so you can bind it
 to an external color variable
 
-Requires an uint16_t array and CRGB array of length NumTwinkles to work, make sure you have the memory for them!
-If you turn fillBG on the off, make sure to also turn off reDrawAll
+
+Requires an uint16_t array and CRGB array of length `numTwinkles` to work, make sure you have the memory for them. 
+These are allocated dynamically, so, to avoid memory fragmentation, when you create the effect, 
+you should set `numTwinkles` to the maximum value you expect to use. 
+See the Effects Advanced wiki page for more on memory management. 
 
 Example calls: 
     FairyLightsSLSeg fairyLights(mainSegments, palette, 5, 0, 0, 1, 150);
@@ -48,16 +64,18 @@ Example calls:
 
 Constructor Inputs:
     palette(optional, see constructors) -- the palette from which colors will be chosen randomly
-    color(optional, see constructors) -- the color that the randomly chosen twinkles will be set to
-    numTwinkles -- The amount of random twinkles chosen for twinkling
+    color(optional, see constructors) -- For the single color constructor, sets the color that the twinkles will be. 
+                                         Note that the effect will create a local palette, `paletteTemp` for the color. 
+    numTwinkles -- The number of random twinkles chosen for twinkling. Can be later adjusted by calling `setNumTwinkles()`.
     bgColor -- The color of the background, this is what twinkles will fade to and from
-    tMode -- The twinkling mode for the effect (see above for descriptions)
+    tMode -- The twinkling mode for the effect (see intro for notes)
     segMode -- Sets if twinkles will be drawn on segment lines, whole segments or individual pixels
                (See segMode notes above)
     rate -- The update rate (ms)
 
 Functions:
-    setSingleColor(Color) -- Sets the effect to use a single color for the twinkles, will restart the effect
+    setSingleColor(Color) -- Sets the effect to use a single color for the twinkles, will restart the effect. 
+                             Uses the local palette, paletteTemp for the color.
     reset() -- Resets the startup variables, you probably don't need to ever call this
     setNumTwinkles(newNumTwinkles) -- Changes the number of twinkles, re-spawns them, and clears out any old twinkles by filling in the background
     setSegMode(newSegMode) -- Sets if twinkles will be drawn on segment lines, whole segments or individual pixels
@@ -68,34 +86,32 @@ Functions:
 Other Settings:
     colorMode (default 0) -- sets the color mode for the random twinkles (see segDrawUtils::setPixelColor)
     bgColorMode (default 0) -- sets the color mode for the background (see segDrawUtils::setPixelColor)
-    randMode (default 0) -- sets how colors will be picked
-                           0: Picks colors from the palette
-                           1: Picks colors at random
+    randMode (default 0) -- sets how colors will be picked (See notes in intro)
     fillBG (default false) -- sets the background to be redrawn every cycle, useful for bgColorModes that are dynamic
-    reDrawAll (default false) -- Will re-draw all the twinkles each cycle, is slower than default,
-                                 but you need this if you want change the number of twinkles during runtime
-                                (is set true if fillBG is true)
-
-Flags:
-    turnOff -- Tracks if we're turning the twinkles on or off, depending on the mode 
+    reDrawAll (default false) -- Will re-draw all the twinkles each cycle, but does not re-draw the whole background.
+                                 You need this if you want change the number of twinkles during runtime.
+                                 It is automatically set true if `fillBG` is true.
 
 Reference Vars:
     segMode -- (see constructor notes above) set using setSegMode()
     numTwinkles -- The amount of random twinkles chosen for twinkling, set using setNumTwinkles()
     cycleNum -- How many twinkles have been drawn (resets once numTwinkles updates have been done)
+
+Flags:
+    turnOff -- Tracks if we're turning the twinkles on or off, depending on the tmode. (true is turning off)
 */
 class FairyLightsSLSeg : public EffectBasePS {
     public:
         //Palette based constructor
-        FairyLightsSLSeg(SegmentSetPS &SegSet, palettePS &Palette, uint8_t NumTwinkles, CRGB BGColor,
+        FairyLightsSLSeg(SegmentSetPS &SegSet, palettePS &Palette, uint16_t NumTwinkles, CRGB BGColor,
                          uint8_t Tmode, uint8_t SegMode, uint16_t Rate);
 
         //Single color constructor
-        FairyLightsSLSeg(SegmentSetPS &SegSet, CRGB Color, uint8_t NumTwinkles, CRGB BGColor,
+        FairyLightsSLSeg(SegmentSetPS &SegSet, CRGB Color, uint16_t NumTwinkles, CRGB BGColor,
                          uint8_t Tmode, uint8_t SegMode, uint16_t Rate);
 
         //Random colors constructor
-        FairyLightsSLSeg(SegmentSetPS &SegSet, uint8_t NumTwinkles, CRGB BGColor, uint8_t Tmode,
+        FairyLightsSLSeg(SegmentSetPS &SegSet, uint16_t NumTwinkles, CRGB BGColor, uint8_t Tmode,
                          uint8_t SegMode, uint16_t Rate);
 
         //destructor
@@ -104,13 +120,13 @@ class FairyLightsSLSeg : public EffectBasePS {
         uint8_t
             segMode,  //for reference, use setSegMode() to set
             randMode = 0,
-            cycleNum = 0,  //for reference, how many twinkles have been drawn (resets once numTwinkles updates have been done)
-            numTwinkles,   //for reference only, set using setNumTwinkles()
             tMode,
             colorMode = 0,
             bgColorMode = 0;
 
         uint16_t
+            cycleNum = 0,  //for reference, how many twinkles have been drawn (resets once numTwinkles updates have been done)
+            numTwinkles,   //for reference only, set using setNumTwinkles()
             *twinkleSet = nullptr;
 
         CRGB
@@ -129,7 +145,7 @@ class FairyLightsSLSeg : public EffectBasePS {
 
         void
             setSingleColor(CRGB Color),
-            setNumTwinkles(uint8_t newNumTwinkles),
+            setNumTwinkles(uint16_t newNumTwinkles),
             setSegMode(uint8_t newSegMode),
             spawnTwinkles(),
             update(void);
@@ -140,13 +156,13 @@ class FairyLightsSLSeg : public EffectBasePS {
             prevTime = 0;
 
         uint8_t
-            maxNumTwinkles = 0,  //used for tracking the memory size of the twinkle arrays
-            paletteLength,
-            cycleLimit,
-            loopStart,
-            loopEnd;
+            paletteLength;
 
         uint16_t
+            cycleLimit,
+            maxNumTwinkles = 0,  //used for tracking the memory size of the twinkle arrays
+            loopStart,
+            loopEnd,
             twinkleRange;
 
         CRGB
@@ -158,7 +174,7 @@ class FairyLightsSLSeg : public EffectBasePS {
             modeOneSet(),
             modeTwoSet(),
             init(CRGB BgColor, SegmentSetPS &SegSet, uint16_t Rate),
-            drawTwinkle(uint8_t twinkleNum, CRGB &tColor, uint8_t cMode);
+            drawTwinkle(uint16_t twinkleNum, CRGB &tColor, uint8_t cMode);
 };
 
 #endif

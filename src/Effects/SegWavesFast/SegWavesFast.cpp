@@ -9,8 +9,8 @@ SegWavesFast::SegWavesFast(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &
 }
 
 //constructor for building the wave pattern from the passed in pattern and the palette, using the passed in colorLength and spacing
-SegWavesFast::SegWavesFast(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t WaveThickness,
-                           uint8_t Spacing, CRGB BgColor, bool Direct, uint16_t Rate)
+SegWavesFast::SegWavesFast(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, uint16_t WaveThickness,
+                           uint16_t Spacing, CRGB BgColor, bool Direct, uint16_t Rate)
     : palette(&Palette), direct(Direct)  //
 {
     init(BgColor, SegSet, Rate);
@@ -23,7 +23,7 @@ SegWavesFast::SegWavesFast(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &
 }
 
 //constructor for building a wave using all the colors in the passed in palette, using the colorLength and spacing for each color
-SegWavesFast::SegWavesFast(SegmentSetPS &SegSet, palettePS &Palette, uint8_t WaveThickness, uint8_t Spacing,
+SegWavesFast::SegWavesFast(SegmentSetPS &SegSet, palettePS &Palette, uint16_t WaveThickness, uint16_t Spacing,
                            CRGB BgColor, bool Direct, uint16_t Rate)
     : palette(&Palette), direct(Direct)  //
 {
@@ -37,7 +37,7 @@ SegWavesFast::SegWavesFast(SegmentSetPS &SegSet, palettePS &Palette, uint8_t Wav
 }
 
 //constructor for doing a single colored wave, using colorLength and spacing
-SegWavesFast::SegWavesFast(SegmentSetPS &SegSet, CRGB Color, uint8_t WaveThickness, uint8_t Spacing, CRGB BgColor,
+SegWavesFast::SegWavesFast(SegmentSetPS &SegSet, CRGB Color, uint16_t WaveThickness, uint16_t Spacing, CRGB BgColor,
                            bool Direct, uint16_t Rate)
     : direct(Direct)  //
 {
@@ -86,7 +86,7 @@ void SegWavesFast::makeSingleWave() {
 //then sets this pattern to be the wave pattern
 //ex : inputPattern is {1, 2, 4} with color length 2, and 1 spacing
 //the wave pattern would be: {1, 1, 255, 2, 2, 255, 4, 4, 255}
-void SegWavesFast::setPatternAsPattern(patternPS &inputPattern, uint8_t waveThickness, uint8_t spacing) {
+void SegWavesFast::setPatternAsPattern(patternPS &inputPattern, uint16_t waveThickness, uint16_t spacing) {
     generalUtilsPS::setPatternAsPattern(patternTemp, inputPattern, waveThickness, spacing);
     pattern = &patternTemp;
 }
@@ -95,7 +95,7 @@ void SegWavesFast::setPatternAsPattern(patternPS &inputPattern, uint8_t waveThic
 //using the passed in waveThickness and spacing
 //ex: for palette of length 3, and a waveThickness of 2, and spacing of 1
 //the final wave pattern would be : {0, 0, 255, 1, 1, 255, 2, 2, 255}
-void SegWavesFast::setPaletteAsPattern(uint8_t waveThickness, uint8_t spacing) {
+void SegWavesFast::setPaletteAsPattern(uint16_t waveThickness, uint16_t spacing) {
     generalUtilsPS::setPaletteAsPattern(patternTemp, *palette, waveThickness, spacing);
     pattern = &patternTemp;
 }

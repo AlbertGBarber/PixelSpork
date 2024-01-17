@@ -48,6 +48,9 @@ if you have a lot of colors, with long streamers, your patterns may be quite lar
 so watch your memory usage. Likewise, if you re-size the waves, the pattern may also be dynamically re-sized.
 (see alwaysResizeObj_PS in Include_Lists -> GlobalVars, and the Effects Advanced Wiki Page -> Managing Memory Fragmentation)
 
+Also, remember that the pattern length is limited to 65,025 (uint16_t max), 
+so make sure your (colorLength + spacing) * <num palette colors> is less than the limit.
+
 Example calls: 
     uint8_t pattern_arr = {0, 255, 255, 255, 1, 1, 255, 255};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
@@ -124,15 +127,15 @@ class StreamerFastSL : public EffectBasePS {
         StreamerFastSL(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint16_t Rate);
 
         //constructor for building the streamer pattern from the passed in pattern and the palette, using the passed in colorLength and spacing
-        StreamerFastSL(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t ColorLength,
-                       uint8_t Spacing, CRGB BgColor, uint16_t Rate);
+        StreamerFastSL(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, uint16_t ColorLength,
+                       uint16_t Spacing, CRGB BgColor, uint16_t Rate);
 
         //constructor for building a streamer using all the colors in the passed in palette, using the colorLength and spacing for each color
-        StreamerFastSL(SegmentSetPS &SegSet, palettePS &Palette, uint8_t ColorLength, uint8_t Spacing,
+        StreamerFastSL(SegmentSetPS &SegSet, palettePS &Palette, uint16_t ColorLength, uint16_t Spacing,
                        CRGB BgColor, uint16_t Rate);
 
         //constructor for doing a single colored streamer, using colorLength and spacing
-        StreamerFastSL(SegmentSetPS &SegSet, CRGB Color, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor,
+        StreamerFastSL(SegmentSetPS &SegSet, CRGB Color, uint16_t ColorLength, uint16_t Spacing, CRGB BgColor,
                        uint16_t Rate);
 
         ~StreamerFastSL();
@@ -159,8 +162,8 @@ class StreamerFastSL : public EffectBasePS {
             paletteTemp = {nullptr, 0};  //Must init structs w/ pointers set to null for safety
 
         void
-            setPatternAsPattern(patternPS &inputPattern, uint8_t colorLength, uint8_t spacing),
-            setPaletteAsPattern(uint8_t colorLength, uint8_t spacing),
+            setPatternAsPattern(patternPS &inputPattern, uint16_t colorLength, uint16_t spacing),
+            setPaletteAsPattern(uint16_t colorLength, uint16_t spacing),
             reset(),
             update(void);
 

@@ -138,7 +138,7 @@ void RainSeg::setupDrops(uint8_t newMaxNumDrops) {
 //For particles with no or trailing trails the spawn position is 0
 //For particles with leading or double trails spawn position is offset by the trail's size
 //(we set the spawn position in the "phantom zone", see update() comments)
-void RainSeg::setDropSpawnPos(particlePS *particlePtr, uint8_t segNum) {
+void RainSeg::setDropSpawnPos(particlePS *particlePtr, uint16_t segNum) {
     partTrailType = particlePtr->trailType;
     sectionEnd = segSet->getTotalSegLength(segNum);
     partTrailSize = particlePtr->trailSize;
@@ -402,7 +402,7 @@ void RainSeg::moveParticle(particlePS *particlePtr) {
 //a trail pixel is indicated by setting bodyPixel to false
 //the trail is blended towards background color according to the trailSize and the trailPixelNum
 //note that colorOut is the palette color of the pixel fetched as part of the update function
-void RainSeg::drawParticlePixel(uint16_t trailLedLocation, uint8_t trailPixelNum, uint8_t trailSize, uint8_t segNum, bool bodyPixel) {
+void RainSeg::drawParticlePixel(uint16_t trailLedLocation, uint8_t trailPixelNum, uint8_t trailSize, uint16_t segNum, bool bodyPixel) {
     //get the physical pixel location and color
     pixelPosTemp = segDrawUtils::getSegmentPixel(*segSet, segNum, trailLedLocation);
     lineNum = segDrawUtils::getLineNumFromPixelNum(*segSet, trailLedLocation, segNum);
@@ -447,7 +447,7 @@ uint16_t RainSeg::getTrailLedLoc(bool trailDirect, uint8_t trailPixelNum, uint16
 //spawns a particle by taking an inactive particle and resetting its position to 0
 //and randomizing its properties
 //also draws the first step of the particle
-void RainSeg::spawnParticle(uint8_t particleIndex, uint8_t segNum) {
+void RainSeg::spawnParticle(uint8_t particleIndex, uint16_t segNum) {
     //set the particle to active
     partActive[particleIndex] = true;
     //randomize the particle properties

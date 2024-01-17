@@ -2,6 +2,7 @@
 #define particlePS_h
 
 #include "FastLED.h"
+#include "MathUtils/mathUtilsPS.h"
 
 #if ARDUINO >= 100
     #include "Arduino.h"
@@ -64,18 +65,18 @@ struct particlePS {
 //    //It should always be the same as the actual size of the array.
 struct particleSetPS {
     particlePS **particleArr;  //pointer to an array of particle pointers
-    uint8_t length;            //the size of the particle array (num of particles)
+    uint16_t length;            //the size of the particle array (num of particles)
 
-    uint8_t maxLength;  //the maximum length of the particle array set (used for memory management)
+    uint16_t maxLength;  //the maximum length of the particle array set (used for memory management)
 
     //returns the pointer to a particle at the specified index
-    particlePS *getParticle(uint8_t index) {
-        return particleArr[mod8(index, length)];
+    particlePS *getParticle(uint16_t index) {
+        return particleArr[mod16PS(index, length)];
     };
 
     //sets particle in the array to the passed in particle at the specified index
-    void setParticle(particlePS *particle, uint8_t index) {
-            particleArr[mod8(index, length)] = particle;
+    void setParticle(particlePS *particle, uint16_t index) {
+            particleArr[mod16PS(index, length)] = particle;
     };
 };
 

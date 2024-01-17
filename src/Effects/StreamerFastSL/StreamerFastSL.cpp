@@ -9,8 +9,8 @@ StreamerFastSL::StreamerFastSL(SegmentSetPS &SegSet, patternPS &Pattern, palette
 }
 
 //constructor for building the streamer pattern from the passed in pattern and the palette, using the passed in colorLength and spacing
-StreamerFastSL::StreamerFastSL(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t ColorLength,
-                               uint8_t Spacing, CRGB BgColor, uint16_t Rate)
+StreamerFastSL::StreamerFastSL(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, uint16_t ColorLength,
+                               uint16_t Spacing, CRGB BgColor, uint16_t Rate)
     : palette(&Palette)  //
 {
     setPatternAsPattern(Pattern, ColorLength, Spacing);
@@ -18,7 +18,7 @@ StreamerFastSL::StreamerFastSL(SegmentSetPS &SegSet, patternPS &Pattern, palette
 }
 
 //constructor for building a streamer using all the colors in the passed in palette, using the colorLength and spacing for each color
-StreamerFastSL::StreamerFastSL(SegmentSetPS &SegSet, palettePS &Palette, uint8_t ColorLength, uint8_t Spacing,
+StreamerFastSL::StreamerFastSL(SegmentSetPS &SegSet, palettePS &Palette, uint16_t ColorLength, uint16_t Spacing,
                                CRGB BgColor, uint16_t Rate)
     : palette(&Palette)  //
 {
@@ -27,7 +27,7 @@ StreamerFastSL::StreamerFastSL(SegmentSetPS &SegSet, palettePS &Palette, uint8_t
 }
 
 //constructor for doing a single colored streamer, using colorLength and spacing
-StreamerFastSL::StreamerFastSL(SegmentSetPS &SegSet, CRGB Color, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor,
+StreamerFastSL::StreamerFastSL(SegmentSetPS &SegSet, CRGB Color, uint16_t ColorLength, uint16_t Spacing, CRGB BgColor,
                                uint16_t Rate)  //
 {
     paletteTemp = paletteUtilsPS::makeSingleColorPalette(Color);
@@ -46,7 +46,7 @@ StreamerFastSL::~StreamerFastSL() {
 //then sets this pattern to be the streamer pattern
 //ex : inputPattern is {1, 2, 4} with color length 2, and 1 spacing
 //the streamer pattern would be: {1, 1, 255, 2, 2, 255, 4, 4, 255}
-void StreamerFastSL::setPatternAsPattern(patternPS &inputPattern, uint8_t colorLength, uint8_t spacing) {
+void StreamerFastSL::setPatternAsPattern(patternPS &inputPattern, uint16_t colorLength, uint16_t spacing) {
     generalUtilsPS::setPatternAsPattern(patternTemp, inputPattern, colorLength, spacing);
     pattern = &patternTemp;
 }
@@ -55,7 +55,7 @@ void StreamerFastSL::setPatternAsPattern(patternPS &inputPattern, uint8_t colorL
 //using the passed in colorLength and spacing
 //ex: for palette of length 3, and a colorLength of 2, and spacing of 1
 //the final streamer pattern would be : {0, 0, 255, 1, 1, 255, 2, 2, 255}
-void StreamerFastSL::setPaletteAsPattern(uint8_t colorLength, uint8_t spacing) {
+void StreamerFastSL::setPaletteAsPattern(uint16_t colorLength, uint16_t spacing) {
     generalUtilsPS::setPaletteAsPattern(patternTemp, *palette, colorLength, spacing);
     pattern = &patternTemp;
 }

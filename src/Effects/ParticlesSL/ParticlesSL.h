@@ -171,7 +171,7 @@ Notes:
 class ParticlesSL : public EffectBasePS {
     public:
         //Constructor for having the effect generate a set of particles
-        ParticlesSL(SegmentSetPS &SegSet, palettePS &Palette, CRGB BgColor, uint8_t numParticles, uint8_t direction,
+        ParticlesSL(SegmentSetPS &SegSet, palettePS &Palette, CRGB BgColor, uint16_t numParticles, uint8_t direction,
                     uint16_t baseSpeed, uint16_t speedRange, uint16_t size, uint16_t sizeRange, uint8_t trailType,
                     uint8_t trailSize, uint8_t trailRange, uint8_t bounce, uint8_t colorIndex, bool randColor);
 
@@ -220,12 +220,12 @@ class ParticlesSL : public EffectBasePS {
 
         uint8_t
             trailType,
-            numParticles,
             trailSize,
             sizeAdj,
             dimRatio;
 
         uint16_t
+            numParticles,
             speed,
             updateRate = 0,  //initialized to 0 to ensure an initial update
             position,
@@ -255,7 +255,7 @@ class ParticlesSL : public EffectBasePS {
         void
             init(CRGB BgColor, SegmentSetPS &SegSet),
             moveParticle(particlePS *particlePtr),
-            setTrailColor(uint16_t trailLineNum, uint8_t segNum, uint8_t trailPixelNum);
+            setTrailColor(uint16_t trailLineNum, uint16_t segNum, uint8_t trailPixelNum);
 };
 
 #endif

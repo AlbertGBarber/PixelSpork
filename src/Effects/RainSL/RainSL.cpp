@@ -122,7 +122,7 @@ void RainSL::setupDrops(uint8_t newMaxNumDrops) {
 
     //set all the particles to inactive
     //and set their spawn positions
-    for( uint8_t i = 0; i < numLines; i++ ) {
+    for( uint16_t i = 0; i < numLines; i++ ) {
         for( uint8_t j = 0; j < maxNumDrops; j++ ) {
             particleIndex = i * maxNumDrops + j;
             partActive[particleIndex] = false;
@@ -232,7 +232,7 @@ void RainSL::update() {
             If it's spawned, set it to active and its position to zero
             and randomize it properties (speed, size, etc)
             the draw the particle head in the 0th position */
-        for( uint8_t i = 0; i < numLines; i++ ) {
+        for( uint16_t i = 0; i < numLines; i++ ) {
             //reset the spawnOkTest for each segment
             spawnOkTest = true;
             for( uint8_t j = 0; j < maxNumDrops; j++ ) {
@@ -405,7 +405,7 @@ void RainSL::moveParticle(particlePS *particlePtr) {
 //a trail pixel is indicated by setting bodyPixel to false
 //the trail is blended towards background color according to the trailSize and the trailPixelNum
 //note that colorOut is the palette color of the pixel fetched as part of the update function
-void RainSL::drawParticlePixel(uint16_t trailLedLocation, uint8_t trailPixelNum, uint8_t trailSize, uint8_t lineNum, bool bodyPixel) {
+void RainSL::drawParticlePixel(uint16_t trailLedLocation, uint8_t trailPixelNum, uint8_t trailSize, uint16_t lineNum, bool bodyPixel) {
     //get the physical pixel location and color
     pixelPosTemp = getParticlePixelLoc(trailLedLocation, lineNum);
     colorTemp = segDrawUtils::getPixelColor(*segSet, pixelPosTemp, colorOut, colorMode, trailLedLocation, lineNum);
@@ -431,7 +431,7 @@ void RainSL::drawParticlePixel(uint16_t trailLedLocation, uint8_t trailPixelNum,
 //ie you want to know the pixel location for the pixel on segment 1 with line number 5
 //also accounts for the direction of the effect and returns a reversed location if the direction is false
 //NOTE: do not pass in a trailLedLocation that is greater than the number of segments
-uint16_t RainSL::getParticlePixelLoc(uint16_t trailLedLocation, uint8_t lineNum) {
+uint16_t RainSL::getParticlePixelLoc(uint16_t trailLedLocation, uint16_t lineNum) {
 
     //reverse the location if the direction is reversed
     if( !direct ) {
@@ -466,7 +466,7 @@ uint16_t RainSL::getTrailLedLoc(bool trailDirect, uint8_t trailPixelNum, uint16_
 //spawns a particle by taking an inactive particle and resetting its position to 0
 //and randomizing its properties
 //also draws the first step of the particle
-void RainSL::spawnParticle(uint8_t particleIndex, uint8_t lineNum) {
+void RainSL::spawnParticle(uint8_t particleIndex, uint16_t lineNum) {
     //set the particle to active
     partActive[particleIndex] = true;
     //randomize the particle properties

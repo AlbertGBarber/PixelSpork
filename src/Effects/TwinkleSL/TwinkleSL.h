@@ -19,6 +19,9 @@ to an external color variable
 
 Note that you cannot change most of the effect variables on the fly without resetting the effect.
 
+Also note that the maximum sum of the fade in and out steps is 255. So you can have 128 fade in and out steps,
+254 fade in steps and 1 fade out, etc.
+
 Example call: 
     TwinkleSL twinkle(mainSegments, CRGB::Red, CRGB::Blue, 2, 4, 4, 70);
     Will choose 2 lines each cycle to fade to/from red each cycle, using a blue background, 

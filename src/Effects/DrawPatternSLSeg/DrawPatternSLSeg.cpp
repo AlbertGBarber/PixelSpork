@@ -2,7 +2,7 @@
 
 //Constructor for using the passed in pattern and palette
 DrawPatternSLSeg::DrawPatternSLSeg(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor,
-                             uint8_t SegMode, uint16_t Rate)
+                                   uint8_t SegMode, uint16_t Rate)
     : pattern(&Pattern), palette(&Palette), segMode(SegMode)  //
 {
     init(BgColor, SegSet, Rate);
@@ -10,8 +10,8 @@ DrawPatternSLSeg::DrawPatternSLSeg(SegmentSetPS &SegSet, patternPS &Pattern, pal
 
 //Constructor for building the pattern from the passed in pattern and the palette,
 //using the passed in colorLength and spacing
-DrawPatternSLSeg::DrawPatternSLSeg(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t ColorLength,
-                             uint8_t Spacing, CRGB BgColor, uint8_t SegMode, uint16_t Rate)
+DrawPatternSLSeg::DrawPatternSLSeg(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, uint16_t ColorLength,
+                                   uint16_t Spacing, CRGB BgColor, uint8_t SegMode, uint16_t Rate)
     : palette(&Palette), segMode(SegMode)  //
 {
     init(BgColor, SegSet, Rate);
@@ -20,8 +20,8 @@ DrawPatternSLSeg::DrawPatternSLSeg(SegmentSetPS &SegSet, patternPS &Pattern, pal
 
 //Constructor for building the pattern using all the colors in the passed in palette,
 //using the colorLength and spacing for each color
-DrawPatternSLSeg::DrawPatternSLSeg(SegmentSetPS &SegSet, palettePS &Palette, uint8_t ColorLength, uint8_t Spacing,
-                             CRGB BgColor, uint8_t SegMode, uint16_t Rate)
+DrawPatternSLSeg::DrawPatternSLSeg(SegmentSetPS &SegSet, palettePS &Palette, uint16_t ColorLength, uint16_t Spacing,
+                                   CRGB BgColor, uint8_t SegMode, uint16_t Rate)
     : palette(&Palette), segMode(SegMode)  //
 {
     setPaletteAsPattern(ColorLength, Spacing);
@@ -29,8 +29,8 @@ DrawPatternSLSeg::DrawPatternSLSeg(SegmentSetPS &SegSet, palettePS &Palette, uin
 }
 
 //Constructor for doing a single colored pattern, using colorLength and spacing
-DrawPatternSLSeg::DrawPatternSLSeg(SegmentSetPS &SegSet, CRGB Color, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor,
-                             uint8_t SegMode, uint16_t Rate)
+DrawPatternSLSeg::DrawPatternSLSeg(SegmentSetPS &SegSet, CRGB Color, uint16_t ColorLength, uint16_t Spacing, CRGB BgColor,
+                                   uint8_t SegMode, uint16_t Rate)
     : segMode(SegMode)  //
 {
     paletteTemp = paletteUtilsPS::makeSingleColorPalette(Color);
@@ -60,7 +60,7 @@ void DrawPatternSLSeg::init(CRGB BgColor, SegmentSetPS &SegSet, uint16_t Rate) {
 //ex : inputPattern is {1, 2, 4} with color length 2, and 1 spacing
 //the streamer pattern would be: {1, 1, 255, 2, 2, 255, 4, 4, 255}
 //(255 will be set to the background color)
-void DrawPatternSLSeg::setPatternAsPattern(patternPS &inputPattern, uint8_t colorLength, uint8_t spacing) {
+void DrawPatternSLSeg::setPatternAsPattern(patternPS &inputPattern, uint16_t colorLength, uint16_t spacing) {
     generalUtilsPS::setPatternAsPattern(patternTemp, inputPattern, colorLength, spacing);
     pattern = &patternTemp;
 }
@@ -69,7 +69,7 @@ void DrawPatternSLSeg::setPatternAsPattern(patternPS &inputPattern, uint8_t colo
 //using the passed in colorLength and spacing
 //ex: for palette of length 3, and a colorLength of 2, and spacing of 1
 //the final streamer pattern would be : {0, 0, 255, 1, 1, 255, 2, 2, 255}
-void DrawPatternSLSeg::setPaletteAsPattern(uint8_t colorLength, uint8_t spacing) {
+void DrawPatternSLSeg::setPaletteAsPattern(uint16_t colorLength, uint16_t spacing) {
     generalUtilsPS::setPaletteAsPattern(patternTemp, *palette, colorLength, spacing);
     pattern = &patternTemp;
 }

@@ -53,6 +53,9 @@ so watch your memory usage. Likewise, if you re-size the waves, the pattern may 
 
 Likewise, the effect needs to store a CRGB array of size numSegs + 1 for random modes.
 
+Also, remember that the pattern length is limited to 65,025 (uint16_t max), 
+so make sure your (waveLength + spacing) * <num palette colors> is less than the limit.
+
 This effect is fully compatible with color modes, but to help make the effect faster it's only
 compatible with modes 2, 4, 5, 7, 9, and 10. In random modes, the colors do not change once the enter the segments
 but the color modes will work as new colors are added.
@@ -165,15 +168,15 @@ class SegWaves : public EffectBasePS {
                  bool Direct, uint16_t Rate);
 
         //constructor for building the wave pattern from the passed in pattern and the palette, using the passed in waveThickness and spacing
-        SegWaves(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t WaveThickness,
-                 uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, bool Direct, uint16_t Rate);
+        SegWaves(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, uint16_t WaveThickness,
+                 uint16_t Spacing, CRGB BgColor, uint8_t FadeSteps, bool Direct, uint16_t Rate);
 
         //constructor for building a wave using all the colors in the passed in palette, using the waveThickness and spacing for each color
-        SegWaves(SegmentSetPS &SegSet, palettePS &Palette, uint8_t WaveThickness, uint8_t Spacing,
+        SegWaves(SegmentSetPS &SegSet, palettePS &Palette, uint16_t WaveThickness, uint16_t Spacing,
                  CRGB BgColor, uint8_t FadeSteps, bool Direct, uint16_t Rate);
 
         //constructor for doing a single colored wave, using waveThickness and spacing
-        SegWaves(SegmentSetPS &SegSet, CRGB Color, uint8_t WaveThickness, uint8_t Spacing, CRGB BgColor,
+        SegWaves(SegmentSetPS &SegSet, CRGB Color, uint16_t WaveThickness, uint16_t Spacing, CRGB BgColor,
                  uint8_t FadeSteps, bool Direct, uint16_t Rate);
 
         //constructor doing a rainbow based on the number of segments
@@ -209,8 +212,8 @@ class SegWaves : public EffectBasePS {
 
         void
             makeSingleWave(),
-            setPatternAsPattern(patternPS &inputPattern, uint8_t waveThickness, uint8_t spacing),
-            setPaletteAsPattern(uint8_t waveThickness, uint8_t spacing),
+            setPatternAsPattern(patternPS &inputPattern, uint16_t waveThickness, uint16_t spacing),
+            setPaletteAsPattern(uint16_t waveThickness, uint16_t spacing),
             reset(),
             resetSegColors(),
             update(void);

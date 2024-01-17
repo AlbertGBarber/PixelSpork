@@ -23,7 +23,7 @@ namespace generalUtilsPS {
         resizePattern(patternPS &pattern, uint16_t sizeNeeded),
         setPaletteAsPattern(patternPS &pattern, palettePS &palette),
         setPaletteAsPattern(patternPS &pattern, palettePS &palette, uint16_t colorLength),
-        setPaletteAsPattern(patternPS &pattern, palettePS &palette, uint8_t colorLength, uint8_t spacing),
-        setPatternAsPattern(patternPS &outputPattern, patternPS &inputPattern, uint8_t colorLength, uint8_t spacing);
+        setPaletteAsPattern(patternPS &pattern, palettePS &palette, uint16_t colorLength, uint16_t spacing),
+        setPatternAsPattern(patternPS &outputPattern, patternPS &inputPattern, uint16_t colorLength, uint16_t spacing);
 };
 #endif

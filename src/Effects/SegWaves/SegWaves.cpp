@@ -10,8 +10,8 @@ SegWaves::SegWaves(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette,
 
 //constructor for building the wave pattern from the passed in pattern and the palette, using the passed in waveThickness and spacing
 //Passing a color length of 0 will set the wave thickness to 1 and the spacing such that there's only one wave on the segment set at once
-SegWaves::SegWaves(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t WaveThickness,
-                   uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, bool Direct, uint16_t Rate)
+SegWaves::SegWaves(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, uint16_t WaveThickness,
+                   uint16_t Spacing, CRGB BgColor, uint8_t FadeSteps, bool Direct, uint16_t Rate)
     : palette(&Palette), fadeSteps(FadeSteps), direct(Direct)  //
 {
     init(BgColor, SegSet, Rate);
@@ -25,7 +25,7 @@ SegWaves::SegWaves(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette,
 
 //constructor for building a wave using all the colors in the passed in palette, using the waveThickness and spacing for each color
 //Passing a color length of 0 will set the wave thickness to 1 and the spacing such that there's only one wave on the segment set at once
-SegWaves::SegWaves(SegmentSetPS &SegSet, palettePS &Palette, uint8_t WaveThickness, uint8_t Spacing, CRGB BgColor,
+SegWaves::SegWaves(SegmentSetPS &SegSet, palettePS &Palette, uint16_t WaveThickness, uint16_t Spacing, CRGB BgColor,
                    uint8_t FadeSteps, bool Direct, uint16_t Rate)
     : palette(&Palette), fadeSteps(FadeSteps), direct(Direct)  //
 {
@@ -40,7 +40,7 @@ SegWaves::SegWaves(SegmentSetPS &SegSet, palettePS &Palette, uint8_t WaveThickne
 
 //constructor for doing a single colored wave, using waveThickness and spacing
 //Passing a color length of 0 will set the wave thickness to 1 and the spacing such that there's only one wave on the segment set at once
-SegWaves::SegWaves(SegmentSetPS &SegSet, CRGB Color, uint8_t WaveThickness, uint8_t Spacing, CRGB BgColor,
+SegWaves::SegWaves(SegmentSetPS &SegSet, CRGB Color, uint16_t WaveThickness, uint16_t Spacing, CRGB BgColor,
                    uint8_t FadeSteps, bool Direct, uint16_t Rate)
     : fadeSteps(FadeSteps), direct(Direct)  //
 {
@@ -139,7 +139,7 @@ void SegWaves::makeSingleWave() {
 //ex : inputPattern is {1, 2, 4} with color length 2, and 1 spacing
 //the wave pattern would be: {1, 1, 255, 2, 2, 255, 4, 4, 255}
 //(255 will be set to the background color)
-void SegWaves::setPatternAsPattern(patternPS &inputPattern, uint8_t waveThickness, uint8_t spacing) {
+void SegWaves::setPatternAsPattern(patternPS &inputPattern, uint16_t waveThickness, uint16_t spacing) {
     generalUtilsPS::setPatternAsPattern(patternTemp, inputPattern, waveThickness, spacing);
     pattern = &patternTemp;
 }
@@ -148,7 +148,7 @@ void SegWaves::setPatternAsPattern(patternPS &inputPattern, uint8_t waveThicknes
 //using the passed in wave thickness and spacing
 //ex: for palette of length 3, and a waveThickness of 2, and spacing of 1
 //the final wave pattern would be : {0, 0, 255, 1, 1, 255, 2, 2, 255}
-void SegWaves::setPaletteAsPattern(uint8_t waveThickness, uint8_t spacing) {
+void SegWaves::setPaletteAsPattern(uint16_t waveThickness, uint16_t spacing) {
     generalUtilsPS::setPaletteAsPattern(patternTemp, *palette, waveThickness, spacing);
     pattern = &patternTemp;
 }

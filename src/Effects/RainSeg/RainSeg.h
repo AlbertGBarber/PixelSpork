@@ -260,10 +260,10 @@ class RainSeg : public EffectBasePS {
 
         void
             init(uint8_t MaxNumDrops, CRGB BgColor, SegmentSetPS &SegSet, uint16_t Rate),
-            setDropSpawnPos(particlePS *particlePtr, uint8_t segNum),
+            setDropSpawnPos(particlePS *particlePtr, uint16_t segNum),
             moveParticle(particlePS *particlePtr),
-            drawParticlePixel(uint16_t trailLedLocation, uint8_t trailPixelNum, uint8_t trailSize, uint8_t segNum, bool bodyPixel),
-            spawnParticle(uint8_t particleIndex, uint8_t segNum);
+            drawParticlePixel(uint16_t trailLedLocation, uint8_t trailPixelNum, uint8_t trailSize, uint16_t segNum, bool bodyPixel),
+            spawnParticle(uint8_t particleIndex, uint16_t segNum);
 };
 
 #endif

@@ -131,7 +131,9 @@ Constructor Inputs:
     palette(optional, see constructors) -- The set of colors that color wipes will use
     pattern(optional, see constructors) -- A pattern is struct made from a 1-d array of palette indexes ie {0, 1, 3, 6, 7} 
                                           and the length of the array (see patternPS.h)   
-    color (optional, see constructors) -- A single color for all the wipes
+    color (optional, see constructors) -- A single color for all the wipes. 
+                                          The color will be placed in the effect's local palette, `paletteTemp`. 
+                                          The local pattern, `patternTemp`, will be set to match the palette (ie a single entry for the single color).
     wipeLength -- Set how long each wipe is. The effect will always do enough wipes to fill the segment set
                   (passing 0 in as the wipe length automatically sets the wipe length to the number of lines in the segment set)
     style -- How the colors are displayed for the wipe(s) (see notes in intro above)

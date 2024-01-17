@@ -40,7 +40,7 @@ However this does have two draw backs:
     1: Due to the way particle trails are drawn, this forces the background to be re-drawn each update cycle,
        which may have a performance impact depending on your strip length, update rate, etc
     2: For colored backgrounds, the particles colors are added to the background colors.
-       This will in most cases significantly change the particle colors 
+       This will in, most cases, significantly change the particle colors 
        For example, blue particles running on a red background will appear purple (blue +  red = purple)
        This can be used to create some nice effects, (like ocean-ish of lava-ish looking things),
        But overall I do not recommend using blend for colored backgrounds
@@ -52,34 +52,35 @@ Note that this effect does require three separate arrays:
 So watch your memory usage
 
 Inputs guide:
-A firework has 7 core inputs:
-    maxNumFireworks: The maximum number of fireworks that can exist on the strip at once
+The fireworks have 7 core inputs:
+    maxNumFireworks: The maximum number of fireworks that can exist on the strip simultaneously.
     maxNumSparks: The number of sparks each firework produces
     spawnChance: How likely an inactive firework is to spawn each update cycle (a percent out of 100)
     lifeBase: The maximum time (in ms) a firework's sparks will live for (asides from a bit or randomness from lifeRange)
     speedDecay: How fast the sparks slow down. This is a percent of their current speed -> speed = speed - speed * speedDecay
-    Rate: The fastest particle speed (speed is the update time in ms, so lower rate => higher speed)
-    SpeedRange: The slowest speed a particle can have
+    rate: The fastest particle speed (speed is the update time in ms, so lower rate => higher speed)
+    speedRange: The range added to a particle's base speed. A spark's speed is set when it spawns as `rate + random( speedRange )`.
 There are some other, secondary variables listed in the Other Settings section below,
 but you probably won't need to tweak these initially
 
-In general the number of fireworks, sparks and spawn chance are up to you based on your strip size
-LifeBase is used to set a limit on all the sparks life, but you still want to give the sparks time to move
+More Info:
+
+lifeBase is used to set a limit on all the sparks life, but you still want to give the sparks time to move
 So lifeBase should probably be 2000+ (2 sec). You should also know that the effect adds a random bit of extra 
 life to each spark, set by lifeRange (default 500, ie 0.5 sec)
-speedDecay is the percent the speed decreases each time the particle is drawn. Starting at 5 or 10 
-and then going from there should work. A lower value will let the sparks spread out more.
-Rate and speedRange do a lot of work in shaping how the firework looks. Rate is the fastest possible speed
-for the sparks (rate is the update rate so lower value => higher speed) while speedRange how much the speed varies by
-Overall, rate sets how fast the average spark moves, while speedRange sets how different spark speeds are from one another
+
+speedDecay is the percent the speed decreases each time the particle is drawn. 
+I recommend starting between 5 - 10, and adjusting as needed. A lower value will let the sparks spread out more.
+
+rate and speedRange do a lot of work in shaping how the firework looks. Overall, "rate" sets how fast the average spark moves,
+while speedRange sets how different spark speeds are from one another.
 So you can have low speeds and low ranges to make a slow, clumped up firework, or have high speeds and high range
 so that the sparks move quick and spread out more.
 I recommend starting with a rate of 40-60 and a speedRange of 300 - 600.
+For higher speed ranges, increasing the number of sparks will help "fill out" the firework.
 
 The fade rate of the sparks is proportional to their speed, so faster sparks fade slower.
 This seems produce a good look.
-
-For higher speed ranges, increasing the number of sparks will help "fill out" the firework.
 
 Fireworks also have a central "bomb" particle, which doesn't move, and decays quickly.
 This makes the fireworks look more like an explosion.
@@ -132,7 +133,7 @@ Constructor Inputs:
     lifeBase -- The longest time a spark can exist (in ms)
     speedDecay -- The percent a spark's speed is reduced by per update cycle (out of 100)
     rate -- The maximum speed for the sparks, also the effect update rate (is a pointer like in other effects)
-    speedRange -- The cap for the slowest speed for the sparks (speed is rate + speedRange) (ms)
+    speedRange -- The cap for the slowest speed for the sparks ( speed is rate + random(speedRange) ) (ms)
 
 Functions:
     setupFireworks(maxFireworks, maxSparks) -- Create the data structures for a set of fireworks
@@ -148,7 +149,7 @@ Other Settings:
                                       Adds a bit of variation so not all the sparks decay at the same time at lower caps
     centerLife (default lifeBase/10 + 100 ) -- How long the central "bomb" lives for in ms
     size (default 1) -- The size of the sparks, only change this for big fireworks
-    sizeRange (default 0) -- A random factor for setting the spark sizes 
+    sizeRange (default 0) -- A random factor for setting the spark sizes. Spark sizes are calculated as `size + random(sizeRange)`.
                              Sparks will be size + random(sizeRange)
                              Only change this for big fireworks
     centerSize (default 3) -- How large the center "bomb" burst is 

@@ -49,6 +49,9 @@ if you have a lot of colors, with long waves, your patterns may be quite large
 so watch your memory usage. Likewise, if you re-size the waves, the pattern may also be dynamically re-sized.
 (see alwaysResizeObj_PS in Include_Lists -> GlobalVars, and the Effects Advanced Wiki Page -> Managing Memory Fragmentation)
 
+Also, remember that the pattern length is limited to 65,025 (uint16_t max), 
+so make sure your (waveLength + spacing) * <num palette colors> is less than the limit.
+
 Example calls: 
     uint8_t pattern_arr = {0, 255, 255, 255, 1, 1, 255, 255};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
@@ -135,15 +138,15 @@ class SegWavesFast : public EffectBasePS {
                      uint16_t Rate);
 
         //constructor for building the wave pattern from the passed in pattern and the palette, using the passed in colorLength and spacing
-        SegWavesFast(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t WaveThickness,
-                     uint8_t Spacing, CRGB BgColor, bool Direct, uint16_t Rate);
+        SegWavesFast(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, uint16_t WaveThickness,
+                     uint16_t Spacing, CRGB BgColor, bool Direct, uint16_t Rate);
 
         //constructor for building a wave using all the colors in the passed in palette, using the colorLength and spacing for each color
-        SegWavesFast(SegmentSetPS &SegSet, palettePS &Palette, uint8_t WaveThickness, uint8_t Spacing, CRGB BgColor,
+        SegWavesFast(SegmentSetPS &SegSet, palettePS &Palette, uint16_t WaveThickness, uint16_t Spacing, CRGB BgColor,
                      bool Direct, uint16_t Rate);
 
         //constructor for doing a single colored wave, using colorLength and spacing
-        SegWavesFast(SegmentSetPS &SegSet, CRGB Color, uint8_t WaveThickness, uint8_t Spacing, CRGB BgColor,
+        SegWavesFast(SegmentSetPS &SegSet, CRGB Color, uint16_t WaveThickness, uint16_t Spacing, CRGB BgColor,
                      bool Direct, uint16_t Rate);
 
         ~SegWavesFast();
@@ -171,8 +174,8 @@ class SegWavesFast : public EffectBasePS {
             paletteTemp = {nullptr, 0};  //Must init structs w/ pointers set to null for safety
 
         void
-            setPatternAsPattern(patternPS &inputPattern, uint8_t waveThickness, uint8_t spacing),
-            setPaletteAsPattern(uint8_t waveThickness, uint8_t spacing),
+            setPatternAsPattern(patternPS &inputPattern, uint16_t waveThickness, uint16_t spacing),
+            setPaletteAsPattern(uint16_t waveThickness, uint16_t spacing),
             reset(),
             makeSingleWave(),
             update(void);

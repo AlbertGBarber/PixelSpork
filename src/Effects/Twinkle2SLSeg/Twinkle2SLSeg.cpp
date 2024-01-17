@@ -75,7 +75,7 @@ void Twinkle2SLSeg::initTwinkleArrays() {
     twinkleArr = (twinkleStarPS **)malloc(numTwinkles * sizeof(twinkleStarPS *));
     twinkleSetTemp = {twinkleArr, numTwinkles, numTwinkles};
     twinkleSet = &twinkleSetTemp;
-    for( uint8_t i = 0; i < numTwinkles; i++ ) {
+    for( uint16_t i = 0; i < numTwinkles; i++ ) {
         twinkleStarPS *t = (twinkleStarPS *)malloc(sizeof(struct twinkleStarPS));
         twinkleSetTemp.setTwinkle(t, i);
     }
@@ -88,7 +88,7 @@ void Twinkle2SLSeg::initTwinkleArrays() {
 void Twinkle2SLSeg::deleteTwinkleSet() {
     if( twinkleSetTemp.twinkleArr ) {  //check that the twinkle set array exists
         //we need to delete all the twinkles in the set before deleting the twinkle array
-        for( uint8_t i = 0; i < twinkleSetTemp.maxLength; i++ ) {
+        for( uint16_t i = 0; i < twinkleSetTemp.maxLength; i++ ) {
             free(twinkleSetTemp.twinkleArr[i]);
         }
         free(twinkleSetTemp.twinkleArr);
@@ -98,7 +98,7 @@ void Twinkle2SLSeg::deleteTwinkleSet() {
 //resets all the twinkles to be inactive
 //and also fills the segment set with the background to clear any active twinkles
 void Twinkle2SLSeg::reset() {
-    for( uint8_t i = 0; i < twinkleSet->length; i++ ) {
+    for( uint16_t i = 0; i < twinkleSet->length; i++ ) {
         twinklePtr = twinkleSet->twinkleArr[i];
         twinklePtr->active = false;
         twinklePtr->stepNum = 0;

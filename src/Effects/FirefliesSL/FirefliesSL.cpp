@@ -1,7 +1,7 @@
 #include "FirefliesSL.h"
 
 //Constructor for effect with palette
-FirefliesSL::FirefliesSL(SegmentSetPS &SegSet, palettePS &Palette, uint8_t MaxNumFireflies, uint8_t SpawnChance,
+FirefliesSL::FirefliesSL(SegmentSetPS &SegSet, palettePS &Palette, uint16_t MaxNumFireflies, uint8_t SpawnChance,
                          uint16_t LifeBase, uint16_t LifeRange, uint16_t SpeedBase, uint16_t SpeedRange, uint16_t Rate)
     : palette(&Palette), spawnChance(SpawnChance), lifeBase(LifeBase), lifeRange(LifeRange), speedBase(SpeedBase), speedRange(SpeedRange)  //
 {
@@ -9,7 +9,7 @@ FirefliesSL::FirefliesSL(SegmentSetPS &SegSet, palettePS &Palette, uint8_t MaxNu
 }
 
 //Constructor for effect with palette of random colors
-FirefliesSL::FirefliesSL(SegmentSetPS &SegSet, uint8_t numColors, uint8_t MaxNumFireflies, uint8_t SpawnChance,
+FirefliesSL::FirefliesSL(SegmentSetPS &SegSet, uint8_t numColors, uint16_t MaxNumFireflies, uint8_t SpawnChance,
                          uint16_t LifeBase, uint16_t LifeRange, uint16_t SpeedBase, uint16_t SpeedRange, uint16_t Rate)
     : spawnChance(SpawnChance), lifeBase(LifeBase), lifeRange(LifeRange), speedBase(SpeedBase), speedRange(SpeedRange)  //
 {
@@ -20,7 +20,7 @@ FirefliesSL::FirefliesSL(SegmentSetPS &SegSet, uint8_t numColors, uint8_t MaxNum
 
 //constructor for effect with single color
 //!!If using pre-build FastLED colors you need to pass them as CRGB( *color code* )
-FirefliesSL::FirefliesSL(SegmentSetPS &SegSet, CRGB Color, uint8_t MaxNumFireflies, uint8_t SpawnChance,
+FirefliesSL::FirefliesSL(SegmentSetPS &SegSet, CRGB Color, uint16_t MaxNumFireflies, uint8_t SpawnChance,
                          uint16_t LifeBase, uint16_t LifeRange, uint16_t SpeedBase, uint16_t SpeedRange, uint16_t Rate)
     : spawnChance(SpawnChance), lifeBase(LifeBase), lifeRange(LifeRange), speedBase(SpeedBase), speedRange(SpeedRange)  //
 {
@@ -38,7 +38,7 @@ FirefliesSL::~FirefliesSL() {
 }
 
 //common initialization function for core vars
-void FirefliesSL::init(uint8_t maxNumFireflies, SegmentSetPS &SegSet, uint16_t Rate) {
+void FirefliesSL::init(uint16_t maxNumFireflies, SegmentSetPS &SegSet, uint16_t Rate) {
     //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
     bindSegSetPtrPS();
     bindClassRatesPS();
@@ -55,7 +55,7 @@ Fireflies need three data structures:
     A particleSet with a particle array of size maxNumFireflies * (maxNumSparks + 1)
     A CRGB array of trailEndColors[maxNumFireflies] to store the trail color for each particle
     A uint16_t array of particlePrevPos[maxNumFireflies] to store the previous particle locations */
-void FirefliesSL::setupFireflies(uint8_t newMaxNumFireflies) {
+void FirefliesSL::setupFireflies(uint16_t newMaxNumFireflies) {
 
     //Set the background to clear any lingering particles from the segment set
     segDrawUtils::fillSegSetColor(*segSet, *bgColor, bgColorMode);
@@ -94,7 +94,7 @@ void FirefliesSL::setupFireflies(uint8_t newMaxNumFireflies) {
     particleSet->length = maxNumFireflies;
 
     //set all the Fireflies to inactive, ready to be spawned
-    for( uint8_t i = 0; i < maxNumFireflies; i++ ) {
+    for( uint16_t i = 0; i < maxNumFireflies; i++ ) {
         particleSet->particleArr[i]->life = 0;
     }
 }
@@ -126,7 +126,7 @@ void FirefliesSL::update() {
 
         //For each firefly (particle) update it if it's life > 0
         //otherwise try to spawn it
-        for( uint8_t i = 0; i < maxNumFireflies; i++ ) {
+        for( uint16_t i = 0; i < maxNumFireflies; i++ ) {
             //get the pointer to the particle in the particle set
             particlePtr = particleSet->particleArr[i];
             partLife = particlePtr->life;
@@ -320,7 +320,7 @@ void FirefliesSL::drawParticlePixel(particlePS *particlePtr, uint16_t partNum) {
 //Spawns a firefly by randomizing an existing particle
 //The particle is given a new speed, start position and color index
 //The size is locked at one
-void FirefliesSL::spawnFirefly(uint8_t partNum) {
+void FirefliesSL::spawnFirefly(uint16_t partNum) {
 
     //randomize the particle properties (position is only up to numLines)
     particleUtilsPS::randomizeParticle(*particleSet, partNum, numLines, true, speedBase, speedRange,

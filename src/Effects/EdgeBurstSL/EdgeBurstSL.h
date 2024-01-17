@@ -30,19 +30,18 @@ so we'd use beat8(9) in place of time(0.1);
 /*
 An effect based on the EdgeBurst pattern in PixelBlaze that produces a rainbow burst
 half-way along the strip, that then expands and reflects back.
-The effect is mostly the same as the original, but I've made it so that the start point 
-of the waves is defaulted to be picked randomly from the number of lines for each wave. 
+The effect is mostly the same as the original, but I've set the start point of the waves to be 
+picked randomly (a random segment line) for each wave by default.
 This adds some nice variation to the effect. You can also set your own start point using "userOffset".
 
-I've also added the ability to use a palette for the wave colors. You can have them be chosen randomly for each wave.
+I've also added the ability to use a palette for the wave colors. 
+You can also have them be chosen randomly for each wave, or mapped to a rainbow (set by `rainbowMode`).
 
-You can also allowed you to adjust the pause time factor between waves.
+You can also adjust the pause time factor between waves.
 I have this set to 2 (the original was 4), which makes the pause time very short.
 
 The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
 passing in a SegmentSetPS with only one segment containing the whole strip.
-
-Rainbow colors are controlled by "rainbowMode", true will do rainbows.
 
 Random Palettes:
     The randomize palette option is set by randomizePal. Note that the effect stores a *palette
@@ -61,7 +60,8 @@ Random Start Points:
     The original PixelBlaze effect locked the wave start point to halfway along the strip. 
     IMO this is a bit too repetitive, so I added a random offset so the waves can spawn from any point on the strip.
     This is controlled by "randomizeStart", and is turned on by default.
-    If "randomizeStart" is false, you can also set your own start point by adjusting "userOffset".
+    If "randomizeStart" is false,  it defaults to the strip's midpoint,
+    but you can also set your own start point by adjusting "userOffset".
     Note that this is added to the halfway point, and wraps.
 
 Example calls: 
@@ -112,8 +112,7 @@ Other Settings:
                               (see randomize notes above)
                                 
 Reference vars:
-    burstCount -- The number of bursts we've done (note this is not reset by any function, so you'll have to manually reset it if needed)
-
+    burstCount -- The number of bursts we've done. Not automatically reset.
 */
 class EdgeBurstSL : public EffectBasePS {
     public:

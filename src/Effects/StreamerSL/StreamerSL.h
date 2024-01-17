@@ -29,6 +29,9 @@ if you have a lot of colors, with long streamers, your patterns may be quite lar
 so watch your memory usage. Likewise, if you re-size the waves, the pattern may also be dynamically re-sized.
 (see alwaysResizeObj_PS in Include_Lists -> GlobalVars, and the Effects Advanced Wiki Page -> Managing Memory Fragmentation)
 
+Also, remember that the pattern length is limited to 65,025 (uint16_t max), 
+so make sure your (colorLength + spacing) * <num palette colors> is less than the limit.
+
 This effect has been adapted to use segment lines to allow 2D effects. 
 Note that this requires an array for storing some colors, so if you change the number of segments
 in your segment set make sure to call reset or the effect will crash!!!!
@@ -94,7 +97,7 @@ Functions:
                                                                     setPatternAsPattern(pattern, 3, 4) 
                                                                     Will do a streamer using the first three colors of the palette (taken from the pattern)
                                                                     Each streamer will be length 3, followed by 4 spaces
-    setPaletteAsPattern(uint8_t colorLength, uint8_t spacing) -- Like the previous function, but all of the current palette will be used for the pattern                                                       
+    setPaletteAsPattern(colorLength, spacing) -- Like the previous function, but all of the current palette will be used for the pattern                                                       
     update() -- updates the effect
 
 Other Settings:
@@ -111,16 +114,20 @@ Reference Vars:
 class StreamerSL : public EffectBasePS {
     public:
         //Constructor for using the passed in pattern and palette for the streamer
-        StreamerSL(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate);  
+        StreamerSL(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint8_t FadeSteps, 
+                   uint16_t Rate);  
 
         //Constructor for building the streamer pattern from the passed in pattern and the palette, using the passed in colorLength and spacing
-        StreamerSL(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate);
+        StreamerSL(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, uint16_t ColorLength, uint16_t Spacing, 
+                   CRGB BgColor, uint8_t FadeSteps, uint16_t Rate);
         
         //Constructor for building a streamer using all the colors in the passed in palette, using the colorLength and spacing for each color
-        StreamerSL(SegmentSetPS &SegSet, palettePS &Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate);
+        StreamerSL(SegmentSetPS &SegSet, palettePS &Palette, uint16_t ColorLength, uint16_t Spacing, CRGB BgColor, 
+                   uint8_t FadeSteps, uint16_t Rate);
 
         //Constructor for doing a single colored streamer, using colorLength and spacing
-        StreamerSL(SegmentSetPS &SegSet, CRGB Color, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate);
+        StreamerSL(SegmentSetPS &SegSet, CRGB Color, uint16_t ColorLength, uint16_t Spacing, CRGB BgColor, 
+                   uint8_t FadeSteps, uint16_t Rate);
 
         ~StreamerSL();
             
@@ -150,8 +157,8 @@ class StreamerSL : public EffectBasePS {
         
         void 
             init(CRGB BgColor, SegmentSetPS &SegSet, uint16_t Rate),
-            setPatternAsPattern(patternPS &inputPattern, uint8_t colorLength, uint8_t spacing),
-            setPaletteAsPattern(uint8_t colorLength, uint8_t spacing),
+            setPatternAsPattern(patternPS &inputPattern, uint16_t colorLength, uint16_t spacing),
+            setPaletteAsPattern(uint16_t colorLength, uint16_t spacing),
             reset(),
             update(void);
     

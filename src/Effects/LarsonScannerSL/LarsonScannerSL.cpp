@@ -1,7 +1,7 @@
 #include "LarsonScannerSL.h"
 
 LarsonScannerSL::LarsonScannerSL(SegmentSetPS &SegSet, uint8_t ScanType, CRGB scanColor, CRGB BgColor,
-                                 uint8_t EyeSize, uint8_t TrailLength, uint16_t Rate)
+                                 uint16_t EyeSize, uint8_t TrailLength, uint16_t Rate)
     : scanType(ScanType), eyeSize(EyeSize), trailLength(TrailLength)  //
 {
     //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
@@ -99,7 +99,7 @@ void LarsonScannerSL::setTrailLength(uint8_t newTrailLength) {
 }
 
 //changes the size of the main body of the scan particle
-void LarsonScannerSL::setEyeSize(uint8_t newEyeSize) {
+void LarsonScannerSL::setEyeSize(uint16_t newEyeSize) {
     eyeSize = newEyeSize;
     particleUtilsPS::setParticleSetProp(particleSet, 3, eyeSize, 0, 0);
 }

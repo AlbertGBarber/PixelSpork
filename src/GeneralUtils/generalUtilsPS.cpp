@@ -65,11 +65,12 @@ the final streamer pattern would be : {0, 0, 255, 1, 1, 255, 2, 2, 255}.
 255 is used for the spaces, allowing them to be filled with background color.
 (Note that only a few effects actually recognize 255 as being background, but they're mostly the effects
 where you'd want to use this sort of extended pattern anyway)
+Note, remember that the pattern length is limited to 65,025 (uint16_t max), so make sure your (colorLength + spacing) * <num palette colors> is less than the limit
 Note, if the pattern is not large enough to store the palette pattern, it will be re-sized dynamically. (see resizePattern())
 !!!Because of this, make sure you free() the patternArr when you're done by calling free(pattern.patternArr). */
-void generalUtilsPS::setPaletteAsPattern(patternPS &pattern, palettePS &palette, uint8_t colorLength, uint8_t spacing) {
+void generalUtilsPS::setPaletteAsPattern(patternPS &pattern, palettePS &palette, uint16_t colorLength, uint16_t spacing) {
 
-    uint8_t repeatLength = (colorLength + spacing);
+    uint16_t repeatLength = (colorLength + spacing);
     uint8_t paletteLength = palette.length;
     uint16_t totalPatternLength = paletteLength * repeatLength;  //the total length taken up by a single color and spacing
 
@@ -77,11 +78,11 @@ void generalUtilsPS::setPaletteAsPattern(patternPS &pattern, palettePS &palette,
     resizePattern(pattern, totalPatternLength);
 
     //for each color in the palette, we fill in the color and spacing for the output pattern
-    for( uint16_t i = 0; i < paletteLength; i++ ) {
+    for( uint8_t i = 0; i < paletteLength; i++ ) {
         //for each color in the palette we run over the length of the color and spacing
         //for the indexes up to color length, we set them as the current palette index
         //after that we set them as spacing (255)
-        for( uint8_t j = 0; j < repeatLength; j++ ) {
+        for( uint16_t j = 0; j < repeatLength; j++ ) {
             if( j < colorLength ) {
                 //we do i*repeatLength to account for how many color sections we've
                 //filled in already
@@ -103,10 +104,10 @@ the streamer pattern would be: {1, 1, 255, 2, 2, 255, 4, 4, 255}.
 where you'd want to use this sort of extended pattern anyway)
 Note, if the pattern is not large enough to store the palette pattern, it will be re-sized dynamically. (see resizePattern())
 !!!Because of this, make sure you free() the patternArr when you're done by calling free(pattern.patternArr). */
-void generalUtilsPS::setPatternAsPattern(patternPS &outputPattern, patternPS &inputPattern, uint8_t colorLength, uint8_t spacing) {
+void generalUtilsPS::setPatternAsPattern(patternPS &outputPattern, patternPS &inputPattern, uint16_t colorLength, uint16_t spacing) {
 
     uint8_t patternIndex;
-    uint8_t repeatLength = (colorLength + spacing);  //the total length taken up by a single color and spacing
+    uint16_t repeatLength = (colorLength + spacing);  //the total length taken up by a single color and spacing
     uint16_t patternLength = inputPattern.length;
     uint16_t totalPatternLength = patternLength * repeatLength;
 
@@ -119,7 +120,7 @@ void generalUtilsPS::setPatternAsPattern(patternPS &outputPattern, patternPS &in
         //for each color in the pattern we run over the length of the color and spacing
         //for the indexes up to color length, we set them as the current patternIndex
         //after that we set them as spacing (255)
-        for( uint8_t j = 0; j < repeatLength; j++ ) {
+        for( uint16_t j = 0; j < repeatLength; j++ ) {
             if( j < colorLength ) {
                 //we do i*repeatLength to account for how many color sections we've
                 //filled in already

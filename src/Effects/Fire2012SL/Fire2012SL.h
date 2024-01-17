@@ -8,27 +8,29 @@
 #include "Effects/Fire2012Seg/Utils/fire2012SegUtilsPS.h"
 
 /* 
-A traditional fire loop, most useful for strips with a diffuser
+A classic, traditional fire loop, most useful for strips with a diffuser
 Code modified from https://www.tweaking4all.com/hardware/arduino/adruino-led-strip-effects/#fire
-Similar to Fire2012Seg, but draws a a random fire along each segment LINE rather than along each segment
-Each segment LINE has it's own fire, but the settings are shared across the set to keep the fires consistent
+Similar to Fire2012Seg, but draws a a random fire along each Segment LINE rather than along each segment
+Each Segment LINE has its own fire, but the settings are shared across the set to keep the fires consistent
 Note that segment lines are perpendicular to the segments
 
-Fires can be configured to start either at the first or last segment
+Fires can be configured to start either at the first or last segment for the segment lines.
 
-The fire colors are based on a palette and a background color
-The background color will be the coldest color, and is usually blank
-It is input separately from the palette because most palettes don't include a blank color
-The palette should be ordered from the coldest to the hottest color
-ie, the first color in the palette will be used for the coldest parts of the fire
-while the last color will be used for the hottest
+The fire colors are based on a palette and background color. 
+The palette should be ordered from the coldest to the hottest color, ie, the first color in the palette will be used 
+for the coldest parts of the fire while the last color will be used for the hottest. 
+Palettes can be of any length, although 3 - 4 colors seems to work best for normal fires. 
+There are several built-in palettes that work well: 
+try `firePal_PS` for a traditional fire, 
+`firePalPink_PS` for a pink/purple fire, and 
+`firePalBlue_PS` for a green/blue fire.
 
-Palettes can be of any length, although 3 - 4 colors seems to work best for normal fires
-There are several built-in palettes that work well (see paletteList.h)
-Try firePal_PS for a traditional fire, firePalPink_PS for a pink/purple fire, and firePalBlue_PS for a green/blue fire
+The background color will be the coldest color and will be applied to most of the strip. 
+Usually it is left as blank. Note that it is separate from the palette colors, 
+which allows you to use more pre-built palettes while keeping the background constant. 
 
-To produce a smoother fire, the palette colors can be blended between based on temperature
-This does take more processing power, and can be turned off using the "blend" flag
+To produce a smoother fire, the palette colors can be blended together based on temperature
+This does take more processing power, and can be turned off using the "blend" setting.
 
 The other variables determine how the fire is drawn:
 Cooling: indicates how fast a flame cools down. More cooling means shorter flames,
@@ -47,11 +49,11 @@ so watch your memory usage
 
 Example calls: 
 
-    Fire2012SL fire2012SL(mainSegments, firePal_PS, 0, 50, 90, true, 70, true);
+    Fire2012SL fire2012SL(mainSegments, firePal_PS, 0, 50, 90, true, true, 70);
     Does a blended fire using the built-in firePal_PS (see paletteList.h) with a blank background
     cooling is set to 50 and sparking is set to 90
-    The fire updates at 70ms
     Fire will start at the first segment and end at the last segment
+    The fire updates at 70ms
  
 Constructor Inputs:
     Palette-- The palette used for the fire, should be arranged from coldest to hottest colors
@@ -62,7 +64,8 @@ Constructor Inputs:
                Suggested values lay between 50 and 200. 90 & 120 work well.
     blend -- Determines if the fire colors will be blended together according to temperature
             Blended fires are smoother, but need more processing power
-    direct -- The direction of the fire (true means it will start at the first segment, false, at the last)
+    direct -- The direction of the fire along segment lines,
+              true starts the fire at the first segment, false, at the last.
     rate -- The update rate (ms) (recommended between 30-80ms)
 
 Functions:

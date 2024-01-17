@@ -144,7 +144,7 @@ void GradientCycleFastSL::update() {
             }
         }
 
-        cycleNum = addMod16PS(cycleNum, 1, gradLength);  //track what step we're on in the gradient
+        cycleNum = addmod8(cycleNum, 1, gradLength);  //track what step we're on in the gradient
         showCheckPS();
     }
 }

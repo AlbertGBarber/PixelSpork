@@ -98,6 +98,7 @@ Each cycle the colors are shifted outwards (or inwards) while
 the brightness wave shifts clockwise round the segment set */
 void PrideWPalSL2::update() {
     currentTime = millis();
+    
     deltaTime = currentTime - prevTime;
     if( (deltaTime) >= *rate ) {
         prevTime = currentTime;

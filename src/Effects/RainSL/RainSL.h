@@ -251,7 +251,7 @@ class RainSL : public EffectBasePS {
             partSize,
             maxPosition,
             trailLedLocation,
-            getParticlePixelLoc(uint16_t trailLedLocation, uint8_t lineNum),
+            getParticlePixelLoc(uint16_t trailLedLocation, uint16_t lineNum),
             getTrailLedLoc(bool trailDirect, uint8_t trailPixelNum, uint16_t maxPosition);
 
         bool
@@ -271,8 +271,8 @@ class RainSL : public EffectBasePS {
             init(uint8_t MaxNumDrops, CRGB BgColor, SegmentSetPS &SegSet, uint16_t Rate),
             setDropSpawnPos(particlePS *particlePtr),
             moveParticle(particlePS *particlePtr),
-            drawParticlePixel(uint16_t trailLedLocation, uint8_t trailPixelNum, uint8_t trailSize, uint8_t segNum, bool bodyPixel),
-            spawnParticle(uint8_t particleIndex, uint8_t segNum);
+            drawParticlePixel(uint16_t trailLedLocation, uint8_t trailPixelNum, uint8_t trailSize, uint16_t lineNum, bool bodyPixel),
+            spawnParticle(uint8_t particleIndex, uint16_t lineNum);
 };
 
 #endif

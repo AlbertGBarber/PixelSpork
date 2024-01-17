@@ -7,7 +7,7 @@
 
 /*
 Effect Description:
-Draws an unmoving color pattern at a set refresh rate.
+Draws a fixed color pattern at a set refresh rate.
 Useful for backgrounds, or maybe combining with a palette utility to change colors.
 Features multiple constructors for different pattern and palette combinations.
 Allows you to add blank spaces to your pattern (any 255 entries in the pattern will be drawn as background)
@@ -17,11 +17,10 @@ The patterns can be drawn in 1D, or in 2D, using segment lines, or whole segment
 
 segModes:
     0 -- The pattern will be drawn using segment lines (each line will be a single color)
-    2 -- The pattern will be drawn using whole segment (each segment will be a single color)
-    3 -- The pattern will be drawn linearly along the segment set (1D).
+    1 -- The pattern will be drawn using whole segment (each segment will be a single color)
+    2 -- The pattern will be drawn linearly along the segment set (1D).
 
-Supports color modes for both the main and background colors. The bgColor is a pointer, so you can bind it
-to an external color variable.
+Supports color modes for both the main and background colors.
 
 Note that using 255 in your patterns will draw the background color.
 
@@ -29,6 +28,9 @@ Note that while each entry in the pattern is a uint8_t,
 if you have a lot of colors, with long streamers, your patterns may be quite large
 so watch your memory usage. Likewise, if you re-size the waves, the pattern may also be dynamically re-sized.
 (see alwaysResizeObj_PS in Include_Lists -> GlobalVars, and the Effects Advanced Wiki Page -> Managing Memory Fragmentation)
+
+Also, remember that the pattern length is limited to 65,025 (uint16_t max), 
+so make sure your (colorLength + spacing) * <num palette colors> is less than the limit.
 
 You can freely change any of the effect's variables during runtime.
 
@@ -67,7 +69,9 @@ Example calls:
 Constructor Inputs:
     pattern(optional, see constructors) -- The pattern used for the streamers, made up of palette indexes.
     palette(optional, see constructors) -- The repository of colors used in the pattern.
-    color(optional, see constructors) -- Used for making a single color pattern.
+    color(optional, see constructors) -- Used for making a single color pattern. 
+                                         The color will be placed in the effect's local palette, `paletteTemp`. 
+                                         The local pattern, `patternTemp`, will be set to match the palette (ie a single entry for the single color).
     colorLength (optional, see constructors, max 255) -- The number pixels a color band is. Used for automated pattern creation.
     spacing (optional, see constructors, max 255) -- The number of pixels between each color band (will be set to bgColor).  
                                                      Used for automated pattern creation.
@@ -84,8 +88,8 @@ Functions:
                                                                     Will do a color pattern using the first three colors of the palette 
                                                                     (taken from the pattern).
                                                                     Each streamer will be length 3, followed by 4 spaces.
-    setPaletteAsPattern(uint8_t colorLength, uint8_t spacing) -- Like the previous function, 
-                                                                 but all of the current palette will be used for the pattern.                                                       
+    setPaletteAsPattern(colorLength, spacing) -- Like the previous function, 
+                                                 but all of the current palette will be used for the pattern.                                                       
     update() -- updates the effect
 
 Other Settings:
@@ -99,16 +103,16 @@ class DrawPatternSLSeg : public EffectBasePS {
 
         //Constructor for building the pattern from the passed in pattern and the palette,
         //using the passed in colorLength and spacing
-        DrawPatternSLSeg(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t ColorLength, uint8_t Spacing,
+        DrawPatternSLSeg(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, uint16_t ColorLength, uint16_t Spacing,
                       CRGB BgColor, uint8_t SegMode, uint16_t Rate);
 
         //Constructor for building the pattern using all the colors in the passed in palette,
         //using the colorLength and spacing for each color
-        DrawPatternSLSeg(SegmentSetPS &SegSet, palettePS &Palette, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor,
+        DrawPatternSLSeg(SegmentSetPS &SegSet, palettePS &Palette, uint16_t ColorLength, uint16_t Spacing, CRGB BgColor,
                       uint8_t SegMode, uint16_t Rate);
 
         //Constructor for doing a single colored pattern, using colorLength and spacing
-        DrawPatternSLSeg(SegmentSetPS &SegSet, CRGB Color, uint8_t ColorLength, uint8_t Spacing, CRGB BgColor,
+        DrawPatternSLSeg(SegmentSetPS &SegSet, CRGB Color, uint16_t ColorLength, uint16_t Spacing, CRGB BgColor,
                       uint8_t SegMode, uint16_t Rate);
 
         ~DrawPatternSLSeg();
@@ -131,8 +135,8 @@ class DrawPatternSLSeg : public EffectBasePS {
             patternTemp = {nullptr, 0, 0};
 
         void
-            setPatternAsPattern(patternPS &inputPattern, uint8_t colorLength, uint8_t spacing),
-            setPaletteAsPattern(uint8_t colorLength, uint8_t spacing),
+            setPatternAsPattern(patternPS &inputPattern, uint16_t colorLength, uint16_t spacing),
+            setPaletteAsPattern(uint16_t colorLength, uint16_t spacing),
             update(void);
 
     private:

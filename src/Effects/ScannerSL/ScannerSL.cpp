@@ -158,7 +158,7 @@ void ScannerSL::reset() {
     //we need to run over them twice to set their initial and next colors
     patternIndexCount = 0;
     numParticles = particleSet.length;
-    for( uint8_t i = 0; i < numParticles * 2; i++ ) {
+    for( uint16_t i = 0; i < numParticles * 2; i++ ) {
         setPartColor(particleSet.particleArr[mod16PS(i, numParticles)]);
     }
 
@@ -258,7 +258,7 @@ void ScannerSL::update() {
         For the longest segment the full particle will always be drawn (it may be truncated on shorted segments)
         so we know that if the trail pixel has not been over-written, it should not have been over-written on other segments
         In any case, this makes the programming much simpler, saves storage, and seems to work well in practice from what I can tell */
-        for( uint8_t i = 0; i < numParticles; i++ ) {
+        for( uint16_t i = 0; i < numParticles; i++ ) {
             //get the particle from the set, and record some vars locally for ease of access
             particlePtr = particleSet.particleArr[i];
             position = particlePtr->position;    //the current position of the particle
@@ -476,7 +476,7 @@ void ScannerSL::setPartColor(particlePS *particlePtr) {
 
 //writes out the trail color according to the pixel number in the trail (ie 0 - trailSize)
 //the trail is blended towards background color according to the trailSize
-void ScannerSL::setTrailColor(uint16_t trailLineNum, uint8_t segNum, uint8_t trailPixelNum) {
+void ScannerSL::setTrailColor(uint16_t trailLineNum, uint16_t segNum, uint8_t trailPixelNum) {
     //get the physical pixel location, it's color, and the target background color
     pixelNum = segDrawUtils::getPixelNumFromLineNum(*segSet, segNum, trailLineNum);
 

@@ -146,7 +146,7 @@ void NoiseWavesPS::update(){
         noisePhase = inoise8( currentTime/phaseScale ) + offset;
 
         //run over each of the leds in the segment set and set a color/brightness value
-        for (uint8_t i = 0; i < numSegs; i++) {
+        for (uint16_t i = 0; i < numSegs; i++) {
             totSegLen = segSet->getTotalSegLength(i);
             for(uint16_t j = 0; j < totSegLen; j++){
                 //Get a changing frequency multiplier, which helps produce the waves

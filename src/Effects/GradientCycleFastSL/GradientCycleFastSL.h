@@ -93,10 +93,8 @@ class GradientCycleFastSL : public EffectBasePS {
 
         uint8_t
             randMode = 0,
-            gradLength;
-
-        uint16_t
-            cycleNum = 0;  // tracks what how many patterns we've gone through
+            gradLength,
+            cycleNum = 0;  // tracks what how many patterns we've gone through;
 
         bool
             initFillDone = false;

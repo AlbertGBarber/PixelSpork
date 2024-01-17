@@ -93,6 +93,7 @@ Each Update cycle we:
     We then color all the pixels on the line */
 void PrideWPalSL::update() {
     currentTime = millis();
+    
     deltaTime = currentTime - prevTime;
     if( (deltaTime) >= *rate ) {
         prevTime = currentTime;
