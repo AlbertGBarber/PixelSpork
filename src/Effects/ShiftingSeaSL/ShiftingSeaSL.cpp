@@ -1,7 +1,7 @@
 #include "ShiftingSeaSL.h"
 
 /* Overview:
-We start by initializing the offset array using shiftingSeaUtilsPS::genOffsetArray(); (in separate file b/c it's shared with ShiftingRainbowSea)
+We start by initializing the offset array using shiftingSeaUtilsPS::genOffsetArray(); (in separate file b/c it used to be shared with another effect)
 Each index of the offset array holds the offset for its corresponding pixel (max value of palette.length * gradLength) to cover all
 the color values the pixel can be
 Then, with each offset cycle, the pixel's color is calculated using the current cycle number and it's offset
@@ -9,6 +9,10 @@ So all pixels are following the same pattern through the palette, but their indi
 creating the effect
 If the randomShift is on, then with each cycle we do a random check to see if we should change the pixel's offset
 if so, then we increment it by a random amount up to shiftStep.
+
+Note that in rainbow mode, we get our colors from the rainbow, blending through them over time.
+Much of the notes above still apply, but our cycle length is capped to 255 steps and we use the wheel() function
+to get our colors.
  */
 //Constructor for effect with pattern and palette
 ShiftingSeaSL::ShiftingSeaSL(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, uint8_t GradLength,
@@ -35,6 +39,22 @@ ShiftingSeaSL::ShiftingSeaSL(SegmentSetPS &SegSet, uint8_t NumColors, uint8_t Gr
     paletteTemp = paletteUtilsPS::makeRandomPalette(NumColors);
     palette = &paletteTemp;
     setPaletteAsPattern();
+    init(SegSet, Rate);
+}
+
+//Constructor for rainbow mode
+ShiftingSeaSL::ShiftingSeaSL(SegmentSetPS &SegSet, uint8_t GradLength, uint8_t ShiftMode, uint8_t Grouping, uint16_t Rate)
+    : shiftMode(ShiftMode), gradLength(GradLength), grouping(Grouping)  //
+{
+    rainbowMode = true;
+
+    //In rainbow mode we won't use a palette, but to prevent crashes should
+    //the user turn off rainbow mode, we'll create a quick 3 color palette and pattern.
+    bgMode = 0;
+    paletteTemp = paletteUtilsPS::makeRandomPalette(3);
+    palette = &paletteTemp;
+    setPaletteAsPattern();
+
     init(SegSet, Rate);
 }
 
@@ -138,14 +158,18 @@ void ShiftingSeaSL::resetOffsets() {
     shiftingSeaUtilsPS::genOffsetArray(offsets, numLines, gradLength, grouping, totalCycleLength, shiftMode);
 }
 
-//calculates the totalCycleLength, which represents the total number of possible offsets a pixel can hav
+//calculates the totalCycleLength, which represents the total number of possible offsets a pixel can have
 void ShiftingSeaSL::setTotalCycleLen() {
-    patternLen = pattern->length;
-    totalCycleLength = gradLength * patternLen;
+    if( rainbowMode ) {  //in rainbow mode the cycle length is 256, the total number of rainbow colors + 1 (b/c it's a limit)
+        totalCycleLength = 256;
+    } else {
+        patternLen = pattern->length;
+        totalCycleLength = gradLength * patternLen;
+    }
 }
 
 //Updates the effect
-//Runs through each pixel, calculates it's color based on the cycle number and the offset
+//Runs through each pixel, calculates it's color based on the cycle number and its offset
 //and determines which colors from the palette it's in between
 //increments the offset based on the randomShift values
 //then writes it out.
@@ -164,37 +188,51 @@ void ShiftingSeaSL::update() {
         setTotalCycleLen();
 
         for( uint16_t i = 0; i < numLines; i++ ) {
-            step = addMod16PS(cycleNum, offsets[i], totalCycleLength);  // where we are in the cycle of all the colors
-            gradStep = addMod16PS(cycleNum, offsets[i], gradLength);    // what step we're on between the current and next color
-            curPatIndex = step / gradLength;                            // what pattern index we've started from (integers always round down)
+            //where we are in the cycle of all the colors based on the current pixel's offset
+            step = addMod16PS(cycleNum, offsets[i], totalCycleLength);
 
-            //Get the palette index from the pattern then the color from the palette
-            curColorIndex = patternUtilsPS::getPatternVal(*pattern, curPatIndex);
+            if( rainbowMode ) {
+                //in rainbow mode the color is taken from the rainbow wheel
+                color = colorUtilsPS::wheel(step, 0, sat, val);
 
-            //Get the current color based on the pattern value. If the value is 255, then we use the bgColor as a "space"
-            //otherwise we get the color from the palette
-            if( curColorIndex == 255 ) {
-                currentColor = *bgColor;
             } else {
-                currentColor = paletteUtilsPS::getPaletteColor(*palette, curColorIndex);
+
+                //what step we're on between the current and next color
+                gradStep = addMod16PS(cycleNum, offsets[i], gradLength);
+
+                //what pattern index we've started from (integers always round down)
+                curPatIndex = step / gradLength;
+
+                //Get the palette index from the pattern then the color from the palette
+                curColorIndex = patternUtilsPS::getPatternVal(*pattern, curPatIndex);
+
+                //Get the current color based on the pattern value. If the value is 255, then we use the bgColor as a "space"
+                //otherwise we get the color from the palette
+                if( curColorIndex == 255 ) {
+                    currentColor = *bgColor;
+                } else {
+                    currentColor = paletteUtilsPS::getPaletteColor(*palette, curColorIndex);
+                }
+
+                //Get the next pattern index, wrapping to the start of the pattern as needed, then the color from the palette
+                nextColorIndex = patternUtilsPS::getPatternVal(*pattern, curPatIndex + 1);
+
+                //Get the next color based on the pattern value. If the value is 255, then we use the bgColor as a "space"
+                //otherwise we get the color from the palette
+                if( nextColorIndex == 255 ) {
+                    nextColor = *bgColor;
+                } else {
+                    nextColor = paletteUtilsPS::getPaletteColor(*palette, nextColorIndex);
+                }
+
+                //get the cross faded color and write it out
+                color = colorUtilsPS::getCrossFadeColor(currentColor, nextColor, gradStep, gradLength);
             }
 
-            //Get the next pattern index, wrapping to the start of the pattern as needed, then the color from the palette
-            nextColorIndex = patternUtilsPS::getPatternVal(*pattern, curPatIndex + 1);
-
-            //Get the next color based on the pattern value. If the value is 255, then we use the bgColor as a "space"
-            //otherwise we get the color from the palette
-            if( nextColorIndex == 255 ) {
-                nextColor = *bgColor;
-            } else {
-                nextColor = paletteUtilsPS::getPaletteColor(*palette, nextColorIndex);
-            }
-
-            //get the cross faded color and write it out
-            color = colorUtilsPS::getCrossFadeColor(currentColor, nextColor, gradStep, gradLength);
+            //Write out the color
             segDrawUtils::drawSegLine(*segSet, i, color, 0);
 
-            // randomly increment the offset (keeps the effect varied)
+            //randomly increment the offset (keeps the effect varied)
             if( randomShift ) {
                 if( random8(100) <= shiftThreshold ) {
                     offsets[i] = addMod16PS(offsets[i], random8(1, shiftStep), totalCycleLength);

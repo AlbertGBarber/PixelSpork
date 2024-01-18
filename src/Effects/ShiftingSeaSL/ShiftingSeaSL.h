@@ -1,6 +1,10 @@
 #ifndef ShiftingSeaSL_h
 #define ShiftingSeaSL_h
 
+//TODO: place a cap on the random shift if in shift mode 1. 
+//      To do this, calculate the avg offset for each cycle, only allow a shift if the value is within some range of the avg
+//      range => 1/3 totalCycleLength? 
+
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
 #include "MathUtils/mathUtilsPS.h"
@@ -9,6 +13,7 @@
 /*
 Cycles each line of a segment set through a pattern of colors. Each segment line is given an random 
 offset to place it somewhere mid-fade between the pattern colors, so the result is a shifting sea of colors. 
+You also have the option of using rainbow colors for the effect, see "rainbowMode" notes below.
 
 The pattern colors are taken from passed in palette. There are constructor options for just using a palette
 (in which case a pattern will be created that matches the palette).
@@ -45,8 +50,20 @@ Note that 255 is used to mark the "blank" spaces in the pattern. You can also ad
 
 You can also set the blank color (default is 0) using the *bgColor var.
 
-Please note that this effect will not work with the colorModes of segDrawUtils::setPixelColor();
-But you can find a rainbow version of the effect in ShiftingRainbowSeaPS.h
+rainbowMode:
+    Setting rainbowMode to true switches the effect to use a rainbow gradient for colors.
+    The gradient is the typical 255 range of colors common in other rainbow effects and colorModes.
+    This mode works with all the other effect variables, but the gradient length is fixed to 255
+    and the background mode and colors are ignored. 
+    However, you can set the rainbow's saturation ("sat") and value ("val").
+    Imo it works best in shift mode 1 or with a large grouping value.
+    I Also recommend an update rate of 30 - 60.
+    rainbowMode is automatically set by the rainbow mode constructor (see below),
+    but may also be toggled on at anytime.
+    Finally, if using the constructor, a random 3 color palette will be created for safety,
+    so you can switch off rainbow mode without the effect crashing due to a lack of palette.
+
+Please note that this effect will not work with the colorModes of segDrawUtils::setPixelColor().
 
 The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
 passing in a SegmentSetPS with only one segment containing the whole strip.
@@ -68,12 +85,19 @@ Example calls:
 
     ShiftingSeaSL shiftingSea(mainSegments, cybPnkPal_PS, 20, 0, 3, 0, 40);
     Will shift through the colors of cybPnkPal_PS, with 20 steps between each shift, using shift mode 0.
-    grouping pixels by 3, at a rate of 40ms.
-    No "blank" spaces are added to the shift pattern (bgMode 0).
+    grouping pixels by 3, no "blank" spaces are added to the shift pattern (bgMode 0).
+    The effect updates at a rate of 40ms.
 
     ShiftingSeaSL shiftingSea(mainSegments, 4, 15, 1, 1, 2, 60);
     Will shift a random set of 4 colors, with 15 steps between each shift, using shift mode 1
     grouping pixels by 1, with "blank" spaces added between each shift color (bgMode 2) at a rate of 60ms.
+
+    ShiftingSeaSL shiftingSea(mainSegments, 50, 0, 15, 30);
+    Will do a shifting sea using rainbow colors (rainbowMode on)
+    (note the lack of palette / color count as inputs)
+    The gradient steps are set at 50, but will be ignored due to shift mode being 0 (the gradient length is 255) 
+    If shift mode was 1, 50 would be the range for the color offsets
+    The effect updates at a rate of 30ms.
 
 Inputs:
     pattern (optional, see constructors) -- Used for making a strobe that follows a specific pattern (using colors from a palette) (see patternPS.h) 
@@ -104,6 +128,13 @@ Other Settings:
     shiftThreshold (default 15) -- Sets the threshold for if a pixel offset will increment, out of 100, with higher values being more likly
                                    15 seemed to look good in my tests
     shiftStep (default 1, min 1) -- The maximum value (is chosen randomly) of the offset increment if the shiftThreshold is met
+    rainbowMode (default false) -- If true, then the effect will use rainbow colors in place of palette colors.
+                                   Note that rainbowMode is automatically set true by the rainbow mode constructor.
+                                   The rainbow colors are spread over the typical range, 
+                                   using 255 as the gradient & total cycle length.
+                                   Note that in this mode, the background mode is ignored.
+    sat (default 255) -- For rainbow mode; the rainbow's saturation value.
+    val (default 255) -- For rainbow mode; the rainbow's "value" value.
 
 Reference Vars:
     grouping -- (see constructor vars above). Set using setGrouping().
@@ -126,6 +157,9 @@ class ShiftingSeaSL : public EffectBasePS {
         //Constructor for effect with randomly created palette
         ShiftingSeaSL(SegmentSetPS &SegSet, uint8_t NumColors, uint8_t GradLength, uint8_t ShiftMode, uint8_t Grouping,
                       uint8_t BgMode, uint16_t Rate);
+        
+        //Constructor for rainbow mode
+        ShiftingSeaSL(SegmentSetPS &SegSet, uint8_t GradLength, uint8_t ShiftMode, uint8_t Grouping, uint16_t Rate);
 
         //destructor
         ~ShiftingSeaSL();
@@ -136,7 +170,9 @@ class ShiftingSeaSL : public EffectBasePS {
             grouping,   //for reference, set this using setGrouping()
             shiftMode,  //for reference, set this using setShiftMode()
             bgMode,     //for reference, set this using setBgMode()
-            gradLength;
+            gradLength,
+            sat = 255, //For rainbow mode; the rainbow's saturation value
+            val = 255; //For rainbow mode; the rainbow's "value" value
 
         uint16_t
             *offsets = nullptr,
@@ -144,7 +180,8 @@ class ShiftingSeaSL : public EffectBasePS {
             cycleNum = 0;      //tracks how many update's we've done, max value of totalCycleLength, for reference
 
         bool
-            randomShift = false;
+            randomShift = false,
+            rainbowMode = false;
 
         CRGB
             bgColorOrig = 0, //default "blank" color for spaces

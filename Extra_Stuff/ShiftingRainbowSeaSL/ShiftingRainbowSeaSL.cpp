@@ -76,7 +76,7 @@ void ShiftingRainbowSeaSL::resetOffsets() {
     if( shiftMode == 0 ) {
         gradLengthTemp = 255;
     }
-    shiftingSeaUtilsPS::genOffsetArray(offsets, numLines, gradLengthTemp, grouping, 255, shiftMode);
+    shiftingSeaUtilsPS::genOffsetArray(offsets, numLines, gradLengthTemp, grouping, 256, shiftMode);
 }
 
 //updates the effect
