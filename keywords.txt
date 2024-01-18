@@ -84,7 +84,6 @@ RollingWavesSL2	KEYWORD1
 ScannerSL	KEYWORD1
 SegWaves	KEYWORD1
 SegWavesFast	KEYWORD1
-ShiftingRainbowSeaSL	KEYWORD1
 ShiftingSeaSL	KEYWORD1
 ShimmerSL	KEYWORD1
 SoftTwinkleSL	KEYWORD1
@@ -136,6 +135,8 @@ minPS		KEYWORD2
 SIZE			KEYWORD2
 qSubD_PS			KEYWORD2
 qSubA_PS			KEYWORD2
+clamp8PS			KEYWORD2
+clamp16PS			KEYWORD2
 
 #######################################
 # Constants (in GlobalVars.h)

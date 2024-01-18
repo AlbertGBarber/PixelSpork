@@ -7,7 +7,6 @@
 #include "Effects/Twinkle2SLSeg/Twinkle2SLSeg.h"
 #include "Effects/TwinkleFastSL/TwinkleFastSL.h"
 #include "Effects/ShiftingSeaSL/ShiftingSeaSL.h"
-#include "Effects/ShiftingRainbowSeaSL/ShiftingRainbowSeaSL.h"
 #include "Effects/FairyLightsSLSeg/FairyLightsSLSeg.h"
 #include "Effects/DissolveSL/DissolveSL.h"
 #include "Effects/SoftTwinkleSL/SoftTwinkleSL.h"
