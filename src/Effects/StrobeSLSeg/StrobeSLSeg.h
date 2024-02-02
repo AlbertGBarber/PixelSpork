@@ -68,7 +68,7 @@ Pausing:
 
 Backgrounds:
     By default the background is filled in after the end of every pulse set and during a pause
-    Both these can be disabled with the fillBG and fillBGOnPause flags respectively
+    Both these can be disabled with the fillBg and fillBGOnPause flags respectively
     This causes the last pulse color to persist after the pulse set is done
     which can be used for some neat effects, like a sci-fi charging cycle "filling up" segments one at a time
 
@@ -78,7 +78,7 @@ to an external color variable (see segDrawUtils::setPixelColor)
 There are quite a lot of extra configuration options to help make more dynamic strobes
 
 Example calls: 
-    uint8_t pattern_arr = {0, 1, 2};
+    uint8_t pattern_arr = {0, 2, 1};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
     StrobeSLSeg strobe(mainSegments, pattern, cybPnkPal_PS, 0, 4, 0, true, true, false, false, false, 50);
     setNewColorBool(true); //put in Arduino Setup() (sets newColor flag)
@@ -96,7 +96,7 @@ Example calls:
 
     StrobeSLSeg strobe(mainSegments, cybPnkPal_PS, CRGB::Red, 2, 500, true, false, false, false, true, 100);
     alternate = true; //put in Arduino Setup()
-    fillBG = false; //put in Arduino Setup()
+    fillBg = false; //put in Arduino Setup()
     fillBGOnPause = false; //put in Arduino Setup()
     Will do a set of strobes using cybPnkPal_PS and strobe modes 0 and 4.
     The background is red, there are 2 pulses per strobe with 100ms between each
@@ -135,6 +135,19 @@ Constructor Inputs:
     segAll -- If true, strobe mode 4 will be run
     rate -- The update rate (ms)
 
+Other Settings:
+    colorMode (default 0) -- sets the color mode for the random pixels (see segDrawUtils::setPixelColor)
+    bgColorMode (default 0) -- sets the color mode for the background (see segDrawUtils::setPixelColor)
+    fillBg (default true) -- flag to fill the background after each set of pulses
+    fillBGOnPause (default true) -- flag to fill the background during each pause
+    pauseEvery (default false) -- pause after every set of pulses rather than after every full strobe cycle
+    direct (default true) -- The direction of the pulses for modes 0 and 2 (true starts at segment 0)
+    alternate (default false) -- Set this to alternate the direction of pulses after each strobe cycle for modes 0 and 2
+    randMode (default 0) -- Sets how colors are chosen from the palette
+                        -- 0: Colors will be chosen from the palette in order (not random)
+                        -- 1: Colors will be chosen completely at random (not using the palette)
+                        -- 2: Colors will be chosen randomly from the palette, same color will not be chosen in a row
+
 Functions:
     reset() -- Restarts the strobe using the first mode
     setPaletteAsPattern() -- Sets the effect pattern to match the current palette
@@ -146,19 +159,6 @@ Functions:
     setCycleCountMax() -- Re-calculates how many strobe cycles to do based on the palette length (only need to call manually if you're doing something funky)                                                     
     update() -- updates the effect
 
-Other Settings:
-    colorMode (default 0) -- sets the color mode for the random pixels (see segDrawUtils::setPixelColor)
-    bgColorMode (default 0) -- sets the color mode for the background (see segDrawUtils::setPixelColor)
-    fillBG (default true) -- flag to fill the background after each set of pulses
-    fillBGOnPause (default true) -- flag to fill the background during each pause
-    pauseEvery (default false) -- pause after every set of pulses rather than after every full strobe cycle
-    direct (default true) -- The direction of the pulses for modes 0 and 2 (true starts at segment 0)
-    alternate (default false) -- Set this to alternate the direction of pulses after each strobe cycle for modes 0 and 2
-    randMode (default 0) -- Sets how colors are chosen from the palette
-                        -- 0: Colors will be chosen from the palette in order (not random)
-                        -- 1: Colors will be chosen completely at random (not using the palette)
-                        -- 2: Colors will be chosen randomly from the palette, same color will not be chosen in a row
-
 Reference Vars:
     newColor (default false) -- see Color options notes above, set using setNewColorBool()
     colorNum -- The pattern index of the color currently being pulsed
@@ -166,6 +166,7 @@ Reference Vars:
     totalCycles -- How many total strobe cycles we've been through.
                    Each sequential strobe mode finished is one strobe cycle.
                    Doesn't reset automatically, only if reset() is called.
+                   
 Flags:
     paused -- set true if a pause is active
 
@@ -193,7 +194,7 @@ class StrobeSLSeg : public EffectBasePS {
         ~StrobeSLSeg();
 
         bool
-            fillBG = true,         //flag to fill the background after each set of pulses
+            fillBg = true,         //flag to fill the background after each set of pulses
             fillBGOnPause = true,  //flag to fill the background during each pause
             paused = false,        //if a pause is active
             pauseEvery = false,

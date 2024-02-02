@@ -37,21 +37,6 @@ void GradientCycleSL::init(SegmentSetPS &SegSet, uint16_t Rate) {
     bindSegSetPtrPS();
     bindClassRatesPS();
     cycleNum = 0;
-    setTotalEffectLength();
-}
-
-//sets the gradLength
-//we need to change the totalCycleLength to match
-void GradientCycleSL::setGradLength(uint8_t newGradLength) {
-    gradLength = newGradLength;
-    setTotalEffectLength();
-}
-
-//sets a new pattern for the effect
-//we need to change the totalCycleLength to match
-void GradientCycleSL::setPattern(patternPS &newPattern) {
-    pattern = &newPattern;
-    setTotalEffectLength();
 }
 
 //sets the pattern to match the current palette
@@ -60,14 +45,6 @@ void GradientCycleSL::setPattern(patternPS &newPattern) {
 void GradientCycleSL::setPaletteAsPattern() {
     generalUtilsPS::setPaletteAsPattern(patternTemp, *palette);
     pattern = &patternTemp;
-    setTotalEffectLength();
-}
-
-//calculates the totalCycleLength, which represents the total number of possible colors a pixel can have
-//ie the total length of all the color gradients combined
-void GradientCycleSL::setTotalEffectLength() {
-    // the number of steps in a full cycle (fading through all the colors)
-    totalCycleLength = pattern->length * gradLength;
 }
 
 //Updates the effect
@@ -83,6 +60,11 @@ void GradientCycleSL::update() {
 
         //we set the segment vars here since the pixel locations depend on them
         numLines = segSet->numLines;
+        
+        //calculates the totalCycleLength, which represents the total number of possible colors a pixel can have
+        //ie the total length of all the color gradients combined
+        //We re-calculate this each loop to allow you to freely change the patter and gradLength
+        totalCycleLength = pattern->length * gradLength;
 
         //In the loop below, we only pick new colors once blendStep is 0
         //due to cycleNum, blendStep is not always 0 for the first pixel

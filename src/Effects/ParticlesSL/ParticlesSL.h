@@ -16,79 +16,79 @@
 #include "Particle_Stuff/particleUtilsPS.h"
 
 /* 
-An effect for updating a set of particles
-Copying the explanation of particles from particleUtilsPS.h:
-A particle is a moving pixel. Particles can move backwards or forwards along the strip. They move at their own speeds.
-There are a number of other settings to do with trails, particle size, bouncing, etc (see particle.h)
-Because working with just one particle at a time would be boring, I've created particleSets (see particleUtilsPS.h)
-which are storage for a group of particles
-This effect animates a set of particles
-The set can either be provided, or automatically built by the effect.
+An effect for updating a set of particles. A particle is a moving pixel. 
+A particle has a direction, speed, and can leave a trail that blends cleanly into the background color over 
+the trail length (like waving a flame around, or a comet trail). 
+Particles are grouped into particle sets.
+ Each particle in a set has its own properties, so you can have multiple 
+ particles with different sizes, speeds, trails, etc. This effect animates a set of particles.
 
-If you're looking for a preset cylon or knightRider mode see LarsonScanner effect
+Before using this effect, you should read about the full details of particles see particlePS.h.
+For this effect, you have the option of using your own particle set, or have the effect create one for you. 
 
-This effect is fully compatible with color modes, and the bgColor is a pointer, so you can bind it
-to an external color variable
+You have a lot of options when creating a particle set, so you can use this effect to build some really great looks!
 
-The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
-passing in a SegmentSetPS with only one segment containing the whole strip. For 2D segments
-particles move along segment lines, with the particle being replicated across all the segments
-ie like a wave.
+The effect is adapted to work on segment lines for 2D use.
+ For 2D segments particles move along segment lines, with the particle being replicated across 
+ all the segment, like a wave.
 
-Note that unlike other effects the update rate is not externally controllable, and depends on the 
-update rates of the particles
+Supports color modes for both the main and background colors.
 
-Due to the way the effect is programmed, particles that are placed later in the particleSet will run "in front"
-of those earlier in the set. This means that when two particles pass each other, the later one will be drawn 
-over the earlier one.
-You can adjust this behavior by turning on "blend", which will add particle colors together as they pass by each other
-However this does have two draw backs:
-    1: Due to the way particle trails are drawn, this forces the background to be re-drawn each update cycle,
-    which may have a performance impact depending on your strip length, update rate, etc
-    2: For colored backgrounds, the particles colors are added to the background colors.
-    This will in most cases significantly change the particle colors 
-    For example, blue particles running on a red background will appear purple (blue +  red = purple)
-    This can be used to create some nice effects, (like ocean-ish of lava-ish looking things),
-    But overall I do not recommend using blend for colored backgrounds
-    3: Using blend on segment sets with lines of un-equal length may look weird, because
-    pixels may be added to many times where multiple lines converge/overlap
+Note that unlike other effects, the update rate is not externally controllable, 
+and depends on the update rates of the particles.
 
-Making a particle set:
-    A particle set is a struct consisting of an array of particles (technically pointers to particles)
-    and a length (the number of particles in the array)
+Trail Modes:
+    Taken from particlePS.h:
+    Trails blend cleanly into the background color over the trail length
+    (like waving a flame around, or a meteor trail)
+    Trail options:
+    0: no trails
+    1: one trail facing away from the direction of motion (like a comet)
+    2: two trails, facing towards both directions of motion
+    3: one trail facing towards the direction of motion
+    4: Infinite trails that persist after the particle (no fading)
+    For example, with a trail length of 4, the modes will produce:
+    (The trail head is *, - are the trail, particle is moving to the right ->)
+    0:     *
+    1: ----* 
+    2: ----*----
+    3:     *----
+    4: *****
 
-    For example lets make a particle: particlePS particle1 = {0, true, 80, 1, 1, 5, true, 0}
-    Based on particlePS.h: this is a particle that starts at pixel 0, is moving forward along the strip at a rate of 80ms,
-    has a size of 1 and a single trail behind the particle of length 5. It will bounce at each end of the strip.
-    It will be colored using the 0th element in whatever palette it is matched with
+Blending:
+    Due to the way the effect is programmed, particles that are placed later in the particleSet will run "in front"
+    of those earlier in the set. This means that when two particles pass each other, the later one will be drawn 
+    over the earlier one.
 
-    Now we stick it in a set: 
-    particlePS *particleArr[] = { &particle1 };
-    particleSetPS particleSet = {particleArr, SIZE(particleArr)};
+    You can adjust this behavior by turning on "blend", which will add particle colors together as they pass by each other
+    However this does have two draw backs:
+        1: Due to the way particle trails are drawn, this forces the background to be re-drawn each update cycle,
+           which may have a performance impact depending on your strip length, update rate, etc
+        2: For colored backgrounds, the particles colors are added to the background colors.
+           This will in most cases significantly change the particle colors 
+           For example, blue particles running on a red background will appear purple (blue +  red = purple)
+           This can be used to create some nice effects, (like ocean-ish of lava-ish looking things),
+           But overall I do not recommend using blend for colored backgrounds
+        3: Using blend on segment sets with lines of un-equal length may look weird, because
+           pixels may be added to many times where multiple lines converge/overlap
 
-    we could then pass this particleSet to this effect and it would animate the particle.
+Bounce Behavior:
+    For a particle to bounce, it must reverse its direction once it hits either end of the segment set.
+    However, how/when it bounces is a matter of opinion. 
 
-    You can have any number of particles, each with their own properties running on the strip.
-    The functions in particleUtilsPS.h let you manipulate particle properties easily 
-
-    Because making particles manually is tedious, this effect features a constructor for automatically making a set of particles
-    including choosing properties at random. I break this down in the constructor inputs below.
-    The created particle set will be bound to the particleSet pointer in the effect, so you can manipulate it from outside
-
-    Please note the following bounce behavior of particles:
-    For a particle to bounce, it must reverse it's direction once it hits either end of the SegmentSetPS
-    However, how/when it bounces is a matter of opinion. I have opted for the following:
-    The particle only bounces when it's main body (not trail) reaches an end point.
-    Both the front and rear trails wrap back on themselves as the particle bounces
-    Ie the head of the trail moves back down the strip, opposite the direction of the particle
-    The rear trail is always drawn last.
-    In practice this means that particles with two trails mimics the classic "cylon" scanner look, where the front of the 
-    trail moves disappears off the strip (it is actually wrapping back, but is over written by the rear trail, which is drawn after)
-    While for particles with only a rear trail, it naturally fades as like it would for a physical streamer/flame/etc
-    Finally, for particles with only a front trail the trail also wraps back, but under the particle,
-    this does look a little weird, but there's not a good real world approximation to this kind of particle, so w/e.
-    For particles where the body size is larger than one, when bounce happens, the entire body reverses direction at once
-    This is not visually noticeable, and makes coding easier. But it does mean there's no "center" of a particle
+    I have opted for the following:
+        * The particle only bounces when its main body (not trail) reaches an end point.
+        * Both the front and rear trails wrap back on themselves as the particle bounces. 
+          Ie the head of the trail moves back down the strip, opposite the direction of the particle.
+        * The rear trail is always drawn last. In practice this means that particles with two trails 
+          mimic the classic "Cylon" scanner look, where the front of the trail disappears off the strip 
+          (it is actually wrapping back, but is over written by the rear trail, which is drawn after).
+        While for particles with only a rear trail, it naturally fades as like it would for a physical streamer/flame/etc.   
+        * For particles with only a front trail the trail also wraps back, but under the particle. 
+          This does look a little weird, but there's not a good real world approximation to this kind of particle, so w/e.
+        * For particles where the body size is larger than one, when a bounce happens, 
+          the entire body reverses direction at once. This is not visually noticeable, 
+          and makes coding easier. However, it does mean there's no "center" of a particle.
 
 Example calls: 
     using the particleSet defined above:
@@ -119,36 +119,22 @@ Constructor inputs for creating a particle set:
     trailSize -- The minimum length of the trails (if the particle has them, min val 1)
     trailRange -- The amount the trailSize can vary from the base size (ie trailSize + random(range))
     bounce -- Whether the particles should reverse direction at either end of the segment set
-             pass in any number > 1 to set this randomly
+              pass in any number > 1 to set this randomly
     colorIndex -- The index of the color in the palette the particles will be
-                 If setting randomly, pass in the length of the palette
+                  If setting randomly, pass in the length of the palette
     randColor -- If the colors are to be chosen randomly from the palette (up to the value passed in for colorIndex)
 
-Trail Modes:
-    Taken from particlePS.h:
-    Trails blend cleanly into the background color over the trail length
-    (like waving a flame around, or a meteor trail)
-    Trail options:
-    0: no trails
-    1: one trail facing away from the direction of motion (like a comet)
-    2: two trails, facing towards both directions of motion
-    3: one trail facing towards the direction of motion
-    4: Infinite trails that persist after the particle (no fading)
-    For example, with a trail length of 4, the modes will produce:
-    (The trail head is *, - are the trail, particle is moving to the right ->)
-    0:     *
-    1: ----* 
-    2: ----*----
-    3:     *----
-    4: *****
-
-DimPow:
-    The rate of dimming for the trails can be adjusted using dimPow. This allows you to produce a brighter head
-    making the comet effect more noticeable
-    The range of dimPow is -127 to 127, it's defaulted to 80
-    Positive values quicken the dimming, while negative ones slow it down
-    setting the negative value below 80, seems to bug it out tho
-    Slowing the dimming down is useful for colored backgrounds, as it makes the particles stand out more
+Other Settings:
+    colorMode (default 0) -- sets the color mode for the particles (see segDrawUtils::setPixelColor)
+    bgColorMode (default 0) -- sets the color mode for the spacing pixels (see segDrawUtils::setPixelColor)
+    dimPow (default 80, min -127, max 127) -- Adjusts the rate of dimming for the trails (see dimPow above)
+    blend (default false) -- Causes particles to add their colors to the strip, rather than set them
+                            See explanation of this in more detail above in effect intro
+    fillBg (default false) -- Sets the background to be redrawn every update, useful for bgColorModes that are dynamic
+                             Warning!: Not compatible with infinite trails (mode 4). They will be drawn over.
+    *particleSet -- The effect's particle set. Is a pointer, so you can bind it to an external set. 
+                    If the effect builds a particle set for you, `particleSet`, 
+                    will be bound to the effect's local set, `particleSetTemp`. 
 
 Functions:
     reset() -- resets all particles to the starting locations
@@ -157,16 +143,6 @@ Functions:
 
 More functions for adjusting the particles on the fly can be found in particleUtilsPS.h/particleUtilsPS.cpp
 
-Other Settings:
-    colorMode (default 0) -- sets the color mode for the particles (see segDrawUtils::setPixelColor)
-    bgColorMode (default 0) -- sets the color mode for the spacing pixels (see segDrawUtils::setPixelColor)
-    dimPow (default 80, min -127, max 127) -- Adjusts the rate of dimming for the trails (see dimPow above)
-    blend (default false) -- Causes particles to add their colors to the strip, rather than set them
-                            See explanation of this in more detail above in effect intro
-    fillBG (default false) -- Sets the background to be redrawn every update, useful for bgColorModes that are dynamic
-                             Warning!: Not compatible with infinite trails (mode 4). They will be drawn over.
-
-Notes:
 */
 class ParticlesSL : public EffectBasePS {
     public:
@@ -175,7 +151,7 @@ class ParticlesSL : public EffectBasePS {
                     uint16_t baseSpeed, uint16_t speedRange, uint16_t size, uint16_t sizeRange, uint8_t trailType,
                     uint8_t trailSize, uint8_t trailRange, uint8_t bounce, uint8_t colorIndex, bool randColor);
 
-        //Constructor for using a passed in set of particles
+        //Constructor for using a predefined set of particles
         ParticlesSL(SegmentSetPS &SegSet, particleSetPS &ParticleSet, palettePS &Palette, CRGB BgColor);
 
         ~ParticlesSL();
@@ -189,7 +165,7 @@ class ParticlesSL : public EffectBasePS {
 
         bool
             blend = false,  //sets if particles should add onto one another
-            fillBG = false;
+            fillBg = false;
 
         CRGB
             *trailEndColors = nullptr,  //used to store the last colors of each trail, so the background color can be set

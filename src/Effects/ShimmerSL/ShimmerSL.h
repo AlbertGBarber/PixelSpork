@@ -42,10 +42,6 @@ Constructor Inputs:
     shimmerSLMax (min 0, max 255) -- The maximum amount of dim that will be applied to a pixel
     rate -- The update rate (ms)
 
-Functions:
-    setSingleColor(Color) -- Sets the effect to use a single color for the pixels
-    update() -- updates the effect
-
 Other Settings:
     colorMode (default 0) -- sets the color mode for the random pixels (see segDrawUtils::setPixelColor)
     lineMode (default true) -- If false, each pixel will have it's own shimmer amount (rather than it being the same along segment lines)
@@ -53,6 +49,10 @@ Other Settings:
     randMode (default 0) -- sets how colors will be picked
                             0: Picks colors from the palette
                             1: Picks colors at random
+
+Functions:
+    setSingleColor(Color) -- Sets the effect to use a single color for the pixels
+    update() -- updates the effect
 */
 class ShimmerSL : public EffectBasePS {
     public:

@@ -42,7 +42,7 @@ randModes:
     4: Colors will be from the rainbow (the hue is offset by hueRate each time a color is chosen)
 
 Example calls: 
-    uint8_t pattern_arr = {0, 1, 2};
+    uint8_t pattern_arr = {0, 2, 1};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
     BreathPS breath(mainSegments, pattern, cybPnkPal_PS, 0, 10, 50);
     Does a breathing cycle using the colors from cybPnkPal_PS, following the pattern above
@@ -85,12 +85,6 @@ Constructor Inputs
     breathFreq -- The speed of the breathing, between 5 and 20 works well.
     Rate -- update rate (ms)
 
-Functions:
-    setPaletteAsPattern() -- Sets the effect pattern to match the current palette
-    reset() -- Restarts the effect
-               Note that the effect may start mid breath after resetting.
-    update() -- updates the effect
-
 Other Settings:
     bgColorOrig -- The default target of the effect's bgColor pointer variable.
                    Will be set to the passed in bgColor from the constructor. 
@@ -102,8 +96,14 @@ Other Settings:
                       (see breathFreq notes above)
     breathEndOffset (default 5) -- The brightness threshold difference from maxBreath for changing breath colors,
                                    shouldn't need to change this, see comments in update() function
-    rainbowSat (default 255) -- The saturation of the rainbow mode 
-    rainbowVal (default 255) -- The value of the rainbow mode (as part of setting the rainbow color)
+    sat (default 255) -- The HSV saturation of the rainbow mode (randMode 4)
+    val (default 255) -- The HSV "value" value of the rainbow mode (randMode 4)
+
+Functions:
+    setPaletteAsPattern() -- Sets the effect pattern to match the current palette
+    reset() -- Restarts the effect
+               Note that the effect may start mid breath after resetting.
+    update() -- updates the effect
 
 Reference vars:
     breathCount -- The number of breath cycles we've gone through. Does not have a capped value.
@@ -132,10 +132,10 @@ class BreathPS : public EffectBasePS {
             minBreath = 60,         //The minimum breath fade amount (0 is min, should be less than maxBreath)
             maxBreath = 255,        //How far the breath color will fade towards the background (255 is max)
             breathEndOffset = 5,    //The offset from maxBreath after which a new color is chosen (see comments in update() code)
-            rainbowSat = 255,
-            rainbowVal = 255,
-            hueRate = 20,  //How much the hue is incremented by for randMode 4
-            randMode = 0;  //see description above
+            sat = 255,              //saturation value for rainbow mode (randMode 4)
+            val = 255,              //"value" value for rainbow mode (randMode 4)
+            hueRate = 20,           //How much the hue is incremented by for rainbow mode (randMode 4)
+            randMode = 0;           //see description in intro
 
         uint16_t
             breathCount = 0;  //How many total breath cycles we've gone through

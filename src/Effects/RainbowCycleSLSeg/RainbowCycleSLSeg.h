@@ -6,26 +6,15 @@
 #include "MathUtils/mathUtilsPS.h"
 
 /*
-Draws a repeated rainbow of a set length repeatedly along segment lines
-shifts the rainbows in along the SegmentSetPS liens in the passed in direction at the passed in rate
-suggested min length is 5 (ie red, yellow, green, blue, indigo/violet)
+A classic effect!
+
+Draws a repeated rainbow of a set length along segment lines in a set direction.
+Suggested min length is 5 (ie red, yellow, green, blue, indigo/violet)
 
 This is the 2D version of rainbowCycle which draws on segment lines or whole segments
 (although if you pass in a 1D segment the results will be the same)
 For most effects I would combine the two effects for one that just works on segment lines
-But since this is a very basic effect I wanted to keep it more user friendly, so I kept the 1D version of the effect
-
-For a better version of this effect you should use the segment rainbow effects that are built into
-the library's colorModes. These produce a smoother rainbow.
-To do this you make a BGRateFill effect with color mode 3 or 4
-Then change the segment's gradLineVal or gradSegVal to set the rainbow length, set the offsetRate to set the speed
-set runOffset to true, and change the offsetDirect if needed. 
-ie:   mainSegments.runOffset = true;
-      mainSegments.gradLineVal = 30;
-      mainSegments.offsetRateOrig = 80;
-      mainSegments.offsetDirect = true;
-This would also let you change to different color modes on the fly
-But this is maybe too complicated for learners.
+But since this is a very basic effect I wanted to keep it more user friendly, so I kept the 1D version of the effect.
 
 Example call: 
     RainbowCycleSLSeg rainbowCycleSLSeg(mainSegments, 30, true, false, 80); 
@@ -48,13 +37,13 @@ Constructor Inputs:
                (true will do whole segments)
     Rate -- update rate (ms)
 
-Functions:
-    setLength(newLength) -- sets a new rainbow length
-    update() -- updates the effect 
-
 Other Settings:
     sat (default 255) -- rainbow saturation value
     val (default 255) -- rainbow "value" value
+    
+Functions:
+    setLength(newLength) -- sets a new rainbow length
+    update() -- updates the effect 
 
 Reference Vars:
     length -- The length of the rainbow. Set using setLength();

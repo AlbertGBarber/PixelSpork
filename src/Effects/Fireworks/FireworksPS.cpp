@@ -20,6 +20,7 @@ FireworksPS::FireworksPS(SegmentSetPS &SegSet, uint16_t numColors, uint8_t MaxNu
 
 //constructor for effect with single color
 //!!If using pre-build FastLED colors you need to pass them as CRGB( *color code* )
+//cause is that the compiler sees this as the same as the random color constructor
 FireworksPS::FireworksPS(SegmentSetPS &SegSet, CRGB Color, uint8_t MaxNumFireworks, uint8_t MaxNumSparks,
                          uint8_t SpawnChance, uint16_t LifeBase, uint8_t SpeedDecay, uint16_t Rate, uint16_t SpeedRange)
     : spawnChance(SpawnChance), lifeBase(LifeBase), speedDecay(SpeedDecay), speedRange(SpeedRange)  //
@@ -154,7 +155,7 @@ void FireworksPS::update() {
         numLEDs = segSet->numLeds;
         //if the bg is to be filled before the particles start, fill it in
         //(such as if you have a background that's changing with time (alla bgColorMode 6))
-        if( fillBG || blend ) {
+        if( fillBg || blend ) {
             segDrawUtils::fillSegSetColor(*segSet, *bgColor, bgColorMode);
         }
 
@@ -212,7 +213,7 @@ void FireworksPS::update() {
 
                         //if we're not filling in the background each cycle
                         //we need to set the previous particle position to the background
-                        if( !fillBG && !blend ) {
+                        if( !fillBg && !blend ) {
                             //get the previous particle location (the trail is always 1 behind the particle)
                             trailLedLocation = getTrailLedLoc(1);
                             //get the physical pixel location and the color it's meant to be

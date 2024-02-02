@@ -22,7 +22,7 @@
 #include "Effects/RollingWavesSL2/RollingWavesSL2.h"
 #include "Effects/ParticlesSL/ParticlesSL.h"
 #include "Effects/LarsonScannerSL/LarsonScannerSL.h"
-#include "Effects/PoliceStrobeSL/PoliceStrobeSL.h"
+#include "Effects/PoliceStrobeSLSeg/PoliceStrobeSLSeg.h"
 #include "Effects/StrobeSLSeg/StrobeSLSeg.h"
 #include "Effects/Fire2012Seg/Fire2012Seg.h"
 #include "Effects/Fire2012SL/Fire2012SL.h"

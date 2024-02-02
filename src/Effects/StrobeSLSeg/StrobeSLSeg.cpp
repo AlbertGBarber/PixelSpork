@@ -124,7 +124,7 @@ Ie for mode 0, we'd pause after pulsing each segment once (or after each color i
 
 Backgrounds:
 By default the background is filled in after the end of every pulse set and during a pause
-Both these can be disabled with the fillBG and fillBGOnPause flags respectively
+Both these can be disabled with the fillBg and fillBGOnPause flags respectively
 This causes the last pulse color to persist after the pulse set is done
 which can be used for some neat effects, like a sci-fi charging cycle or something
 
@@ -219,7 +219,7 @@ void StrobeSLSeg::update() {
 
             //One pulse is setting the color and then turning it off again
             //so we only advance the pulse count every other cycle
-            //we also toggle the fillBG flag each cycle so every time we advance the pulse count
+            //we also toggle the fillBg flag each cycle so every time we advance the pulse count
             //we know we've done one full pulse
             if( !pulseBG ) {
                 pulseCount++;
@@ -270,7 +270,7 @@ void StrobeSLSeg::update() {
             pulseCount = 1;
             //fill the segment set with the background to clear the strip for the next pulse cycle
             //(if desired)
-            if( fillBG ) {
+            if( fillBg ) {
                 segDrawUtils::fillSegSetColor(*segSet, *bgColor, bgColorMode);
             }
             //don't want to start with the background for the next pulse cycle

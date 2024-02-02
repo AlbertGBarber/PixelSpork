@@ -14,42 +14,37 @@
   For Dan.
 
 An effect based on the pacific code here: https://github.com/FastLED/FastLED/blob/master/examples/PacificaSL/PacificaSL.ino
-A gentle effect of blue-green ocean waves rolling across the strip
-This version of Pacifica differs from the normal because we draw the colors along seg lines
-This produces uniform waves that shift across the whole segment set
-This version also supports different hues, so you can change the pacifica colors
+This is an alternate version of the original PacificaPS.h,
+that I've adapted to work in 2D, while also allowing you to change the overall color of the waves. 
+This produces uniform waves that shift across the whole segment set, 
+which shift between a colors in a limited hue range. 
 
 Recommend brightness > 80 and rate > 20ms
-For low brightness values I recommend turing off dithering using
+For low brightness values I recommend turning off dithering using
 FastLED.setDither(0);
 
-The effect is a bit computationally heavy
+Like the original, the effect is a bit computationally heavy
 
 Almost all of the code is directly copied from the original linked above
 (with modifications by me to work with segment sets and hues)
 If you have any questions about how it works, please direct them to Mark Kriegsman
 
-I've made the addWhiteCaps() function optional. You can turn it on by setting addWhiteCaps true
-It brightness the areas where waves meet. It works best for blue hues, 
-For all segment shapes except matrices the code will now do this automatically.
-So you should only need to turn addWhiteCaps() on for matrices
-I've also added a constant thresholdMax value that caps the white cap light level
-To prevent them from getting too white
+Inputs Guide:
 
-To get the effect to work with multiple colors the palettes needed to be heavily modified.
-The palettes and info about hues can be found in "PacificaHuePal.h"
-Basically the hue sets where our base color is in the rainbow
-The palettes then form their colors around that base color
-This means that you'll always end up with colors that are close to each other in the rainbow
-(ie you can't have green and purple together)
-This keeps with the look of the original effect
-    Some hue ranges are:
-        Red/Orange: 240 to ~10 
-        Orange/Yellow: 10 to ~40
-        Yellow/Green: 40 to ~90
-        Green/Blue: 90 to ~150
-        Blue/Purple: 150 to ~180
-        Purple/Red: 180 to 240
+The main input for the effect is the `hue`, which sets where our base color is in the rainbow.
+ The effect's palettes then form their colors around that base color. 
+ While this produces a nice gentle wave effect like the original effect, 
+ but tinted in a specific color, it does mean that you cannot have colors from opposite ends of the spectrum 
+ together (like green and purple for example). 
+ If you want that, you may have luck with the LavaPS effect or one of the noise effects. 
+
+Some hue ranges are:
+    Red/Orange: 240 to ~10 
+    Orange/Yellow: 10 to ~40
+    Yellow/Green: 40 to ~90
+    Green/Blue: 90 to ~150
+    Blue/Purple: 150 to ~180
+    Purple/Red: 180 to 240
         
 By default the hue is set to 130, which closely matches the colors from the original effect.
 
@@ -58,6 +53,21 @@ A hue rate of 0 will stop the hue cycle.
 The hue is updated as part of the effect, so the hueRate should be slower than the effect's update rate.
 Note that the hueRate is a pointer (like the overall effect Rate), so you can bind it to an external variable if wanted.
 The rate passed into the constructors is hueRateOrig
+
+In the original code, waves are shifted towards white where they meet using the function `addWhiteCaps()`. 
+I've made this function optional for a few reasons:
+
+    1. In the code, pixel colors are added to one another. For a 1D line or a rectangular matrix this is fine, 
+       because each pixel is part of a single Segment Line, so the `addWhiteCaps()` is needed to form the wave peaks. 
+       However for an uneven segment set with different length segments, a single pixel may exist in multiple 
+       lines at once. In this case, the code is already forming the wave peaks by adding the colors of the 
+       overlapping pixels multiple times, making `addWhiteCaps()` overkill. 
+
+    2. `addWhiteCaps()` was specifically written for the original blue-green colors of the original Pacifica effect. 
+        I have been unable to adapt it to work well with all hues. So in some cases, it's best to leave it off. 
+
+In addition to the above, I've also allowed you to cap the white light level 
+of the pixels using `thresholdMax` as part of `addWhiteCaps()`.
 
 Example calls: 
     PacificaHueSL pacificaHue(mainSegments, 40);
@@ -73,18 +83,21 @@ Example calls:
 
 Constructor inputs: 
     addWhiteCaps (optional, default false) -- If true, the addWhiteCaps() function will be called as part of the update cycle
-    hue (optional, default 130, max 255) -- The hue used in the effect (see hue notes above)
-    hueRate (optional, default 0) -- How quickly the hue shifts (ms)
+    hue (optional, default 130, max 255) -- The hue used in the effect (see hue notes above). Use `setHue()` to change later.
+    hueRate (optional, default 0) -- How quickly the hue shifts (ms).
+                                     By default it's bound the effect's local variable, `hueRateOrig`. 
+                                     (see Inputs Guide Notes).
     rate -- The update rate of the effect (ms)
-
-Functions:
-    setHue(newHue) -- Changes the hue value
-    update() -- updates the effect 
 
 Other Settings:
     thresholdMax (default 230) -- caps the white cap light level to prevent pixels from getting too white
                                   as part of the addWhiteCaps() function
+                                Lower -> lower light cap.
     PacificaPalette -- The PacificaHuePal object. You shouldn't need to access this.
+
+Functions:
+    setHue(newHue) -- Changes the hue value
+    update() -- updates the effect 
 
 Reference vars:
     hue -- The current hue setting, use setHue() to change
@@ -92,7 +105,7 @@ Reference vars:
 */
 class PacificaHueSL : public EffectBasePS {
     public:
-        //Normal constructor
+        //Normal constructor (does default Pacifica)
         PacificaHueSL(SegmentSetPS &SegSet, uint16_t Rate);
 
         //constructor with addWhiteCaps setting

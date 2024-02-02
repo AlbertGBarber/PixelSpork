@@ -111,7 +111,7 @@ Example calls:
     Both simlut and alternate are false (they don't matter for a single wipe)
     The wipe will move in the positive direction, updating at 140ms
    
-    uint8_t pattern_arr = {0, 1, 2};
+    uint8_t pattern_arr = {0, 2, 1};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
     ColorWipeSLSeg colorWipeSL(mainSegments, cybPnkPal_PS, pattern, 8, 0, true, false, false, false, 140);
     Will do a color wipe along mainSegment's lines using colors from cybPnkPal_PS, according to pattern1
@@ -143,17 +143,6 @@ Constructor Inputs:
     segMode -- If true, the wipes will use whole segments, otherwise they'll use segment lines
     Rate -- The update rate of the effect (ms)
 
-Functions:
-    reset() -- Resets the effect vars, restarting the wipes
-    setPaletteAsPattern() -- Sets the effect pattern to match the current palette
-    setWipeLength(newWipeLength) -- Sets the wipe length, does NOT restart the effect
-    setSegMode(newSegMode) -- Changes the segMode and changes the wipeLength to either segWipeLen or lineWipeLen (recalculating numWipes) (see segMode notes above)
-    resetLoop() -- Resets the current loop, will switch to the next loop, only relevant when looping (you shouldn't need to call this)
-    setUpLoop(bool nLooped, uint8_t nBgLoopFreq, bool nBgLoop, uint8_t nLoopFreq, bool nShiftPatLoop,
-              bool nAltWipeDirLoop, bool nBgAltLoop, bool nAltSegDirLoop, bool nAltSegModeLoop) 
-             -- A quick way of setting all the loop variables (see intro for notes on loops)
-    update() -- updates the effect
-
 Other Settings:
     colorMode (default 0) -- sets the color mode for the waves (see segDrawUtils::setPixelColor)
     bgColorMode (default 0) -- sets the color mode for the spacing pixels (see segDrawUtils::setPixelColor)
@@ -172,6 +161,17 @@ Looping Settings:
     altWipeDirLoop (default false) -- (see intro looping notes)
     bgLoop (default false) -- (see intro looping notes)
     bgAltLoop (default false) -- (see intro looping notes)
+
+Functions:
+    reset() -- Resets the effect vars, restarting the wipes
+    setPaletteAsPattern() -- Sets the effect pattern to match the current palette
+    setWipeLength(newWipeLength) -- Sets the wipe length, does NOT restart the effect
+    setSegMode(newSegMode) -- Changes the segMode and changes the wipeLength to either segWipeLen or lineWipeLen (recalculating numWipes) (see segMode notes above)
+    resetLoop() -- Resets the current loop, will switch to the next loop, only relevant when looping (you shouldn't need to call this)
+    setUpLoop(bool nLooped, uint8_t nBgLoopFreq, bool nBgLoop, uint8_t nLoopFreq, bool nShiftPatLoop,
+              bool nAltWipeDirLoop, bool nBgAltLoop, bool nAltSegDirLoop, bool nAltSegModeLoop) 
+             -- A quick way of setting all the loop variables (see intro for notes on loops)
+    update() -- updates the effect
 
 Reference Vars:
     loopCount -- How many full wipe cycles we've done, useful for tracking wipes when looping.

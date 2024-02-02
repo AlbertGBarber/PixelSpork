@@ -45,10 +45,10 @@ You can freely use colorModes from segDrawUtils::setPixelColor(), but they don't
 unless you are running an offset in the SegmentSetPS or using colorModes 5 or 6.
 
 Example calls: 
-    uint8_t pattern_arr = {0, 1, 2};
+    uint8_t pattern_arr = {0, 2, 1};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
     DissolveSL dissolve(mainSegments, pattern, cybPnkPal_PS, 0, 150, 70);
-    Will dissolve from color 0 in the palette to color 1, to color 4, etc using randMode 0 (see below) 
+    Will dissolve from color 0 in the palette to color 2, to color 1, etc using randMode 0 (see below) 
     with the number of leds set on one cycle increasing every 150ms with the effect updating every 70ms
 
     DissolveSL dissolve(mainSegments, cybPnkPal_PS, 4, 100, 100);
@@ -70,13 +70,6 @@ Constructor Inputs
                     Setting this close-ish (up to double?) to the update rate looks the best
     rate -- update rate (ms)
 
-Functions:
-    setPaletteAsPattern() -- Sets the effect pattern to match the current palette
-    resetPixelArray() -- Resets the dissolved state of the segment lines, effectively restarting the current dissolve.
-    setLineMode(newLineMode) -- Sets the line mode (see intro LineMode notes), 
-                                also restarts the dissolve, and sets the setAllThreshold to 1/10 the numLines
-    update() -- updates the effect
-
 Other Settings:
     colorMode (default 0) -- sets the color mode for the random pixels (see segDrawUtils::setPixelColor)
     setAllThreshold (defaults to 1/10th of the segment set length) -- The number of segment lines that will be set 
@@ -89,6 +82,13 @@ Other Settings:
                                If the pause time is active, it is indicated with the paused flag
     maxNumSpawnBase (default 1) -- The starting value of the number of segment lines set in one cycle. 
                                    Higher numbers may work better for longer segment set lengths.
+                                
+Functions:
+    setPaletteAsPattern() -- Sets the effect pattern to match the current palette
+    resetPixelArray() -- Resets the dissolved state of the segment lines, effectively restarting the current dissolve.
+    setLineMode(newLineMode) -- Sets the line mode (see intro LineMode notes), 
+                                also restarts the dissolve, and sets the setAllThreshold to 1/10 the numLines
+    update() -- updates the effect
 
 Reference vars:
     dissolveCount -- The number of dissolves we've done  (does not reset automatically).

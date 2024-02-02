@@ -80,15 +80,15 @@ Constructor Inputs:
                    Allows you to use the inital palette colors for a time and then start blending. 
     rate -- The update rate of the blend (ms).
 
+Other Settings:
+    pauseTime (default 0) -- Sets a time (ms) that the sliderPalette will be pause 
+                             for after finishing a blend before starting the next.
+                            
 Functions:
     setPaletteAsPattern() -- Sets the effect pattern to match the current palette.
     makeSliderPalette(paletteLength) -- Creates a new slider palette of the specified length, also resets the utility.
     reset() -- Restarts the effect.
     update() -- updates the effect.
-
-Other Settings:
-    pauseTime (default 0) -- Sets a time (ms) that the sliderPalette will be pause 
-                             for after finishing a blend before starting the next.
 
 Reference Vars:
     patternIndex -- What index we're at in the pattern, for reference only. 

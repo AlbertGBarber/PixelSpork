@@ -37,8 +37,8 @@ segMode:
 When drawing on segment lines (`segMode` 0), for segment sets with varying segment lengths, 
 you may see "artifacts" where twinkles are not fully turned off. 
 This happens because of overlapping segment lines. 
-Thankfully you can fix this by setting `fillBG` to true, which forces all the twinkles to be re-drawn each update cycle.
-Note that if you turn `fillBG` off, make sure to also turn off `reDrawAll` (see Other Settings below for more info).
+Thankfully you can fix this by setting `fillBg` to true, which forces all the twinkles to be re-drawn each update cycle.
+Note that if you turn `fillBg` off, make sure to also turn off `reDrawAll` (see Other Settings below for more info).
 
 This effect is fully compatible with color modes, and the bgColor is a pointer, so you can bind it
 to an external color variable
@@ -74,6 +74,19 @@ Constructor Inputs:
                (See segMode notes above)
     rate -- The update rate (ms)
 
+Other Settings:
+    colorMode (default 0) -- sets the color mode for the random twinkles (see segDrawUtils::setPixelColor)
+    bgColorMode (default 0) -- sets the color mode for the background (see segDrawUtils::setPixelColor)
+    randMode (default 0) -- sets how colors will be picked (See notes in intro)
+    fillBg (default false) -- sets the background to be redrawn every cycle, useful for bgColorModes that are dynamic
+    reDrawAll (default false) -- Will re-draw all the twinkles each cycle, but does not re-draw the whole background.
+                                 You need this if you want change the number of twinkles during runtime.
+                                 It is automatically set true if `fillBg` is true.
+    prefill (default false) -- If true, the effect pre-draws a full set of twinkles on the first update,
+                               as if a full cycle had been completed and we're ready to turn off the pixels.
+                               Won't work for tMode 0 since all the pixels will be immediately turned off.
+                               (Which is fine, since that's what that mode does)
+
 Functions:
     setSingleColor(Color) -- Sets the effect to use a single color for the twinkles, will restart the effect. 
                              Uses the local palette, paletteTemp for the color.
@@ -83,19 +96,6 @@ Functions:
     reset() -- Restarts the effect by clearing our any existing pixels and spawning a new set. 
                (will also trigger prefill if set)
     update() -- updates the effect
-
-Other Settings:
-    colorMode (default 0) -- sets the color mode for the random twinkles (see segDrawUtils::setPixelColor)
-    bgColorMode (default 0) -- sets the color mode for the background (see segDrawUtils::setPixelColor)
-    randMode (default 0) -- sets how colors will be picked (See notes in intro)
-    fillBG (default false) -- sets the background to be redrawn every cycle, useful for bgColorModes that are dynamic
-    reDrawAll (default false) -- Will re-draw all the twinkles each cycle, but does not re-draw the whole background.
-                                 You need this if you want change the number of twinkles during runtime.
-                                 It is automatically set true if `fillBG` is true.
-    prefill (default false) -- If true, the effect pre-draws a full set of twinkles on the first update,
-                               as if a full cycle had been completed and we're ready to turn off the pixels.
-                               Won't work for tMode 0 since all the pixels will be immediately turned off.
-                               (Which is fine, since that's what that mode does)
 
 Reference Vars:
     segMode -- (see constructor notes above) set using setSegMode()
@@ -137,7 +137,7 @@ class FairyLightsSLSeg : public EffectBasePS {
         bool
             prefill = false,
             reDrawAll = false,
-            fillBG = false,
+            fillBg = false,
             turnOff = false;  //tracks if we're turning the twinkles on or off, depending on the mode
 
         CRGB
@@ -153,7 +153,7 @@ class FairyLightsSLSeg : public EffectBasePS {
             setSingleColor(CRGB Color),
             setNumTwinkles(uint16_t newNumTwinkles),
             setSegMode(uint8_t newSegMode),
-            reset(),
+            reset(void),
             update(void);
 
     private:

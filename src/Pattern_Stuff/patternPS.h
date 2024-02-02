@@ -17,7 +17,7 @@ See patternUtils.h for interacting with patterns
 
 generally a pattern will be paired with a palette in an effect, where the
 pattern entries will be the indicies of the colors in the palette
-ie pattern of {0, 1, 2} would correspond to the first, second, and third colors in the palette
+ie pattern of {0, 2, 1} would correspond to the first, second, and third colors in the palette
 
 note that the patternArr is a pointer to an array of CRGB colors
 this is b/c structs don't allow you to have variable length arrays

@@ -111,17 +111,6 @@ Inputs:
                                            See bgModes in intro for mode list.
     rate -- The update rate (ms)
 
-Functions:
-    resetOffsets() -- Resets the offset array, re-calculating offsets for each pixel, will cause a jump if done mid-effect
-    setShiftMode(newMode) -- Changes the mode of the effect, also resets the offset array
-    setGrouping(newGrouping) -- Sets a new grouping value for the effect, also resets the offset array since that's where the grouping is set
-    setPaletteAsPattern() -- Sets the effect pattern to match the current palette, 
-                             will also add "blank" spaces depending on bgMode (see intro)
-    setBgMode(newBgMode) -- Sets the bgMode to control "blank" pattern spaces (See bgMode note in intro). 
-                            Note that changing the bgMode also changes the shift pattern to use patternTemp
-                            and re-writes patternTemp to a new pattern for the bgMode.
-    update() -- updates the effect
-
 Other Settings:
     *bgColor and bgColorOrig (default 0) -- The color used by "blank" spaces. By default the bgColor is pointed to bgColorOrig.
     randomShift (default false) -- Turns on/off the random shift for the pixel offsets (see effect description above)
@@ -135,6 +124,17 @@ Other Settings:
                                    Note that in this mode, the background mode is ignored.
     sat (default 255) -- For rainbow mode; the rainbow's saturation value.
     val (default 255) -- For rainbow mode; the rainbow's "value" value.
+
+Functions:
+    resetOffsets() -- Resets the offset array, re-calculating offsets for each pixel, will cause a jump if done mid-effect
+    setShiftMode(newMode) -- Changes the mode of the effect, also resets the offset array
+    setGrouping(newGrouping) -- Sets a new grouping value for the effect, also resets the offset array since that's where the grouping is set
+    setPaletteAsPattern() -- Sets the effect pattern to match the current palette, 
+                             will also add "blank" spaces depending on bgMode (see intro)
+    setBgMode(newBgMode) -- Sets the bgMode to control "blank" pattern spaces (See bgMode note in intro). 
+                            Note that changing the bgMode also changes the shift pattern to use patternTemp
+                            and re-writes patternTemp to a new pattern for the bgMode.
+    update() -- updates the effect
 
 Reference Vars:
     grouping -- (see constructor vars above). Set using setGrouping().

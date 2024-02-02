@@ -96,9 +96,6 @@ Constructor inputs:
                                Higher -> faster
     rate -- The update rate (ms) note that this is synced with all the particles.
 
-Functions:
-    update() -- updates the effect 
-
 Other Settings:
     burstPause (default 2, original code value was 4) -- Adjusts how long there is between bursts
                                                         Factors of 2 work best.
@@ -110,6 +107,9 @@ Other Settings:
                                    by passing 0 for numColors.
     userOffset (default 0) -- A fixed, user controlled offset for the wave start points. Only useful if "randomizeStart" is false,
                               (see randomize notes above)
+
+Functions:
+    update() -- updates the effect 
                                 
 Reference vars:
     burstCount -- The number of bursts we've done. Not automatically reset.

@@ -9,9 +9,9 @@
 /* 
 Moves a set of color gradients along the segment set
 the gradients can be set to follow a pattern, use a palette, or set randomly
-The gradients have a set length, and smoothly transition from one color to the next, wrapping at the end
-If the total length of the gradients is longer than the segment set, they will still all transition on
-whatever fits onto the segment set will be drawn at one time
+The gradients have a set length, and smoothly transition from one color to the next, wrapping back to the first color at the end.
+If the total length of the gradients is longer than the segment set, all colors will still be shown, 
+they will just cycle on and off the segment set.
 
 The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
 passing in a SegmentSetPS with only one segment containing the whole strip.
@@ -19,24 +19,24 @@ passing in a SegmentSetPS with only one segment containing the whole strip.
 Note that this effect should not be run alongside other effects on the same SegmentSetPS
 since it needs to use the existing colors of the leds
 
-This effect is the same as GradientCyclePS, but should need fewer calculations per cycle
-however it does have a few extra restrictions
-1: Changing the palette on the fly will have a delayed effect on the colors
-  The existing colors will shift off the strip before new ones shift on
-  This prevents this effect from playing well with paletteBlend functions
-2: The same restrictions as (1) apply to changing the pattern or the gradLength
-3: Changing the direction of the segments or segment set mid-effect may break it temporarily
-
-Basically the effect works by setting the color of the first line, then for each subsequent line,
-it copies the color of the next line.
-So any changes you make to colors will only show up at the first line, and will be shifted along the segment set
+This effect is the same as Gradient Cycle (Seg Line), 
+but instead of calculating the color of every pixel, it only does so for the lead pixel, 
+while copying the color of each subsequent pixel down along the strip. 
+This leads to a much more lightweight effect, however it does have a few extra restrictions:
+    1: Changing the palette on the fly will have a delayed effect on the colors. 
+       The existing colors will shift off the strip before new ones shift on. 
+       This prevents this effect from playing well with Palette Blend functions.
+    2: The same restrictions as (1) apply to changing the pattern or the gradient lengths, `gradLength`.
+    3: Changing the direction of the segments or segment set mid-effect may break it temporarily.
+    4: The effect should not be run alongside other effects on the same Segment Set due to it copying colors from LEDs.
+    5: The effect will not work well with the Effect Set Fader utility.
 
 However, as a bonus, this effect supports random colored gradients
 where the colors for the gradients are chosen at random as the enter the strip
 This is controlled by the randMode setting
 
 Example calls: 
-    uint8_t pattern_arr = {0, 1, 2};
+    uint8_t pattern_arr = {0, 2, 1};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
     GradientCycleFastSL gradientCycleFast(mainSegments, pattern, cybPnkPal_PS, 10, 100);
     Will do a gradient cycle from color 0, to color 1, to color 4, of the palette
@@ -58,24 +58,23 @@ Constructor Inputs:
     gradLength -- How many steps for each gradient
     rate -- The update rate (ms)
 
+Other Settings:
+    randMode (default 0) -- Sets how colors are chosen:
+                         -- 0: Colors will be chosen in order from the pattern (not random)
+                         -- 1: Colors will be chosen completely at random
+                         -- 2: Colors will be chosen randomly from the pattern (will not repeat the same color in a row)
+
 Functions:
     setPaletteAsPattern() -- Sets the effect pattern to match the current palette
     reset() -- Restarts the effect
     update() -- updates the effect
-
-Other Settings:
-    randMode (default 0) -- Sets the type of how colors are chosen:
-                         -- 0: Colors will be chosen in order from the pattern (not random)
-                         -- 1: Colors will be chosen completely at random
-                         -- 2: Colors will be chosen randomly from the pattern (will not repeat the same color in a row)
-                         --                                                     (unless your pattern has the same color in a row, like { 2, 2, 3})
 
 Reference Vars:
     cycleNum -- Tracks how many cycles we've done, resets every gradLength cycles
 
 Flags:
     initFillDone -- Flag for doing the initial fill of the gradients on the strip
-                   Set true once the fill is done
+                    Set true once the fill is done
 
 */
 class GradientCycleFastSL : public EffectBasePS {

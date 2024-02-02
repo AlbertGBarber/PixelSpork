@@ -48,7 +48,7 @@ void FairyLightsSLSeg::init(CRGB BgColor, SegmentSetPS &SegSet, uint16_t Rate) {
 }
 
 //Restarts the effect by clearing our any existing pixels and spawning a new set
-void FairyLightsSLSeg::reset(){
+void FairyLightsSLSeg::reset(void){
     cycleNum = 0;
 
     //clear out any old twinkles and spawn a new set
@@ -126,8 +126,8 @@ void FairyLightsSLSeg::update() {
         //by default, we only touch the twinkle at the current cycleNum
         //but for rainbow or gradient backgrounds that a cycling
         //you want to redraw the whole thing
-        if( fillBG ) {
-            reDrawAll = true;  //if fillBG is true, reDrawAll must be set true as well
+        if( fillBg ) {
+            reDrawAll = true;  //if fillBg is true, reDrawAll must be set true as well
             segDrawUtils::fillSegSetColor(*segSet, *bgColor, bgColorMode);
         }
 

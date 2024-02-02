@@ -78,7 +78,7 @@ Example calls:
     so wipes will go from the first to last segment, starting at the end of each segment
     The effect updates at 60ms
     
-    uint8_t pattern_arr = {0, 1, 2};
+    uint8_t pattern_arr = {0, 2, 1};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
     ColorWipeSeg colorWipeSeg(mainSegments, cybPnkPal_PS, pattern, 1, true, true, true, 60);
     Will do a color wipe along mainSegment's segments using colors from cybPnkPal_PS according to pattern
@@ -111,14 +111,6 @@ Constructor Inputs:
     segWipeDir -- The order the segments are wiped in, true is first to last
     rate -- The update rate of the effect (ms)
 
-Functions:
-    reset() -- Resets the effect vars, restarting the wipes
-    setPaletteAsPattern() -- Sets the effect pattern to match the current palette
-    resetLoop() -- Resets the current loop, will switch to the next loop, only relevant when looping (you shouldn't need to call this)
-    setUpLoop(looped, bgLoop, shiftPatLoop, patShiftDir, altWipeDirLoop, bgAltLoop, altSegWipeDirLoop) 
-             -- A quick way of setting all the loop variables (see intro for notes on loops)
-    update() -- updates the effect
-
 Other Settings:
     colorMode (default 0) -- sets the color mode for the waves (see segDrawUtils::setPixelColor)
     bgColorMode (default 0) -- sets the color mode for the spacing pixels (see segDrawUtils::setPixelColor)
@@ -132,6 +124,14 @@ Looping Settings:
     altWipeDirLoop (default false) -- (see intro looping notes)
     bgLoop (default false) -- (see intro looping notes)
     bgAltLoop (default false) -- (see intro looping notes)
+
+Functions:
+    reset() -- Resets the effect vars, restarting the wipes
+    setPaletteAsPattern() -- Sets the effect pattern to match the current palette
+    resetLoop() -- Resets the current loop, will switch to the next loop, only relevant when looping (you shouldn't need to call this)
+    setUpLoop(looped, bgLoop, shiftPatLoop, patShiftDir, altWipeDirLoop, bgAltLoop, altSegWipeDirLoop) 
+             -- A quick way of setting all the loop variables (see intro for notes on loops)
+    update() -- updates the effect
 
 Reference Vars:
     loopCount -- How many full wipe cycles we've done, useful for tracking wipes when looping

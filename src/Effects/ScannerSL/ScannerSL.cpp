@@ -229,7 +229,7 @@ void ScannerSL::update() {
         //need to reset the update rate each cycle, to make sure we always set it to the fastest particle
 
         //refill the background if directed (if we're using a dynamic rainbow or something)
-        if( fillBG || blend ) {
+        if( fillBg || blend ) {
             segDrawUtils::fillSegSetColor(*segSet, *bgColor, bgColorMode);
         }
 
@@ -292,7 +292,7 @@ void ScannerSL::update() {
 
             //if we have 4 trails or more, we are in infinite trails mode, so we don't touch the previous leds
             //otherwise we need to set the last pixel in the trail to the background
-            if( trailType < 4 && (!fillBG && !blend) ) {
+            if( trailType < 4 && (!fillBg && !blend) ) {
                 //if we don't have trails, we just need to turn off the first trail pixel
                 //otherwise we need to switch the pixel at the end of the trail
                 if( trailType == 0 || trailType == 3 ) {

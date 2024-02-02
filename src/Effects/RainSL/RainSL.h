@@ -1,7 +1,8 @@
 #ifndef RainSL_h
 #define RainSL_h
 
-//TODO: -- Try to make core common functions for this and RainSeg?
+//TODO: -- Use the particle's "life" property to track it they're active instead of the separate partActive array.
+//      -- Try to make core common functions for this and RainSeg?
 //      -- Add alternating direction mode?
 
 #include "Effects/EffectBasePS.h"
@@ -9,33 +10,101 @@
 #include "Effects/ParticlesSL/Particle_Stuff/particleUtilsPS.h"
 
 /* 
-Like RainSeg, but the drops spawn and move along the segment set lines (perpendicular to the segments)
 An effect for producing a random set of falling particles, like rain, or the classic "Matrix" code animation
-You can set the drops to spawn at either the first or last segment
-They will then "fall" towards the last or first segment respectively
-This effect uses particles as the drops. See particlePS.h and particleUtilsPS.h for more details
+Drops spawn at the start of each segment line and "fall down" to the end of the lines. 
+The falling direction is configurable. 
+This effect uses particles as the drops. See particlePS.h and particleUtilsPS.h for more details.
+
+For a similar effect see RainSeg, which moves drops along segments rather than segment lines 
+(making it "orthogonal" to this effect).
+
 There are numerous options for the drops: trail type, speed, size, etc
 There are also more general settings for how often drops spawn, how the background is drawn,
 and if the drops should blend together if they pass over each other.
 You can also configure each drop's properties to be chosen at random from ranges.
-
-Drop colors can either be a static color or picked randomly from a palette
+Drop colors can either be a static color or picked randomly from a palette.
 
 This effect is fully compatible with color modes, and the bgColor is a pointer, so you can bind it
 to an external color variable
 
-Note that update rate of the effect is the maximum speed of the drops.
+Note that update rate of the effect is the base speed of the drops.
 
-Due to the way the effect is programmed, if two drops meet each other, by default one will overwrite the other
-You can adjust this behavior by turning on "blend", which will add particle colors together as they pass by each other
-However this does have two draw backs:
-    1: Due to the way particle trails are drawn, this forces the background to be re-drawn each update cycle,
-       which may have a performance impact depending on your strip length, update rate, etc
-    2: For colored backgrounds, the particles colors are added to the background colors.
-       This will in most cases significantly change the particle colors 
-       For example, blue particles running on a red background will appear purple (blue +  red = purple)
-       This can be used to create some nice effects, (like ocean-ish of lava-ish looking things),
-       But overall I do not recommend using blend for colored backgrounds
+Note that the effect requires an array of particles and a booleans of size `maxNumDrops * numSegs`. 
+These are allocated dynamically, so, to avoid memory fragmentation, when you create the effect, 
+you should set `maxNumDrops` to the maximum value you expect to use. 
+See https://github.com/AlbertGBarber/PixelSpork/wiki/Effects-Advanced#managing-dynamic-memory-and-fragmentation
+for more details. 
+
+Inputs Guide:
+
+    Trail Modes:
+        Taken from particlePS.h:
+        Trails blend cleanly into the background color over the trail length
+        (like waving a flame around, or a meteor trail)
+
+        Trail options:
+            0: no trails
+            1: one trail facing away from the direction of motion (like a comet)
+            2: two trails, facing towards both directions of motion
+            3: one trail facing towards the direction of motion
+            4: Infinite trails that persist after the particle (no fading)
+
+        For example, with a trail length of 4, the modes will produce:
+        (The trail head is *, - are the trail, particle is moving to the right ->)
+            0:     *
+            1: ----* 
+            2: ----*----
+            3:     *----
+            4: *****
+
+    Randomizing Trail Types:
+        You can have the rain drops chose a random trail type from a customizable selection. 
+        To access this feature set `trailType` to 6 (or use one of the trail customization constructors). 
+        There is a flag for each type of trail. Each drop's trail will be picked randomly from the flags set true. 
+        If no flags are set, drops will spawn with no trails.
+
+        Trail Flags:
+            * `noTrails` -- Allows drops with no trails.
+            * `oneTrail` -- Allows drops with one trailing trail.
+            * `twoTrail` -- Allows drops with two trails.
+            * `revTrail` -- Allows drops with one reversed trails.
+            * `infTrail` -- Allows drops with infinite trails.
+
+        For example, if `noTrails`, `twoTrail`, `infTrail` are true then drops
+        can spawn with no trails, two trails or infinite trails.
+
+    Randomizing Size Settings:
+        When a rain drop particle is spawned, it's speed, size, and trail size are set to the effect settings, 
+        `rate` (the effect update rate), `size`, and `trailSize`. 
+        You can opt to randomize these values for each rain drop by setting the following ranges:
+        * `speedRange` -- The amount the speed may vary up from the Rate ( ie `rate + random(speedRange)` ) (ms).
+        * `trailRange` -- The amount the `trailSize` can vary from the base size ( ie `trailSize + random(trailRange)` ).
+        * sizeRange -- The amount the size can vary from the base size ( ie `size + random(sizeRange)` ).
+
+    Blending:
+        Due to the way the effect is programmed, particles at the end in the particle set will run "in front"
+        of those earlier in the set. This means that when two particles pass each other, 
+        the later one will be drawn over the earlier one.
+
+        You can adjust this behavior by turning on `blend`, which will add particle colors 
+        together as they pass by each other. However this does have a few draw backs:
+            1. Due to the way particle trails are drawn, this forces the background to 
+               be re-drawn each update cycle, which may have a performance impact depending on your strip length, 
+               update rate, etc.
+            2. For colored backgrounds, the particles colors are added to the background colors. 
+               This will in most cases significantly change the particle colors. 
+               For example, blue particles running on a red background will appear purple (blue +  red = purple).
+               While this can be used to create some nice effects, (like ocean-ish of lava-ish looking things), 
+               overall I do not recommend using blend for colored backgrounds.
+
+    Background Pre-filling:
+        As the rain drops move, they naturally fill in the background behind them. 
+        This allows you to create a neat start to the effect by letting the first rain drops
+        replace whatever was previously on the segment set over time as the spawn in and move. 
+        You can also opt to pre-fill the background instead. the `bgPrefill` setting controls 
+        this behavior (true will pre-fill the background). The effect also features the more standard `fillBg`, 
+        which fills the background every cycle. Finally, note that backgrounds are not drawn by drops 
+        with infinite trails (trail mode 4), and that turning on `fillBg` will break their trails.
 
 Example calls: 
 
@@ -44,96 +113,55 @@ Example calls:
     There is a similar constructor for using a single color, just replace the palette with a color in th
     constructor
 
-    RainSL rainSL(mainSegments, cybPnkPal_PS, CRGB::Red, true, 10, 4, 1, 1, 5, 80, true);
+    rainSeg.bgColorMode = 6; => optional for next effect, will cycle the background through the rainbow, 
+                                place in Arduino setup()
+    RainSeg rainSL(mainSegments, cybPnkPal_PS, 0, true, 10, 4, 1, 1, 5, 80, true);
     Will spawn drops on the mainSegment set, picking colors from cybPnkPal_PS
-    The background is red, and it will be pre-filled before the drops spawn
+    The background is blank, and it will be pre-filled before the drops spawn
     The drops have a spawn chance of 10/100 (10% chance of spawning each update cycle)
     There is a maximum of 4 drops running concurrently on each segment
-    The drops have a single trailing trail of length 5
+    The drops are size 1 and have a single trail trail of length 5 (trail mode 1)
     The drops move with a base speed of 80ms
     Drops will spawn at the first segment and move towards the last
-    bgColorMode = 6; => will cycle the background through the rainbow (see segDrawUtils::getPixelColor())
 
     A more extensive constructor will all the options for drops
     Also comes as a palette variant; replace the color with a palette in the constructor
 
-    RainSL rainSL(mainSegments, CRGB::Green, 0, false, 10, 4, 1, 3, 2, 4, true, true, false, false, false, 60, 40, false);
+    RainSeg rainSeg(mainSegments, CRGB::Green, CRGB::Red, false, 10, 4, 1, 3, 2, 4, true, true, false, false, false, 60, 40);
     Will spawn green drops on the mainSegment set
-    The background is off, and it will not be pre-filled before the drops spawn
+    The background is red, and it will not be pre-filled before the drops spawn
     The drops have a spawn chance of 10/100 (10% chance of spawning each update cycle)
     There is a maximum of 4 drops running concurrently on each segment
-    The drops have a minimum size of 1, with a range of 3
-    The drops have minimum trail size of 2 with a range of 4 (if they have them)
-    Drops can spawn with no trails or a single trial, and will not
-    spawn with double, reversed, or infinite trails
-     Drops will spawn at the last segment and move towards the first
-    Drops will have a base speed of 60ms and a speed range of 40ms 
+    The drops have a minimum size of 1, with a range of 3 (for a max size of 4)
+    The drops have minimum trail size (if they have them) of 2 with a range of 4 (max size 6)
+    Drops can spawn with no trails or a single trial,
+    but will not spawn with double, reversed, or infinite trails
+    Drops will have a base speed of 60ms and a speed range of 40ms (for a min speed of 100ms)
+    Drops will spawn at the last segment and move towards the first
 
 Constructor inputs for creating a particle set:
     palette(optional) -- The palette than will be used for the particle colors 
     color(optional) -- Used in place of a palette to spawn drops in a single color
-    BgColor -- The background color used for the effect
-    BgPrefill -- If set, then the background will be filled in when the effect first runs
+    bgColor -- The background color used for the effect
+    bgPrefill -- If true, then the background will be filled in when the effect first runs
                 Otherwise the drops will fill it in as they move along
-    SpawnChance -- The chance a drop will spawn (if able) each cycle out of 100, higher val => more likely to spawn
-    MaxNumDrops -- The maximum number of drops that can be active on a segment (not the whole segment Set!) at one time
-    Size -- The minimum size of the drops (min value 1) (doesn't include trails)
-    SizeRange (optional) -- The amount the size can vary from the base size (ie size + random(range))
-    TrailType -- The type of trails used for the drops (see below and particlePS.h),
+    spawnChance -- The chance a drop will spawn (if able) each cycle out of 100, higher val => more likely to spawn
+    maxNumDrops -- The maximum number of rain drop particles that can be active on a segment (not the whole segment Set!) at one time
+    size -- The minimum size of the body of the drops (min value 1) (doesn't include trails)
+    sizeRange (optional) -- The amount the size can vary from the base size (ie size + random(range))
+    trailType -- The type of trails used for the drops (see below and particlePS.h),
                            pass in 5 to set the trails randomly between 0, 1, and 2 trails
                            pass in 6 to set the trails based on the trail flags (see below)
-    TrailSize -- The minimum length of the trails (if the particle has them, min val 1)
-    TrailRange (optional) -- The amount the trailSize can vary from the base size (ie trailSize + random(range))
+    trailSize -- The length of the rain drop trails (if the particle has them, min val 1)
+    trailRange (optional) -- The amount the trailSize can vary from the base size (ie trailSize + random(range))
     noTrails (optional, default false) -- Used with trailType 6, allows drops with no trails
     oneTrail (optional, default false) -- Used with trailType 6, allows drops with one trailing trail
     twoTrail (optional, default false) -- Used with trailType 6, allows drops with two trails
     revTrail (optional, default false) -- Used with trailType 6, allows drops with one reversed trails
     infTrail (optional, default false) -- Used with trailType 6, allows drops with infinite trails
-    Rate -- The minimum speed of the drops
-    SpeedRange -- The amount the speed may vary up from the Rate ( ie Rate + random(range) )
-    Direct -- The direction the drops will fall
- 
-Trail Modes:
-    Taken from particlePS.h:
-    Trails blend cleanly into the background color over the trail length
-    (like waving a flame around, or a meteor trail)
-    Trail options:
-    0: no trails
-    1: one trail facing away from the direction of motion (like a comet)
-    2: two trails, facing towards both directions of motion
-    3: one trail facing towards the direction of motion
-    4: Infinite trails that persist after the particle (no fading)
-    For example, with a trail length of 4, the modes will produce:
-    (The trail head is *, - are the trail, particle is moving to the right ->)
-    0:     *
-    1: ----* 
-    2: ----*----
-    3:     *----
-    4: *****
-
-Trail flags:
-    There is a flag for each type of trail. When used with trailType of 6, each drop's trail will be picked randomly
-    from the flags set true
-    ie if noTrails, twoTrail, infTrail are true then drops can spawn with no trails, two trails or infinite trails
-    if no flags are set, drops will spawn with no trails
-
-DimPow:
-    The rate of dimming for the trails can be adjusted using dimPow. This allows you to produce a brighter head
-    making the comet effect more noticeable
-    The range of dimPow is -127 to 127, it's defaulted to 80
-    Positive values quicken the dimming, while negative ones slow it down
-    setting the negative value below 80, seems to bug it out tho
-    Slowing the dimming down is useful for colored backgrounds, as it makes the particles stand out more
-
-Functions:
-    setupDrops(newMaxNumDrops) -- Changes the maximum number of drops, but any currently active drops will stop.
-                                  If bgPrefill is true, then the background will be re-filled in the next update.
-                                  If you want to increase the number of drops without clearing, set the
-                                  maxNumDrops to your maximum in the constructor. Then lower it before running the
-                                  effect. You can safely raise it again without resetting (set maxNumDrops manually)
-                                  !!If you lower the maximum number of drops, some active drops may be left on the segments
-                                  !!If you change the segment set, you should re-call this function!!
-    update() -- updates the effect 
+    rate -- The minimum speed of the drops
+    speedRange -- The amount the speed may vary up from the Rate ( ie Rate + random(range) )
+    direct --  The direction the drops will fall along the segment lines (true is from the first line to last).
 
 Other Settings:
     colorMode (default 0) -- sets the color mode for the particles (see segDrawUtils::setPixelColor)
@@ -141,14 +169,24 @@ Other Settings:
     dimPow (default 80, min -127, max 127) -- Adjusts the rate of dimming for the trails (see dimPow above)
     blend (default false) -- Causes particles to add their colors to the strip, rather than set them
                              See explanation of this in more detail above in effect intro
-    fillBG (default false) -- Sets the background to be redrawn every update, useful for bgColorModes that are dynamic
+    fillBg (default false) -- Sets the background to be redrawn every update, useful for bgColorModes that are dynamic
                               Warning!: Not compatible with infinite trails (mode 4). They will be drawn over.
+
+Functions:
+    setupDrops(newMaxNumDrops) -- Changes the maximum number of drops. 
+                                  Also calls reset() to reset the drop's spawns. 
+                                  Note that any active drops will be left on the segments. 
+                                  If `bgPrefill` is true, then the background will be re-filled in 
+                                  the next update to clear them. 
+                                  !!If you change the segment set, you should re-call 
+                                  this function to re-configure the drop particle set!!
+    reset() -- Resets the effect by setting all particles to inactive.
+               Configures the background to be cleared on the next update if bgPrefill is true.
+    update() -- updates the effect 
 
 Reference Vars: 
     maxNumDrops -- (see notes above) set using setupDrops();
 
-Notes:
-    you can change the drop variables (speed, size, the ranges) on the fly. As drops spawn they will use the new values
 */
 class RainSL : public EffectBasePS {
     public:
@@ -194,7 +232,7 @@ class RainSL : public EffectBasePS {
         bool
             direct,
             bgPrefill,
-            fillBG = false,
+            fillBg = false,
             blend = false,
             *partActive = nullptr;
 
@@ -221,6 +259,7 @@ class RainSL : public EffectBasePS {
 
         void
             setupDrops(uint8_t newMaxNumDrops),
+            reset(void),
             update(void);
 
     private:

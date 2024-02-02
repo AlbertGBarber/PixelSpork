@@ -32,17 +32,17 @@ Constructor Inputs:
     looped -- Sets the utility to looped continuously between the start and end rates
     rate -- The update rate of the utility (ms)
 
-Functions:
-    reset(StartRate, EndRate, Rate) -- resets the utility with a new start rate, end rate, and update rate
-                                      DO NOT change the start/end rates unless you know what you're doing
-    reset() -- restarts the transition using the current start/end rates
-    update() -- updates the effect
-
 Other Settings:
     pauseTime (default 0) -- Sets a time (ms) that the output rate will be held at after finishing a transition
     looped -- Sets if the utility will looped continuously between the start and end rates
     easing -- Sets if easing will be used for the rate transition
     outputRate -- The output rate of the transition
+    
+Functions:
+    reset(StartRate, EndRate, Rate) -- resets the utility with a new start rate, end rate, and update rate
+                                      DO NOT change the start/end rates unless you know what you're doing
+    reset() -- restarts the transition using the current start/end rates
+    update() -- updates the effect
 
 Flags:
     rateReached -- Set when the utility reaches the end rate 

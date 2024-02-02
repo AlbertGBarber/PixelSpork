@@ -85,6 +85,12 @@ Constructor Inputs:
     totalSteps (max 255) -- The total number of steps taken to blend between the palettes
     rate -- The update rate of the blend (ms)
 
+Other Settings:
+    compliment (default false) -- Only relevant when randomizing -
+                                  If true, randomized palettes will only generate complimentary colors, 
+                                  which means they will be equally spaced across the hue spectrum (see the HSV color space). 
+                                  This should generate color sets that are different but "look good" together.
+
 Functions:
     reset(&newPaletteSet) -- Restarts the blend with a new palette set, with the same steps and update rate
     reset() -- Restarts the blend (all settings and palettes stay the same)
@@ -92,13 +98,7 @@ Functions:
     setPauseTime(newPauseTime) -- Changes the pause between blends (set in the PB instance, see PaletteBlenderPS)
     setStartPaused(bool newStartPaused) -- Changes the "startPaused" setting in the PB instance, see PaletteBlenderPS.
     update() -- updates the effect
-
-Other Settings:
-    compliment (default false) -- Only relevant when randomizing -
-                                  If true, randomized palettes will only generate complimentary colors, 
-                                  which means they will be equally spaced across the hue spectrum (see the HSV color space). 
-                                  This should generate color sets that are different but "look good" together.
-                                     
+                                      
 Reference Vars:
     cycleNum -- How many palette blends have been finished. Must be reset manually by calling reset();
 

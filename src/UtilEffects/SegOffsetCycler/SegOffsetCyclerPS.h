@@ -58,6 +58,12 @@ Constructor Inputs:
     direction -- The direction of the offset (true is forward)
     rate -- The update rate of the utility (ms)
 
+Other Settings:
+    runOffset (default true) -- For reference, records if the offset is active or not
+    direct -- For reference, the offset's direction of motion
+    colorMode -- The colorMode used for the offset, is a pointer so it can be bound to an external variable
+                 By default it is bound to colorModeOrig
+                 
 Functions:
     setCycle(newDirect, newRunOffset) -- Sets the direction and can turn the offset on/off in one function
     setDirect(newDirect) -- Sets the offset direction
@@ -67,11 +73,6 @@ Functions:
     setGroup(SegmentSetPS &SegSet) -- Sets the Util to act on the passed in SegmentSetPS only
     update() -- updates the effect
 
-Other Settings:
-    runOffset (default true) -- For reference, records if the offset is active or not
-    direct -- For reference, the offset's direction of motion
-    colorMode -- The colorMode used for the offset, is a pointer so it can be bound to an external variable
-                 By default it is bound to colorModeOrig
 */
 class SegOffsetCyclerPS : public EffectBasePS {
     public:

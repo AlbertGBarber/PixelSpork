@@ -6,19 +6,19 @@
 #include "Effects/ParticlesSL/ParticlesSL.h"
 
 /* 
-This effect is intended to be a short-hand for re-creating some classic scanner effects (Cylon, Kit)
-Overall, it's a wrapper for a ParticlesPS instance that actually controls the effect
-So you should read ParticlesPS.h if you want to adjust any major settings
+This effect is intended to be a short-hand for re-creating some classic scanner effects (Cylon, Kitt).
+Allows you to pick the scan type, color, the size of the scan particles, etc. 
 
-The underlying ParticlePS instance is called scannerInst
-You may access it like: yourScannedName->scannerInst->reset();
+Overall, it's a wrapper for a ParticlesPS instance that actually controls the effect.
+For a similar, more customizable effect, see ScannerSL. 
 
-The LarsonScannerSL instance also creates it's own particleSet
-To adjust the particles you can access it via yourLarsonScannerSL->particleSet
-Same thing with the palette
+While this effect does provide some pass-through functions for adjusting some things like the trail length, 
+particle size, etc. You can access the underlying "Particle" instance, `scannerInst`. 
+You may access it like: `yourScannerName->scannerInst->reset();`.
 
-This effect does provide some pass-through functions for adjusting some things like the 
-trail length, particle size, etc
+Likewise the effect has its own particleSet. 
+To adjust the particles you can access it via `yourScannerName->particleSet`. 
+Same thing with the effect's palette.
 
 the background color of the scannerInst is bound to the background color set in the larson Scanner
 The background color is a pointer, so you can bind it externally as needed
@@ -26,7 +26,7 @@ The background color is a pointer, so you can bind it externally as needed
 Three scanner types are built in:
     0: Like the classic cylon scanner, one particle with two trails moving back and forth
     1: Like the cylon scanner, but only using one trail
-    2: Like one of the Kit Knight Rider scanners: two particles with single trails
+    2: Like one of the Kitt Knight Rider scanners: two particles with single trails
         That move back and forth, intersecting in the center of the strip
         (note that this mode uses blend, see ParticlesPS.h for details)
 
@@ -47,10 +47,15 @@ Example calls:
 Constructor inputs for creating a particle set:
     scanColor -- The color of the scan particles
     scanType -- The type of scan type (see above)
-    eyeSize -- The size of the particles (min value 1)
+    eyeSize -- The size of the body of the particles (min value 1)
     trailLength -- The length of the trails. Using 0 will turn off the trails for the scanner.
     bgColor -- The background color used for the effect.
     rate -- The update rate (ms) note that this is synced with all the particles.
+
+Other Settings:
+    palette -- The palette used for the particles color (this is always a single length palette since scanners are a single color)
+    *scannerInst -- The local ParticleSL instance
+    particleSet -- The particleSet used to store the scan particles (and passed to the ParticleSL instance)
 
 Functions:
     setColorMode(colorMode, bool bgColorMode) -- Sets either the main or background color mode for the particles
@@ -58,22 +63,18 @@ Functions:
     setColor(color) -- sets the scan particle color
     setScanType(newType) -- sets the scan mode (note this re-creates all the particles from scratch)
     setTrailLength(newTrailLength) -- Changes the particle trail lengths. 
-                                      Trials will be turned off if you set the length to 0
-    setEyeSize(newEyeSize) -- Sets the eye size of the scanner (the non-trail portion)
-    setBounce(newBounce) -- Sets the bounce property of the scanner particles, ie sets if the particles reverse
-                            when they reach the end of the segments
+                                      Trails will be turned off if you set the length to 0
+    setEyeSize(newEyeSize) -- Sets the body size of the particles.
+    setBounce(newBounce) -- Sets the bounce property of the scanner particles.
+                            If true, the particles reverse when they reach the end of the segments rather than wrapping.
+    reset() -- resets all particles to the starting locations
     update() -- updates the effect 
 
-Other Settings:
-    palette -- The palette than will be used for the particle color (this is always a single length palette since scanners are a single color)
-    *scannerInst -- The local ParticlePS instance
-    particleSet -- The particleSet used to store the scan particles (and passed to the ParticlePS instance)
-
 Reference Vars:
-    trailLength -- The The length of the trails. Set using the setTrailLength() function.
-    bounce (default true) -- The bounce property of the scan particles. Set using the setBounce() function.
-    scanType -- The current scan mode. Set using the setScanType() function.
-    eyeSize -- The length of the scan particle's body (not trail). Set using the setEyeSize() function.
+    trailLength -- The The length of the trails. Set using the setTrailLength().
+    bounce (default true) -- The bounce property of the scan particles. Set using the setBounce().
+    scanType -- The current scan mode. Set using the setScanType().
+    eyeSize -- The length of the scan particle's body (not trail). Set using the setEyeSize().
 */
 class LarsonScannerSL : public EffectBasePS {
     public:
@@ -97,13 +98,13 @@ class LarsonScannerSL : public EffectBasePS {
             *bgColor = nullptr;  //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
 
         palettePS
-            palette = {nullptr, 0};  //palette used for ParticlePS instance. Init to empty for safety
+            palette = {nullptr, 0};  //palette used for ParticleSL instance. Init to empty for safety
 
         ParticlesSL
-            *scannerInst = nullptr;  //pointer to the ParticlePS instance
+            *scannerInst = nullptr;  //pointer to the ParticleSL instance
 
         particleSetPS
-            particleSet = {nullptr, 0};  //the particle set used in the ParticlePS instance. Init to empty for safety
+            particleSet = {nullptr, 0};  //the particle set used in the ParticleSL instance. Init to empty for safety
 
         void
             setColorMode(uint8_t colorMode, bool bgColorMode),
@@ -112,6 +113,7 @@ class LarsonScannerSL : public EffectBasePS {
             setTrailLength(uint8_t newTrailLength),
             setEyeSize(uint16_t newEyeSize),
             setBounce(bool newBounce),
+            reset(void),
             update(void);
 
     private:

@@ -20,6 +20,7 @@ FirefliesSL::FirefliesSL(SegmentSetPS &SegSet, uint8_t numColors, uint16_t MaxNu
 
 //constructor for effect with single color
 //!!If using pre-build FastLED colors you need to pass them as CRGB( *color code* )
+//cause is that the compiler sees this as the same as the random color constructor
 FirefliesSL::FirefliesSL(SegmentSetPS &SegSet, CRGB Color, uint16_t MaxNumFireflies, uint8_t SpawnChance,
                          uint16_t LifeBase, uint16_t LifeRange, uint16_t SpeedBase, uint16_t SpeedRange, uint16_t Rate)
     : spawnChance(SpawnChance), lifeBase(LifeBase), lifeRange(LifeRange), speedBase(SpeedBase), speedRange(SpeedRange)  //
@@ -120,7 +121,7 @@ void FirefliesSL::update() {
 
         //If the bg is to be filled before the particles start, fill it in
         //(such as if you have a background that's changing with time (alla bgColorMode 6))
-        if( fillBG || blend ) {
+        if( fillBg || blend ) {
             segDrawUtils::fillSegSetColor(*segSet, *bgColor, bgColorMode);
         }
 
@@ -146,7 +147,7 @@ void FirefliesSL::update() {
                 //particle pixel on the longest segment to check when setting the background
                 //This minimizes the data we have to store, and avoids a bunch of issues when working
                 //with segments with different lengths
-                if( !fillBG && !blend ) {
+                if( !fillBg && !blend ) {
                     //The old particle location is stored in particlePrevPos[i]
                     //We use it to get the physical pixel location and the color it's meant to be
 

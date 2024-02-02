@@ -8,9 +8,9 @@
 /* 
 Moves a set of color gradients along the segment set
 the gradients can be set to follow a pattern, use a palette, or set randomly
-The gradients have a set length, and smoothly transition from one color to the next, wrapping at the end
-If the total length of the gradients is longer than the segment set, they will still all transition on
-whatever fits onto the segment set will be drawn at one time
+The gradients have a set length, and smoothly transition from one color to the next, wrapping back to the first color at the end.
+If the total length of the gradients is longer than the segment set, t all colors will still be shown, 
+they will just cycle on and off the segment set.
 
 There is a version of this effect that takes less CPU power (GradientCycleSLFastPS)
 It has a few restrictions, but should run faster than this effect
@@ -19,7 +19,7 @@ The effect is adapted to work on segment lines for 2D use, but you can keep it 1
 passing in a SegmentSetPS with only one segment containing the whole strip.
 
 Example calls: 
-    uint8_t pattern_arr = {0, 1, 2};
+    uint8_t pattern_arr = {0, 2, 1};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
     GradientCycleSL gradientCycle(mainSegments, pattern, cybPnkPal_PS, 10, 100);
     Will do a gradient cycle from color 0, to color 1, to color 4, of the palette
@@ -41,16 +41,12 @@ Constructor Inputs:
     rate -- The update rate (ms)
 
 Functions:
-    setTotalEffectLength() -- Calculates the total length of all the gradients combined, you shouldn't need to call this
-    setPattern(*newPattern) -- Sets the passed in pattern to be the effect pattern
-                              Will force setTotalEffectLength() call, so may cause effect to jump
     setPaletteAsPattern() -- Sets the effect pattern to match the current palette (calls setTotalEffectLength())
-    setGradLength(newGradLength) -- Changes the gradLength to the specified value, adjusting the length of the gradients (calls setTotalEffectLength())
     update() -- updates the effect
 
 Reference Vars:
-    totalCycleLength -- Total length of all the gradients combined, set by setTotalEffectLength()
-    cycleNum -- Tracks what how many patterns we've gone through, resets every totalCycleLength cycles, set during update()
+    totalCycleLength -- Total length of all the gradients combined, ie pattern->length * gradLength.totalCycleLength -- Total length of all the gradients combined, ie pattern->length * gradLength.
+    cycleNum -- Tracks how many patterns we've gone through, resets every totalCycleLength cycles, set during update()
 
 Notes:
     For the randomly generated gradient constructor, the random palette can be accessed via paletteTemp
@@ -88,10 +84,7 @@ class GradientCycleSL : public EffectBasePS {
             paletteTemp = {nullptr, 0};  //Must init structs w/ pointers set to null for safety
 
         void
-            setGradLength(uint8_t newGradLength),
-            setPattern(patternPS &newPattern),
             setPaletteAsPattern(),
-            setTotalEffectLength(),
             update(void);
 
     private:

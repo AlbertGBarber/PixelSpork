@@ -32,7 +32,7 @@ This effect is fully compatible with color modes.
 The bgColor is a pointer, so you can bind it to an external color variable.
 By default it is bound to bgColorOrig, which is set to 0 (blank color).
 
-If you have a non-zero background color be sure to set fillBG to true!!
+If you have a non-zero background color be sure to set fillBg to true!!
 
 Due to the way the effect is programmed, if two sparks meet each other, by default one will overwrite the other
 You can adjust this behavior by turning on "blend", which will add particle colors together as they pass by each other
@@ -113,7 +113,7 @@ Example calls:
     FireworksPS fireworks(mainSegments, CRGB(CRGB::White), 5, 4, 50, 2000, 10, 80, 80);
     Small, but fast fireworks on a shifting background
     fireworks.bgColorMode = 6; //Put in Arduino setup()
-    fireworks.fillBG = true; //Put in Arduino setup()
+    fireworks.fillBg = true; //Put in Arduino setup()
     Will do a set of fireworks using white as the color
     There is a maximum of 5 fireworks active at one time.
     Each firework has 4 sparks
@@ -121,7 +121,7 @@ Example calls:
     The sparks have a maximum life of 2000ms (+ a random(500) from the default life range)
     The spark's speed decays at 10 percent per update
     The fastest particles will update at 80ms, while the slowest will be 80 + 80ms
-    !!If using pre-build FastLED colors you need to pass them as CRGB( *color code* )
+    !!If using pre-build FastLED colors you need to pass them as CRGB( *color code* ) -> ex CRGB(CRGB::Blue)
 
 Constructor Inputs:
     palette(optional, see constructors) -- The set of colors that firework colors will be picked from
@@ -135,12 +135,6 @@ Constructor Inputs:
     rate -- The maximum speed for the sparks, also the effect update rate (is a pointer like in other effects)
     speedRange -- The cap for the slowest speed for the sparks ( speed is rate + random(speedRange) ) (ms)
 
-Functions:
-    setupFireworks(maxFireworks, maxSparks) -- Create the data structures for a set of fireworks
-                                               You should call this if you ever want to change maxNumFireworks or maxNumSparks
-                                               Will also clear any active fireworks from the segment set by filling in the background
-    update() -- updates the effect
-
 Other Settings:
     colorMode (default 0) -- sets the color mode for the waves (see segDrawUtils::setPixelColor)
     bgColorMode (default 0) -- sets the color mode for the spacing pixels (see segDrawUtils::setPixelColor)
@@ -153,7 +147,7 @@ Other Settings:
                              Sparks will be size + random(sizeRange)
                              Only change this for big fireworks
     centerSize (default 3) -- How large the center "bomb" burst is 
-    fillBG (default false) -- Sets whether to fill the background in every update cycle,
+    fillBg (default false) -- Sets whether to fill the background in every update cycle,
                               You should set this true if you are using an animated background mode
     blend (default false) -- Causes sparks to add their colors to the strip, rather than set them
                              See explanation of this in more detail above in effect intro
@@ -163,7 +157,14 @@ Other Settings:
     bgColorOrig (default 0) -- The default color of the background (bound to the bgColor pointer by default)
     *bgColor (default bound to bgColorOrig) -- The color of the background, is a pointer so it can be bound to an external variable 
     spawnRangeDiv (default 5) -- Sets what range of the strip fireworks spawn in: from numLEDs / spawnRangeDiv to ( numLEDs - (numLEDs / spawnRangeDiv) )
- */
+ 
+ Functions:
+    setupFireworks(maxFireworks, maxSparks) -- Create the data structures for a set of fireworks
+                                               You should call this if you ever want to change maxNumFireworks or maxNumSparks
+                                               Will also clear any active fireworks from the segment set by filling in the background
+    update() -- updates the effect
+
+*/
 class FireworksPS : public EffectBasePS {
     public:
         //Constructor for fireworks using a palette
@@ -175,7 +176,7 @@ class FireworksPS : public EffectBasePS {
                     uint8_t SpawnChance, uint16_t LifeBase, uint8_t SpeedDecay, uint16_t Rate, uint16_t SpeedRange);
 
         //Constructor for fireworks of a single color
-        //!!If using pre-build FastLED colors you need to pass them as CRGB( *color code* )
+        //!!If using pre-build FastLED colors you need to pass them as CRGB( *color code* ) -> ex CRGB(CRGB::Blue)
         FireworksPS(SegmentSetPS &SegSet, CRGB Color, uint8_t MaxNumFireworks, uint8_t MaxNumSparks,
                     uint8_t SpawnChance, uint16_t LifeBase, uint8_t SpeedDecay, uint16_t Rate, uint16_t SpeedRange);
 
@@ -201,7 +202,7 @@ class FireworksPS : public EffectBasePS {
             centerSize = 3;  //how large the center "bomb" burst is
 
         bool
-            fillBG = false,
+            fillBg = false,
             blend = false,
             randSparkColors = false,
             *fireWorkActive = nullptr;

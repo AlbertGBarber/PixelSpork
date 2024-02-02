@@ -73,6 +73,26 @@ void RainSL::init(uint8_t MaxNumDrops, CRGB BgColor, SegmentSetPS &SegSet, uint1
     setupDrops(MaxNumDrops);
 }
 
+//Resets the effect by setting all particles to inactive
+//Configures the background to be cleared on the next update if bgPrefill is true
+void RainSL::reset(void){
+    //set all the particles to inactive
+    //and set their spawn positions
+    for( uint16_t i = 0; i < numSegs; i++ ) {
+        for( uint8_t j = 0; j < maxNumDrops; j++ ) {
+            particleIndex = i * maxNumDrops + j;
+            partActive[particleIndex] = false;
+            //particlePtr = particleSet->particleArr[particleIndex];
+            //setDropSpawnPos(particlePtr, i);
+        }
+    }
+
+    //Flag the background to be filled to clear any leftover active particles
+    //This will only trigger the background to fill if bgPrefill is true.
+    bgFilled = false;
+
+}
+
 //Creates a new set of particles for the effect based on the passed in value for the max number of concurrent drops
 //You should call this if you want to change the number of drops or if you change the segment set
 //Note that all particles will be reset, and if bgPrefill is true, the background will be filled in to clear any active particles
@@ -116,24 +136,11 @@ void RainSL::setupDrops(uint8_t newMaxNumDrops) {
     particleSet->length = numParticles;
 
     //for trailType 6, we'll set the particle trails randomly based on the trail flags
-    if( trailType == 6 ) {
-        particleUtilsPS::setAllTrailRand(*particleSet, noTrails, oneTrail, twoTrail, revTrail, infTrail);
-    }
+    //if( trailType == 6 ) {
+        //particleUtilsPS::setAllTrailRand(*particleSet, noTrails, oneTrail, twoTrail, revTrail, infTrail);
+    //}
 
-    //set all the particles to inactive
-    //and set their spawn positions
-    for( uint16_t i = 0; i < numLines; i++ ) {
-        for( uint8_t j = 0; j < maxNumDrops; j++ ) {
-            particleIndex = i * maxNumDrops + j;
-            partActive[particleIndex] = false;
-            particlePtr = particleSet->particleArr[particleIndex];
-            setDropSpawnPos(particlePtr);
-        }
-    }
-
-    //Flag the background to be filled to clear any leftover active particles
-    //This will only trigger the background to fill if bgPrefill is true.
-    bgFilled = false;
+    reset();
 }
 
 //Sets the inital spawn position of a particle
@@ -206,7 +213,7 @@ void RainSL::update() {
         prevTime = currentTime;
 
         //if the bg is to be filled before the particles start, fill it in
-        if( fillBG || blend || (bgPrefill && !bgFilled) ) {
+        if( fillBg || blend || (bgPrefill && !bgFilled) ) {
             bgFilled = true;
             segDrawUtils::fillSegSetColor(*segSet, *bgColor, bgColorMode);
         }
@@ -284,7 +291,7 @@ void RainSL::update() {
 
                     //if we have 4 trails or more, we are in infinite trails mode, so we don't touch the previous leds
                     //otherwise we need to set the last pixel in the trail to the background
-                    if( partTrailType < 4 && (!fillBG || blend) ) {
+                    if( partTrailType < 4 && (!fillBg || blend) ) {
                         //get the physical pixel location and the color it's meant to be
                         //if we don't have trails, we just need to turn off the first trail pixel
                         //otherwise we need to switch the pixel at the end of the trail

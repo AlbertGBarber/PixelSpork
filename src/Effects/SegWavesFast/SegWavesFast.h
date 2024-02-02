@@ -30,7 +30,7 @@ This is controlled by the randMode setting
 Otherwise, all the settings are/functions are the same as SegWavesFast
 
 Patterns work the same as with other effects, they are a pattern of palette array indexes
-ie a pattern of {0, 1, 2} would be the first three colors of a palette
+ie a pattern of {0, 2, 1} would be the first three colors of a palette
 to indicate a background segment (ie set to the BgColor) we use 255 in the pattern
 This does mean if your palette has 255 colors, you'll lose the final color, but you shouldn't have palettes that large
 
@@ -93,6 +93,17 @@ Constructor Inputs:
                True will make the waves move from the last to first segment, false, the reverse.e 
     rate -- The update rate (ms)
 
+Other Settings:
+    randMode (default 0) -- Sets the type of how colors are chosen:
+                         -- 0: Colors will be chosen in order from the pattern (not random)
+                         -- 1: Colors will be chosen completely at random
+                         -- 2: Colors will be chosen at random from the !!palette!!, 
+                               but the same color won't be repeated in a row
+                         -- 3: Colors will be chosen randomly from the pattern
+                         -- 4: Colors will be chosen randomly from the !!palette!!
+                               (option included b/c the pattern may have a lot of spaces, 
+                                so choosing from it may be very biased)
+
 Functions:
     reset() -- Restarts the wave pattern
     setPatternAsPattern(&inputPattern, colorLength, spacing) -- Takes an input pattern and creates a wave pattern from it using the current palette
@@ -105,17 +116,6 @@ Functions:
     makeSingleWave() -- Creates a wave pattern so that there's only a single wave of thickness 1 active on the segment set at one time
     update() -- updates the effect
 
-Other Settings:
-    randMode (default 0) -- Sets the type of how colors are chosen:
-                         -- 0: Colors will be chosen in order from the pattern (not random)
-                         -- 1: Colors will be chosen completely at random
-                         -- 2: Colors will be chosen at random from the !!palette!!, 
-                               but the same color won't be repeated in a row
-                         -- 3: Colors will be chosen randomly from the pattern
-                         -- 4: Colors will be chosen randomly from the !!palette!!
-                               (option included b/c the pattern may have a lot of spaces, 
-                                so choosing from it may be very biased)
-
 Flags:
     initFillDone -- Indicates if the strip has been pre-filled with the effect's color outputs 
                     This needs to happen before running the first update cycle
@@ -125,7 +125,6 @@ Flags:
 Reference vars:
     cycleNum -- Tracks what how many patterns we've gone through, 
                 resets every pattern length number of cycles (ie once we've gone through the whole pattern)
-
 
 Notes:
     If the constructor made your pattern, it will be stored in patternTemp

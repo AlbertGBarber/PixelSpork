@@ -5,23 +5,24 @@
 #include "ColorUtils/colorUtilsPS.h"
 #include "MathUtils/mathUtilsPS.h"
 
-//Particles need a bit of an explanation.
-//A particle is a moving pixel. Particles can move backwards or forwards along the strip. They move at their own speeds.
-//There are a number of other settings to do with trails, particle size, bouncing, etc (see particle.h)
-//Because working with just one particle at a time would be boring, I've created particleSets (see particle.h)
-//which are storage for a group of particles
-//You pass these sets into effects (or the effects create them) and then the effects animate them
-//Because particles has a number of options, creating them manually is a pain
-//To alleviate this, I've created a number of utility functions for changing particle values
-//and creating particle sets
-//These functions also give you the option of choosing the values at random, to create random sets of particles
+/* Particles need a bit of an explanation.
+A particle is a moving pixel. Particles can move backwards or forwards along the strip. They move at their own speeds.
+There are a number of other settings to do with trails, particle size, bouncing, etc (see particle.h)
+Because working with just one particle at a time would be boring, I've created particleSets (see particle.h)
+which are storage for a group of particles.
 
-//buildParticleSet() is the main function for creating a set of particles
-//while setParticleSetProp() can change a single quality of all the particles in a set
-//(say you wanted to change all their speeds, etc)
-//there are then sub-functions for changing a specific particle's aspects within a set
+You pass these sets into effects (or the effects create them) and then the effects animate them
+Because particles have a number of options, creating them manually is a pain.
+To alleviate this, I've created a number of utility functions for changing particle values
+and creating particle sets.
 
-//understanding these functions will help you manipulate particles efficiently (see .cpp file for comments)
+These functions also give you the option of choosing the values at random, to create random sets of particles
+buildParticleSet() is the main function for creating a set of particles
+while setParticleSetProp() can change a single quality of all the particles in a set
+(say you wanted to change all their speeds, etc)
+there are then sub-functions for changing a specific particle's aspects within a set
+understanding these functions will help you manipulate particles efficiently (see .cpp file for comments) 
+*/
 
 //series of utility functions for interacting with particles
 namespace particleUtilsPS {
@@ -72,12 +73,13 @@ namespace particleUtilsPS {
         setTrailRand(particleSetPS &particleSet, uint16_t partNum, bool noTrails,
                      bool oneTrail, bool twoTrail, bool revTrail, bool infTrail);
 
-    int8_t
-        getDirectStep(bool direction);
-
-    //for setting colors of particles
+    //for getting colors of particles
     CRGB
         getTrailColor(CRGB &color, CRGB &targetColor, uint8_t step, uint8_t totalSteps, int8_t dimPow);
+
+    //misc functions
+    int8_t
+        getDirectStep(bool direction);
 
     //pre-allocate variables for speed
     static uint8_t

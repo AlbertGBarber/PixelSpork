@@ -75,9 +75,6 @@ Constructor inputs:
     briInvert -- If true, then the brightness wave will be inverted, producing larger areas of color (see intro above)
     rate -- The update rate (ms) note that this is synced with all the particles.
 
-Functions:
-    update() -- updates the effect 
-
 Other Settings:
     phaseEnable (default true) -- Allows the phase to shift over time at the phaseFreq
     phase (default 0) -- The phase offset. This is changed over time when phaseEnable is true, but you can 
@@ -86,6 +83,10 @@ Other Settings:
                                    to true for the rainbow mode constructor.
     hlDiv (default 2) -- Sets the melt divisions, the default of 2 is taken from the original effect
                          It's hard to describe what this does, but increasing it sort of shortens the melt waves.
+                         
+Functions:
+    update() -- updates the effect 
+
 */
 class ColorMeltSL : public EffectBasePS {
     public:

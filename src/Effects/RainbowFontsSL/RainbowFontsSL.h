@@ -28,8 +28,8 @@ so we'd use beat8(9) in place of time(0.1);
 #include "MathUtils/mathUtilsPS.h"
 
 /*
-An effect based on the RainbowFonts pattern in PixelBlaze that rainbow waves that grow and shrink
-The effect is largely the same as the original, but I've added the ability to change the frequency of the waves
+An effect based on the RainbowFonts pattern in PixelBlaze. Features rainbow waves that grow and shrink.
+The effect is largely the same as the original, but I've added the ability to change the frequency of the waves.
 
 The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
 passing in a SegmentSetPS with only one segment containing the whole strip.
@@ -37,13 +37,17 @@ passing in a SegmentSetPS with only one segment containing the whole strip.
 Example calls: 
 
     RainbowFontsSL rainbowFonts(mainSegments, 15, 80);
-    Will do the effect with a wave freq of 15
+    Will do the effect with a wave frequency of 15
     The effect updates at 80ms
 
 Constructor inputs: 
     waveFreq (min value 1) -- How fast the waves happen and move, recommend value of 5 - 30
                               Higher -> faster
     rate -- The update rate (ms) note that this is synced with all the particles.
+
+Other Settings:
+   sat (Default 255) -- The HSV rainbow saturation value.
+   val (Default 255) -- The HSV rainbow "value" value.
 
 Functions:
     update() -- updates the effect 
@@ -53,6 +57,8 @@ class RainbowFontsSL : public EffectBasePS {
         RainbowFontsSL(SegmentSetPS &SegSet, uint8_t WaveFreq, uint16_t Rate);
 
         uint8_t
+            sat = 255, //The HSV rainbow saturation value.
+            val = 255, //The HSV rainbow "value" value
             waveFreq;
 
         void

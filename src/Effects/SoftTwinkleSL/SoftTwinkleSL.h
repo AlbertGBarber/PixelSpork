@@ -76,16 +76,16 @@ Example Call:
     SoftTwinklePS softTwinkle(mainSegments, 150, 20);
     soft twinkles with density of 150, updating at a rate of 20ms
 
-Functions:
-    reset() -- resets all the segment leds to black, restarting the effect
-    update() -- updates the effect
-
 Constructor Inputs:
     density -- max 255, the threshold for turning on an led, higher will turn on more leds at once
 
 Other Settings:
     lightColor default( CRGB{8,5,1} ) -- The color used to increment the pixel colors
                                         as noted above the red value should always be an even number
+
+Functions:
+    reset() -- resets all the segment leds to black, restarting the effect
+    update() -- updates the effect
 
 Notes:
     This is a pretty basic and pre-packaged effect, so there's not a lot of inputs or adjustments allowed

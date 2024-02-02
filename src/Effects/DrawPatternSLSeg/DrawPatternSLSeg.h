@@ -38,17 +38,17 @@ Example calls:
     uint8_t pattern_arr = {0, 255, 255, 255, 1, 1, 255, 255};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
     DrawPatternSLSeg drawPat(mainSegments, pattern, cybPnkPal_PS, 0, 0, 80);
-    Will do pattern using the first two colors in the palette (based on the pattern)
+    Will draw a pattern using the first two colors in the palette (based on the pattern above)
     The [pattern will begin with 1 pixel of color 0, with three spaces after, 
     followed by 2 pixels of color 1, followed by 2 spaces.
     The bgColor is zero (off).
     The effect uses segMode 0, so the pattern will be drawn linearly (1D) on the segment set.
     The pattern will be re-drawn every 80ms.
 
-    uint8_t pattern_arr = {1, 2, 3};
+    uint8_t pattern_arr = {0, 2, 1};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
     DrawPatternSLSeg drawPat(mainSegments, pattern, cybPnkPal_PS, 3, 4, 0, 1, 120);
-    Will draw a pattern using the first three colors of the palette (taken from the pattern)
+    Will draw a pattern using the first three colors of the palette (using the pattern above)
     The pattern will have color bands of length 3, followed by 4 spaces, bgColor is 0 (off).
     The pattern will be drawn on segment lines (segMode is 1).
     The pattern will be re-drawn every 120ms.
@@ -80,6 +80,10 @@ Constructor Inputs:
     segMode -- Sets if the pattern will be drawn along segment lines, whole segments, or in 1D (see intro notes)
     rate -- The pattern re-draw rate (ms)
 
+Other Settings:
+    colorMode (default 0) -- sets the color mode for the streamer pixels (see segDrawUtils::setPixelColor)
+    bgColorMode (default 0) -- sets the color mode for the spacing pixels (see segDrawUtils::setPixelColor)
+
 Functions:
     setPatternAsPattern(&inputPattern, colorLength, spacing) -- Takes an input pattern and creates a color pattern from it using the current palette
                                                                 Ex: uint8_t pattern_arr = {1, 2, 3};
@@ -92,9 +96,6 @@ Functions:
                                                  but all of the current palette will be used for the pattern.                                                       
     update() -- updates the effect
 
-Other Settings:
-    colorMode (default 0) -- sets the color mode for the streamer pixels (see segDrawUtils::setPixelColor)
-    bgColorMode (default 0) -- sets the color mode for the spacing pixels (see segDrawUtils::setPixelColor)
 */
 class DrawPatternSLSeg : public EffectBasePS {
     public:

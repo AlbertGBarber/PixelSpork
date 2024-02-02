@@ -64,7 +64,7 @@ Trail Modes:
     2: *------
 
 Example calls: 
-    uint8_t pattern_arr = {0, 1, 2};
+    uint8_t pattern_arr = {0, 2, 1};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
     RollingWavesFastSL rollingWavesFast(mainSegments, pattern, cybPnkPal_PS, 0, 7, 1, 0, 100);
     Will do a set of waves according to the pattern, with a blank background
@@ -92,19 +92,9 @@ Constructor Inputs:
     numColors (optional, see constructors) -- The number of randomly chosen colors for the gradients
     BgColor -- The color of the spacing pixels. It is a pointer, so it can be tied to an external variable
     gradLength -- How many steps for each gradient
-    trailMode -- They type of waves used (see trailMode section below)
+    trailMode -- They type of waves used (see trailMode section above)
     spacing -- The number of background spaces between each wave
     Rate -- The update rate (ms)
-
-Functions:
-    setTotalEffectLength() -- Calculates the total length of all the waves in the pattern (incl spacing), you shouldn't need to call this
-    setPattern(*newPattern) -- Sets the passed in pattern to be the effect pattern
-                               Will force setTotalEffectLength() call, so may cause effect to jump
-    setPaletteAsPattern() -- Sets the effect pattern to match the current palette (calls setTotalEffectLength())
-    setGradLength(newGradLength) -- Changes the gradLength to the specified value, adjusting the length of the waves (calls setTotalEffectLength())
-    setSpacing(newSpacing) -- Changes the spacing to the specified value, (calls setTotalEffectLength())
-    setTrailMode(newTrailMode) -- Changes the trail mode used for the waves
-    update() -- updates the effect
 
 Other Settings:
     randMode (default 0) -- Sets how colors are chosen from the palette
@@ -117,13 +107,21 @@ Other Settings:
                                      While anything below will dim faster
                                      120 sets a good balance of brightness, will not dimming most colors to 0 before the end of the wave
 
+Functions:
+    setPaletteAsPattern() -- Sets the effect pattern to match the current palette
+    setGradLength(newGradLength) -- Changes the gradLength to the specified value, adjusting the length of the waves
+    setTrailMode(newTrailMode) -- Changes the trail mode used for the waves
+    update() -- updates the effect
+    
 Flags:
     initFillDone -- Flag for doing the initial fill of the gradients on the strip
                     Set true once the fill is done
 
 Reference Vars:
-    totalCycleLength -- Total length of all the gradients combined, set by setTotalEffectLength()
-    cycleNum -- Tracks what how many patterns we've gone through, resets every totalCycleLength cycles, set during update()
+    totalCycleLength -- Total length of all the gradients combined, re-calculated each update
+    gradLength -- The length of the waves, set using setGradLength().
+    trailMode -- They type of trails drawn for the waves, set using setTrailMode().
+    cycleNum -- Tracks what how many patterns we've gone through, resets every totalCycleLength cycles.
 
 Notes:
 */
@@ -168,12 +166,9 @@ class RollingWavesFastSL : public EffectBasePS {
             paletteTemp = {nullptr, 0};  //Must init structs w/ pointers set to null for safety
 
         void
-            setGradLength(uint8_t newGradLength),
-            setSpacing(uint8_t newSpacing),
-            setPattern(patternPS &newPattern),
             setTrailMode(uint8_t newTrailMode),
+            setGradLength(uint8_t newGradLength),
             setPaletteAsPattern(),
-            setTotalEffectLength(),
             update(void);
 
     private:
@@ -182,7 +177,6 @@ class RollingWavesFastSL : public EffectBasePS {
             prevTime = 0;
 
         uint8_t
-            dimRatio,
             stepTemp,
             currentPattern,
             currentColorIndex,
@@ -209,6 +203,7 @@ class RollingWavesFastSL : public EffectBasePS {
         void
             init(CRGB BgColor, SegmentSetPS &SegSet, uint16_t Rate),
             initalFill(),
+            setTotalEffectLength(),
             setNextColors(uint16_t segPixelNum);
 };
 

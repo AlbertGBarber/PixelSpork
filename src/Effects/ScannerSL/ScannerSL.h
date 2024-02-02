@@ -140,19 +140,19 @@ Constructor inputs:
     blend -- (See Inputs Guide above)
     rate -- The update rate (ms) note that this is synced with all the particles.
 
+Other Settings:
+    colorMode (default 0) -- sets the color mode for the wave pixels (see segDrawUtils::setPixelColor)
+    bgColorMode (default 0) -- sets the color mode for the background pixels (see segDrawUtils::setPixelColor)
+    dimPow (default 80, min -127, max 127) -- Adjusts the rate of dimming for the trails (see particleUtilsPS.h)
+    fillBg (default false) -- If true, the segment set will be filled with the background every update cycle
+    particleSet -- The particleSet used to store the scan particles (you can use it to directly customize the waves)
+    randMode -- Sets how colors are chosen (see randMode notes above)
+
 Functions:
     setPaletteAsPattern() -- Sets the palette to be the pattern (each color in the palette, in order)
     makeWaveSet(numWaves, direction, alternate, makeEndWave) -- Creates a set of evenly space repeating waves
                                                                 (see Inputs Guide above)
     update() -- updates the effect 
-
-Other Settings:
-    colorMode (default 0) -- sets the color mode for the wave pixels (see segDrawUtils::setPixelColor)
-    bgColorMode (default 0) -- sets the color mode for the background pixels (see segDrawUtils::setPixelColor)
-    dimPow (default 80, min -127, max 127) -- Adjusts the rate of dimming for the trails (see particleUtilsPS.h)
-    fillBG (default false) -- If true, the segment set will be filled with the background every update cycle
-    particleSet -- The particleSet used to store the scan particles (you can use it to directly customize the waves)
-    randMode -- Sets how colors are chosen (see randMode notes above)
 */
 class ScannerSL : public EffectBasePS {
     public:
@@ -188,7 +188,7 @@ class ScannerSL : public EffectBasePS {
 
         bool
             blend = false,  //sets if particles should add onto one another
-            fillBG = false,
+            fillBg = false,
             bounce,
             bounceChange;
 

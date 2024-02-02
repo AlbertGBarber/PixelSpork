@@ -17,7 +17,7 @@ The direction of the waves is controlled using the direct var.
 True will make the waves move from the last to first segment, false, the reverse.
 
 Patterns work the same as with other effects, they are a pattern of palette array indexes
-ie a pattern of {0, 1, 2} would be the first three colors of a palette
+ie a pattern of {0, 2, 1} would be the first three colors of a palette
 to indicate a background pixel (ie set to the BgColor) we use 255 in the pattern
 This does mean if your palette has 255 colors, you'll lose the final color, but you shouldn't have palettes that large
 
@@ -115,6 +115,19 @@ Constructor Inputs:
                True will make the waves move from the last to first segment, false, the reverse.
     rate -- The update rate (ms)
 
+Other Settings:
+    colorMode (default 0) -- sets the color mode for the wave pixels (see segDrawUtils::setPixelColor)
+    bgColorMode (default 0) -- sets the color mode for the spacing pixels (see segDrawUtils::setPixelColor)
+    fadeOn (default true) -- If false, the wave will jump directly to the next color instead of fading
+                             Note that if 1 or 0 are passed in as the FadeSteps in the constructor, 
+                             fadeOn will be set to false automatically
+    randMode (default 0) -- Sets the type of how colors are chosen:
+                         -- 0: Colors will be chosen in order from the pattern (not random)
+                         -- 1: Colors will be chosen completely at random
+                         -- 2: Colors will be chosen at random from the palette,
+                               but the same color won't be repeated in a row
+                         -- 3: Colors will be chosen randomly from the palette (allowing repeats)
+
 Functions:
     reset() -- Restarts the wave pattern (also calls resetSegColors())
     resetSegColors() -- Only needed for random modes when changing the number of segments in your set. 
@@ -128,19 +141,6 @@ Functions:
     setPaletteAsPattern(colorLength, spacing) -- Like the previous function, but all of the current palette will be used for the pattern                                                       
     makeSingleWave() -- Creates a wave pattern so that there's only a single wave of thickness 1 active on the segment set at one time
     update() -- updates the effect
-
-Other Settings:
-    colorMode (default 0) -- sets the color mode for the wave pixels (see segDrawUtils::setPixelColor)
-    bgColorMode (default 0) -- sets the color mode for the spacing pixels (see segDrawUtils::setPixelColor)
-    fadeOn (default true) -- If false, the wave will jump directly to the next color instead of fading
-                             Note that if 1 or 0 are passed in as the FadeSteps in the constructor, 
-                             fadeOn will be set to false automatically
-    randMode (default 0) -- Sets the type of how colors are chosen:
-                         -- 0: Colors will be chosen in order from the pattern (not random)
-                         -- 1: Colors will be chosen completely at random
-                         -- 2: Colors will be chosen at random from the palette,
-                               but the same color won't be repeated in a row
-                         -- 3: Colors will be chosen randomly from the palette (allowing repeats)
 
 Reference vars:
     cycleNum -- Tracks what how many patterns we've gone through, 

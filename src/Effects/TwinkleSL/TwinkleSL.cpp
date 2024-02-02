@@ -192,7 +192,7 @@ void TwinkleSL::update() {
         //by default, we only touch twinkles that are fading
         //but for rainbow or gradient backgrounds that a cycling
         //you want to redraw the whole thing
-        if( fillBG ) {
+        if( fillBg ) {
             segDrawUtils::fillSegSetColor(*segSet, *bgColor, bgColorMode);
         }
 

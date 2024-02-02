@@ -32,14 +32,14 @@ Constructor Inputs:
     spacing (min 1) -- The size of the space between the spots
     rate -- The update rate (ms)
 
+Other Settings:
+    colorMode (default 0) -- sets the color mode for the random pixels (see segDrawUtils::setPixelColor)
+    bgColorMode (default 0) -- sets the color mode for the background (see segDrawUtils::setPixelColor)
+
 Functions:
     setLitLength(newLitLength) -- Changes the spot size, you can set litLength directly, but make sure its >1
     setSpacing(newSpacing) -- Changes the size between spots, you can set spacing directly, but make sure its >1
     update() -- updates the effect
-
-Other Settings:
-    colorMode (default 0) -- sets the color mode for the random pixels (see segDrawUtils::setPixelColor)
-    bgColorMode (default 0) -- sets the color mode for the background (see segDrawUtils::setPixelColor)
 
 Reference Vars:
     cycleNum --  This tracks how many update cycles have happened, resets every totalDrawLength (spacing + litLength)

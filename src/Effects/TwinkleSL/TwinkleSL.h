@@ -44,6 +44,14 @@ Constructor Inputs:
     fadeInSteps and FadeOutSteps -- The number of steps taken to fade pixels in and out (min value of 1, max of 255)
     rate -- The update rate (ms)
 
+Other Settings:
+    colorMode (default 0) -- sets the color mode for the random pixels (see segDrawUtils::setPixelColor)
+    bgColorMode (default 0) -- sets the color mode for the background (see segDrawUtils::setPixelColor)
+    randMode (default 0) -- sets how colors will be picked
+                            0: Picks colors from the palette
+                            1: Picks colors at random
+    fillBg (default false) -- sets the background to be redrawn every cycle, useful for bgColorModes that are dynamic
+
 Functions:
     setSteps(newFadeInSteps, newFadeOutSteps) -- Sets the number of fade in and out steps
                                                  (Will reset the effect if the new total number of steps (fadeInSteps + fadeOutSteps) 
@@ -53,14 +61,6 @@ Functions:
     setNumTwinkles(newNumTwinkles) -- sets an new number of pixels to be chosen each cycle, 
                                       (Will reset the effect if the new number of pixels is different than the current number)
     update() -- updates the effect
-
-Other Settings:
-    colorMode (default 0) -- sets the color mode for the random pixels (see segDrawUtils::setPixelColor)
-    bgColorMode (default 0) -- sets the color mode for the background (see segDrawUtils::setPixelColor)
-    randMode (default 0) -- sets how colors will be picked
-                            0: Picks colors from the palette
-                            1: Picks colors at random
-    fillBG (default false) -- sets the background to be redrawn every cycle, useful for bgColorModes that are dynamic
 
 reference Vars:
     numTwinkles -- How many random pixels are chosen each cycle, set with setNumTwinkles()
@@ -116,7 +116,7 @@ class TwinkleSL : public EffectBasePS {
             *bgColor = nullptr;  //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
 
         bool
-            fillBG = false;
+            fillBg = false;
 
         palettePS
             *palette = nullptr,

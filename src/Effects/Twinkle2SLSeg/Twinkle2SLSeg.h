@@ -104,6 +104,15 @@ Constructor Inputs:
                (See segMode notes above)
     Rate -- The update rate (ms)
 
+Other Settings:
+    colorMode (default 0) -- sets the color mode for the random twinkles (see segDrawUtils::setPixelColor)
+    bgColorMode (default 0) -- sets the color mode for the background (see segDrawUtils::setPixelColor)
+    randMode (default 0) -- sets how colors will be picked
+                            0: Picks colors from the palette
+                            1: Picks colors at random
+    fillBg (default false) -- sets the background to be redrawn every cycle, useful for bgColorModes that are dynamic
+    limitSpawning -- Limits the twinkles so that only one new one can become active per update cycle (see inputs guide above)
+
 Functions:
     setSteps(newFadeInSteps, newFadeOutSteps) -- Sets the number of fade in and out steps
                                                  You can also set the steps directly as long as you don't set them below 1
@@ -115,16 +124,7 @@ Functions:
     setSegMode(newSegMode) -- Sets if twinkles will be drawn on segment lines, whole segments or individual pixels
                               (See segMode notes above) (will reset the effect if value is different from current value)
     update() -- updates the effect
-
-Other Settings:
-    colorMode (default 0) -- sets the color mode for the random twinkles (see segDrawUtils::setPixelColor)
-    bgColorMode (default 0) -- sets the color mode for the background (see segDrawUtils::setPixelColor)
-    randMode (default 0) -- sets how colors will be picked
-                            0: Picks colors from the palette
-                            1: Picks colors at random
-    fillBG (default false) -- sets the background to be redrawn every cycle, useful for bgColorModes that are dynamic
-    limitSpawning -- Limits the twinkles so that only one new one can become active per update cycle (see inputs guide above)
-
+    
 Reference Vars:
     numTwinkles -- (see notes above) set using setNumTwinkles()
     segMode -- (see notes above) set using setSegMode()
@@ -174,7 +174,7 @@ class Twinkle2SLSeg : public EffectBasePS {
         
         bool 
             limitSpawning = false,
-            fillBG = false;
+            fillBg = false;
         
         CRGB 
             bgColorOrig,

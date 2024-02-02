@@ -18,7 +18,8 @@ Example call:
     Will draw rainbows of length 30, moving towards the end of the SegmentSetPS, at 80ms
 
     RainbowCyclePS rainbowCycle(mainSegments, true, 80); 
-    Will draw rainbows of length 255 (the length is set to 255 by default b/c it is omitted from the constructor),
+    Will draw rainbows of length 255 
+    (the length is set to 255 by default b/c it is omitted from the constructor),
     moving towards the end of the SegmentSetPS, at 80ms
 
 Constructor Inputs:
@@ -26,13 +27,13 @@ Constructor Inputs:
     direct -- The direction the rainbows will move in (true is forward)
     rate -- update rate (ms)
 
-Functions:
-    setLength(newLength) -- sets a new rainbow length
-    update() -- updates the effect 
-
 Other Settings:
     sat (default 255) -- rainbow saturation value
     val (default 255) -- rainbow "value" value
+    
+Functions:
+    setLength(newLength) -- sets a new rainbow length
+    update() -- updates the effect 
 
 Reference Vars:
     length -- The length of the rainbow. Set using setLength().

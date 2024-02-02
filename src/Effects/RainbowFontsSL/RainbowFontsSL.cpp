@@ -38,7 +38,7 @@ void RainbowFontsSL::update() {
             c = sin8(c);
             c = sin8(c + t1);
 
-            colorOut = CHSV(c, 255, 255);
+            colorOut = CHSV(c, sat, val);
 
             //reverse the line number so that the effect moves positively along the strip
             lineNum = numLines - i - 1;

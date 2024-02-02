@@ -18,7 +18,7 @@ You can also turn the twinkling off
 This effect is fully compatible with color modes, and the bgColor is a pointer, so you can bind it
 to an external color variable. By default it is bound to bgColorOrig, which is set to 0 (blank color).
 
-If you have a non-zero background color be sure to set fillBG to true!!
+If you have a non-zero background color be sure to set fillBg to true!!
 
 The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
 passing in a SegmentSetPS with only one segment containing the whole strip.
@@ -107,16 +107,10 @@ Constructor Inputs:
                   The overall firefly speed is calculated as speedBase + random(speedRange);
     rate -- The update rate for the effect (ms)
 
-Functions:
-    setupFireflies(maxNumFireflies) -- Create the data structures for a set of fireflies
-                                       You should call this if you ever want to change maxNumFireflies
-                                       Will also clear any active fireflies from the segment set by filling in the background
-    update() -- updates the effect
-
 Other Settings:
     colorMode (default 0) -- sets the color mode for the waves (see segDrawUtils::setPixelColor)
     bgColorMode (default 0) -- sets the color mode for the spacing pixels (see segDrawUtils::setPixelColor)
-    fillBG (default false) -- Sets whether to fill the background in every update cycle,
+    fillBg (default false) -- Sets whether to fill the background in every update cycle,
                               You should set this true if you are using an animated background mode
     blend (default false) -- Causes sparks to add their colors to the strip, rather than set them
                              See explanation of this in more detail above in effect intro
@@ -128,6 +122,12 @@ Other Settings:
                                The value of `fadeThresh` sets how many steps they spend fading
                                Note that setting it to 255 will only doa fade in, and then the fireflies will disappear instantly
                                128 will cause them to fade in then out with no pause at the peak 
+                            
+Functions:
+    setupFireflies(maxNumFireflies) -- Create the data structures for a set of fireflies
+                                       You should call this if you ever want to change maxNumFireflies
+                                       Will also clear any active fireflies from the segment set by filling in the background
+    update() -- updates the effect
 
 Reference Vars:
     maxNumFireflies -- The maximum number of fireflies that can be active at any one time
@@ -144,7 +144,7 @@ class FirefliesSL : public EffectBasePS {
                     uint16_t LifeBase, uint16_t LifeRange, uint16_t SpeedBase, uint16_t SpeedRange, uint16_t Rate);
 
         //constructor for effect with single color
-        //!!If using pre-build FastLED colors you need to pass them as CRGB( *color code* )
+        //!!If using pre-build FastLED colors you need to pass them as CRGB( *color code* ) -> ex CRGB(CRGB::Blue)
         FirefliesSL(SegmentSetPS &SegSet, CRGB Color, uint16_t MaxNumFireflies, uint8_t SpawnChance,
                     uint16_t LifeBase, uint16_t LifeRange, uint16_t SpeedBase, uint16_t SpeedRange, uint16_t Rate);
 
@@ -165,7 +165,7 @@ class FirefliesSL : public EffectBasePS {
             *particlePrevPos = nullptr;
 
         bool
-            fillBG = false,
+            fillBg = false,
             blend = false,
             flicker = true;
 

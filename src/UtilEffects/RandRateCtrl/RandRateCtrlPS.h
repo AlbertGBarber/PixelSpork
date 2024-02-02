@@ -39,6 +39,9 @@ Constructor Inputs:
     easing -- Sets the rate easing setting used in RateCtrl 
     rate -- The update rate of the utility (ms)
 
+Other Settings:
+    pauseTime (default 0) -- Sets a time (ms) that the output rate will be held at after finishing a transition before starting the next
+
 Functions:
     Note: Most of these are setter functions for changing the variables in the RateRandomizer and RateCtrl instances
     These instances are public. You can access them directly via  RR-> and RC-> respectively
@@ -49,9 +52,6 @@ Functions:
     setEasing(newEasing) -- Changes the easing setting of the RateCtrl instance
     reset() -- Ends the current transition instantly
     update() -- updates the effect
-
-Other Settings:
-    pauseTime (default 0) -- Sets a time (ms) that the output rate will be held at after finishing a transition before starting the next
 
 Flags:
     paused -- Set when the class is in the holding time after transitioning between rates

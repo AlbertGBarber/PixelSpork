@@ -69,8 +69,8 @@ void NoiseWavesSL::update() {
         totBlendLength = blendSteps * palette->length;
 
         //Get a phase value for our waves using noise
-        //The offset keeps the waves moving across the strip
-        noisePhase = inoise8(currentTime / phaseScale) + offset;
+        //The hue offset keeps the waves moving across the strip
+        noisePhase = inoise8(currentTime / phaseScale) + hue;
 
         //run over each segment line and set color and brightness values for the whole line
         for( uint16_t i = 0; i < numLines; i++ ) {
@@ -80,10 +80,10 @@ void NoiseWavesSL::update() {
             freqCounter = addmod8(freqCounter, 1, 60);
 
             //Get a color based on some noise
-            //For the color index we add an offset the increments each cycle
+            //For the color index we add an hue offset the increments each cycle
             //Noise values tend to fall around the center of the 255 range, so by adding
-            //a moving offset we make sure that we see all the palette colors and keeps the effect varying
-            index = inoise8(i * blendScale, currentTime / blendSpeed) + offset;
+            //a moving hue offset we make sure that we see all the palette colors and keeps the effect varying
+            index = inoise8(i * blendScale, currentTime / blendSpeed) + hue;
 
             /* Get a brightness based on a cos wave with noisy inputs
             The brightness is set by a wave who's frequency and phase vary as functions of noise
@@ -113,7 +113,12 @@ void NoiseWavesSL::update() {
             }
         }
         showCheckPS();
-        offset++;
+
+        //increment the noise center hue offset if desired
+        //hue offset is a uint8_t so it wraps at 256
+        if(hueCycle){
+           hue++; 
+        }
     }
 }
 
@@ -142,8 +147,8 @@ void NoiseWavesPS::update(){
         totBlendLength = blendSteps * palette->length;
 
         //Get a phase value for our waves using noise
-        //The offset keeps the waves moving across the strip
-        noisePhase = inoise8( currentTime/phaseScale ) + offset;
+        //The hue offset keeps the waves moving across the strip
+        noisePhase = inoise8( currentTime/phaseScale ) + hue offset;
 
         //run over each of the leds in the segment set and set a color/brightness value
         for (uint16_t i = 0; i < numSegs; i++) {
@@ -158,10 +163,10 @@ void NoiseWavesPS::update(){
                 pixelNum = segDrawUtils::getSegmentPixel(*segSet, i, j);
 
                 //Get a color based on some noise
-                //For the color index we add an offset the increments each cycle
+                //For the color index we add an hue offset the increments each cycle
                 //Noise values tend to fall around the center of the 255 range, so by adding
-                //a moving offset we make sure that we see all the palette colors and keeps the effect varying
-                index = inoise8( pixelCount * blendScale, currentTime/blendSpeed ) + offset;// beatsin16(4, 0, totBlendLength /2);
+                //a moving hue offset we make sure that we see all the palette colors and keeps the effect varying
+                index = inoise8( pixelCount * blendScale, currentTime/blendSpeed ) + hue offset;// beatsin16(4, 0, totBlendLength /2);
                 
                 //Get a brightness based on a cos wave with noisy inputs
                 //The brightness is set by a wave who's frequency and phase vary as functions of noise
@@ -192,7 +197,7 @@ void NoiseWavesPS::update(){
             }
         }
         showCheckPS();
-        offset++;
+        hue offset++;
     }
 }
 */

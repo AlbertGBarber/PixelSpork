@@ -11,6 +11,10 @@
 //-- Add function somewhere to automatically sync a rainbow or gradient across multiple segment sets
 //	(sets offsets and lengths to sync them up, more complicated to match lines)
 
+//Honestly, this page is a bit of a mess in terms of layout......
+//(the info should still be correct tho)
+//It's probably easier to read the Segments wiki pages.
+
 /*
 An explanation of segment structure:
 	Basic hierarchy:
@@ -271,8 +275,8 @@ Rainbows and Gradients
 		gradLenVal -- The gradient length for color modes 1 & 6 (default val is the number of leds in the segment set)
 		gradSegVal -- The gradient length for color modes 2 & 7 (default val is the number of segments in the SegmentSetPS)
 		gradLineVal -- The gradient length for color modes 3 & 8 (defaulted val is the length of the longest segment (numLines) )
-		rainbowVal -- (default 255) HSV style value for the rainbows drawn on the SegmentSetPS
-		rainbowSatur -- (default 255) HSV style saturation for the rainbows drawn on the SegmentSetPS
+		val -- (default 255) HSV style value for the rainbows drawn on the SegmentSetPS
+		sat -- (default 255) HSV style saturation for the rainbows drawn on the SegmentSetPS
 
 The gradient lengths are separated by mode to make it easy to switch between color modes
 By changing these vars you can change how the rainbow or gradient looks.
@@ -343,8 +347,8 @@ class SegmentSetPS {
         SegmentSetPS(struct CRGB *Leds, uint16_t LedArrSize, SegmentPS **SegArr, uint16_t NumSegs);
 
         uint8_t
-            rainbowVal = 255,    //HSV style value for the rainbows drawn on the SegmentSetPS
-            rainbowSatur = 255,  //HSV style saturation for the rainbows drawn on the SegmentSetPS
+            val = 255,  //HSV style "value" value for the rainbows drawn on the SegmentSetPS
+            sat = 255,  //HSV style saturation for the rainbows drawn on the SegmentSetPS
             brightness = 255,    //brightness of the segment (**relative** to the overall strip brightness)
                                  //255 = same brightness as strip
                                  //DO NOT use this in effects, it is meant as a set-up once type of control

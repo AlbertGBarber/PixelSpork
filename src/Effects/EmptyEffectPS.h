@@ -13,8 +13,8 @@ Effect Description:
 Inputs Guide / Notes:
 Example calls: 
 Constructor Inputs:
-Functions:
 Other Settings:
+Functions:
 Reference Vars:
 Flags:
 

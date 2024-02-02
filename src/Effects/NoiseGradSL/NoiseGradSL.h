@@ -7,41 +7,50 @@
 
 /*
 An effect where palette colors are drawn as a gradient across segment lines
-The gradient is shifted based on the output of a noise function,
+The gradient is shifted based on the output of the FastLED Perlin noise function,
 while the brightness is randomly set in blobs across the segment lines.
 
 The length of the color gradient can be set to shift over time in quick bursts
 This lets the effect stay calm for a while, and then quickly shift to a new look
 
-This effect is NOT compatible with color modes, but the background color is.
-
 You can change the variables freely, although this may result in jumps in the effect.
+
+The noise colors will be blended towards a background color.
+ Changing the background color will "tint" the overall output, 
+ because all the colors are blended towards the background color as part of the effect. 
+ Supports color modes for the background color.
 
 Inputs guide:
     Overall the effect has two components:
         1) A gradient of palette colors that shifts along the segment set in random jumps
         2) Spots of brightness that grow and change with time
+
+    Both these factors have their own independent settings, so you can tune the effect to your liking. 
     
     Blend settings: 
-        1) blendStepsBase: The minimum number of gradient steps between palette colors. The actual number of steps is
-                           stored in blendSteps, which is shifted over time (unless blendStepsRange is 0)
+        1) blendStepsBase: The minimum number of gradient steps between palette colors. 
+                           To make the effect more interesting, the number of gradient steps (`blendSteps`)
+                           can be set to shift over time, which changes how fast palette colors blend. 
+                           The total number of `blendSteps` is calculated as 
+                           `blendSteps = blendStepBase + random(blendStepsRange)`, 
+                           so `blendStepBase` sets the smallest number of steps the gradients can have. 
         2) blendStepsRange: The maximum amount added to blendStepBase. Sets the upper limit for blendSteps
-                            ie blendSteps = blendStepBase + random(blendStepsRange);
-                            If you set blendStepsRange to 0 then there will be no shifting and blendSteps will stay at it's current value.
+                            If you set blendStepsRange to 0 then there will be no shifting and blendSteps 
+                            will stay at it's current value.
         3) blendRate: How often (in ms) the blendSteps are shifted. Constantly shifting the blendSteps looks choppy
                       so instead we only shift it every blendRate time, but do so quickly. So the effect has moments of calm
                       before jumping to a new look.
-        4) PhaseScale: The gradient is constantly offset by a noise value. PhaseScale sets quickly the noise changes, 
+        4) phaseScale: The gradient is constantly offset by a noise value. PhaseScale sets how quickly the noise changes, 
                        ie, how wobbly the gradient is. Lower values => faster changing, min value of 1.
                        Recommend between 5 and 20
-        5) FreqScale:  How quickly the gradient moves across the segments. Lower value => faster. Min value of 1.
+        5) freqScale:  How quickly the gradient moves across the segments. Lower value => faster. Min value of 1.
                        Recommend between 5 and 20
         
-        I recommend keeping you blendRange less than 20. Otherwise you might not notice the shifting very much.
-        May depend on your segments though.
+        I recommend keeping the total possible steps to be less than 20. 
+        At higher values the shifting becomes quite slow. This may depend on your segments though.
         
-        !!Do NOT set the blendSteps directly after turning on shiftBlendSteps() (Having blendStepsRange > 0)
-        if you do, be sure to set blendSteps = blendStepsTarget
+        **Warning**, do **NOT** set the `blendSteps` directly if your `blendStepsRange` is greater than 0.
+        Doing so may cause the `blendSteps` to increase/decrease infinitely. 
 
         blendRate is a pointer, so you can bind it externally.
         The blendRate you passed in is stored in blendRateOrig.
@@ -55,17 +64,19 @@ Inputs guide:
         3) doBrightness: Default true. Turns the brightness spots on/off. 
 
 Example calls: 
-    uint8_t numColors = 3;
-    uint8_t minBase = 3;
-    uint8_t maxBase = mainSegments.numLines / numColors - minBase;
-    NoiseGradSL noiseGrad(mainSegments, numColors, 0, minBase, maxBase, 10, 20, 30, 5000, 80);
-    For this example, I'm showing you how to set the blendStepsRange so that you have one complete palette gradient 
-    fit into the segment set. This tends to look good because you always have all the colors showing, and they'll
+    For this example, I'm showing you how to set the blendStepsRange so that one complete palette gradient 
+    fits into the segment set. This tends to look good because you always have all the colors showing, and they'll
     either spread out into one full wave, or make multiple smaller waves as the blendSteps shifts.
-    In my instance the mainSegments have a maximum length of 24, so maxBase is 5.
+    For this, you want your "max blend steps" * "number of palette colors" to equal the number of segment lines.
+    uint8_t numColors = 3;
+    uint8_t minSteps = 3;
+    uint8_t stepsRange = ( mainSegments.numLines / numColors ) - minSteps;
+    In my instance the mainSegments have a maximum length of 24, so stepsRange is 5.
+
+    NoiseGradSL noiseGrad(mainSegments, numColors, 0, minSteps, stepsRange, 10, 20, 30, 5000, 80);
     Will produce an effect using a palette of 3 random colors
     The background is blank.
-    There are a minimum of 3 blendSteps and range of 5 for a maximum blendSteps of 8
+    There are a minimum of 3 blendSteps and range of 5 for a maximum blendSteps of 8 (as calculated above)
     The phaseScale is 10, the freqScale is 20, and the briScale is 30.
     The blendSteps will be shifted every 5000ms (5 sec).
     The effect updates at 80ms.
@@ -96,12 +107,14 @@ Constructor inputs:
 Other Settings:
     bgColorMode (default 0) -- sets the color mode for the spacing pixels (see segDrawUtils::setPixelColor)
     briFreq (default 5) -- Sets how quickly the brightness changes. Smaller value => faster change. Min value of 1.
-    blendSteps (defaulted to 10, but set in init() ) -- How many steps are taken to blend between palette colors
-                                                        Automatically set when shifting.
+    blendSteps -- How many steps are taken to blend between palette colors. 
+                  Set to blendStepBase during effect creation.
+                  Changes over time if `blendStepsRange` is greater than 0.
     doBrightness (default true) -- Turns the brightness spots on/off. 
-
+    
 Functions:
     update() -- updates the effect 
+
 */
 class NoiseGradSL : public EffectBasePS {
     public:
@@ -125,7 +138,7 @@ class NoiseGradSL : public EffectBasePS {
         uint16_t
             blendStepsBase,
             blendStepsRange,
-            blendSteps = 10;
+            blendSteps = 10; //will be set to blendStepsBase during effect creation
 
         uint16_t
             blendRateOrig,

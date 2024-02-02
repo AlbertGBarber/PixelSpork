@@ -56,7 +56,7 @@ void EffectSetPS::updateEffect(uint8_t effectNum) {
 
 //Returns the pointer to the specified effect in the effect array
 //Note that the return type is EffectBasePS, so you'll only be able to access the vars listed in EffectBasePS.h
-//Ie if you effect has a var called "fillBG" you won't be able to access it from here b/c "fillBG" is not in EffectBasePS
+//Ie if you effect has a var called "fillBg" you won't be able to access it from here b/c "fillBg" is not in EffectBasePS
 //Instead you'll need a pointer of the same type as your effect:
 //Ie if your effect is FireworksPS, you'll need a pointer like FireworksPS *yourPointer
 EffectBasePS *EffectSetPS::getEffectPtr(uint8_t effectNum) {

@@ -143,7 +143,7 @@ void BreathEyeSL::getNextColor() {
             break;
         case 4:  //Colors will be from the rainbow (the hue is offset by hueRate each time a color is chosen)
             hue += hueRate;
-            breathColor = CHSV(hue, rainbowSat, rainbowVal);
+            breathColor = CHSV(hue, sat, val);
             break;
     }
 
@@ -233,7 +233,7 @@ void BreathEyeSL::update() {
             }
 
             //fill in the segment set with background if needed
-            if( fillBG ) {
+            if( fillBg ) {
                 segDrawUtils::fillSegSetColor(*segSet, *bgColor, 0);
             }
 

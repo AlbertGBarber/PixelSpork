@@ -54,21 +54,6 @@ void RollingWavesSL2::init(CRGB BgColor, SegmentSetPS &SegSet, uint16_t Rate) {
 void RollingWavesSL2::setGradLength(uint8_t newGradLength) {
     gradLength = newGradLength;
     setTrailMode(trailMode);
-    setTotalEffectLength();
-}
-
-//sets the spacing between the waves
-//and recalculates the totalCycleLength, since it includes the spacing
-void RollingWavesSL2::setSpacing(uint8_t newSpacing) {
-    spacing = newSpacing;
-    setTotalEffectLength();
-}
-
-//sets a new pattern for the effect
-//we need to change the totalCycleLength to match
-void RollingWavesSL2::setPattern(patternPS *newPattern) {
-    pattern = newPattern;
-    setTotalEffectLength();
 }
 
 //sets the pattern to match the current palette
@@ -77,17 +62,6 @@ void RollingWavesSL2::setPattern(patternPS *newPattern) {
 void RollingWavesSL2::setPaletteAsPattern() {
     generalUtilsPS::setPaletteAsPattern(patternTemp, *palette);
     pattern = &patternTemp;
-    setTotalEffectLength();
-}
-
-//calculates the totalCycleLength, which represents the total number of possible colors a pixel can have
-//ie the total length of all the waves (of each color in the pattern) combined
-//includes the spacing after each wave
-//The blend limit is the length of a wave plus its spacing
-void RollingWavesSL2::setTotalEffectLength() {
-    // the number of steps in a full cycle (fading through all the colors)
-    blendLimit = gradLength + spacing;
-    totalCycleLength = pattern->length * blendLimit;
 }
 
 //creates an array for storing the physical led locations of the
@@ -165,6 +139,9 @@ void RollingWavesSL2::setTrailMode(uint8_t newTrailMode) {
 void RollingWavesSL2::initalFill() {
     cycleNum = 0;
 
+    //Calculate the total cycle length based on the current gradLength and spacing
+    setTotalEffectLength();
+
     //we need to draw the initial waves on the strip
     //to pre-fill it for the main update cycle
     //to do this we run across all the leds
@@ -213,6 +190,10 @@ void RollingWavesSL2::update() {
 
     if( (currentTime - prevTime) >= *rate ) {
         prevTime = currentTime;
+
+        //re-calculate the total cycle length based on the current gradLength and spacing
+        //This allows you to change their values on the fly
+        setTotalEffectLength();
 
         //We need to pre-fill the strip with a full cycle the first time the update is called
         //so that the colors are copied down the strip correctly on subsequent cycles
@@ -272,6 +253,16 @@ void RollingWavesSL2::update() {
     }
 }
 
+//calculates the totalCycleLength, which represents the total number of possible colors a pixel can have
+//ie the total length of all the waves (of each color in the pattern) combined
+//includes the spacing after each wave
+//The blend limit is the length of a wave plus its spacing
+void RollingWavesSL2::setTotalEffectLength() {
+    // the number of steps in a full cycle (fading through all the colors)
+    blendLimit = gradLength + spacing;
+    totalCycleLength = pattern->length * blendLimit;
+}
+
 /* Returns a wave color blended towards 0 based on the trailMode and the step
 For each wave we first draw the leading trail up to firstHalfGrad
 Then we draw the ending trail up to gradLength
@@ -308,29 +299,13 @@ CRGB RollingWavesSL2::getWaveColor(uint8_t step) {
             //if the blendStep is at the "head" led, we don't dim it
             colorOut = currentColor;
         } else {
-            colorOut = desaturate(currentColor, stepTemp, halfGrad);
+            //Get the dimmed wave color, note that we use the same function as particles use to get the color
+            //This produces a more non-linear fade (depending on the dimPow), for a better overall look
+            //See notes in particleUtils.h or particles.h for more
+            colorOut = particleUtilsPS::getTrailColor(currentColor, *bgColor, stepTemp, halfGrad, dimPow);
         }
     }
     return colorOut;
-}
-
-/* returns a dimmed color (towards 0) based on the input steps and totalSteps
-step == totalSteps is fully dimmed
-Note that we offset totalSteps by 1, so we never reach full dim (since it would produce blank pixels)
-the maximum brightness is scaled by dimPow
-dimPow 255 will produce a normal linear gradient, but for more shimmery waves we can dial the brightness down
-The "head" wave pixel will still be drawn at full brightness since it's drawn separately  */
-CRGB RollingWavesSL2::desaturate(CRGB &color, uint8_t step, uint8_t totalSteps) {
-
-    dimRatio = (dimPow - (uint16_t)step * dimPow / (totalSteps + 1));
-
-    //ratio = dim8_video(ratio);
-    //uint8_t ratio = 255 - triwave8( 128 * (uint16_t)step / (totalSteps + 1) );
-
-    //quickly scales each of the color components by dimRatio
-    nscale8x3(color.r, color.g, color.b, dimRatio);
-
-    return color;
 }
 
 //For calling whenever a wave has finished

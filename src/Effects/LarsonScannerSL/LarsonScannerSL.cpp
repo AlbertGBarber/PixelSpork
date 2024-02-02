@@ -22,6 +22,12 @@ LarsonScannerSL::~LarsonScannerSL() {
     //Free all particles and the particle array pointer
     particleSet.length = 2;  //set the particle set to it's maximum length (see setScanType())
     particleUtilsPS::freeParticleSet(particleSet);
+    free(palette.paletteArr);
+}
+
+//resets all particles to the starting locations
+void LarsonScannerSL::reset(void) {
+    scannerInst->reset();
 }
 
 //changes the color mode of the scanner
@@ -85,7 +91,7 @@ void LarsonScannerSL::setScanType(uint8_t newScanType) {
     }
 
     scannerInst->setParticleSet(particleSet);
-    scannerInst->reset();
+    reset();
 }
 
 //changes the trail length of the scan particle

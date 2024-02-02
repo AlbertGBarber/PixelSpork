@@ -1,7 +1,7 @@
 #include "Noise16PS.h"
 
 //constructor with palette
-Noise16PS::Noise16PS(SegmentSetPS &SegSet, palettePS &Palette, uint16_t BlendSteps, uint16_t BlendScale,
+Noise16PS::Noise16PS(SegmentSetPS &SegSet, palettePS &Palette, uint8_t BlendSteps, uint16_t BlendScale,
                      uint8_t X_mode, uint8_t Y_mode, uint8_t Z_mode, uint16_t X_val, uint16_t Y_val, uint16_t Z_val, uint16_t Rate)
     : palette(&Palette), blendSteps(BlendSteps), blendScale(BlendScale),
       x_mode(X_mode), y_mode(Y_mode), z_mode(Z_mode), x_val(X_val), y_val(Y_val), z_val(Z_val)  //
@@ -10,7 +10,7 @@ Noise16PS::Noise16PS(SegmentSetPS &SegSet, palettePS &Palette, uint16_t BlendSte
 }
 
 //constructor with randomly generated palette
-Noise16PS::Noise16PS(SegmentSetPS &SegSet, uint8_t numColors, uint16_t BlendSteps, uint16_t BlendScale,
+Noise16PS::Noise16PS(SegmentSetPS &SegSet, uint8_t numColors, uint8_t BlendSteps, uint16_t BlendScale,
                      uint8_t X_mode, uint8_t Y_mode, uint8_t Z_mode, uint16_t X_val, uint16_t Y_val, uint16_t Z_val, uint16_t Rate)
     : blendSteps(BlendSteps), blendScale(BlendScale),
       x_mode(X_mode), y_mode(Y_mode), z_mode(Z_mode), x_val(X_val), y_val(Y_val), z_val(Z_val)  //

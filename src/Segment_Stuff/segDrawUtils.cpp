@@ -418,7 +418,7 @@ CRGB segDrawUtils::getPixelColor(SegmentSetPS &SegSet, uint16_t pixelNum, const 
     //Custom gradient lengths are capped at the segment set's gradOffsetMax
     if( colorMode < 6 ) {
         offsetMax = 256;
-        colorFinal = colorUtilsPS::wheel((colorModeNum * offsetMax) / colorModeDom, SegSet.gradOffset, SegSet.rainbowSatur, SegSet.rainbowVal);
+        colorFinal = colorUtilsPS::wheel((colorModeNum * offsetMax) / colorModeDom, SegSet.gradOffset, SegSet.sat, SegSet.val);
     } else {
         offsetMax = SegSet.gradOffsetMax;
         colorFinal = paletteUtilsPS::getPaletteGradColor(*SegSet.gradPalette, (colorModeNum * offsetMax) / colorModeDom, SegSet.gradOffset, offsetMax);

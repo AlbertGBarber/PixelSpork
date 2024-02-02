@@ -117,7 +117,7 @@ void BreathPS::getNextColor() {
             break;
         case 4:  //Colors will be from the rainbow (the hue is offset by hueRate each time a color is chosen)
             hue += hueRate;
-            breathColor = CHSV(hue, rainbowSat, rainbowVal);
+            breathColor = CHSV(hue, sat, val);
             break;
     }
 

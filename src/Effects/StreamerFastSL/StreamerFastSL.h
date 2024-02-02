@@ -32,7 +32,7 @@ This is controlled by the randMode setting
 Otherwise, all the settings are/functions are the same as StreamerPS
 
 Patterns work the same as with other effects, they are a pattern of palette array indexes
-ie a pattern of {0, 1, 2} would be the first three colors of a palette
+ie a pattern of {0, 2, 1} would be the first three colors of a palette
 to indicate a background pixel (ie set to the BgColor) we use 255 in the pattern
 This does mean if your palette has 255 colors, you'll lose the final color, but you shouldn't have palettes that large
 
@@ -86,17 +86,6 @@ Constructor Inputs:
     bgColor -- The color of the spacing pixels. It is a pointer, so it can be tied to an external variable
     rate -- The update rate (ms)
 
-Functions:
-    reset() -- Restarts the streamer pattern
-    setPatternAsPattern(&inputPattern, colorLength, spacing) -- Takes an input pattern and creates a streamer pattern from it using the current palette
-                                                                Ex: uint8_t pattern_arr = {1, 2, 3};
-                                                                   patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
-                                                                   setPatternAsPattern(pattern, 3, 4) 
-                                                                   Will do a streamer using the first three colors of the palette (taken from the pattern)
-                                                                   Each streamer will be length 3, followed by 4 spaces
-    setPaletteAsPattern(colorLength, spacing) -- Like the previous function, but all of the current palette will be used for the pattern                                                       
-    update() -- updates the effect
-
 Other Settings:
     randMode (default 0) -- Sets the type of how colors are chosen:
                          -- 0: Colors will be chosen in order from the pattern (not random)
@@ -107,6 +96,17 @@ Other Settings:
                          -- 4: Colors will be chosen randomly from the !!palette!!
                                (option included b/c the pattern may have a lot of spaces, 
                                 so choosing from it may be very biased)
+
+Functions:
+    reset() -- Restarts the streamer pattern
+    setPatternAsPattern(&inputPattern, colorLength, spacing) -- Takes an input pattern and creates a streamer pattern from it using the current palette
+                                                                Ex: uint8_t pattern_arr = {1, 2, 3};
+                                                                   patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
+                                                                   setPatternAsPattern(pattern, 3, 4) 
+                                                                   Will do a streamer using the first three colors of the palette (taken from the pattern)
+                                                                   Each streamer will be length 3, followed by 4 spaces
+    setPaletteAsPattern(colorLength, spacing) -- Like the previous function, but all of the current palette will be used for the pattern                                                       
+    update() -- updates the effect
 
 Flags:
     initFillDone -- Indicates if the strip has been pre-filled with the effect's color outputs 

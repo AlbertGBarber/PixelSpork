@@ -58,13 +58,6 @@ Constructor Inputs:
     totalSteps (max 255) -- The total number of steps taken to blend between the palettes
     rate -- The update rate of the blend (ms)
 
-Functions:
-    reset(StartPalette, EndPalette) -- Restarts the blend with a new start/end palette, with the same steps and update rate
-    reset(StartPalette, EndPalette, TotalSteps, Rate) -- Restarts the blend with all new vars
-    reset() -- restarts the blend (all settings and palettes stay the same)
-    setupBlendPalette(blendPaletteLength) -- //creates a blend palette, used only by PaletteCycle, not for general use!
-    update() -- updates the effect
-
 Other Settings:
     pauseTime (default 0) -- Sets a time (ms) that the blendPalette will be pause at after finishing a transition before starting the next
                              Only relevant if looping.
@@ -76,6 +69,13 @@ Other Settings:
                                   If true, randomized palettes will only generate complimentary colors, 
                                   which means they will be equally spaced across the hue spectrum (see the HSV color space). 
                                   This should generate color sets that are different but "look good" together.
+                                  
+Functions:
+    reset(StartPalette, EndPalette) -- Restarts the blend with a new start/end palette, with the same steps and update rate
+    reset(StartPalette, EndPalette, TotalSteps, Rate) -- Restarts the blend with all new vars
+    reset() -- restarts the blend (all settings and palettes stay the same)
+    setupBlendPalette(blendPaletteLength) -- //creates a blend palette, used only by PaletteCycle, not for general use!
+    update() -- updates the effect
 
 Flags:
     blendEnd -- Set when the blend has ended, causes the pause to start

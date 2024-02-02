@@ -13,7 +13,7 @@ Since the blending takes a bit of processing power, you can disable it with fade
 For an even faster version of this effect, see StreamerFastPS
 
 Patterns work the same as with other effects, they are a pattern of palette array indexes
-ie a pattern of {0, 1, 2} would be the first three colors of a palette
+ie a pattern of {0, 2, 1} would be the first three colors of a palette
 to indicate a background pixel (ie set to the BgColor) we use 255 in the pattern
 This does mean if your palette has 255 colors, you'll lose the final color, but you shouldn't have palettes that large
 
@@ -89,6 +89,13 @@ Constructor Inputs:
     fadeSteps -- The number of steps to transition from one color to the next as the streamers move down the strip
     rate -- The update rate (ms)
 
+Other Settings:
+    colorMode (default 0) -- sets the color mode for the streamer pixels (see segDrawUtils::setPixelColor)
+    bgColorMode (default 0) -- sets the color mode for the spacing pixels (see segDrawUtils::setPixelColor)
+    fadeOn (default true) -- If false, the streamer will jump directly to the next color instead of fading
+                             Note that if 1 or 0 are passed in as the FadeSteps in the constructor, 
+                             fadeOn will be set to false automatically
+
 Functions:
     reset() -- Restarts the streamer pattern, you should call this if you change segment sets as well.
     setPatternAsPattern(&inputPattern, colorLength, spacing) -- Takes an input pattern and creates a streamer pattern from it using the current palette
@@ -99,13 +106,6 @@ Functions:
                                                                     Each streamer will be length 3, followed by 4 spaces
     setPaletteAsPattern(colorLength, spacing) -- Like the previous function, but all of the current palette will be used for the pattern                                                       
     update() -- updates the effect
-
-Other Settings:
-    colorMode (default 0) -- sets the color mode for the streamer pixels (see segDrawUtils::setPixelColor)
-    bgColorMode (default 0) -- sets the color mode for the spacing pixels (see segDrawUtils::setPixelColor)
-    fadeOn (default true) -- If false, the streamer will jump directly to the next color instead of fading
-                             Note that if 1 or 0 are passed in as the FadeSteps in the constructor, 
-                             fadeOn will be set to false automatically
     
 Reference Vars:
     cycleNum -- How many update cycles we've done, resets every pattern length number of cycles (the pattern has been streamed once)

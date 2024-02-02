@@ -6,14 +6,15 @@
 #include "MathUtils/mathUtilsPS.h"
 
 /*
-Uses FastLED noise to produce varying colors with waves of brightness that both move and 
+Uses FastLED Perlin noise to produce varying colors with waves of brightness that both move and 
 grow/shrink across the segment lines with time.
 There are various setting to control waves and colors, explained in the Inputs guide below.
-The effect requires a palette for colors, or one can generate on randomly for you.
+The effect requires a palette for colors, or can generate one randomly for you.
 
-The noise waves will be blended towards a background color. 
-
-This effect is NOT compatible with color modes, but the background color is.
+The noise colors will be blended towards a background color. 
+Changing the background color will "tint" the overall output, 
+because all the colors are blended towards the background color as part of the effect.
+Supports Color Modes for the background color only.
 
 You can change the variables freely, although this may result in jumps in the effect.
 
@@ -24,12 +25,12 @@ Inputs guide:
     
     Brightness wave settings: 
         The brightness wave is generated using a cos() where the frequency and phase are set based on noise functions
-        The scales determine how fast the waves move and how large they are
+        The scale settings determine how fast the waves move and how large they are
         1) phaseScale: Changes how fast the waves move. Must be greater than 0. Recommend between 3 - 15.
                        Note that because the waves a noise based, their speed varies over time. phaseScale sets a cap on how 
-                       fast they move. Higher is slower. The effect diminishes at higher values.
+                       fast they move. Higher is slower. The effect has diminishing returns at higher values.
         2) freqScale: Sets how long the waves are. Must be greater than 0. Recommend between 3 - 10.
-                      The wave will vary in size over time, but this sets a minimum they will reach.
+                      The waves will vary in size over time, but this sets a minimum they will reach.
                       Higher means longer waves.
         
     Color change settings: 
@@ -41,25 +42,37 @@ Inputs guide:
                        This is not a constructor setting since the change to the effect isn't very noticeable 
                        unless below a certain value, which causes the colors to become coarse.
                        Defaulted to 30.
+
+    Cycling Colors:
+        For FastLED noise, most of the noise output falls in the center of its range. 
+        This means that for a given palette, you tend to only see the colors in the middle of the palette. 
+        To counteract this, the noise center can be offset over time, cycling colors into view. 
+        The end result is more pretty than without imo.
+
+        The offset cycling is controlled by the settings below. Note that the cycling is on by default:
+
+*       1) hue: Offsets the center of the FastLED noise, allowing you to shift the "center" color of the palette. 
+                By default it is incremented during every update cycle, but can also be set to a fixed value 
+                with cycling turned off. 
+
+        2) hueCycle (default true): Controls the hue offset cycling.
+                                    When off (false) the hue offset will be fixed to its current value.
                     
-    Note that colors will always shift over time. This is due to most noise values falling in the center of the range.
-    So to make sure all the colors are shown, I offset the noise over time, cycling colors into view.
-    The end result is more pretty than without imo.
 
 Example calls: 
 
-    NoiseWavesSL noiseWaves(mainSegments, 3, 0, 30, 10, 3, 80);
+    NoiseWavesSL noiseWaves(mainSegments, 3, 0, 30, 8, 3, 80);
     Will produce an effect using 3 random colors
     The background is blank
-    The blend scale is 5, while the phaseScale is 2 and the freqScale is 3
+    The blend scale is 30, while the phaseScale is 8 and the freqScale is 3
     The produces small waves that shift more slowly, with larger color patches.
     (even at the slowest the waves still move pretty quick)
     The effect updates at 80ms
     
-    NoiseWavesSL noiseWaves(mainSegments, cybPnkPal_PS, 0, 10, 2, 10, 80);
+    NoiseWavesSL noiseWaves(mainSegments, cybPnkPal_PS, 0, 10, 2, 9, 80);
     Will produce an effect using colors from cybPnkPal_PS
     The background is blank
-    The blend scale is 30, while the phaseScale is 5 and the freqScale is 7
+    The blend scale is 10, while the phaseScale is 2 and the freqScale is 9
     The produces large waves that shift quickly
     The effect updates at 40ms
 
@@ -77,6 +90,9 @@ Other Settings:
     blendSpeed (default 10) -- How fast the colors blend with time. Must be greater than 0. Lower => faster.
     blendSteps (default 30) -- How many steps there are between colors. Doesn't really change anything in the effect
                                unless you make it very small.
+    hueCycle (default true) -- Controls the hue offset cycling. (See Inputs Guide above).
+    hue (default 0) -- Offsets the center of the FastLED noise, allowing you to shift the "center" color of the palette.
+                       (See Inputs Guide above).
 
 Functions:
     update() -- updates the effect 
@@ -97,11 +113,15 @@ class NoiseWavesSL : public EffectBasePS {
             bgColorMode = 0,
             phaseScale,
             freqScale,
-            blendSpeed = 10;
+            blendSpeed = 10,
+            hue = 0; //Offsets the center of the noise to shift palette colors, called hue for consistency with other effects
 
         uint16_t
             blendScale,
             blendSteps = 30;
+        
+        bool 
+            hueCycle = true;
 
         CRGB
             bgColorOrig,
@@ -122,7 +142,6 @@ class NoiseWavesSL : public EffectBasePS {
         uint8_t
             freqCounter,
             noisePhase,
-            offset = 0,
             index,
             bri;
 

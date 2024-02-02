@@ -10,42 +10,58 @@
 //        If you want to flip the pattern, you'll need to flip the start/end lines -> add/subtract the patternLineLen?
 
 /*
-An effect used to move shiftPatterns along segment lines
-shiftPatterns are manually created, and are used to represent custom display patterns
-like arrows, text?, flags, etc
-For a full explanation, see shiftPatternPS.h
+An effect that moves a shiftPattern along SEGMENT LINES. 
+Shift patterns are manually created, and are used to draw more complex patterns like arrows, text?, flags, etc. 
+Also see PatternShifterSeg.h for an alternate, orthogonal, version of this effect. 
+For a full explanation of shift patterns, see shiftPatternPS.h
 
-This effect moves shiftPatterns from one segment line to another, wrapping at the segment line end
-Ie if you had a pattern where and single segment line was lit up, 
+This effect moves a shift pattern from one SEGMENT LINE to another, 
+wrapping at the last segment line. Ie if you had a pattern where and single segment line was lit up, 
 it would be shifted from one segment line to the next as the effect runs.
-(This doesn't change the pattern, all the movement is local to the effect)
+(This doesn't change the pattern, all the movement is local to the effect). 
+For this effect, patterns can be longer (have more segment lines) than the segment set. 
+The pattern will cycle across the segments lines as the effect runs. 
+However, your pattern "rows" must be the same length as the number of segments in the segment set, 
+ie for a set with 5 segments, your pattern "rows" should be length 5, anything extra will not be drawn.
 
-This effect is really only useful for segment set with multiple segments, Ie 2D shapes
+For example, if I have an 4x4 matrix, arranged into 4 segment rows, and use the following pattern:
 
+uint16_t basicPattern_arr[(6 + 2) * 3] = { <--(<<how long each "row"is>>) * <<number of rows>>
+    0, 2,    0, 255, 0, 255, 0, 0
+    2, 5,   255, 0, 255, 0,  0, 0
+    5, 6,    0,  0,  0,  0,  0, 0 // <-- This row will be drawn even though we only have 4 segment lines, 
+//                                        it will cycle on as the pattern moves across the segment lines.
+//                          [-^^-]   <-- These columns will NOT be drawn because our segment set only has 4 segments.
+};
+
+The above pattern uses 5 segment lines (note the line start/end points for each "row"),
+and is 6 segments long (the length of each pattern row). 
+Although our matrix only has 4 segment lines (columns), the 5 line pattern will be drawn as 
+the pattern is shifted across the segment lines. However, 
+the extra 2 end entries in each pattern row will not be drawn because our matrix only has 4 rows, 
+and the pattern is NOT shifted along the segments. 
+
+This effect is really only useful for segment set with multiple segments (2D).
 The shiftPattern can be set to repeat, which will draw the pattern as many times as possible along the segment set
 For ie, for a segment set with 10 lines:
     If you repeat along segment lines, a pattern that is 5 lines long will be draw twice (10/5) (offset so the patterns don't overlap)
 Repeating works best if you can fit an even number of patterns onto the segment set
 
-Patterns can be longer (have more segment lines) than the segment set, the pattern will cycle across as the effect runs
-Your pattern color "rows" must be the same length as the number of segments in the segment set
-ie for a set with 5 segments, your pattern "rows" should have a color for each segment.
-
-Note that the effect has a segSet pointer like other effects, but
-the effect doesn't take a segment set as an input, it gets it from the shiftPattern.
-Ie the effect's segSet pointer is bound to the shiftPattern's segSet pointer.
-(Usually a shiftPattern is intended to work with a specific segment set, so it made sense to include the segment set in the pattern itself)
-Note that because segSet is a pointer, the effect and pattern's segment set are one and the same.
-If you want to change what segment set the effect is using, you should change the shiftPattern's segment set instead.
+Note that the effect has a `segSet` pointer like other effects, 
+but the effect doesn't take a segment set as an input. 
+Instead it gets its `segSet` from the shift pattern (see shiftPatternPS.h for more detail). 
+In other words, the effect's `segSet` pointer is bound to the shift pattern's `segSet` pointer. 
+(Usually a shift pattern is intended to work with a specific segment set, 
+so it made sense to include the segment set in the pattern itself). 
+This info is only relevant if you plan on changing the segment set. 
+If you do so, you should change the shift pattern's `segSet` rather than the effect's.
 
 The bgColor will be draw on any pattern indexes with the value 255.
 The bgColor is a pointer, so you can bind it to an external color variable.
 
 This effect is fully compatible with colorModes.
 
-!!If you want to adjust the shiftPattern while the effect is running, be very careful not
-to change how many segment lines the pattern takes up (patLineLength in the shiftPattern struct)
-Changing the color index's is fine, but it's probably easier to change the palette colors instead.
+!!While you can change the values of a pattern during runtime, you should avoid changing the row/column dimensions.
 
 Example calls: 
     Note that I cannot provide a universal shiftPattern for all segmentSets
@@ -78,20 +94,22 @@ Constructor inputs:
     repeat -- If the pattern is to be repeated along the segment set
     rate -- The update rate (ms) note that this is synced with all the particles.
 
-Functions:
-    setShiftPattern(shiftPatternPS *newShiftPattern) -- Sets the effect shiftPattern, will restart the effect
-    setRepeat(newRepeat) -- Sets if the shiftPattern will be repeated along the segment set
-    reset() -- Restarts the effect
-    update() -- updates the effect 
-
 Other Settings:
     colorMode (default 0) -- sets the color mode for the pattern pixels (see segDrawUtils::setPixelColor)
     bgColorMode (default 0) -- sets the color mode for the background pixels (see segDrawUtils::setPixelColor)
+
+Functions:
+    setShiftPattern(shiftPatternPS *newShiftPattern) -- Sets the effect's shiftPattern.
+    setRepeat(newRepeat) -- Sets if the shiftPattern will be repeated along the segment lines
+    reset() -- Restarts the effect
+    update() -- updates the effect 
 
 Reference Vars:
     cycleNum -- How many times the pattern has be shifted,
                 resets every time the pattern has been cycled across the whole segment set
     repeat -- (see notes above), set using setRepeat(bool newRepeat)
+    shiftPattern (sorta) -- While you can change the values of a pattern, you should avoid changing the row/column dimensions. 
+                            Use setShiftPattern() to change to a new pattern.
 
 */
 class PatternShifterSL : public EffectBasePS {

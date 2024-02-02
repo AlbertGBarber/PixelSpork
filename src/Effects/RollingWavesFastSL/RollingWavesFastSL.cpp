@@ -51,21 +51,6 @@ void RollingWavesFastSL::init(CRGB BgColor, SegmentSetPS &SegSet, uint16_t Rate)
 void RollingWavesFastSL::setGradLength(uint8_t newGradLength) {
     gradLength = newGradLength;
     setTrailMode(trailMode);
-    setTotalEffectLength();
-}
-
-//sets the spacing between the waves
-//and recalculates the totalCycleLength, since it includes the spacing
-void RollingWavesFastSL::setSpacing(uint8_t newSpacing) {
-    spacing = newSpacing;
-    setTotalEffectLength();
-}
-
-//sets a new pattern for the effect
-//we need to change the totalCycleLength to match
-void RollingWavesFastSL::setPattern(patternPS &newPattern) {
-    pattern = &newPattern;
-    setTotalEffectLength();
 }
 
 //sets the pattern to match the current palette
@@ -74,17 +59,6 @@ void RollingWavesFastSL::setPattern(patternPS &newPattern) {
 void RollingWavesFastSL::setPaletteAsPattern() {
     generalUtilsPS::setPaletteAsPattern(patternTemp, *palette);
     pattern = &patternTemp;
-    setTotalEffectLength();
-}
-
-//calculates the totalCycleLength, which represents the total number of possible colors a pixel can have
-//ie the total length of all the waves (of each color in the pattern) combined
-//includes the spacing after each wave
-//The blend limit is the length of a wave plus its spacing
-void RollingWavesFastSL::setTotalEffectLength() {
-    // the number of steps in a full cycle (fading through all the colors)
-    blendLimit = gradLength + spacing;
-    totalCycleLength = pattern->length * blendLimit;
 }
 
 /* sets various limits for drawing different types of trails
@@ -142,6 +116,9 @@ void RollingWavesFastSL::setTrailMode(uint8_t newTrailMode) {
 void RollingWavesFastSL::initalFill() {
     cycleNum = 0;
 
+    //Calculate the total cycle length based on the current gradLength and spacing
+    setTotalEffectLength();
+
     //we need to draw the initial waves on the strip
     //to pre-fill it for the main update cycle
     //to do this we run across all the leds
@@ -193,6 +170,10 @@ void RollingWavesFastSL::update() {
         numLinesLim = numLines - 1;
         longestSeg = segSet->segNumMaxNumLines;
 
+        //re-calculate the total cycle length based on the current gradLength and spacing
+        //This allows you to change their values on the fly
+        setTotalEffectLength(); 
+
         //We need to pre-fill the strip with a full cycle the first time the update is called
         //so that the colors are copied down the strip correctly on subsequent cycles
         if( !initFillDone ) {
@@ -233,6 +214,16 @@ void RollingWavesFastSL::update() {
         cycleNum = addMod16PS(cycleNum, 1, totalCycleLength);
         showCheckPS();
     }
+}
+
+//calculates the totalCycleLength, which represents the total number of possible colors a pixel can have
+//ie the total length of all the waves (of each color in the pattern) combined
+//includes the spacing after each wave
+//The blend limit is the length of a wave plus its spacing
+void RollingWavesFastSL::setTotalEffectLength() {
+    // the number of steps in a full cycle (fading through all the colors)
+    blendLimit = gradLength + spacing;
+    totalCycleLength = pattern->length * blendLimit;
 }
 
 /* Returns a wave color blended towards 0 based on the trailMode and the step

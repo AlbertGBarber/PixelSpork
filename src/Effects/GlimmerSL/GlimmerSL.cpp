@@ -35,20 +35,28 @@ void GlimmerSL::init(CRGB GlimmerColor, CRGB BgColor, SegmentSetPS &SegSet, uint
 
     //bind the glimmer color to a pointer
     //so it can be bound to an external variable like bgColor
-    colorOrig = GlimmerColor;
-    glimmerColor = &colorOrig;
+    glimColorOrig = GlimmerColor;
+    glimmerColor = &glimColorOrig;
     setupPixelArray();
 }
 
-/* Sets the number of glimmering particles to be the passed in value
-If the new number of glims is different from the current one: (If they're the same nothing happens)
-    creates the pixel location and fade value arrays
-    these store the locations for the fading pixels, and how much they will fade by
-    if we're doing twoPixelSets, then there will be one set of pixels fading in
-    while another is fading out
-    these sets are tracked in the same array, so the array's length is 2 * numGlims
-    pixels up to numGlims in the array are fading in,
-    while pixels from numGlims to the end are fading out */
+//Resets the effect, restarting it. Fills in the background to clear any existing pixels.
+void GlimmerSL::reset(void){
+    //To reset the effect, we need to create a new pixel array, fill in the background to 
+    //clear any old pixels, and then reset the effect flags and counters.
+    firstFade = true;
+    step = 0;
+    fillPixelArray();
+    segDrawUtils::fillSegSetColor(*segSet, *bgColor, bgColorMode);
+}
+
+/* Creates the pixel location and fade value arrays and also resets the effect.
+The arrays store the locations for the fading pixels, and how much they will fade by
+if we're doing twoPixelSets, then there will be one set of pixels fading in
+while another is fading out
+these sets are tracked in the same array, so the array's length is 2 * numGlims
+pixels up to numGlims in the array are fading in,
+while pixels from numGlims to the end are fading out */
 void GlimmerSL::setupPixelArray() {
 
     glimArrLen = numGlims;
@@ -70,16 +78,10 @@ void GlimmerSL::setupPixelArray() {
         totFadeSteps = (uint8_t *)malloc(glimArrLen * sizeof(uint8_t));
     }
 
-    //we need to set firstFade to since the arrays
-    //are only filled up to numGlims because we don't
-    //want to start with set that is already faded when the effect begins
-    //(note that firstFade is not needed if we're only doing a single pixel set)
-    firstFade = true;
-    fillPixelArray();
-    segDrawUtils::fillSegSetColor(*segSet, *bgColor, bgColorMode);
+    reset();
 }
 
-/* fills in the pixel arrays with random locations and fade values
+/* Fills in the pixel arrays with random locations and fade values
 Note that the locations are chosen from the line or pixel numbers in the segment set, depending on lineMode
 Only fills the arrays up to numGlims since if we're working with two pixel sets,
 the second numGlims length of the array is used for the fading out set,
@@ -170,7 +172,7 @@ void GlimmerSL::update() {
         //by default, we only touch pixels that are fading
         //but for rainbow or gradient backgrounds that a cycling
         //you want to redraw the whole thing
-        if( fillBG ) {
+        if( fillBg ) {
             segDrawUtils::fillSegSetColor(*segSet, *bgColor, bgColorMode);
         }
 

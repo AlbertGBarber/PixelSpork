@@ -22,16 +22,18 @@ The effect runs as is; there's no customization
 Almost all of the code is directly copied from the original linked above
 If you have any questions about how it works, please direct them to Mark Kriegsman
 
+For a hue-based version of the effect see PacificaHueSL.h
+
 The palettes can be found in "pacificaPalette.h"
 
 Recommend brightness >80 and rate > 20ms
-For low brightness values I recommend turing off dithering using
+For low brightness values I recommend turning off dithering using
 FastLED.setDither(0);
 
 The effect is a bit computationally heavy
 
-Technically, I've made the background color a pointer so you can bind it externally
-You probably shouldn't do this tho, b/c it heavily influences the effect
+Note, I've made the background color a pointer so you can bind it externally (as it is in other effects).
+You probably shouldn't change it tho, b/c it heavily influences the effect.
 
 Example calls: 
     PacificaPS pacifica(mainSegments, 40);

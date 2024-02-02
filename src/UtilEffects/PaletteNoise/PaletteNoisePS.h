@@ -112,10 +112,6 @@ Constructor Inputs:
                                                Is a pointer, by default is bound to hueRateOrig
     rate -- The util update rate (ms)
 
-Functions:
-    setupPalette(numColors) -- Changes the number of colors in the palette. Note that this re-creates the noisePalette
-                               so any external pointers to the noisePalette's colors will become invalid.
-
 Other Settings:
     colorScale (default 200) -- How "zoomed in" the color noise is. 
                                 At lower values the palette colors can be too similar, so we want this pretty high.
@@ -123,6 +119,10 @@ Other Settings:
                               we use separate a separate noise output for the Value to increase variation in colors.
     briSpeed (default 10) -- Same as the blendSpeed, but for the HSV Value (darkness added)
     hueRateOrig (default 0) -- The default address the hueRate points to
+
+Functions:
+    setupPalette(numColors) -- Changes the number of colors in the palette. Note that this re-creates the noisePalette
+                               so any external pointers to the noisePalette's colors will become invalid.
 
 */
 class PaletteNoisePS : public EffectBasePS {

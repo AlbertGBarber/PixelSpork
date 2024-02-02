@@ -53,21 +53,6 @@ void RollingWavesSL::init(CRGB BgColor, SegmentSetPS &SegSet, uint16_t Rate) {
 void RollingWavesSL::setGradLength(uint8_t newGradLength) {
     gradLength = newGradLength;
     setTrailMode(trailMode);
-    setTotalEffectLength();
-}
-
-//sets the spacing between the waves
-//and recalculates the totalCycleLength, since it includes the spacing
-void RollingWavesSL::setSpacing(uint8_t newSpacing) {
-    spacing = newSpacing;
-    setTotalEffectLength();
-}
-
-//sets a new pattern for the effect
-//we need to change the totalCycleLength to match
-void RollingWavesSL::setPattern(patternPS &newPattern) {
-    pattern = &newPattern;
-    setTotalEffectLength();
 }
 
 //sets the pattern to match the current palette
@@ -76,16 +61,6 @@ void RollingWavesSL::setPattern(patternPS &newPattern) {
 void RollingWavesSL::setPaletteAsPattern() {
     generalUtilsPS::setPaletteAsPattern(patternTemp, *palette);
     pattern = &patternTemp;
-    setTotalEffectLength();
-}
-
-//calculates the totalCycleLength, which represents the total number of possible colors a pixel can have
-//ie the total length of all the waves (of each color in the pattern) combined
-//includes the spacing after each wave
-//The blend limit is the length of a wave plus its spacing
-void RollingWavesSL::setTotalEffectLength() {
-    blendLimit = gradLength + spacing;
-    totalCycleLength = pattern->length * blendLimit;
 }
 
 /* sets various limits for drawing different types of trails
@@ -161,6 +136,10 @@ void RollingWavesSL::update() {
         numSegs = segSet->numSegs;
         numLines = segSet->numLines;
 
+        //re-calculate the total cycle length based on the current gradLength and spacing
+        //This allows you to change their values on the fly
+        setTotalEffectLength();
+        
         //we need to set the current color for the initial loop step
         //because it will not automatically be set in the loop unless the first blendStep is 0
         setNextColors(0);
@@ -223,6 +202,15 @@ void RollingWavesSL::update() {
         cycleNum = addMod16PS(cycleNum, 1, totalCycleLength);
         showCheckPS();
     }
+}
+
+//calculates the totalCycleLength, which represents the total number of possible colors a pixel can have
+//ie the total length of all the waves (of each color in the pattern) combined
+//includes the spacing after each wave
+//The blend limit is the length of a wave plus its spacing
+void RollingWavesSL::setTotalEffectLength() {
+    blendLimit = gradLength + spacing;
+    totalCycleLength = pattern->length * blendLimit;
 }
 
 //sets the color for the passed in pixel number based on the cycleNum

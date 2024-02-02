@@ -22,10 +22,10 @@ randModes are: (default 0)
     2: Colors will be chosen randomly from the palette (not allowing repeats)
 
 Example calls: 
-    uint8_t pattern_arr = {0, 1, 2};
+    uint8_t pattern_arr = {0, 2, 1};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
     CrossFadeCyclePS crossFadeCycle(mainSegments, pattern, cybPnkPal_PS, 40, 30);
-    Will fade from color 0, to color 1, to color 4 of the palette
+    Will fade from color 0, to color 2, to color 1 of the palette
     taking 40 steps for each fade, with 30ms between steps
 
     CrossFadeCyclePS crossFadeCycle(mainSegments, cybPnkPal_PS, 40, 30);
@@ -44,14 +44,14 @@ Constructor Inputs
     steps -- How many steps for each fade
     rate -- update rate (ms)
 
+Other Settings:
+    randMode (default 0) -- see mode note above
+    pauseTime (default 0) -- The time that the effect will wait for between fades (ms)
+
 Functions:
     setPaletteAsPattern() -- Sets the effect pattern to match the current palette
     reset() -- restarts the effect
     update() -- updates the effect
-
-Other Settings:
-    randMode (default 0) -- see mode note above
-    pauseTime (default 0) -- The time that the effect will wait for between fades (ms)
 
 Reference Vars:
     fadeCount -- The number of fade cycles we've gone through.

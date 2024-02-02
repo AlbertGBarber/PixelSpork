@@ -64,7 +64,7 @@ void TwinkleFastSL::update() {
         //instead of setting a background
         if( sparkle ) {
             segDrawUtils::fadeSegSetToBlackBy(*segSet, fadeOutRate);
-        } else if( fillBG ) {
+        } else if( fillBg ) {
             segDrawUtils::fillSegSetColor(*segSet, *bgColor, bgColorMode);
         }
 

@@ -72,6 +72,13 @@ Constructor Inputs:
     totalSteps (max 255) -- The total number of steps taken to blend between the palettes
     rate -- The update rate of the blend (ms)
 
+Other Settings:
+   *inputPalette -- The pointer to the input palette (as supplied when you created the class instance)
+                   You can change it by calling setPalette(), but this resets the cycle
+                   To avoid resetting, you can change it manually, but you may need to call switchPalette()
+   cyclePalette -- The output palette for the blend, length is set depending on mode (see notes below for more)
+   *PB -- The PaletteBlendPS instance, public for reference 
+
 Functions:
     switchPalette() -- Adjusts the current start/end palettes used for the current blend. Should only be called if you manually changed the palette
     reset() -- Restarts the blend cycle (all settings and palettes stay the same)
@@ -79,13 +86,6 @@ Functions:
     setPauseTime(newPauseTime) -- Changes the pause between blends (set in the PB instance, see PaletteBlenderPS)
     setStartPaused(bool newStartPaused) -- Changes the "startPaused" setting in the PB instance, see PaletteBlenderPS.
     update() -- updates the effect
-
-Other Settings:
-   *inputPalette -- The pointer to the input palette (as supplied when you created the class instance)
-                   You can change it by calling setPalette(), but this resets the cycle
-                   To avoid resetting, you can change it manually, but you may need to call switchPalette()
-   cyclePalette -- The output palette for the blend, length is set depending on mode (see notes below for more)
-   *PB -- The PaletteBlendPS instance, public for reference 
 
 Reference Vars:
     cycleNum -- How many blend cycle's we've done, resets every palette length number of cycles (all the palette colors have been shifted once)

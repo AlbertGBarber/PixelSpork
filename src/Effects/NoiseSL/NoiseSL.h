@@ -9,30 +9,28 @@
 #include "MathUtils/mathUtilsPS.h"
 
 /* 
-An effect that maps 2D noise to a segment set by drawing the noise onto the segment lines
-This is easy because segment set line always form a full matrix of size numLines x numSegs
-Much of this code is based on the FastLED noise example here: https://github.com/FastLED/FastLED/blob/master/examples/NoisePlusPalette/NoisePlusPalette.ino
-See more about noise here: https://github.com/s-marley/FastLED-basics/tree/main/6.%20Noise
-
-This effect is a sort of 2D noise playground
-Overall it produces spots of color that shift and morph across the segment set
-You have a number of options for tuning the noise an how it changes through time
-The output colors can either be taken from a palette, or set to one of two rainbow modes.
+An effect that maps 2D Perlin noise to a segment set by drawing the noise onto the segment lines 
+(made simpler because a segment set acts like a matrix with dimensions `numLines x numSegs`). 
+Much of this code is based on the FastLED noise example here: 
+(https://github.com/FastLED/FastLED/blob/master/examples/NoisePlusPalette/NoisePlusPalette.ino). 
+Overall, this effect is a sort of 2D noise playground, 
+producing spots of color that shift and morph across the segment set. 
+You have a number of options for tuning the noise an how it changes through time. 
+The output colors can either be taken from a palette, or set to one of two rainbow modes. 
+You can read more about FastLED noise here: (https://github.com/s-marley/FastLED-basics/tree/main/6.%20Noise).
 
 The effect also works well on a strip with a only a single segment (ie just one strip)
 
-The noise colors will be blended towards a background color.
+The noise colors will be blended towards a background color (except for in rainbow modes)
 The bgColor is a pointer, so you can bind it to an external color variable.
 By default it is bound to bgColorOrig, which is set to 0 (blank color).
 Changing the background color will "tint" the overall output, since all the colors are blended towards the background color as part of the noise.
 You can also set the effect to use one of the background color modes (see segDrawUtils::setPixelColor).
 
-For an alternate noise effect, see LavaPS or Noise16.
-You could also check shiftingSeaSL for a simpler effect.
-
 Please note that this effect stores an array of uint8_t's of size (length of longest segment) * (number of segments in set)
 So make sure you have enough memory to run it!
 
+Since this effect is more of a playground, I encourage you to experiment with different input values.
 Note that I don't fully understand how everything in this effect works (mainly the noise smoothing),
 but based on testing I've written an input guide below:
 
@@ -62,7 +60,7 @@ Inputs guide:
             You probably want to start with rate between 50-80 (100+ may look choppy)
             And a speed value of 10 - 50.
 
-        Rainbows and shifting hues:
+        cMode:
             There are three color modes in the effect (note that these are not the same as general Color Modes)
             These are set by cMode:
                 0: Use the input palette for colors
@@ -73,28 +71,32 @@ Inputs guide:
                    setting it so that the <<palette length>> * blendSteps ~= 250+ works well.
                 2: Noise is mapped directly to the rainbow
                    So any color can show up anywhere, but they will follow the rainbow gradient (red goes to orange to yellow, etc )
+                   Ignores the background color.
                 3: Noise is mapped to a limited section of the rainbow (like mode 1)
                    So you'll get one-ish color across the whole strip, with the color blending towards the next color in the rainbow, ie red to orange, etc
-                   To shift the colors make sure the hueCycle is on!
+                   To shift the colors make sure the hueCycle is on! Ignores the background color.
             Both rainbow modes were adapted from here: https://github.com/FastLED/FastLED/blob/master/examples/Noise/Noise.ino
 
         hueCycle and hue:
             The noise that FastLED produces tends to be grouped in the middle of the range 
             While the effect does try to stretch this out, it still doesn't usually hit colors at either end of the palette
-            So, for example using cMode 1, you'll get more yellow, green, and blue than red and purple 
+            So, for example using cMode 2 (rainbow mode 1), you'll get more yellow, green, and blue than red and purple 
             because they're in the middle of the rainbow.
             To mitigate this we can slowly offset the color center over time,
             so our rainbow will slowly morph to being more red, yellow, green to more purple, red, yellow, etc
-            hueCycle controls if the offsetting is on or off, while hue is the offset value (0 - 255)
-            hueCycle is on (true) by default, since it looks good with all modes.
+            hueCycle controls if the offsetting is on or off.
+            hueCycle is on (true) by default, since it looks good with all modes. 
+            When cycling, the hue is incremented by 1 every update cycle. 
+            The hue values range from 0 - 255 for cMode's 0, 2, 3, 
+            and 0 - <<palette length>> * blendSteps for cMode 1.
 
 Example calls: 
-    NoiseSL noiseSL(mainSegments, 4, 20, 20, 60, 10, 0, 80);
+    NoiseSL noiseSL(mainSegments, 4, 20, 20, 60, 10, 1, 80);
     Will produce a noise effect with a palette of 4 randomly chosen colors
     There are 20 blend steps between each color
     A base scaling value of 20 will be applied with a range of 60 (max scale is 80)
     The speed is 10
-    cMode is 0
+    cMode is 1
     The effect updates at 80ms
     
     NoiseSL noiseSL(mainSegments, cybPnkPal_PS, 40, 5, 95, 20, 0, 80);
@@ -115,30 +117,27 @@ Constructor inputs:
     scaleBase -- Sets how "zoomed-in" the noise is
                  (test it out yourself to see what I mean) (see inputs guide above)
     scaleRange -- The range for the variation of the scale (see inputs guide above)
-    speed -- (See inputs guide above)
+    speed -- How fast the colors blend (higher is faster) (See inputs guide above)
     cMode -- The color mode of the effect (see inputs guide above)
-    Rate -- The update rate (ms) note that this is synced with all the particles.
+    Rate -- The update rate (ms) note that this is synced with all the particles. 
 
 Other settings:
     bgColorMode (default 0) -- Sets the color mode for blend color target (background) (see segDrawUtils::setPixelColor)
     hueCycle (default true) -- sets if the noise center will be offset over time (see inputs guide above)
     hue (default 0) -- The position of the noise center, is automatically adjusted if hueCycle is on
                         But you can also set if yourself to a specific value if needed (see inputs guide above)
+                        Range is (0 - 255) for `cMode`'s 0, 2, 3, and (0 - <<palette length>> * blendSteps) for cMode 1.
     bgColorOrig (default 0) -- The default color of the background (bound to the bgColor pointer by default)
     *bgColor (default bound to bgColorOrig) -- The color of the background, is a pointer so it can be bound to an external variable
 
 Functions:
-    setupNoiseArray() -- Creates the array for storing the noise (will be matrix of uint8_t's, numLines x numSegs)
-                         Only call this if you change what SegmentSetPS the effect is on
-    update() -- updates the effect 
-
-Notes:
-    !!Do NOT set the scale directly after turning on shiftScale
-    if you do, be sure to adjust scaleTarget = scale 
+    setupNoiseArray() -- Creates the array for storing the noise data (will be matrix of uint8_t's, numLines x numSegs)
+                         Only call this if you change the segment set dimensions.
+    update() -- updates the effect
+    
 */
 class NoiseSL : public EffectBasePS {
     public:
-
         //Constructor for randomly generated palette
         NoiseSL(SegmentSetPS &SegSet, uint8_t numColors, uint16_t BlendSteps, uint16_t ScaleBase,
                 uint16_t ScaleRange, uint16_t Speed, uint8_t CMode, uint16_t Rate);

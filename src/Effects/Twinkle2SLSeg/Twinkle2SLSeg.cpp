@@ -169,7 +169,7 @@ void Twinkle2SLSeg::update() {
         //by default, we only touch pixels that are fading
         //but for rainbow or gradient backgrounds that a cycling
         //you want to redraw the whole thing
-        if( fillBG ) {
+        if( fillBg ) {
             segDrawUtils::fillSegSetColor(*segSet, *bgColor, bgColorMode);
         }
 

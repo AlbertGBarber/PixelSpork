@@ -3,6 +3,7 @@
 
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
+#include "Effects/ParticlesSL/Particle_Stuff/particleUtilsPS.h" //We use the particle color dimming function to dim the waves
 #include "MathUtils/mathUtilsPS.h"
 
 /*
@@ -46,7 +47,7 @@ where the colors for the waves are chosen at random as the enter the strip
 This is controlled by the randMode setting
 
 Example calls: 
-    uint8_t pattern_arr = {0, 1, 2};
+    uint8_t pattern_arr = {0, 2, 1};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
     RollingWavesSL2 rollingWaves2(mainSegments, pattern, cybPnkPal_PS, 0, 7, 1, 0, 100);
     Will do a set of waves according to the pattern, with a blank background
@@ -92,19 +93,6 @@ Trail Modes:
     2: ---*---
     3: *------
 
-Functions:
-    setPalette(*newPalette) -- Sets the palette used for the waves
-    setTotalEffectLength() -- Calculates the total length of all the waves in the pattern (incl spacing), you shouldn't need to call this
-    setPattern(*newPattern) -- Sets the passed in pattern to be the effect pattern
-                               Will force setTotalEffectLength() call, so may cause effect to jump
-    setPaletteAsPattern() -- Sets the effect pattern to match the current palette (calls setTotalEffectLength())
-    setGradLength(newGradLength) -- Changes the gradLength to the specified value, adjusting the length of the waves (calls setTotalEffectLength())
-    setSpacing(newSpacing) -- Changes the spacing to the specified value, (calls setTotalEffectLength())
-    setTrailMode(newTrailMode) -- Changes the trail mode used for the waves
-    buildLineArr() -- Creates the array for storing the line pixel locations
-                      !! Only call this if you change your segment set
-    update() -- updates the effect
-
 Other Settings:
     randMode (default 0) -- Sets how colors are chosen from the palette
                          -- 0: Colors will be chosen from the palette in order (not random)
@@ -116,13 +104,23 @@ Other Settings:
                                      While anything below will dim faster
                                      120 sets a good balance of brightness, will not dimming most colors to 0 before the end of the wave
 
+Functions:
+    setPaletteAsPattern() -- Sets the effect pattern to match the current palette
+    setGradLength(newGradLength) -- Changes the gradLength to the specified value, adjusting the length of the waves
+    setTrailMode(newTrailMode) -- Changes the trail mode used for the waves
+    buildLineArr() -- Creates the array for storing the line pixel locations
+                      !! Only call this if you change your segment set
+    update() -- updates the effect
+    
 Flags:
     initFillDone -- Flag for doing the initial fill of the gradients on the strip
                     Set true once the fill is done
 
 Reference Vars:
-    totalCycleLength -- Total length of all the gradients combined, set by setTotalEffectLength()
-    cycleNum -- Tracks what how many patterns we've gone through, resets every totalCycleLength cycles, set during update()
+    totalCycleLength -- Total length of all the gradients combined, re-calculated each update.
+    gradLength -- The length of the waves, set using setGradLength().
+    trailMode -- The type of trails used for the waves, set using setTrailMode().
+    cycleNum -- Tracks what how many patterns we've gone through, resets every totalCycleLength cycles.
 
 Notes:
 */
@@ -172,11 +170,8 @@ class RollingWavesSL2 : public EffectBasePS {
 
         void
             setGradLength(uint8_t newGradLength),
-            setSpacing(uint8_t newSpacing),
-            setPattern(patternPS *newPattern),
             setTrailMode(uint8_t newTrailMode),
             setPaletteAsPattern(),
-            setTotalEffectLength(),
             buildLineArr(),
             update(void);
 
@@ -186,7 +181,6 @@ class RollingWavesSL2 : public EffectBasePS {
             prevTime = 0;
 
         uint8_t
-            dimRatio,
             stepTemp,
             currentPattern,
             currentColorIndex,
@@ -208,13 +202,13 @@ class RollingWavesSL2 : public EffectBasePS {
 
         CRGB
             getWaveColor(uint8_t step),
-            desaturate(CRGB &color, uint8_t step, uint8_t totalSteps),
             currentColor,
             colorOut;
 
         void
             init(CRGB BgColor, SegmentSetPS &SegSet, uint16_t Rate),
             initalFill(),
+            setTotalEffectLength(),
             setNextColors(uint16_t segPixelNum);
 };
 

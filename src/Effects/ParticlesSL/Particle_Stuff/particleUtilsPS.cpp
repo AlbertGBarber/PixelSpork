@@ -16,7 +16,7 @@ void particleUtilsPS::resetParticle(particleSetPS &particleSet, uint16_t partNum
     resetParticle(particleSet.particleArr[partNum]);
 }
 
-//resets a set of particles back to their starting position and sets their update time to 0
+//resets a set of particles back to their starting positions and sets their update times to 0
 void particleUtilsPS::resetParticleSet(particleSetPS &particleSet) {
     for( uint8_t i = 0; i < particleSet.length; i++ ) {
         resetParticle(particleSet, i);
@@ -150,8 +150,8 @@ void particleUtilsPS::setParticleSetPosition(particleSetPS &particleSet, uint16_
     particleSet.particleArr[partNum]->startPosition = position;
 }
 
-//sets a particle's direction based on the passed in direction
-//to set the direction randomly, pass in a value > 1
+//sets a particle's "direction" to the passed in direction
+//to set the direction randomly, pass in a value >= 2
 void particleUtilsPS::setParticleSetDirection(particleSetPS &particleSet, uint16_t partNum, uint8_t direction) {
     if( direction > 1 ) {
         direction = random8(2);
@@ -265,7 +265,7 @@ void particleUtilsPS::setParticleSetColor(particleSetPS &particleSet, uint16_t p
     particleSet.particleArr[partNum]->colorIndex = colorIndex;
 }
 
-//Frees the pointers in a particle set (the pointer to the particle array and all thr pointers in the array)
+//Frees the pointers in a particle set (the pointer to the particle array and all the pointers in the array)
 //Call when you're finished with a particle set that was created using buildParticleSet()
 //!!!DO NOT call this if the particle set was not created using malloc() or buildParticleSet()
 void particleUtilsPS::freeParticleSet(particleSetPS &particleSet) {
@@ -293,14 +293,16 @@ void particleUtilsPS::freeParticle(particleSetPS &particleSet, uint16_t partNum)
     free(particleSet.particleArr[partNum]);
 }
 
-//for getting particle trail colors
-//returns a blended color towards the target color based on the input steps and totalSteps
-//step == totalSteps is fully blended
-//Note that we offset totalSteps by 1, so we never reach full blend (since it would produce background pixels)
-//the maximum brightness is scaled by dimPow
-//dimPow 0 will produce a normal linear gradient, but for more shimmery waves we can dial the brightness down
-//dimPow of 80 gives a good effect
-//The body of the particle will still be drawn at full brightness since it's drawn separately
+/* Returns a particle trail color, blended towards the `targetColor` by the ratio `steps / totalSteps`.
+step == totalSteps is fully blended
+Note that we offset totalSteps by 1, so we never reach full blend (since it would produce background pixels)
+The maximum brightness is scaled by dimPow.
+A dimPow of 0 will produce a normal linear gradient, but for more shimmery waves we can dial the brightness down,
+a dimPow of 80 gives a good effect.
+The range of dimPow is -127 to 127, it's defaulted to 80 for most effects.
+Positive values quicken the dimming, while negative ones slow it down
+setting the negative value below 80 seems to bug it out tho.
+Slowing the dimming down is useful for colored backgrounds, as it makes the particles stand out more */
 CRGB particleUtilsPS::getTrailColor(CRGB &color, CRGB &targetColor, uint8_t step, uint8_t totalSteps, int8_t dimPow) {
 
     //dimRatio = ( (uint16_t)step * dimPow ) / (totalSteps + 1) ;
