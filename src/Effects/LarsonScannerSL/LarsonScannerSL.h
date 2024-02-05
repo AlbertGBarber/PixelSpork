@@ -50,7 +50,7 @@ Constructor inputs for creating a particle set:
     eyeSize -- The size of the body of the particles (min value 1)
     trailLength -- The length of the trails. Using 0 will turn off the trails for the scanner.
     bgColor -- The background color used for the effect.
-    rate -- The update rate (ms) note that this is synced with all the particles.
+    rate -- The update rate (ms). Note that this is synced with all the particles and also the ParticlesSL instance. 
 
 Other Settings:
     palette -- The palette used for the particles color (this is always a single length palette since scanners are a single color)

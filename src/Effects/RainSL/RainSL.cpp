@@ -1,34 +1,35 @@
 #include "RainSL.h"
 
 //constructor for palette colors, no range options
-RainSL::RainSL(SegmentSetPS &SegSet, palettePS &Palette, CRGB BgColor, bool BgPrefill, uint8_t SpawnChance,
-               uint8_t MaxNumDrops, uint16_t Size, uint8_t TrailType, uint8_t TrailSize, uint16_t Rate, bool Direct)
+RainSL::RainSL(SegmentSetPS &SegSet, palettePS &Palette, CRGB BgColor, bool BgPrefill, uint16_t SpawnChance,
+               uint8_t MaxNumDrops, uint16_t Size, uint8_t TrailType, uint8_t TrailSize, uint16_t Speed, bool Direct)
     : palette(&Palette), bgPrefill(BgPrefill), spawnChance(SpawnChance), size(Size), trailType(TrailType),
-      trailSize(TrailSize), direct(Direct)  //
+      trailSize(TrailSize), speed(Speed), direct(Direct)  //
 {
     speedRange = 0;
     sizeRange = 0;
     trailRange = 0;
-    init(MaxNumDrops, BgColor, SegSet, Rate);
+    init(MaxNumDrops, BgColor, SegSet);
 }
 
 //constructor for palette colors with range and trail options
-RainSL::RainSL(SegmentSetPS &SegSet, palettePS &Palette, CRGB BgColor, bool BgPrefill, uint8_t SpawnChance,
+RainSL::RainSL(SegmentSetPS &SegSet, palettePS &Palette, CRGB BgColor, bool BgPrefill, uint16_t SpawnChance,
                uint8_t MaxNumDrops, uint16_t Size, uint16_t SizeRange, uint8_t TrailSize, uint8_t TrailRange,
-               bool NoTrails, bool OneTrail, bool TwoTrail, bool RevTrail, bool InfTrail, uint16_t Rate,
+               bool NoTrails, bool OneTrail, bool TwoTrail, bool RevTrail, bool InfTrail, uint16_t Speed,
                uint16_t SpeedRange, bool Direct)
     : palette(&Palette), bgPrefill(BgPrefill), spawnChance(SpawnChance), size(Size), sizeRange(SizeRange),
       trailSize(TrailSize), trailRange(TrailRange), noTrails(NoTrails), oneTrail(OneTrail),
-      twoTrail(TwoTrail), revTrail(RevTrail), infTrail(InfTrail), speedRange(SpeedRange), direct(Direct)  //
+      twoTrail(TwoTrail), revTrail(RevTrail), infTrail(InfTrail), speed(Speed), speedRange(SpeedRange), direct(Direct)  //
 {
     trailType = 6;  //we're picking from the boolean trail options, this is indicated by trailType 6
-    init(MaxNumDrops, BgColor, SegSet, Rate);
+    init(MaxNumDrops, BgColor, SegSet);
 }
 
 //constructor for single color, no range options
-RainSL::RainSL(SegmentSetPS &SegSet, CRGB Color, CRGB BgColor, bool BgPrefill, uint8_t SpawnChance,
-               uint8_t MaxNumDrops, uint16_t Size, uint8_t TrailType, uint8_t TrailSize, uint16_t Rate, bool Direct)
-    : bgPrefill(BgPrefill), spawnChance(SpawnChance), size(Size), trailType(TrailType), trailSize(TrailSize), direct(Direct)  //
+RainSL::RainSL(SegmentSetPS &SegSet, CRGB Color, CRGB BgColor, bool BgPrefill, uint16_t SpawnChance,
+               uint8_t MaxNumDrops, uint16_t Size, uint8_t TrailType, uint8_t TrailSize, uint16_t Speed, bool Direct)
+    : bgPrefill(BgPrefill), spawnChance(SpawnChance), size(Size), trailType(TrailType), trailSize(TrailSize), // 
+      speed(Speed), direct(Direct)  //
 {
     speedRange = 0;
     sizeRange = 0;
@@ -36,36 +37,37 @@ RainSL::RainSL(SegmentSetPS &SegSet, CRGB Color, CRGB BgColor, bool BgPrefill, u
     //make a single colored palette
     paletteTemp = paletteUtilsPS::makeSingleColorPalette(Color);
     palette = &paletteTemp;
-    init(MaxNumDrops, BgColor, SegSet, Rate);
+    init(MaxNumDrops, BgColor, SegSet);
 }
 
 //constructor for single colors with range and trail options
-RainSL::RainSL(SegmentSetPS &SegSet, CRGB Color, CRGB BgColor, bool BgPrefill, uint8_t SpawnChance,
+RainSL::RainSL(SegmentSetPS &SegSet, CRGB Color, CRGB BgColor, bool BgPrefill, uint16_t SpawnChance,
                uint8_t MaxNumDrops, uint16_t Size, uint16_t SizeRange, uint8_t TrailSize, uint8_t TrailRange,
-               bool NoTrails, bool OneTrail, bool TwoTrail, bool RevTrail, bool InfTrail, uint16_t Rate,
+               bool NoTrails, bool OneTrail, bool TwoTrail, bool RevTrail, bool InfTrail, uint16_t Speed,
                uint16_t SpeedRange, bool Direct)
     : bgPrefill(BgPrefill), spawnChance(SpawnChance), size(Size), sizeRange(SizeRange), trailSize(TrailSize),
       trailRange(TrailRange), noTrails(NoTrails), oneTrail(OneTrail), twoTrail(TwoTrail), revTrail(RevTrail),
-      infTrail(InfTrail), speedRange(SpeedRange), direct(Direct)  //
+      infTrail(InfTrail), speedRange(SpeedRange), speed(Speed), direct(Direct)  //
 {
     trailType = 6;  //we're picking from the boolean trail options, this is indicated by trailType 6
     //make a single colored palette
     paletteTemp = paletteUtilsPS::makeSingleColorPalette(Color);
     palette = &paletteTemp;
-    init(MaxNumDrops, BgColor, SegSet, Rate);
+    init(MaxNumDrops, BgColor, SegSet);
 }
 
 RainSL::~RainSL() {
     //Free all particles and the particle array pointer
     particleUtilsPS::freeParticleSet(particleSetTemp);
-    free(partActive);
     free(trailEndColors);
     free(paletteTemp.paletteArr);
 }
 
 //general setup function for class vars
-void RainSL::init(uint8_t MaxNumDrops, CRGB BgColor, SegmentSetPS &SegSet, uint16_t Rate) {
+void RainSL::init(uint8_t MaxNumDrops, CRGB BgColor, SegmentSetPS &SegSet) {
     //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
+    //The effect uses the rates of the particles, but all effects must have a Rate var, so we make one up
+    uint16_t Rate = 5;
     bindSegSetPtrPS();
     bindClassRatesPS();
     //bind background color pointer
@@ -75,22 +77,19 @@ void RainSL::init(uint8_t MaxNumDrops, CRGB BgColor, SegmentSetPS &SegSet, uint1
 
 //Resets the effect by setting all particles to inactive
 //Configures the background to be cleared on the next update if bgPrefill is true
-void RainSL::reset(void){
+void RainSL::reset(void) {
     //set all the particles to inactive
     //and set their spawn positions
     for( uint16_t i = 0; i < numSegs; i++ ) {
         for( uint8_t j = 0; j < maxNumDrops; j++ ) {
             particleIndex = i * maxNumDrops + j;
-            partActive[particleIndex] = false;
-            //particlePtr = particleSet->particleArr[particleIndex];
-            //setDropSpawnPos(particlePtr, i);
+            setActive(particleIndex, false);
         }
     }
 
     //Flag the background to be filled to clear any leftover active particles
     //This will only trigger the background to fill if bgPrefill is true.
     bgFilled = false;
-
 }
 
 //Creates a new set of particles for the effect based on the passed in value for the max number of concurrent drops
@@ -120,14 +119,11 @@ void RainSL::setupDrops(uint8_t newMaxNumDrops) {
         free(trailEndColors);
         trailEndColors = (CRGB *)malloc(numParticles * sizeof(CRGB));
 
-        free(partActive);
-        partActive = (bool *)malloc(numParticles * sizeof(bool));
-
         //Free all particles and the particle array pointer
         particleUtilsPS::freeParticleSet(particleSetTemp);
 
         //create a new set of particles
-        particleSetTemp = particleUtilsPS::buildParticleSet(numParticles, 0, true, *rate, speedRange, size, sizeRange,
+        particleSetTemp = particleUtilsPS::buildParticleSet(numParticles, 0, true, speed, speedRange, size, sizeRange,
                                                             trailType, trailSize, trailRange, false, palette->length, true);
         particleSet = &particleSetTemp;
     }
@@ -135,29 +131,7 @@ void RainSL::setupDrops(uint8_t newMaxNumDrops) {
     //This "hides" any unused particles from the rest of the effect
     particleSet->length = numParticles;
 
-    //for trailType 6, we'll set the particle trails randomly based on the trail flags
-    //if( trailType == 6 ) {
-        //particleUtilsPS::setAllTrailRand(*particleSet, noTrails, oneTrail, twoTrail, revTrail, infTrail);
-    //}
-
     reset();
-}
-
-//Sets the inital spawn position of a particle
-//For particles with no or trailing trails the spawn position is 0th segment
-//For particles with leading or double trails spawn position is offset by the trail's size
-//(we set the spawn position in the "phantom zone", see update() comments)
-void RainSL::setDropSpawnPos(particlePS *particlePtr) {
-    partTrailType = particlePtr->trailType;
-    partTrailSize = particlePtr->trailSize;
-    partSize = particlePtr->size;
-    if( partTrailType == 2 ) {
-        particlePtr->position = numSegs + partTrailSize + partSize;
-    } else if( partTrailType == 3 ) {
-        particlePtr->position = numSegs + partSize;
-    } else {
-        particlePtr->position = 0;
-    }
 }
 
 /* Updates the effect by either moving particles or spawning them for each line
@@ -167,12 +141,12 @@ How it works:
     Particles from particlePS.h (in the Particles Effect)
     We have a single set of particles ( created using setupDrops() )
     Each particle is either active or inactive
-    An active particle is drawn moving on the segSet, while an inactive on is waiting to become activated
-    The active/inactive status of particles is stored in the partActive array
-    There is a single particle set and partActive array for all the particles across all the segments set's lines
+    The active/inactive status of particles is stored in the "life" property of each particle
+    (1 is active, 0 is inactive)
+    There is a single particle set for all the particles across all the segment lines
     The areas in the array for each line's particles go up sequentially
         so for a segment set with 3 lines, each with three possible active particles
-        partActive[0],[1],[2] would be the particles on the first line
+        particleSet[0],[1],[2] would be the particles in the first segment
         and [3],[4],[5] would be those on the second line, etc
         in general particleIndex = lineNumber * maxNumDrops + particleNumber
 2: Particle motion
@@ -192,6 +166,8 @@ How it works:
     When a particle is re-spawned, its position is set to 0, and it is given a new set of random traits
     (size, speed, color, etc) depending on the effect options
     As part of spawning, the particle is also drawn (at 0)
+    When a particle spawns, it blocks other particles from spawning until it has fully cleared the first pixel
+    (including trails) "spawnOk" is set to false
 4: Overall Steps:
     On each update cycle, for each segment we check all its particle to see if they are active and should move, 
     if so, we move them
@@ -208,7 +184,6 @@ How it works:
 void RainSL::update() {
     currentTime = millis();
 
-    //we use *rate as the update rate b/c it's the maximum speed any particle have
     if( (currentTime - prevTime) >= *rate ) {
         prevTime = currentTime;
 
@@ -243,10 +218,10 @@ void RainSL::update() {
             //reset the spawnOkTest for each segment
             spawnOkTest = true;
             for( uint8_t j = 0; j < maxNumDrops; j++ ) {
-                //the particle's location in the particleSet and partActive arrays
+                //the particle's location in the particleSet array
                 particleIndex = i * maxNumDrops + j;
                 //if the particle is active, we need to increment it and draw trails
-                if( partActive[particleIndex] ) {
+                if( isActive(particleIndex) ) {
                     //get the particle from the set, and record some vars locally for ease of access
                     particlePtr = particleSet->particleArr[particleIndex];
                     partPos = particlePtr->position;         //the current position of the particle
@@ -285,7 +260,7 @@ void RainSL::update() {
                     //we need to block any new particles from spawning
                     //headPos takes into account the leading trails for trailTypes 2 and 3
                     headPos = addMod16PS(partPos, posOffset, maxPosition);
-                    if( headPos < totPartSize ) {
+                    if( headPos <= totPartSize ) {
                         spawnOkTest = false;
                     }
 
@@ -321,7 +296,7 @@ void RainSL::update() {
                     //anything that falls outside the segment won't be drawn,
                     //so we can skip drawing the particle, and break out of the loop
                     if( headPos == maxPosition - 1 ) {
-                        partActive[particleIndex] = false;
+                        setActive(particleIndex, false);
                         continue;
                     }
 
@@ -380,11 +355,11 @@ void RainSL::update() {
             //(if we can)
             for( uint8_t j = 0; j < maxNumDrops; j++ ) {
                 particleIndex = i * maxNumDrops + j;
-                if( spawnOkTest && !partActive[particleIndex] ) {
+                if( spawnOkTest && !isActive(particleIndex) ) {
                     //try to spawn particle
                     //if we spawn a particle, stop more from spawning (prevents overlapping),
                     //then set the particle's properties using spawnParticle();
-                    if( random8(100) <= spawnChance ) {
+                    if( random16(spawnBasis) <= spawnChance ) {
                         spawnOkTest = false;
                         spawnParticle(particleIndex, i);
                     }
@@ -475,9 +450,10 @@ uint16_t RainSL::getTrailLedLoc(bool trailDirect, uint8_t trailPixelNum, uint16_
 //also draws the first step of the particle
 void RainSL::spawnParticle(uint8_t particleIndex, uint16_t lineNum) {
     //set the particle to active
-    partActive[particleIndex] = true;
+    setActive(particleIndex, true);
+
     //randomize the particle properties
-    particleUtilsPS::randomizeParticle(*particleSet, particleIndex, 0, true, *rate, speedRange, size, sizeRange,
+    particleUtilsPS::randomizeParticle(*particleSet, particleIndex, 0, true, speed, speedRange, size, sizeRange,
                                        trailType, trailSize, trailRange, false, palette->length, true);
     if( trailType == 6 ) {
         particleUtilsPS::setTrailRand(*particleSet, particleIndex, noTrails, oneTrail, twoTrail, revTrail, infTrail);
@@ -487,11 +463,17 @@ void RainSL::spawnParticle(uint8_t particleIndex, uint16_t lineNum) {
     particlePtr = particleSet->particleArr[particleIndex];
     particleUtilsPS::resetParticle(particlePtr);
     setDropSpawnPos(particlePtr);
+    colorOut = paletteUtilsPS::getPaletteColor(*palette, particlePtr->colorIndex);
+    partTrailType = particlePtr->trailType;
+
+    //for particles with no trails we need to set their trail size to 1
+    //so that block spawning correctly
+    if( partTrailType == 0 || partTrailType == 4 ) {
+        particlePtr->trailSize = 1;
+    }
 
     //draw the first step of the particle
     //for particles with leading trails, the first step is the end of the trail
-    colorOut = paletteUtilsPS::getPaletteColor(*palette, particlePtr->colorIndex);
-    partTrailType = particlePtr->trailType;
     if( partTrailType == 2 || partTrailType == 3 ) {
         drawParticlePixel(0, particlePtr->trailSize, particlePtr->trailSize, lineNum, true);
     } else {
@@ -500,4 +482,32 @@ void RainSL::spawnParticle(uint8_t particleIndex, uint16_t lineNum) {
     //we need to store the trailEndColor for size 1 particles
     //otherwise, when they next update, trailEndColors will be empty
     trailEndColors[particleIndex] = segSet->leds[pixelPosTemp];
+}
+
+//Sets the inital spawn position of a particle
+//For particles with no or trailing trails the spawn position is 0th segment
+//For particles with leading or double trails spawn position is offset by the trail's size
+//(we set the spawn position in the "phantom zone", see update() comments)
+void RainSL::setDropSpawnPos(particlePS *particlePtr) {
+    partTrailType = particlePtr->trailType;
+    partTrailSize = particlePtr->trailSize;
+    partSize = particlePtr->size;
+    if( partTrailType == 2 ) {
+        particlePtr->position = numSegs + partTrailSize + partSize;
+    } else if( partTrailType == 3 ) {
+        particlePtr->position = numSegs + partSize;
+    } else {
+        particlePtr->position = 0;
+    }
+}
+
+//Returns true if the particle is active, false if not
+//Note, we use the "life" particle property to track if the particle is active (1 is active, 0 is not)
+bool RainSL::isActive(uint8_t particleIndex) {
+    return particleSet->particleArr[particleIndex]->life == 1;
+}
+
+//Sets the active status of a particle
+void RainSL::setActive(uint8_t particleIndex, bool isActive) {
+    particleSet->particleArr[particleIndex]->life = uint8_t(isActive);
 }

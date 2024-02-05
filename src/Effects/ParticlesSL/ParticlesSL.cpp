@@ -39,12 +39,13 @@ ParticlesSL::~ParticlesSL() {
 void ParticlesSL::init(CRGB BgColor, SegmentSetPS &SegSet) {
     //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
     //The effect uses the rates of the particles, but all effects must have a Rate var, so we make one up
-    uint16_t Rate = 80;
+    uint16_t Rate = 5;
     bindSegSetPtrPS();
     bindClassRatesPS();
 
     //bind background color pointer
     bindBGColorPS();
+    
     //initial fill to clear out any previous effects
     segDrawUtils::fillSegSetColor(*segSet, *bgColor, bgColorMode);
 }
@@ -100,10 +101,8 @@ This is not visually noticeable, and makes coding easier. But it does mean there
 void ParticlesSL::update() {
     currentTime = millis();
 
-    if( (currentTime - prevTime) >= updateRate ) {
+    if( (currentTime - prevTime) >= *rate ) {
         prevTime = currentTime;
-        //need to reset the update rate each cycle, to make sure we always set it to the fastest particle
-        updateRate = 65535;  //max value of a uint16_t. This is an update rate of 65.5 sec.
 
         //refill the background if directed (if we're using a dynamic rainbow or something)
         if( fillBg || blend ) {
@@ -145,11 +144,6 @@ void ParticlesSL::update() {
             trailType = particlePtr->trailType;  //the type of trail for the particle (see above for types)
             trailSize = particlePtr->trailSize;  //the length of the trail(s) of the particle (only applies if the pixel has a trail)
             bounce = particlePtr->bounce;        //sets if the particle wraps to the beginning of the segSet once it reaches the end, or if it reverses direction (it bounces)
-
-            //record the fastest particle for accurate effect updating
-            if( speed < updateRate ) {
-                updateRate = speed;
-            }
 
             partColor = paletteUtilsPS::getPaletteColor(*palette, particlePtr->colorIndex);
 

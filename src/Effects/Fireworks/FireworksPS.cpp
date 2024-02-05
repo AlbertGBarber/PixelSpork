@@ -2,32 +2,32 @@
 
 //Constructor for effect with palette
 FireworksPS::FireworksPS(SegmentSetPS &SegSet, palettePS &Palette, uint8_t MaxNumFireworks, uint8_t MaxNumSparks,
-                         uint8_t SpawnChance, uint16_t LifeBase, uint8_t SpeedDecay, uint16_t Rate, uint16_t SpeedRange)
-    : palette(&Palette), spawnChance(SpawnChance), lifeBase(LifeBase), speedDecay(SpeedDecay), speedRange(SpeedRange)  //
+                         uint8_t SpawnChance, uint16_t LifeBase, uint8_t SpeedDecay, uint16_t Speed, uint16_t SpeedRange)
+    : palette(&Palette), spawnChance(SpawnChance), lifeBase(LifeBase), speedDecay(SpeedDecay), speed(Speed), speedRange(SpeedRange)  //
 {
-    init(MaxNumFireworks, MaxNumSparks, SegSet, Rate);
+    init(MaxNumFireworks, MaxNumSparks, SegSet);
 }
 
 //Constructor for effect with palette of random colors
 FireworksPS::FireworksPS(SegmentSetPS &SegSet, uint16_t numColors, uint8_t MaxNumFireworks, uint8_t MaxNumSparks,
-                         uint8_t SpawnChance, uint16_t LifeBase, uint8_t SpeedDecay, uint16_t Rate, uint16_t SpeedRange)
-    : spawnChance(SpawnChance), lifeBase(LifeBase), speedDecay(SpeedDecay), speedRange(SpeedRange)  //
+                         uint8_t SpawnChance, uint16_t LifeBase, uint8_t SpeedDecay, uint16_t Speed, uint16_t SpeedRange)
+    : spawnChance(SpawnChance), lifeBase(LifeBase), speedDecay(SpeedDecay), speed(Speed), speedRange(SpeedRange)  //
 {
     paletteTemp = paletteUtilsPS::makeRandomPalette(numColors);
     palette = &paletteTemp;
-    init(MaxNumFireworks, MaxNumSparks, SegSet, Rate);
+    init(MaxNumFireworks, MaxNumSparks, SegSet);
 }
 
 //constructor for effect with single color
 //!!If using pre-build FastLED colors you need to pass them as CRGB( *color code* )
 //cause is that the compiler sees this as the same as the random color constructor
 FireworksPS::FireworksPS(SegmentSetPS &SegSet, CRGB Color, uint8_t MaxNumFireworks, uint8_t MaxNumSparks,
-                         uint8_t SpawnChance, uint16_t LifeBase, uint8_t SpeedDecay, uint16_t Rate, uint16_t SpeedRange)
-    : spawnChance(SpawnChance), lifeBase(LifeBase), speedDecay(SpeedDecay), speedRange(SpeedRange)  //
+                         uint8_t SpawnChance, uint16_t LifeBase, uint8_t SpeedDecay, uint16_t Speed, uint16_t SpeedRange)
+    : spawnChance(SpawnChance), lifeBase(LifeBase), speedDecay(SpeedDecay), speed(Speed), speedRange(SpeedRange)  //
 {
     paletteTemp = paletteUtilsPS::makeSingleColorPalette(Color);
     palette = &paletteTemp;
-    init(MaxNumFireworks, MaxNumSparks, SegSet, Rate);
+    init(MaxNumFireworks, MaxNumSparks, SegSet);
 }
 
 FireworksPS::~FireworksPS() {
@@ -39,8 +39,10 @@ FireworksPS::~FireworksPS() {
 }
 
 //common initialization function for core vars
-void FireworksPS::init(uint8_t maxNumFireworks, uint8_t maxNumSparks, SegmentSetPS &SegSet, uint16_t Rate) {
+void FireworksPS::init(uint8_t maxNumFireworks, uint8_t maxNumSparks, SegmentSetPS &SegSet) {
     //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
+    //The effect uses the rates of the particles, but all effects must have a Rate var, so we make one up
+    uint16_t Rate = 5;
     bindSegSetPtrPS();
     bindClassRatesPS();
 
@@ -102,7 +104,7 @@ void FireworksPS::setupFireworks(uint8_t newMaxNumFireworks, uint8_t newMaxNumSp
         particleUtilsPS::freeParticleSet(particleSetTemp);
 
         //create a new particle set
-        particleSetTemp = particleUtilsPS::buildParticleSet(numParticles, 0, true, *rate, speedRange, size, sizeRange,
+        particleSetTemp = particleUtilsPS::buildParticleSet(numParticles, 0, true, speed, speedRange, size, sizeRange,
                                                             0, 0, 0, false, palette->length, true);
         particleSet = &particleSetTemp;
     }
@@ -280,7 +282,6 @@ void FireworksPS::moveParticle(particlePS *particlePtr) {
 
     //Reduce the particle's speed. This formula isn't the most elegant
     //but seems to produce a reasonable looking result
-    //NOTE that speed is the particle's update rate, so higher speed value => slower particle
     particlePtr->speed += uint32_t(particlePtr->speed * speedDecay) / 100;
     //particlePtr->speed += particlePtr->speed * deltaTime / 100;
 
@@ -382,7 +383,7 @@ void FireworksPS::spawnFirework(uint8_t fireworkNum) {
     //pick a starting direction at random
     //we will alternate this direction for each subsequent particle to get an even spread on both sides
     bool initDirect = random8(2);
-    uint16_t maxSpeed = *rate + speedRange;
+    uint16_t maxSpeed = speed + speedRange;
     uint16_t speedRangeTemp;
 
     //if all the particles are to be the same color, pick it here
@@ -406,11 +407,10 @@ void FireworksPS::spawnFirework(uint8_t fireworkNum) {
         //To ensure that we have an even-ish spread of particles
         //we cap the range that each particle's speed can vary by based on it's array index
         //Particles will start out fast, and gradually be more likely to slow down
-        //( since the speed is picked by rate + random(speedRangeTemp) )
-        //NOTE that speed is the particle's update rate, so higher speed value => slower particle
+        //( since the speed is picked by speed + random(speedRangeTemp) )
         speedRangeTemp = speedRange * i / maxNumSparks;
         //randomize the particle properties
-        particleUtilsPS::randomizeParticle(*particleSet, particleIndex, 0, initDirect, *rate, speedRangeTemp, size, sizeRange,
+        particleUtilsPS::randomizeParticle(*particleSet, particleIndex, 0, initDirect, speed, speedRangeTemp, size, sizeRange,
                                            0, 0, 0, false, randColorIndex, false);
 
         //reset the particle and set its new spawn location

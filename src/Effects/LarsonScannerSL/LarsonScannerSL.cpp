@@ -13,6 +13,9 @@ LarsonScannerSL::LarsonScannerSL(SegmentSetPS &SegSet, uint8_t ScanType, CRGB sc
     scannerInst = new ParticlesSL(*segSet, particleSet, palette, BgColor);
     //bind the ParticlesSL instance background color to point to the LarsonScannerSL's background color
     scannerInst->bgColor = bgColor;
+    //bind the scanner's update rate to the Larson Scanner's. 
+    //All the particles have the same update rate, so there's no need to use the particleSL's default fast rate
+    scannerInst->rate = rate;
     setColor(scanColor);
     setScanType(scanType);
 }
@@ -54,8 +57,8 @@ void LarsonScannerSL::setBounce(bool newBounce) {
 
 /* builds the particle set for the type of scan
 Scan types:
-    0: Like the classic cylon scanner, one particle with two trails moving back and forth
-    1: Like the cylon scanner, but only using one trail
+    0: Like the classic Cylon scanner, one particle with two trails moving back and forth
+    1: Like the Cylon scanner, but only using one trail
     2: Like one of the Kit Knight Rider scanners: two particles with single trails
         That move back and forth, intersecting in the center of the strip
         (note that this mode uses blend, see ParticlesPS.h for details) */

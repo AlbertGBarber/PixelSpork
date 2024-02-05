@@ -21,7 +21,7 @@ You have the option of having the constructor make a random palette for you
 By default all a firework's sparks are the same color, but you can set them all to be random (from the palette)
 using randSparkColors.
 
-All fireworks "burst" as initially before fading to their spark color
+All fireworks "burst" initially before fading to their spark color
 The burst color is stored as burstColor, which is a pointer, so you can bind it to an eternal variable
 By default it is bound to burstColOrig, which is set to white.
 
@@ -52,56 +52,69 @@ Note that this effect does require three separate arrays:
 So watch your memory usage
 
 Inputs guide:
-The fireworks have 7 core inputs:
-    maxNumFireworks: The maximum number of fireworks that can exist on the strip simultaneously.
-    maxNumSparks: The number of sparks each firework produces
-    spawnChance: How likely an inactive firework is to spawn each update cycle (a percent out of 100)
-    lifeBase: The maximum time (in ms) a firework's sparks will live for (asides from a bit or randomness from lifeRange)
-    speedDecay: How fast the sparks slow down. This is a percent of their current speed -> speed = speed - speed * speedDecay
-    rate: The fastest particle speed (speed is the update time in ms, so lower rate => higher speed)
-    speedRange: The range added to a particle's base speed. A spark's speed is set when it spawns as `rate + random( speedRange )`.
-There are some other, secondary variables listed in the Other Settings section below,
-but you probably won't need to tweak these initially
+    The fireworks have 7 core inputs:
+        maxNumFireworks: The maximum number of fireworks that can exist on the strip simultaneously.
+        maxNumSparks: The number of sparks each firework produces
+        spawnChance: How likely an inactive firework is to spawn each update cycle (a percent out of 100)
+        lifeBase: The maximum time (in ms) a firework's sparks will live for (asides from a bit or randomness from lifeRange)
+        speedDecay: How fast the sparks slow down. This is a percent of their current speed -> speed = speed - speed * speedDecay
+        speed: The base spark speed (speed is the update time in ms, so lower rate => higher speed)
+        speedRange: The range added to a spark's base speed. A spark's speed is set when it spawns as `speed + random( speedRange )`.
+    
+   More Settings Details:
+    * "lifeBase" sets the maximum spark life. You want to give the sparks time to move,
+      so lifeBase should probably be 2000+ (2 sec). You should also know that the effect adds a random bit of extra 
+      life to each spark, set by lifeRange (default 500, ie 0.5 sec)
 
-More Info:
+    * "speedDecay" is the percent the speed decreases each time the spark is drawn. 
+      I recommend starting between 5 - 20, and adjusting as needed. A lower value will let the sparks spread out more.
 
-lifeBase is used to set a limit on all the sparks life, but you still want to give the sparks time to move
-So lifeBase should probably be 2000+ (2 sec). You should also know that the effect adds a random bit of extra 
-life to each spark, set by lifeRange (default 500, ie 0.5 sec)
+    * "speed and speedRange" do a lot of work in shaping how the firework looks. Overall, "speed" sets how fast the average spark moves,
+      while speedRange sets how different spark speeds are from one another.
+      So you can have low speeds and low ranges to make a slow, clumped up firework, or have high speeds and high range
+      so that the sparks move quick and spread out more.
+      I recommend starting with a speed of 40-60 and a speedRange of 300 - 600.
+      For higher speed ranges, increasing the number of sparks will help "fill out" the firework.
 
-speedDecay is the percent the speed decreases each time the particle is drawn. 
-I recommend starting between 5 - 10, and adjusting as needed. A lower value will let the sparks spread out more.
+    The fade rate of the sparks is proportional to their speed, so faster sparks fade slower.
+    This seems produce a good look.
 
-rate and speedRange do a lot of work in shaping how the firework looks. Overall, "rate" sets how fast the average spark moves,
-while speedRange sets how different spark speeds are from one another.
-So you can have low speeds and low ranges to make a slow, clumped up firework, or have high speeds and high range
-so that the sparks move quick and spread out more.
-I recommend starting with a rate of 40-60 and a speedRange of 300 - 600.
-For higher speed ranges, increasing the number of sparks will help "fill out" the firework.
+    Fireworks also have a central "bomb" particle, which doesn't move, and decays quickly.
+    This makes the fireworks look more like an explosion.
+    The settings for this spark all use the "center" in their name.
 
-The fade rate of the sparks is proportional to their speed, so faster sparks fade slower.
-This seems produce a good look.
+    Note that to help avoid fireworks from spawning very close to either end of the strip, 
+    their spawn range is reduced by numLEDs / spawnRangeDiv from each end of the strip.
+    By default, spawnRangeDiv is 5. A higher spawnRangeDiv will expand the spawn area.
 
-Fireworks also have a central "bomb" particle, which doesn't move, and decays quickly.
-This makes the fireworks look more like an explosion.
-The settings for this spark all use the "center" in their name.
+    There are some other, secondary variables, but you probably won't need to tweak these initially.
 
-Note that to help avoid fireworks from spawning very close to either end of the strip, 
-their spawn range is reduced by numLEDs / spawnRangeDiv from each end of the strip.
-By default, spawnRangeDiv is 5. Higher spawnRangeDiv will expand the spawn area.
+Update Rate:
+    Note that unlike other effects, the update rate is preset for you at 5ms, 
+    which helps catch each of the spark's updates on time (hopefully!). 
+    You see, each spark has its own speed (update rate), but we still want be able to update the 
+    effect with a single `update()` call. I could have ignored the "rate" setting, 
+    and just updated all the spark whenever you call `update()`. 
+    However, the sparks are re-drawn every `update()`, even if they haven't moved, 
+    so this becomes problematic, especially when working with multiple effects or segment sets, 
+    where you want more control over when you update. Instead I opted to treat the effect as normal,
+     and keep the overall update rate, but default it to a very fast 5ms. 
+     Hopefully this default will catch most sparks on time. 
+     You are free to change the update rate as needed by setting `rateOrig`.
 
 Example calls: 
 
-    FireworksPS fireworks(mainSegments, 5, 3, 10, 10, 2000, 10, 40, 300);
+    FireworksPS fireworks(mainSegments, 5, 3, 10, 10, 2000, 20, 40, 300);
     Will do a set of fireworks using colors from a randomly generated palette of 5 colors
     There is a maximum of 3 fireworks active at one time.
     Each firework has 10 sparks
     There is a 10% chance a new firework spawns during an update
     The sparks have a maximum life of 2000ms (+ a random(500) from the default life range)
-    The spark's speed decays at 10 percent per update
+    The spark's speed decays at 20 percent per update
     The fastest particles will update at 40ms, while the slowest will be 40 + 300ms
 
     FireworksPS fireworks(mainSegments, cybPnkPal_PS, 3, 20, 10, 4000, 5, 40, 500);
+    Big fireworks with long lasting sparks
     Will do a set of fireworks using colors from a cybPnkPal_PS
     There is a maximum of 3 fireworks active at one time.
     Each firework has 20 sparks
@@ -121,19 +134,20 @@ Example calls:
     The sparks have a maximum life of 2000ms (+ a random(500) from the default life range)
     The spark's speed decays at 10 percent per update
     The fastest particles will update at 80ms, while the slowest will be 80 + 80ms
-    !!If using pre-build FastLED colors you need to pass them as CRGB( *color code* ) -> ex CRGB(CRGB::Blue)
+    !!If using a pre-built FastLED color you need to pass it as CRGB( *color code* ) -> ex CRGB(CRGB::Blue)
 
 Constructor Inputs:
     palette(optional, see constructors) -- The set of colors that firework colors will be picked from
     numColors (optional, see constructors) -- The number of randomly chosen colors for fireworks
     color (optional, see constructors) -- A single color for all the fireworks
+                                          If using a pre-built FastLED color you need to pass is as CRGB( *color code* ) -> ex CRGB(CRGB::Blue)
     maxNumFireworks -- The maximum number of simultaneous fireworks that can be active at one time
     maxNumSparks -- The number of sparks spawned per firework
     spawnChance -- The likely-hood of a firework spawning (percent out of 100, larger is more likely)
     lifeBase -- The longest time a spark can exist (in ms)
     speedDecay -- The percent a spark's speed is reduced by per update cycle (out of 100)
-    rate -- The maximum speed for the sparks, also the effect update rate (is a pointer like in other effects)
-    speedRange -- The cap for the slowest speed for the sparks ( speed is rate + random(speedRange) ) (ms)
+    speed -- The base spark speed (speed is the update time in ms, so lower rate => higher speed).
+    speedRange -- The cap for the slowest speed for the sparks ( speed is speed + random(speedRange) ) (ms)
 
 Other Settings:
     colorMode (default 0) -- sets the color mode for the waves (see segDrawUtils::setPixelColor)
@@ -157,7 +171,10 @@ Other Settings:
     bgColorOrig (default 0) -- The default color of the background (bound to the bgColor pointer by default)
     *bgColor (default bound to bgColorOrig) -- The color of the background, is a pointer so it can be bound to an external variable 
     spawnRangeDiv (default 5) -- Sets what range of the strip fireworks spawn in: from numLEDs / spawnRangeDiv to ( numLEDs - (numLEDs / spawnRangeDiv) )
- 
+    *rate and rateOrig -- Update rate (ms). Defaulted to 5ms (see Update note in Inputs Guide). 
+                          Is a pointer, allowing you to bind it to an external variable. 
+                          By default it's bound the effect's local variable, `rateOrig`. 
+
  Functions:
     setupFireworks(maxFireworks, maxSparks) -- Create the data structures for a set of fireworks
                                                You should call this if you ever want to change maxNumFireworks or maxNumSparks
@@ -169,16 +186,16 @@ class FireworksPS : public EffectBasePS {
     public:
         //Constructor for fireworks using a palette
         FireworksPS(SegmentSetPS &SegSet, palettePS &Palette, uint8_t MaxNumFireworks, uint8_t MaxNumSparks,
-                    uint8_t SpawnChance, uint16_t LifeBase, uint8_t SpeedDecay, uint16_t Rate, uint16_t SpeedRange);
+                    uint8_t SpawnChance, uint16_t LifeBase, uint8_t SpeedDecay, uint16_t Speed, uint16_t SpeedRange);
 
         //Constructor for fireworks using a palette of random colors
         FireworksPS(SegmentSetPS &SegSet, uint16_t numColors, uint8_t MaxNumFireworks, uint8_t MaxNumSparks,
-                    uint8_t SpawnChance, uint16_t LifeBase, uint8_t SpeedDecay, uint16_t Rate, uint16_t SpeedRange);
+                    uint8_t SpawnChance, uint16_t LifeBase, uint8_t SpeedDecay, uint16_t Speed, uint16_t SpeedRange);
 
         //Constructor for fireworks of a single color
-        //!!If using pre-build FastLED colors you need to pass them as CRGB( *color code* ) -> ex CRGB(CRGB::Blue)
+        //!!If using a pre-built FastLED color you need to pass it as CRGB( *color code* ) -> ex CRGB(CRGB::Blue)
         FireworksPS(SegmentSetPS &SegSet, CRGB Color, uint8_t MaxNumFireworks, uint8_t MaxNumSparks,
-                    uint8_t SpawnChance, uint16_t LifeBase, uint8_t SpeedDecay, uint16_t Rate, uint16_t SpeedRange);
+                    uint8_t SpawnChance, uint16_t LifeBase, uint8_t SpeedDecay, uint16_t Speed, uint16_t SpeedRange);
 
         ~FireworksPS();
 
@@ -196,6 +213,7 @@ class FireworksPS : public EffectBasePS {
             lifeBase,
             lifeRange = 500,
             centerLife,  //set to lifeBase/10 + 100 in init()
+            speed,
             speedRange,
             size = 1,
             sizeRange = 0,
@@ -270,7 +288,7 @@ class FireworksPS : public EffectBasePS {
             colorTemp;
 
         void
-            init(uint8_t maxNumFireworks, uint8_t maxNumSparks, SegmentSetPS &SegSet, uint16_t Rate),
+            init(uint8_t maxNumFireworks, uint8_t maxNumSparks, SegmentSetPS &SegSet),
             moveParticle(particlePS *particlePtr),
             drawParticlePixel(particlePS *particlePtr, uint16_t trailLedLocation),
             spawnFirework(uint8_t fireworkNum);

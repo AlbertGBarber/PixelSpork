@@ -20,8 +20,8 @@ An effect for updating a set of particles. A particle is a moving pixel.
 A particle has a direction, speed, and can leave a trail that blends cleanly into the background color over 
 the trail length (like waving a flame around, or a comet trail). 
 Particles are grouped into particle sets.
- Each particle in a set has its own properties, so you can have multiple 
- particles with different sizes, speeds, trails, etc. This effect animates a set of particles.
+Each particle in a set has its own properties, so you can have multiple 
+particles with different sizes, speeds, trails, etc. This effect animates a set of particles.
 
 Before using this effect, you should read about the full details of particles see particlePS.h.
 For this effect, you have the option of using your own particle set, or have the effect create one for you. 
@@ -29,13 +29,10 @@ For this effect, you have the option of using your own particle set, or have the
 You have a lot of options when creating a particle set, so you can use this effect to build some really great looks!
 
 The effect is adapted to work on segment lines for 2D use.
- For 2D segments particles move along segment lines, with the particle being replicated across 
- all the segment, like a wave.
+For 2D segments particles move along segment lines, with the particle being replicated across 
+all the segment, like a wave.
 
 Supports color modes for both the main and background colors.
-
-Note that unlike other effects, the update rate is not externally controllable, 
-and depends on the update rates of the particles.
 
 Trail Modes:
     Taken from particlePS.h:
@@ -90,6 +87,19 @@ Bounce Behavior:
           the entire body reverses direction at once. This is not visually noticeable, 
           and makes coding easier. However, it does mean there's no "center" of a particle.
 
+Update Rate:
+    Note that unlike other effects, the update rate is pre-set for you at 5ms, 
+    which helps catch each of the particles updates on time (hopefully!). 
+    You see, each particle has its own speed (update rate), but we still want be able to update the effect
+    with a single update() call. I could have ignored the "rate" setting, and just updated all the 
+    particles whenever you call update(). However, the particles are re-drawn every update(), even if they haven't moved,
+    so this becomes problematic, especially when working with multiple effects or segment sets, where you want more
+    control over when you update. Instead I opted to treat the effect as normal, and keep the overall update rate,
+    but default it to a very fast 5ms. Usually I set my speeds to multiples of 10, so hopefully this default
+    will catch most particles on time. You are free to change the update rate as needed by setting rateOrig.
+    (Note, just setting the update rate to the speed of the fastest particle doesn't work, just think of two
+    particles with speeds 40 and 50. The 50 speed particle ends up moving at more like 80 due to the 40ms update rate).
+
 Example calls: 
     using the particleSet defined above:
     ParticlesSL particles(mainSegments, particleSet, cybPnkPal_PS, CRGB::Red);
@@ -109,7 +119,7 @@ Constructor inputs for creating a particle set:
     BgColor -- The background color used for the effect
     numParticles -- The number of particles that will be created for the effect
     direction -- The direction of the particle's motion (pass in any number > 1 to set it randomly)
-    baseSpeed -- The minimum speed of the particles (ms)
+    baseSpeed -- The base speed of the particles (ms)
     speedRange -- The amount the speed may vary up from the base speed ( ie baseSpeed + random(range) ) (ms)
     size -- The minimum size of the particles (min value 1)
     sizeRange -- The amount the size can vary from the base size (ie size + random(range))
@@ -135,6 +145,9 @@ Other Settings:
     *particleSet -- The effect's particle set. Is a pointer, so you can bind it to an external set. 
                     If the effect builds a particle set for you, `particleSet`, 
                     will be bound to the effect's local set, `particleSetTemp`. 
+    *rate and rateOrig -- Update rate (ms). Defaulted to 5ms (see Update note in Inputs Guide). 
+                          Is a pointer, allowing you to bind it to an external variable. 
+                          By default it's bound the effect's local variable, `rateOrig`. 
 
 Functions:
     reset() -- resets all particles to the starting locations
