@@ -67,11 +67,18 @@ Inputs guide:
     I recommend starting with a combined (speedBase + speedRange) of (1 - 15).
     I'd set my range to at least 5 to get a good variation. If you set it too low fireflies will tend to move together.
 
+    Spawning:
+        A firefly will spawn if random(spawnBasis) <= spawnChance. spawnBasis is default to 1000, so you can go down
+        to sub 1% percentages. Note that the effect tries to spawn any inactive firefly with each update().
+        This means that how densely your fireflies spawn depends a lot on the
+        effect update rate and how many fireflies you have. 
+        Even with quite low percentages, fireflies will probably spawn quite often.
+
 Example calls: 
 
-    FirefliesSL fireflies(mainSegments, CRGB(222, 144, 9), 15, 5, 2000, 3000, 3, 6, 80);
+    FirefliesSL fireflies(mainSegments, CRGB(222, 144, 9), 15, 50, 2000, 3000, 3, 6, 80);
     Will do a set of fireflies using a yellow-orange color
-    There are a maximum of 15 fireflies active at one time, and each has a 5 percent chance of spawning per cycle
+    There are a maximum of 15 fireflies active at one time, and each has a 5 percent chance of spawning per cycle (50/1000)
     The fireflies have a base life of 2000ms, with a range of 3000ms (for a max life of 5000ms)
     The fireflies have a base speed of 3, with a range of 6 (for a max speed of 9)
     The effect updates at 80ms
@@ -79,16 +86,16 @@ Example calls:
     CRGB(*colorCode*), ex CRGB(CRGB::Red)
     Otherwise it will get confused and call the random palette constructor
 
-    FirefliesSL fireflies(mainSegments, cybPnkPal_PS, 5, 20, 3000, 4000, 6, 14, 70);
+    FirefliesSL fireflies(mainSegments, cybPnkPal_PS, 5, 200, 3000, 4000, 6, 14, 70);
     Will do a set of fireflies using colors from cybPnkPal_PS
-    There are a maximum of 5 fireflies active at one time, and each has a 20 percent chance of spawning per cycle
+    There are a maximum of 5 fireflies active at one time, and each has a 20 percent chance of spawning per cycle (200/1000)
     The fireflies have a base life of 3000ms, with a range of 4000ms (for a max life of 7000ms)
     The fireflies have a base speed of 6, with a range of 14 (for a max speed of 20)
     The effect updates at 70ms
 
-    FirefliesSL fireflies(mainSegments, 2, 20, 5, 3000, 3000, 2, 5, 80);
+    FirefliesSL fireflies(mainSegments, 2, 20, 50, 3000, 3000, 2, 5, 80);
     Will do a set of fireflies using a random palette of 2 colors
-    There are a maximum of 20 fireflies active at one time, and each has a 5 percent chance of spawning per cycle
+    There are a maximum of 20 fireflies active at one time, and each has a 5 percent chance of spawning per cycle (50/1000)
     The fireflies have a base life of 3000ms, with a range of 3000ms (for a max life of 6000ms)
     The fireflies have a base speed of 2, with a range of 5 (for a max speed of 7)
     The effect updates at 80ms
@@ -122,6 +129,8 @@ Other Settings:
                                The value of `fadeThresh` sets how many steps they spend fading
                                Note that setting it to 255 will only doa fade in, and then the fireflies will disappear instantly
                                128 will cause them to fade in then out with no pause at the peak 
+    spawnBasis (default 1000) -- The spawn probability threshold. 
+                                 A firefly will spawn if "random(spawnBasis) <= spawnChance".
                             
 Functions:
     setupFireflies(maxNumFireflies) -- Create the data structures for a set of fireflies
@@ -136,27 +145,28 @@ Reference Vars:
 class FirefliesSL : public EffectBasePS {
     public:
         //Constructor for effect with palette
-        FirefliesSL(SegmentSetPS &SegSet, palettePS &Palette, uint16_t MaxNumFireflies, uint8_t SpawnChance,
+        FirefliesSL(SegmentSetPS &SegSet, palettePS &Palette, uint16_t MaxNumFireflies, uint16_t SpawnChance,
                     uint16_t LifeBase, uint16_t LifeRange, uint16_t SpeedBase, uint16_t SpeedRange, uint16_t Rate);
 
         //Constructor for effect with palette of random colors
-        FirefliesSL(SegmentSetPS &SegSet, uint8_t numColors, uint16_t MaxNumFireflies, uint8_t SpawnChance,
+        FirefliesSL(SegmentSetPS &SegSet, uint8_t numColors, uint16_t MaxNumFireflies, uint16_t SpawnChance,
                     uint16_t LifeBase, uint16_t LifeRange, uint16_t SpeedBase, uint16_t SpeedRange, uint16_t Rate);
 
         //constructor for effect with single color
         //!!If using pre-build FastLED colors you need to pass them as CRGB( *color code* ) -> ex CRGB(CRGB::Blue)
-        FirefliesSL(SegmentSetPS &SegSet, CRGB Color, uint16_t MaxNumFireflies, uint8_t SpawnChance,
+        FirefliesSL(SegmentSetPS &SegSet, CRGB Color, uint16_t MaxNumFireflies, uint16_t SpawnChance,
                     uint16_t LifeBase, uint16_t LifeRange, uint16_t SpeedBase, uint16_t SpeedRange, uint16_t Rate);
 
         ~FirefliesSL();
 
         uint8_t
-            spawnChance,
             colorMode = 0,
             bgColorMode = 0,
             fadeThresh = 50;
 
         uint16_t
+            spawnChance,
+            spawnBasis = 1000, //spawn change scaling (random(spawnBasis) <= spawnChance controls spawning)
             maxNumFireflies = 0,  //For reference only!, call setupFireflies() to change
             lifeBase,
             lifeRange,

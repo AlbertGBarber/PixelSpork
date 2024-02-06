@@ -1,7 +1,7 @@
 #include "FirefliesSL.h"
 
 //Constructor for effect with palette
-FirefliesSL::FirefliesSL(SegmentSetPS &SegSet, palettePS &Palette, uint16_t MaxNumFireflies, uint8_t SpawnChance,
+FirefliesSL::FirefliesSL(SegmentSetPS &SegSet, palettePS &Palette, uint16_t MaxNumFireflies, uint16_t SpawnChance,
                          uint16_t LifeBase, uint16_t LifeRange, uint16_t SpeedBase, uint16_t SpeedRange, uint16_t Rate)
     : palette(&Palette), spawnChance(SpawnChance), lifeBase(LifeBase), lifeRange(LifeRange), speedBase(SpeedBase), speedRange(SpeedRange)  //
 {
@@ -9,7 +9,7 @@ FirefliesSL::FirefliesSL(SegmentSetPS &SegSet, palettePS &Palette, uint16_t MaxN
 }
 
 //Constructor for effect with palette of random colors
-FirefliesSL::FirefliesSL(SegmentSetPS &SegSet, uint8_t numColors, uint16_t MaxNumFireflies, uint8_t SpawnChance,
+FirefliesSL::FirefliesSL(SegmentSetPS &SegSet, uint8_t numColors, uint16_t MaxNumFireflies, uint16_t SpawnChance,
                          uint16_t LifeBase, uint16_t LifeRange, uint16_t SpeedBase, uint16_t SpeedRange, uint16_t Rate)
     : spawnChance(SpawnChance), lifeBase(LifeBase), lifeRange(LifeRange), speedBase(SpeedBase), speedRange(SpeedRange)  //
 {
@@ -21,7 +21,7 @@ FirefliesSL::FirefliesSL(SegmentSetPS &SegSet, uint8_t numColors, uint16_t MaxNu
 //constructor for effect with single color
 //!!If using pre-build FastLED colors you need to pass them as CRGB( *color code* )
 //cause is that the compiler sees this as the same as the random color constructor
-FirefliesSL::FirefliesSL(SegmentSetPS &SegSet, CRGB Color, uint16_t MaxNumFireflies, uint8_t SpawnChance,
+FirefliesSL::FirefliesSL(SegmentSetPS &SegSet, CRGB Color, uint16_t MaxNumFireflies, uint16_t SpawnChance,
                          uint16_t LifeBase, uint16_t LifeRange, uint16_t SpeedBase, uint16_t SpeedRange, uint16_t Rate)
     : spawnChance(SpawnChance), lifeBase(LifeBase), lifeRange(LifeRange), speedBase(SpeedBase), speedRange(SpeedRange)  //
 {
@@ -173,7 +173,7 @@ void FirefliesSL::update() {
 
             } else {
                 //try to spawn a firefly
-                if( random8(100) <= spawnChance ) {
+                if( random16(spawnBasis) <= spawnChance ) {
                     spawnFirefly(i);
                 }
             }

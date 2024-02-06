@@ -2,7 +2,7 @@
 
 //palette based constructor
 Twinkle2SLSeg::Twinkle2SLSeg(SegmentSetPS &SegSet, palettePS &Palette, CRGB BgColor, uint16_t NumTwinkles,
-                             uint8_t SpawnChance, uint8_t FadeInSteps, uint8_t FadeInRange, uint8_t FadeOutSteps,
+                             uint16_t SpawnChance, uint8_t FadeInSteps, uint8_t FadeInRange, uint8_t FadeOutSteps,
                              uint8_t FadeOutRange, uint8_t SegMode, uint16_t Rate)
     : palette(&Palette), numTwinkles(NumTwinkles), spawnChance(SpawnChance), fadeInRange(FadeInRange),
       fadeOutRange(FadeOutRange), segMode(SegMode)  //
@@ -11,7 +11,7 @@ Twinkle2SLSeg::Twinkle2SLSeg(SegmentSetPS &SegSet, palettePS &Palette, CRGB BgCo
 }
 
 //single color constructor
-Twinkle2SLSeg::Twinkle2SLSeg(SegmentSetPS &SegSet, CRGB Color, CRGB BgColor, uint16_t NumTwinkles, uint8_t SpawnChance,
+Twinkle2SLSeg::Twinkle2SLSeg(SegmentSetPS &SegSet, CRGB Color, CRGB BgColor, uint16_t NumTwinkles, uint16_t SpawnChance,
                              uint8_t FadeInSteps, uint8_t FadeInRange, uint8_t FadeOutSteps, uint8_t FadeOutRange,
                              uint8_t SegMode, uint16_t Rate)
     : numTwinkles(NumTwinkles), spawnChance(SpawnChance), fadeInRange(FadeInRange), fadeOutRange(FadeOutRange),
@@ -22,7 +22,7 @@ Twinkle2SLSeg::Twinkle2SLSeg(SegmentSetPS &SegSet, CRGB Color, CRGB BgColor, uin
 }
 
 //random colors constructor
-Twinkle2SLSeg::Twinkle2SLSeg(SegmentSetPS &SegSet, CRGB BgColor, uint16_t NumTwinkles, uint8_t SpawnChance,
+Twinkle2SLSeg::Twinkle2SLSeg(SegmentSetPS &SegSet, CRGB BgColor, uint16_t NumTwinkles, uint16_t SpawnChance,
                              uint8_t FadeInSteps, uint8_t FadeInRange, uint8_t FadeOutSteps, uint8_t FadeOutRange,
                              uint8_t SegMode, uint16_t Rate)
     : numTwinkles(NumTwinkles), spawnChance(SpawnChance), fadeInRange(FadeInRange), fadeOutRange(FadeOutRange), segMode(SegMode)  //
@@ -219,7 +219,7 @@ void Twinkle2SLSeg::update() {
                 }
             } else {
                 //try to spawn any inactive twinkles
-                if( (random8(100) < spawnChance) && spawnOk ) {
+                if( (random16(spawnBasis) <= spawnChance) && spawnOk ) {
                     spawnTwinkle(i);
                     if( limitSpawning ) {
                         spawnOk = false;

@@ -1,6 +1,8 @@
 #ifndef Twinkle2SLSeg_h
 #define Twinkle2SLSeg_h
 
+//TODO --Remove "limitSpawning", use updated lower probability values
+
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
 #include "twinkleStarPS.h"
@@ -66,6 +68,13 @@ Inputs Guide:
                                          can be active at one time because if you take 10 cycles to fade in-out total, then only 10 
                                          new twinkles can spawn before the first pixel is up again. 
 
+    Spawning:
+        A twinkle will spawn if random(spawnBasis) <= spawnChance. spawnBasis is default to 1000, so you can go down
+        to sub 1% percentages. Note that the effect tries to spawn any inactive twinkle with each update().
+        This means that how densely your twinkles spawn depends a lot on the
+        effect update rate and how many twinkles you have. 
+        Even with quite low percentages, twinkles will probably spawn quite often.
+
 An extra note: You technically cannot change the numTwinkles on the fly, since it may require re-sizing the twinkleSet storage struct. 
                However, the struct is only re-sized and reset if it needs to be bigger (ie numTwinkles is bigger than it's been for the effect before)
                So you can set the inital number of twinkles higher than you need, and then adjust numTwinkles to be lower.
@@ -74,22 +83,22 @@ An extra note: You technically cannot change the numTwinkles on the fly, since i
               However, you should turn on filBG, so that if you reduce the number of twinkles you don't have any that are left in mid-fade on the strip.
 
 Example call: 
-    Twinkle2SLSeg twinkle2(mainSegments, CRGB::Red, CRGB::Blue, 12, 50, 3, 2, 4, 5, 0, 70);
+    Twinkle2SLSeg twinkle2(mainSegments, CRGB::Red, CRGB::Blue, 12, 500, 3, 2, 4, 5, 0, 70);
     Will choose 12 segment lines (segMode 0) to fade to/from red each cycle, using a blue background, 
-    There is a 50% chance an inactive line will become active each cycle
+    There is a 50% chance an inactive line will become active each cycle (500/1000)
     There are 3 fade in and 4 fade out steps with ranges of 2 and 5 respectively
     The effect updates at a rate of 70ms
 
-    Twinkle2SLSeg twinkle2(mainSegments, cybPnkPal_PS, 0, 8, 100, 2, 0, 6, 0, 1, 60);
+    Twinkle2SLSeg twinkle2(mainSegments, cybPnkPal_PS, 0, 8, 1000, 2, 0, 6, 0, 1, 60);
     Will choose 8 segments (segMode 1) each cycle to fade to/from colors from cybPnkPal_PS, using a blank background, 
-    There is a 100% chance an inactive segment will become active each cycle
+    There is a 100% chance an inactive segment will become active each cycle (1000/1000)
     There are 2 fade in and 6 fade out steps with ranges of 0 and 0 respectively
     The effect updates at a rate of 60ms
 
-    Twinkle2SLSeg twinkle2(mainSegments, 0, 12, 20, 2, 0, 2, 0, 3, 80);
+    Twinkle2SLSeg twinkle2(mainSegments, 0, 12, 200, 2, 0, 2, 0, 3, 80);
     Will choose 12 individual pixels (segMode 2) to fade to/from random colors, using a blank background, 
     (note this sets randMode = 1)
-    There is a 20% chance an inactive line will become active each cycle
+    There is a 20% chance an inactive line will become active each cycle (200/1000)
     There are 2 fade in and 2 fade out steps with ranges of 0 and 0 respectively
     The effect updates at a rate of 80ms
 
@@ -112,6 +121,8 @@ Other Settings:
                             1: Picks colors at random
     fillBg (default false) -- sets the background to be redrawn every cycle, useful for bgColorModes that are dynamic
     limitSpawning -- Limits the twinkles so that only one new one can become active per update cycle (see inputs guide above)
+    spawnBasis (default 1000) -- The spawn probability threshold. 
+                                 A twinkle will spawn if "random(spawnBasis) <= spawnChance".
 
 Functions:
     setSteps(newFadeInSteps, newFadeOutSteps) -- Sets the number of fade in and out steps
@@ -138,17 +149,17 @@ Notes:
 class Twinkle2SLSeg : public EffectBasePS {
     public:
         //Constructor for a full palette effect
-        Twinkle2SLSeg(SegmentSetPS &SegSet, palettePS &Palette, CRGB BgColor, uint16_t NumTwinkles, uint8_t SpawnChance, 
+        Twinkle2SLSeg(SegmentSetPS &SegSet, palettePS &Palette, CRGB BgColor, uint16_t NumTwinkles, uint16_t SpawnChance, 
                       uint8_t FadeInSteps, uint8_t FadeInRange, uint8_t FadeOutSteps, uint8_t FadeOutRange, 
                       uint8_t SegMode, uint16_t Rate); 
 
         //Constructor for a using a single color
-        Twinkle2SLSeg(SegmentSetPS &SegSet, CRGB Color, CRGB BgColor, uint16_t NumTwinkles, uint8_t SpawnChance,
+        Twinkle2SLSeg(SegmentSetPS &SegSet, CRGB Color, CRGB BgColor, uint16_t NumTwinkles, uint16_t SpawnChance,
                       uint8_t FadeInSteps, uint8_t FadeInRange, uint8_t FadeOutSteps, uint8_t FadeOutRange,
                       uint8_t SegMode, uint16_t Rate);
         
         //Constructor for choosing all colors at random
-        Twinkle2SLSeg(SegmentSetPS &SegSet, CRGB BgColor, uint16_t NumTwinkles, uint8_t SpawnChance, 
+        Twinkle2SLSeg(SegmentSetPS &SegSet, CRGB BgColor, uint16_t NumTwinkles, uint16_t SpawnChance, 
                       uint8_t FadeInSteps, uint8_t FadeInRange, uint8_t FadeOutSteps, uint8_t FadeOutRange, 
                       uint8_t SegMode, uint16_t Rate);
 
@@ -158,7 +169,6 @@ class Twinkle2SLSeg : public EffectBasePS {
         uint8_t
             segMode, //For reference only, use setSegMode()
             randMode = 0,
-            spawnChance,
             colorMode = 0,
             bgColorMode = 0;
 
@@ -170,6 +180,8 @@ class Twinkle2SLSeg : public EffectBasePS {
             fadeOutSteps; 
         
         uint16_t
+            spawnChance,
+            spawnBasis = 1000, //spawn change scaling (random(spawnBasis) <= spawnChance controls spawning)
             numTwinkles; //for reference, set with setNumTwinkles()
         
         bool 

@@ -24,7 +24,9 @@ This makes the effect more uniform, and may look better with longer segment sets
 
 By default, once the offsets are set, they do not change. This can make the effect look a bit repetitive
 to counter this, you can turn on random shifting, which will increment the offset of a pixel
-by up to shiftStep (default 1) if a random threshold is met.
+by up to shiftStep (default 1) if a random threshold is met. 
+You can modify the likelihood of shifting by changing "shiftThreshold" and "shiftBasis".
+(see Other Settings below)
 
 Note that by passing a gradLength of 0 to the constructor, you will set the effect to shift mode 0
 In shift mode 0 the gradLength isn't used, but that if you set it back to shift mode 0,
@@ -67,9 +69,11 @@ Other Settings:
     shiftMode -- The shift mode of the effect, either 0, or 1: 0 for the offsets to be picked at any point in the rainbow
                                                     1 for the offsets to be picked between 0 and gradLength
     randomShift (default false) -- Turns on/off the random shift for the pixel offsets (see effect description above)
-    shiftThreshold (default 15) -- Sets the threshold for if a pixel offset will increment, out of 100, with higher values being more likely
-                                   15 seemed to look good in my tests
+    shiftThreshold (default 15) -- Sets the probability threshold for incrementing a pixel's offset, out of "shiftBasis" (100), 
+                                   with higher values being more likely. 15 seemed to look good in my tests.
     shiftStep (default 1, min 1) -- The maximum value (is chosen randomly) of the offset increment if the shiftThreshold is met
+    shiftBasis (default 100) -- The shift probability threshold. 
+                                A pixel's offset will shift if "random(shiftBasis) <= shiftThreshold".
 
 Reference Vars:
     grouping -- (see constructor notes above) set this using setGrouping()
@@ -99,6 +103,7 @@ class ShiftingRainbowSeaSL : public EffectBasePS {
 
         uint16_t
             *offsets = nullptr,
+            shiftBasis = 100, //random shift change scaling (random(shiftBasis) <= shiftThreshold controls shifting)
             cycleNum = 0;  //tracks how many update's we've done, max value of 255
 
         bool

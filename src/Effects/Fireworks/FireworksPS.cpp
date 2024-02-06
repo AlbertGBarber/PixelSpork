@@ -2,7 +2,7 @@
 
 //Constructor for effect with palette
 FireworksPS::FireworksPS(SegmentSetPS &SegSet, palettePS &Palette, uint8_t MaxNumFireworks, uint8_t MaxNumSparks,
-                         uint8_t SpawnChance, uint16_t LifeBase, uint8_t SpeedDecay, uint16_t Speed, uint16_t SpeedRange)
+                         uint16_t SpawnChance, uint16_t LifeBase, uint8_t SpeedDecay, uint16_t Speed, uint16_t SpeedRange)
     : palette(&Palette), spawnChance(SpawnChance), lifeBase(LifeBase), speedDecay(SpeedDecay), speed(Speed), speedRange(SpeedRange)  //
 {
     init(MaxNumFireworks, MaxNumSparks, SegSet);
@@ -10,7 +10,7 @@ FireworksPS::FireworksPS(SegmentSetPS &SegSet, palettePS &Palette, uint8_t MaxNu
 
 //Constructor for effect with palette of random colors
 FireworksPS::FireworksPS(SegmentSetPS &SegSet, uint16_t numColors, uint8_t MaxNumFireworks, uint8_t MaxNumSparks,
-                         uint8_t SpawnChance, uint16_t LifeBase, uint8_t SpeedDecay, uint16_t Speed, uint16_t SpeedRange)
+                         uint16_t SpawnChance, uint16_t LifeBase, uint8_t SpeedDecay, uint16_t Speed, uint16_t SpeedRange)
     : spawnChance(SpawnChance), lifeBase(LifeBase), speedDecay(SpeedDecay), speed(Speed), speedRange(SpeedRange)  //
 {
     paletteTemp = paletteUtilsPS::makeRandomPalette(numColors);
@@ -22,7 +22,7 @@ FireworksPS::FireworksPS(SegmentSetPS &SegSet, uint16_t numColors, uint8_t MaxNu
 //!!If using pre-build FastLED colors you need to pass them as CRGB( *color code* )
 //cause is that the compiler sees this as the same as the random color constructor
 FireworksPS::FireworksPS(SegmentSetPS &SegSet, CRGB Color, uint8_t MaxNumFireworks, uint8_t MaxNumSparks,
-                         uint8_t SpawnChance, uint16_t LifeBase, uint8_t SpeedDecay, uint16_t Speed, uint16_t SpeedRange)
+                         uint16_t SpawnChance, uint16_t LifeBase, uint8_t SpeedDecay, uint16_t Speed, uint16_t SpeedRange)
     : spawnChance(SpawnChance), lifeBase(LifeBase), speedDecay(SpeedDecay), speed(Speed), speedRange(SpeedRange)  //
 {
     paletteTemp = paletteUtilsPS::makeSingleColorPalette(Color);
@@ -267,7 +267,7 @@ void FireworksPS::update() {
         for( uint8_t i = 0; i < maxNumFireworks; i++ ) {
             if( !fireWorkActive[i] ) {
                 //try to spawn firework
-                if( random8(100) <= spawnChance ) {
+                if( random16(spawnBasis) <= spawnChance ) {
                     spawnFirework(i);
                 }
             }

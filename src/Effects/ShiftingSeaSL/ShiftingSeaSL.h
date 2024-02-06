@@ -33,6 +33,8 @@ This makes the effect more uniform, and may look better with larger patterns or 
 By default, once the offsets are set, they do not change. This can make the effect look a bit repetitive
 to counter this, you can turn on random shifting, which will increment the offset of a line
 by up to shiftStep (default 1) if a random threshold is met.
+You can modify the likelihood of shifting by changing "shiftThreshold" and "shiftBasis".
+(see Other Settings below)
 
 You can change how many gradient steps between colors there are on the fly.
 
@@ -114,9 +116,11 @@ Inputs:
 Other Settings:
     *bgColor and bgColorOrig (default 0) -- The color used by "blank" spaces. By default the bgColor is pointed to bgColorOrig.
     randomShift (default false) -- Turns on/off the random shift for the pixel offsets (see effect description above)
-    shiftThreshold (default 15) -- Sets the threshold for if a pixel offset will increment, out of 100, with higher values being more likly
-                                   15 seemed to look good in my tests
+    shiftThreshold (default 15) -- Sets the probability threshold for incrementing a pixel's offset,out of "shiftBasis" (100), 
+                                   with higher values being more likely. 15 seemed to look good in my tests.
     shiftStep (default 1, min 1) -- The maximum value (is chosen randomly) of the offset increment if the shiftThreshold is met
+    shiftBasis (default 100) -- The shift probability basis. 
+                                A pixel's offset will shift if "random(shiftBasis) <= shiftThreshold".
     rainbowMode (default false) -- If true, then the effect will use rainbow colors in place of palette colors.
                                    Note that rainbowMode is automatically set true by the rainbow mode constructor.
                                    The rainbow colors are spread over the typical range, 
@@ -176,6 +180,7 @@ class ShiftingSeaSL : public EffectBasePS {
 
         uint16_t
             *offsets = nullptr,
+            shiftBasis = 100,  //random shift change scaling (random(shiftBasis) <= shiftThreshold controls shifting)
             totalCycleLength,  //the total number of possible offsets a pixel can have (one for each fade color), for reference
             cycleNum = 0;      //tracks how many update's we've done, max value of totalCycleLength, for reference
 

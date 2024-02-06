@@ -234,7 +234,7 @@ void ShiftingSeaSL::update() {
 
             //randomly increment the offset (keeps the effect varied)
             if( randomShift ) {
-                if( random8(100) <= shiftThreshold ) {
+                if( random16(shiftBasis) <= shiftThreshold ) {
                     offsets[i] = addMod16PS(offsets[i], random8(1, shiftStep), totalCycleLength);
                 }
             }

@@ -187,7 +187,7 @@ Other Settings:
                              See explanation of this in more detail above in effect intro
     fillBg (default false) -- Sets the background to be redrawn every update, useful for bgColorModes that are dynamic
                               Warning!: Not compatible with infinite trails (mode 4). They will be drawn over.
-    spawnBasis (default 1000) -- The default spawn probability threshold. 
+    spawnBasis (default 1000) -- The spawn probability threshold. 
                                  A drop will spawn if "random(spawnBasis) <= spawnChance".
 
 Functions:
@@ -247,7 +247,7 @@ class RainSL : public EffectBasePS {
             speedRange = 0,
             size,
             sizeRange = 0,
-            spawnBasis = 1000; //spawn change scaling (ie spawnChance / spawnBasis)
+            spawnBasis = 1000; //spawn change scaling (random(spawnBasis) <= spawnChance controls spawning)
 
         bool
             direct,
