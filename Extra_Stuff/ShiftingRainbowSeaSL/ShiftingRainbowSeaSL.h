@@ -67,7 +67,7 @@ Functions:
 Other Settings:
     sat and val (default 255) -- the saturation and value settings for the rainbow
     shiftMode -- The shift mode of the effect, either 0, or 1: 0 for the offsets to be picked at any point in the rainbow
-                                                    1 for the offsets to be picked between 0 and gradLength
+                                                               1 for the offsets to be picked between 0 and gradLength
     randomShift (default false) -- Turns on/off the random shift for the pixel offsets (see effect description above)
     shiftThreshold (default 15) -- Sets the probability threshold for incrementing a pixel's offset, out of "shiftBasis" (100), 
                                    with higher values being more likely. 15 seemed to look good in my tests.

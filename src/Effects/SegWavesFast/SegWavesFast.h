@@ -25,7 +25,16 @@ So any changes you make to colors will only show up at the first segment, and wi
 
 However, as a bonus, this effect supports random colored waves
 where the colors for the waves are chosen at random as the enter the segments
-This is controlled by the randMode setting
+This is controlled by the randMode setting:
+
+randModes (default 0):
+Sets the type of how colors are chosen:
+    0: Colors will be chosen in order from the pattern (not random).
+    1: Colors will be chosen completely at random.
+    2: Colors will be chosen at random from the !!palette!!, but the same color won't be repeated in a row.
+    3: Colors will be chosen randomly from the pattern.
+    4: Colors will be chosen randomly from the !!palette!!.
+       (option included b/c the pattern may have a lot of spaces, so choosing from it may be very biased).
 
 Otherwise, all the settings are/functions are the same as SegWavesFast
 
@@ -94,15 +103,7 @@ Constructor Inputs:
     rate -- The update rate (ms)
 
 Other Settings:
-    randMode (default 0) -- Sets the type of how colors are chosen:
-                         -- 0: Colors will be chosen in order from the pattern (not random)
-                         -- 1: Colors will be chosen completely at random
-                         -- 2: Colors will be chosen at random from the !!palette!!, 
-                               but the same color won't be repeated in a row
-                         -- 3: Colors will be chosen randomly from the pattern
-                         -- 4: Colors will be chosen randomly from the !!palette!!
-                               (option included b/c the pattern may have a lot of spaces, 
-                                so choosing from it may be very biased)
+    randMode (default 0) -- (See randMode notes in intro)
 
 Functions:
     reset() -- Restarts the wave pattern

@@ -54,3 +54,4 @@
 #include "Effects/ColorWipeSeg/ColorWipeSeg.h"
 #include "Effects/ColorModeFill/ColorModeFillPS.h"
 #include "Effects/DrawPatternSLSeg/DrawPatternSLSeg.h"
+#include "Effects/XmasLightsSLSeg/XmasLightsSLSeg.h"

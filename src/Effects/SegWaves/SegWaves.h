@@ -34,13 +34,13 @@ For any of the constructors with a waveThickness input, just pass in 0, and a si
 Likewise I've added a rainbow constructor, which will create a smooth rainbow transition wave.
 
 The effect also has a random mode (set using randMode, not in the constructors),
-where the pattern color are chosen at random as they enter the segments
-The modes are: 
-    0 (dfault): Colors will be chosen in order from the pattern (not random)
-    1: Colors will be chosen completely at random
-    2: Colors will be chosen randomly from the palette (allowing repeats)
-    3: Colors will be chosen at random from the palette,
-       but the same color won't be repeated in a row
+where the pattern color are chosen at random as they enter the segments:
+
+randModes (default 0): 
+    0: Colors will be chosen in order from the pattern (not random).
+    1: Colors will be chosen completely at random.
+    2: Colors will be chosen randomly from the palette (allowing repeats).
+    3: Colors will be chosen at random from the palette, but the same color won't be repeated in a row.
 
 Note that switching from random modes to the fixed pattern mode (randMode 0) will cause a jump in colors
 Also if you change the number of segments in your segment set, you'll need to reset the effect when using a random mode
@@ -121,12 +121,7 @@ Other Settings:
     fadeOn (default true) -- If false, the wave will jump directly to the next color instead of fading
                              Note that if 1 or 0 are passed in as the FadeSteps in the constructor, 
                              fadeOn will be set to false automatically
-    randMode (default 0) -- Sets the type of how colors are chosen:
-                         -- 0: Colors will be chosen in order from the pattern (not random)
-                         -- 1: Colors will be chosen completely at random
-                         -- 2: Colors will be chosen at random from the palette,
-                               but the same color won't be repeated in a row
-                         -- 3: Colors will be chosen randomly from the palette (allowing repeats)
+    randMode (default 0) -- (See randMode notes in intro)
 
 Functions:
     reset() -- Restarts the wave pattern (also calls resetSegColors())

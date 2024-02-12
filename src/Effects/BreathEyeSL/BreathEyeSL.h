@@ -45,12 +45,6 @@ I recommend a breathFreq between 5 and 20, otherwise it gets quite slow.
 
 Your update rate should not be too much more than your breathing freq, or the effect will look choppy.
 
-You can also set how far the eye fades by setting maxBreath (default 255) to mimic more of a pulse kind of look
-by preventing the eye from fading all the way to the background.
-Note that this works best when using a single color with a fixed eye position, 
-otherwise the effect will look "jumpy" since colors will change without fully fading.
-If you use a random eye position, be sure to set fillBg to true to clear out the previous eye fade.
-
 Note that you can change variables freely while the effect is running.
 
 Does not work with color modes from segDrawUtils::setPixelColor().
@@ -61,6 +55,20 @@ randModes:
     2: Colors will be chosen randomly from the pattern (not allowing repeats)
     3: Colors will be chosen randomly from the pattern (allowing repeats)
     4: Colors will be from the rainbow (the hue is offset by hueRate each time a color is chosen)
+
+Eye Arm Fading:
+    By default, the eye arms dim quickly in a non-linear fashion. 
+    This makes the eye "head / center" brighter and standout more, 
+    which, in my opinion, looks better then just using a linear fade. 
+    You can control the linearity of the arm fades using the "dimPow" setting.
+    A default of 80 is used in this effect. "dimPow" is borrowed from the particle based effects; 
+    you can read the "dimPow" notes in particleUtils.h for more.
+
+    You can also set how far the eye fades by setting maxBreath (default 255) to mimic more of a pulse kind of look
+    by preventing the eye from fading all the way to the background.
+    Note that this works best when using a single color with a fixed eye position, 
+    otherwise the effect will look "jumpy" since colors will change without fully fading.
+    If you use a random eye position, be sure to set fillBg to true to clear out the previous eye fade.
 
 Example calls: 
     uint8_t pattern_arr = {0, 2, 1};

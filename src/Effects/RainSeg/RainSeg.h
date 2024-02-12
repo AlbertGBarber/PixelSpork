@@ -66,6 +66,13 @@ Inputs Guide:
         For example, if `noTrails`, `twoTrail`, `infTrail` are true then drops
         can spawn with no trails, two trails or infinite trails.
 
+    Trail Fading:
+        By default, the trails dim quickly in a non-linear fashion. 
+        This makes the drop "heads" brighter and standout more, which, in my opinion, 
+        looks better then just using a linear fade. You can control the linearity of the 
+        trail fades using the "dimPow" setting. A default of 80 is used in this effect. 
+        You can read the "dimPow" notes in "particleUtils.h" for more.
+
     Randomizing Size Settings:
         When a rain drop particle is spawned, it's speed, size, and trail size are set to the effect settings, 
         speed, size, and trailSize. 
@@ -173,7 +180,7 @@ Constructor inputs for creating a particle set:
 Other Settings:
     colorMode (default 0) -- sets the color mode for the particles (see segDrawUtils::setPixelColor)
     bgColorMode (default 0) -- sets the color mode for the spacing pixels (see segDrawUtils::setPixelColor)
-    dimPow (default 80, min -127, max 127) -- Adjusts the rate of dimming for the trails (see dimPow above)
+    dimPow (default 80, min -127, max 127) -- Adjusts the rate of dimming for the trails (see Fading above)
     blend (default false) -- Causes particles to add their colors to the strip, rather than set them
                              See explanation of this in more detail above in effect intro
     fillBg (default false) -- Sets the background to be redrawn every update, useful for bgColorModes that are dynamic

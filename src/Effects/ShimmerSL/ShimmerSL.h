@@ -21,6 +21,11 @@ The effect is adapted to work on segment lines for 2D use, but you can keep it 1
 passing in a SegmentSetPS with only one segment containing the whole strip.
 Or you can set lineMode to false, which means each pixel always gets it's own shimmer value.
 
+randModes (default 0):
+Sets how colors will be picked.
+    0: Picks colors from the palette.
+    1: Picks colors at random.
+
 Example calls: 
     ShimmerSL shimmer(mainSegments, 0, 180, 80);
     Each pixel will be set to a random color, refreshing at 80ms
@@ -46,9 +51,7 @@ Other Settings:
     colorMode (default 0) -- sets the color mode for the random pixels (see segDrawUtils::setPixelColor)
     lineMode (default true) -- If false, each pixel will have it's own shimmer amount (rather than it being the same along segment lines)
                                Only really useful if you want multi-segment color modes and don't want the shimmers in lines
-    randMode (default 0) -- sets how colors will be picked
-                            0: Picks colors from the palette
-                            1: Picks colors at random
+    randMode (default 0) -- (See randMode notes in intro)
 
 Functions:
     setSingleColor(Color) -- Sets the effect to use a single color for the pixels

@@ -33,11 +33,11 @@ You can use `lineMode` to control how pixels are filled in:
 * false: Individual pixels will be dissolved (only really useful when using certain color modes).
 
 randModes:
-    0: Each dissolve is a solid color following the pattern
-    1: Each dissolve is a set of randomly chosen colors (dif color for each pixel)
-    2: Each dissolve is a set of random colors chosen from the pattern (dif color for each pixel)
-    3: Each dissolve is a solid color chosen at random
-    4: Each dissolve is a solid color chosen randomly from the pattern
+    0: Each dissolve is a solid color following the pattern (not random).
+    1: Each dissolve is a set of randomly chosen colors (dif color for each pixel).
+    2: Each dissolve is a set of random colors chosen from the pattern (dif color for each pixel).
+    3: Each dissolve is a solid color chosen at random.
+    4: Each dissolve is a solid color chosen randomly from the pattern.
 
 You should be able switch freely between randModes on the fly (the random modes will set up a random palette/pattern as a fallback)
 

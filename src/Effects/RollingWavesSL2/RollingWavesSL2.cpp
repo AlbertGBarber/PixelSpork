@@ -1,31 +1,31 @@
 #include "RollingWavesSL2.h"
 
 //constructor with pattern
-RollingWavesSL2::RollingWavesSL2(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BGColor,
+RollingWavesSL2::RollingWavesSL2(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor,
                                  uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate)
     : pattern(&Pattern), palette(&Palette), gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)  //
 {
-    init(BGColor, SegSet, Rate);
+    init(BgColor, SegSet, Rate);
 }
 
 //constructor with palette as pattern
-RollingWavesSL2::RollingWavesSL2(SegmentSetPS &SegSet, palettePS &Palette, CRGB BGColor, uint8_t GradLength,
+RollingWavesSL2::RollingWavesSL2(SegmentSetPS &SegSet, palettePS &Palette, CRGB BgColor, uint8_t GradLength,
                                  uint8_t TrailMode, uint8_t Spacing, uint16_t Rate)
     : palette(&Palette), gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)  //
 {
     setPaletteAsPattern();
-    init(BGColor, SegSet, Rate);
+    init(BgColor, SegSet, Rate);
 }
 
 //constructor with random colors
-RollingWavesSL2::RollingWavesSL2(SegmentSetPS &SegSet, uint8_t NumColors, CRGB BGColor, uint8_t GradLength,
+RollingWavesSL2::RollingWavesSL2(SegmentSetPS &SegSet, uint8_t NumColors, CRGB BgColor, uint8_t GradLength,
                                  uint8_t TrailMode, uint8_t Spacing, uint16_t Rate)
     : gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)  //
 {
     paletteTemp = paletteUtilsPS::makeRandomPalette(NumColors);
     palette = &paletteTemp;
     setPaletteAsPattern();
-    init(BGColor, SegSet, Rate);
+    init(BgColor, SegSet, Rate);
 }
 
 RollingWavesSL2::~RollingWavesSL2() {

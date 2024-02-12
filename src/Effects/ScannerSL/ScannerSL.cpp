@@ -1,13 +1,13 @@
 #include "ScannerSL.h"
 
 //Constructor for using a single color
-ScannerSL::ScannerSL(SegmentSetPS &SegSet, CRGB Color, CRGB BGColor, uint16_t numWaves, uint8_t TrailType, uint16_t TrailSize,
+ScannerSL::ScannerSL(SegmentSetPS &SegSet, CRGB Color, CRGB BgColor, uint16_t numWaves, uint8_t TrailType, uint16_t TrailSize,
                      uint16_t Size, bool direction, bool alternate, bool makeEndWave, bool Bounce,
                      bool Blend, uint16_t Rate)
     : trailSize(TrailSize), trailType(TrailType), size(Size), bounce(Bounce), blend(Blend)  //
 {
     bounceChange = false;
-    init(BGColor, SegSet, Rate);
+    init(BgColor, SegSet, Rate);
     paletteTemp = paletteUtilsPS::makeSingleColorPalette(Color);
     palette = &paletteTemp;
     setPaletteAsPattern();
@@ -15,24 +15,24 @@ ScannerSL::ScannerSL(SegmentSetPS &SegSet, CRGB Color, CRGB BGColor, uint16_t nu
 }
 
 //Constructor for using a pattern with a custom set of repeating waves
-ScannerSL::ScannerSL(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BGColor, uint16_t numWaves,
+ScannerSL::ScannerSL(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint16_t numWaves,
                      uint8_t TrailType, uint16_t TrailSize, uint16_t Size, bool direction, bool alternate, bool makeEndWave,
                      bool Bounce, bool BounceChange, bool Blend, uint16_t Rate)
     : pattern(&Pattern), palette(&Palette), trailSize(TrailSize), trailType(TrailType), size(Size), bounce(Bounce),
       bounceChange(BounceChange), blend(Blend)  //
 {
-    init(BGColor, SegSet, Rate);
+    init(BgColor, SegSet, Rate);
     makeWaveSet(numWaves, direction, alternate, makeEndWave);
 }
 
 //Constructor for using the palette as the pattern with a custom set of repeating waves
-ScannerSL::ScannerSL(SegmentSetPS &SegSet, palettePS &Palette, CRGB BGColor, uint16_t numWaves, uint8_t TrailType,
+ScannerSL::ScannerSL(SegmentSetPS &SegSet, palettePS &Palette, CRGB BgColor, uint16_t numWaves, uint8_t TrailType,
                      uint16_t TrailSize, uint16_t Size, bool direction, bool alternate, bool makeEndWave, bool Bounce,
                      bool BounceChange, bool Blend, uint16_t Rate)
     : palette(&Palette), trailSize(TrailSize), trailType(TrailType), size(Size), bounce(Bounce),
       bounceChange(BounceChange), blend(Blend)  //
 {
-    init(BGColor, SegSet, Rate);
+    init(BgColor, SegSet, Rate);
     setPaletteAsPattern();
     makeWaveSet(numWaves, direction, alternate, makeEndWave);
 }
@@ -150,6 +150,7 @@ void ScannerSL::makeWaveSet(uint16_t numWaves, bool direction, bool alternate, b
 }
 
 //resets all the particles to their start locations and sets their starting colors
+//also fills the background to remove any old waves
 void ScannerSL::reset() {
     //reset particles to starting locations
     particleUtilsPS::resetParticleSet(particleSet);
@@ -157,9 +158,9 @@ void ScannerSL::reset() {
     //set the particle's starting colors
     //we need to run over them twice to set their initial and next colors
     patternIndexCount = 0;
-    numParticles = particleSet.length;
-    for( uint16_t i = 0; i < numParticles * 2; i++ ) {
-        setPartColor(particleSet.particleArr[mod16PS(i, numParticles)]);
+    numWaves = particleSet.length;
+    for( uint16_t i = 0; i < numWaves * 2; i++ ) {
+        setPartColor(particleSet.particleArr[mod16PS(i, numWaves)]);
     }
 
     //can't have 0 length trails, so we need to change the trail type
@@ -234,7 +235,7 @@ void ScannerSL::update() {
         }
 
         //re-fetch the segment vars in-case they've been modified
-        numParticles = particleSet.length;
+        numWaves = particleSet.length;
         numLines = segSet->numLines;
         numSegs = segSet->numSegs;
         longestSeg = segSet->segNumMaxNumLines;
@@ -258,7 +259,7 @@ void ScannerSL::update() {
         For the longest segment the full particle will always be drawn (it may be truncated on shorted segments)
         so we know that if the trail pixel has not been over-written, it should not have been over-written on other segments
         In any case, this makes the programming much simpler, saves storage, and seems to work well in practice from what I can tell */
-        for( uint16_t i = 0; i < numParticles; i++ ) {
+        for( uint16_t i = 0; i < numWaves; i++ ) {
             //get the particle from the set, and record some vars locally for ease of access
             particlePtr = particleSet.particleArr[i];
             position = particlePtr->position;    //the current position of the particle
@@ -462,7 +463,7 @@ void ScannerSL::setPartColor(particlePS *particlePtr) {
     if( randMode == 0 ) {
         //Get the next particle color, taking into account the number of active particles
         //(don't want to have every particle repeat the pattern individually, rather all the particles do the pattern together)
-        particlePtr->maxLife = patternUtilsPS::getPatternVal(*pattern, patternIndexCount + numParticles);
+        particlePtr->maxLife = patternUtilsPS::getPatternVal(*pattern, patternIndexCount + numWaves);
         //Once we've set a color, we need to advance the pattern index for the next particle
         patternIndexCount = addMod16PS(patternIndexCount, 1, pattern->length);
     } else if( randMode == 1 ) {

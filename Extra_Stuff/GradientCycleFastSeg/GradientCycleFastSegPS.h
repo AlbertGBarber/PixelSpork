@@ -37,6 +37,11 @@ However, as a bonus, this effect supports random colored gradients
 where the colors for the gradients are choosen at random as the enter the strip
 This is controlled by the randMode setting
 
+randModes (default 0): 
+    0: Colors will be chosen from the palette in order (not random)
+    1: Colors will be chosen completely at random
+    2: Colors will be chosen randomly from the pattern (will not repeat the same color in a row)
+
 Example calls: 
     uint8_t pattern_arr = {0, 1, 4};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr)};
@@ -71,12 +76,8 @@ Functions:
     update() -- updates the effect
 
 Other Settings:
-    randMode (default 0) -- Sets the type of how colors are choosen:
-                         -- 0: Colors will be choosen in order from the pattern (not random)
-                         -- 1: Colors will be choosen completely at random
-                         -- 2: Colors will be choosen randomly from the pattern (will not repeat the same color in a row)
-                         --                                                     (unless your pattern has the same color in a row, like { 2, 2, 3})
-
+    randMode (default 0) -- (See Notes in Intro)
+    
 Flags:
     initFillDone -- Flag for doing the initial fill of the gradients on the strip
                    Set true once the fill is done

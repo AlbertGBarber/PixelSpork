@@ -16,7 +16,7 @@ You can set the effect to pause between between fades for a fixed length of time
 
 Does not work with color modes from segDrawUtils::setPixelColor()
 
-randModes are: (default 0)
+randModes: (default 0)
     0: Colors will be chosen in order from the pattern (not random)
     1: Colors will be chosen completely at random
     2: Colors will be chosen randomly from the palette (not allowing repeats)
@@ -45,7 +45,7 @@ Constructor Inputs
     rate -- update rate (ms)
 
 Other Settings:
-    randMode (default 0) -- see mode note above
+    randMode (default 0) -- (See notes in intro)
     pauseTime (default 0) -- The time that the effect will wait for between fades (ms)
 
 Functions:

@@ -51,6 +51,15 @@ so watch your memory usage. Likewise, if you re-size the waves, the pattern may 
 Also, remember that the pattern length is limited to 65,025 (uint16_t max), 
 so make sure your (colorLength + spacing) * <num palette colors> is less than the limit.
 
+randModes (default 0):
+Sets the type of how colors are chosen:
+    0: Colors will be chosen in order from the pattern (not random).
+    1: Colors will be chosen completely at random.
+    2: Colors will be chosen at random from the !!palette!!, but the same color won't be repeated in a row.
+    3: Colors will be chosen randomly from the pattern.
+    4: Colors will be chosen randomly from the !!palette!!.
+    (option included b/c the pattern may have a lot of spaces, so choosing from it may be very biased).
+
 Example calls: 
     uint8_t pattern_arr = {0, 255, 255, 255, 1, 1, 255, 255};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
@@ -87,15 +96,7 @@ Constructor Inputs:
     rate -- The update rate (ms)
 
 Other Settings:
-    randMode (default 0) -- Sets the type of how colors are chosen:
-                         -- 0: Colors will be chosen in order from the pattern (not random)
-                         -- 1: Colors will be chosen completely at random
-                         -- 2: Colors will be chosen at random from the !!palette!!, 
-                               but the same color won't be repeated in a row
-                         -- 3: Colors will be chosen randomly from the pattern
-                         -- 4: Colors will be chosen randomly from the !!palette!!
-                               (option included b/c the pattern may have a lot of spaces, 
-                                so choosing from it may be very biased)
+    randMode (default 0) -- (See randMode notes in intro)
 
 Functions:
     reset() -- Restarts the streamer pattern

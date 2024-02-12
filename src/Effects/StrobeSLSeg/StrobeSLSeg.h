@@ -55,6 +55,12 @@ Color options and Strobe cycle behavior (set with newColor flag)
     If you have a pattern of multiple colors, and want to multiple strobe modes, but go through all the colors before switching colors
     It's best to have a single color palette and pattern, and switch the colors depending on totalCycles.
 
+randModes (default 0):
+Sets how colors are chosen from the palette
+    0: Colors will be chosen from the palette in order (not random).
+    1: Colors will be chosen completely at random (not using the palette).
+    2: Colors will be chosen randomly from the palette, same color will not be chosen in a row.
+
 !!The number of cycles is full dependent on the pattern length, even if colors are chosen at random
 
 See the code of setCycleCountMax() to work out how many strobe cycles will happen based on your pattern
@@ -143,10 +149,7 @@ Other Settings:
     pauseEvery (default false) -- pause after every set of pulses rather than after every full strobe cycle
     direct (default true) -- The direction of the pulses for modes 0 and 2 (true starts at segment 0)
     alternate (default false) -- Set this to alternate the direction of pulses after each strobe cycle for modes 0 and 2
-    randMode (default 0) -- Sets how colors are chosen from the palette
-                        -- 0: Colors will be chosen from the palette in order (not random)
-                        -- 1: Colors will be chosen completely at random (not using the palette)
-                        -- 2: Colors will be chosen randomly from the palette, same color will not be chosen in a row
+    randMode (default 0) -- (See randMode notes in intro)
 
 Functions:
     reset() -- Restarts the strobe using the first mode

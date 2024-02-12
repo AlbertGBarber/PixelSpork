@@ -33,7 +33,12 @@ This leads to a much more lightweight effect, however it does have a few extra r
 
 However, as a bonus, this effect supports random colored gradients
 where the colors for the gradients are chosen at random as the enter the strip
-This is controlled by the randMode setting
+This is controlled by the randMode setting:
+
+randModes (default 0): 
+    0: Colors will be chosen from the palette in order (not random).
+    1: Colors will be chosen completely at random.
+    2: Colors will be chosen randomly from the pattern (will not repeat the same color in a row).
 
 Example calls: 
     uint8_t pattern_arr = {0, 2, 1};
@@ -59,10 +64,7 @@ Constructor Inputs:
     rate -- The update rate (ms)
 
 Other Settings:
-    randMode (default 0) -- Sets how colors are chosen:
-                         -- 0: Colors will be chosen in order from the pattern (not random)
-                         -- 1: Colors will be chosen completely at random
-                         -- 2: Colors will be chosen randomly from the pattern (will not repeat the same color in a row)
+    randMode (default 0) -- (See randMode notes in intro)
 
 Functions:
     setPaletteAsPattern() -- Sets the effect pattern to match the current palette

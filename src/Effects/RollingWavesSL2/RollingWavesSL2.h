@@ -127,15 +127,15 @@ Notes:
 class RollingWavesSL2 : public EffectBasePS {
     public:
         //Constructor with pattern
-        RollingWavesSL2(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BGColor,
+        RollingWavesSL2(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor,
                         uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate);
 
         //Constructor with palette as pattern
-        RollingWavesSL2(SegmentSetPS &SegSet, palettePS &Palette, CRGB BGColor, uint8_t GradLength,
+        RollingWavesSL2(SegmentSetPS &SegSet, palettePS &Palette, CRGB BgColor, uint8_t GradLength,
                         uint8_t TrailMode, uint8_t Spacing, uint16_t Rate);
 
         //Constructor with random colors
-        RollingWavesSL2(SegmentSetPS &SegSet, uint8_t NumColors, CRGB BGColor, uint8_t GradLength,
+        RollingWavesSL2(SegmentSetPS &SegSet, uint8_t NumColors, CRGB BgColor, uint8_t GradLength,
                         uint8_t TrailMode, uint8_t Spacing, uint16_t Rate);
 
         ~RollingWavesSL2();

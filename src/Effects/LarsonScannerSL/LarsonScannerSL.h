@@ -24,11 +24,13 @@ the background color of the scannerInst is bound to the background color set in 
 The background color is a pointer, so you can bind it externally as needed
 
 Three scanner types are built in:
-    0: Like the classic cylon scanner, one particle with two trails moving back and forth
-    1: Like the cylon scanner, but only using one trail
+    0: Like the classic Cylon scanner, one particle with two trails moving back and forth
+    1: Like the Cylon scanner, but only using one trail
     2: Like one of the Kitt Knight Rider scanners: two particles with single trails
         That move back and forth, intersecting in the center of the strip
         (note that this mode uses blend, see ParticlesPS.h for details)
+    3: A combination of modes 1 and 2; two single trail waves running in opposite directions
+       and one double wave. All the particles are the same size. Uses blend.
 
 by default all the scanner particles will bounce back at either strip end
 You can change this by calling setBounce( newBounceVal );
@@ -104,7 +106,9 @@ class LarsonScannerSL : public EffectBasePS {
             *scannerInst = nullptr;  //pointer to the ParticleSL instance
 
         particleSetPS
-            particleSet = {nullptr, 0};  //the particle set used in the ParticleSL instance. Init to empty for safety
+            particleSet = {nullptr, maxNumParticles};  //the particle set used in the ParticleSL instance. 
+                                                       //Init to empty for safety, but with our max length of 3 
+                                                       //so that the ParticlesSL instances boots up correctly
 
         void
             setColorMode(uint8_t colorMode, bool bgColorMode),
@@ -122,8 +126,15 @@ class LarsonScannerSL : public EffectBasePS {
             currentTime,
             prevTime = 0;
 
+        const uint8_t 
+            maxNumParticles = 3; //We always use the same particle set length regardless of scan modes.
+                                 //This helps prevent memory fragmentation when switching scan modes.
+
         uint16_t
             numLines;
+        
+        void
+            scanType3SetTrails();
 };
 
 #endif

@@ -1,31 +1,43 @@
 #include "RollingWavesSL.h"
 
 //constructor with pattern
-RollingWavesSL::RollingWavesSL(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BGColor,
+RollingWavesSL::RollingWavesSL(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor,
                                uint8_t GradLength, uint8_t TrailMode, uint8_t Spacing, uint16_t Rate)
     : pattern(&Pattern), palette(&Palette), gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)  //
 {
-    init(BGColor, SegSet, Rate);
+    init(BgColor, SegSet, Rate);
 }
 
 //constructor with palette as pattern
-RollingWavesSL::RollingWavesSL(SegmentSetPS &SegSet, palettePS &Palette, CRGB BGColor, uint8_t GradLength,
+RollingWavesSL::RollingWavesSL(SegmentSetPS &SegSet, palettePS &Palette, CRGB BgColor, uint8_t GradLength,
                                uint8_t TrailMode, uint8_t Spacing, uint16_t Rate)
     : palette(&Palette), gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)  //
 {
     setPaletteAsPattern();
-    init(BGColor, SegSet, Rate);
+    init(BgColor, SegSet, Rate);
 }
 
 //constructor with random colors
-RollingWavesSL::RollingWavesSL(SegmentSetPS &SegSet, uint8_t NumColors, CRGB BGColor, uint8_t GradLength,
+RollingWavesSL::RollingWavesSL(SegmentSetPS &SegSet, uint8_t NumColors, CRGB BgColor, uint8_t GradLength,
                                uint8_t TrailMode, uint8_t Spacing, uint16_t Rate)
     : gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)  //
 {
     paletteTemp = paletteUtilsPS::makeRandomPalette(NumColors);
     palette = &paletteTemp;
     setPaletteAsPattern();
-    init(BGColor, SegSet, Rate);
+    init(BgColor, SegSet, Rate);
+}
+
+//constructor with a single color
+//!!If using a pre-built FastLED color you need to pass it as CRGB( *color code* ) -> ex CRGB(CRGB::Blue)
+RollingWavesSL::RollingWavesSL(SegmentSetPS &SegSet, CRGB Color, CRGB BgColor, uint8_t GradLength,
+                               uint8_t TrailMode, uint8_t Spacing, uint16_t Rate)
+    : gradLength(GradLength), spacing(Spacing), trailMode(TrailMode)  //
+{
+    paletteTemp = paletteUtilsPS::makeSingleColorPalette(Color);
+    palette = &paletteTemp;
+    setPaletteAsPattern();
+    init(BgColor, SegSet, Rate);
 }
 
 RollingWavesSL::~RollingWavesSL() {

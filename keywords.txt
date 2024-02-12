@@ -94,6 +94,7 @@ TheaterChaseSL	KEYWORD1
 Twinkle2SLSeg	KEYWORD1
 TwinkleFastSL	KEYWORD1
 TwinkleSL	KEYWORD1
+XmasLightsSL	KEYWORD1
 EffectBasePS	KEYWORD1
 EmptyEffectPS	KEYWORD1
 

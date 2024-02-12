@@ -70,6 +70,13 @@ Inputs Guide:
 
         For example, if `noTrails`, `twoTrail`, `infTrail` are true then drops
         can spawn with no trails, two trails or infinite trails.
+    
+    Trail Fading:
+        By default, the trails dim quickly in a non-linear fashion. 
+        This makes the drop "heads" brighter and standout more, which, in my opinion, 
+        looks better then just using a linear fade. You can control the linearity of the 
+        trail fades using the "dimPow" setting. A default of 80 is used in this effect. 
+        You can read the "dimPow" notes in "particleUtils.h" for more.
 
     Randomizing Size Settings:
         When a rain drop particle is spawned, it's speed, size, and trail size are set to the effect settings, 
@@ -161,7 +168,7 @@ Constructor inputs for creating a particle set:
     bgColor -- The background color used for the effect
     bgPrefill -- If true, then the background will be filled in when the effect first runs
                 Otherwise the drops will fill it in as they move along
-    spawnChance -- The chance a drop will spawn (if able) each cycle out of 100, higher val => more likely to spawn
+    spawnChance -- The chance a drop will spawn (if able) each cycle out of 1000 (see spawnBasis), higher val => more likely to spawn
     maxNumDrops -- The maximum number of rain drop particles that can be active on a segment (not the whole segment Set!) at one time
     size -- The minimum size of the body of the drops (min value 1) (doesn't include trails)
     sizeRange (optional) -- The amount the size can vary from the base size (ie size + random(range))
@@ -182,7 +189,7 @@ Constructor inputs for creating a particle set:
 Other Settings:
     colorMode (default 0) -- sets the color mode for the particles (see segDrawUtils::setPixelColor)
     bgColorMode (default 0) -- sets the color mode for the spacing pixels (see segDrawUtils::setPixelColor)
-    dimPow (default 80, min -127, max 127) -- Adjusts the rate of dimming for the trails (see dimPow above)
+    dimPow (default 80, min -127, max 127) -- Adjusts the rate of dimming for the trails (see Fading above)
     blend (default false) -- Causes particles to add their colors to the strip, rather than set them
                              See explanation of this in more detail above in effect intro
     fillBg (default false) -- Sets the background to be redrawn every update, useful for bgColorModes that are dynamic

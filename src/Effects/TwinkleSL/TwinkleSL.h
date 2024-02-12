@@ -22,6 +22,11 @@ Note that you cannot change most of the effect variables on the fly without rese
 Also note that the maximum sum of the fade in and out steps is 255. So you can have 128 fade in and out steps,
 254 fade in steps and 1 fade out, etc.
 
+randMode (default 0):
+sets how colors will be picked.
+    0: Picks colors from the palette.
+    1: Picks colors at random.
+
 Example call: 
     TwinkleSL twinkle(mainSegments, CRGB::Red, CRGB::Blue, 2, 4, 4, 70);
     Will choose 2 lines each cycle to fade to/from red each cycle, using a blue background, 
@@ -47,9 +52,7 @@ Constructor Inputs:
 Other Settings:
     colorMode (default 0) -- sets the color mode for the random pixels (see segDrawUtils::setPixelColor)
     bgColorMode (default 0) -- sets the color mode for the background (see segDrawUtils::setPixelColor)
-    randMode (default 0) -- sets how colors will be picked
-                            0: Picks colors from the palette
-                            1: Picks colors at random
+    randMode (default 0) -- (See randMode notes in intro)
     fillBg (default false) -- sets the background to be redrawn every cycle, useful for bgColorModes that are dynamic
 
 Functions:

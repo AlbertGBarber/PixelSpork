@@ -13,7 +13,7 @@ LarsonScannerSL::LarsonScannerSL(SegmentSetPS &SegSet, uint8_t ScanType, CRGB sc
     scannerInst = new ParticlesSL(*segSet, particleSet, palette, BgColor);
     //bind the ParticlesSL instance background color to point to the LarsonScannerSL's background color
     scannerInst->bgColor = bgColor;
-    //bind the scanner's update rate to the Larson Scanner's. 
+    //bind the scanner's update rate to the Larson Scanner's.
     //All the particles have the same update rate, so there's no need to use the particleSL's default fast rate
     scannerInst->rate = rate;
     setColor(scanColor);
@@ -59,9 +59,11 @@ void LarsonScannerSL::setBounce(bool newBounce) {
 Scan types:
     0: Like the classic Cylon scanner, one particle with two trails moving back and forth
     1: Like the Cylon scanner, but only using one trail
-    2: Like one of the Kit Knight Rider scanners: two particles with single trails
+    2: Like one of the Kitt Knight Rider scanners: two particles with single trails
         That move back and forth, intersecting in the center of the strip
-        (note that this mode uses blend, see ParticlesPS.h for details) */
+        (note that this mode uses blend, see ParticlesPS.h for details) 
+    3: A combination of modes 1 and 2; two single trail waves running in opposite directions
+       and one double wave. All the particles are the same size. Uses blend.*/
 void LarsonScannerSL::setScanType(uint8_t newScanType) {
     numLines = segSet->numLines;
     scanType = newScanType;
@@ -75,19 +77,53 @@ void LarsonScannerSL::setScanType(uint8_t newScanType) {
     //and then "hide" any extra particles by changing the set's length.
     //This helps prevent memory fragmentation by always storing the same sized set.
     scannerInst->blend = false;
-    if( scanType == 0 ) {
-        particleSet = particleUtilsPS::buildParticleSet(2, numLines, true, *rate, 0, eyeSize, 0, 2, trailLength, 0, bounce, 0, false);
-        particleSet.length = 1;  //We only use 1 particle in this mode, so limit the particle set to 1.
-    } else if( scanType == 1 ) {
-        particleSet = particleUtilsPS::buildParticleSet(2, numLines, true, *rate, 0, eyeSize, 0, 1, trailLength, 0, bounce, 0, false);
-        particleSet.length = 1;  //We only use 1 particle in this mode, so limit the particle set to 1.
-    } else if( scanType == 2 ) {
-        particleSet = particleUtilsPS::buildParticleSet(2, numLines, true, *rate, 0, eyeSize, 0, 1, trailLength, 0, bounce, 0, false);
-        particleUtilsPS::setParticleSetPosition(particleSet, 0, 0, false);
-        particleUtilsPS::setParticleSetDirection(particleSet, 0, false);
-        particleUtilsPS::setParticleSetPosition(particleSet, 1, numLines - 1, false);
-        scannerInst->blend = true;  //need to turn on blend so that the two particles don't overwrite each other when they meet
+
+    switch( scanType ) {
+        case 0:
+        default:
+            particleSet = particleUtilsPS::buildParticleSet(maxNumParticles, numLines, true, *rate, 0, eyeSize, 0, 2, trailLength, 0, bounce, 0, false);
+            particleSet.length = 1;  //We only use 1 particle in this mode, so limit the particle set to 1.
+            break;
+        case 1:
+            particleSet = particleUtilsPS::buildParticleSet(maxNumParticles, numLines, true, *rate, 0, eyeSize, 0, 1, trailLength, 0, bounce, 0, false);
+            particleSet.length = 1;  //We only use 1 particle in this mode, so limit the particle set to 1.
+            break;
+        case 2:
+            particleSet = particleUtilsPS::buildParticleSet(maxNumParticles, numLines, true, *rate, 0, eyeSize, 0, 1, trailLength, 0, bounce, 0, false);
+            particleSet.length = 2;  //We only use 2 particles in this mode, so limit the particle set to 2.
+
+            //One particle starting at the start of the segment set
+            //We reverse its direction verses the other particle
+            particleUtilsPS::setParticleSetPosition(particleSet, 0, 0, false);
+            particleUtilsPS::setParticleSetDirection(particleSet, 0, false);
+
+            //One particle starting at the end of the segment set
+            particleUtilsPS::setParticleSetPosition(particleSet, 1, numLines - 1, false);
+            scannerInst->blend = true;  //need to turn on blend so that the two particles don't overwrite each other when they meet
+            break;
+        case 3:
+            particleSet = particleUtilsPS::buildParticleSet(maxNumParticles, numLines, true, *rate, 0, eyeSize, 0, 1, trailLength, 0, bounce, 0, false);
+            particleSet.length = 3;
+            //One particle starting at the start of the segment set
+            //We reverse its direction verses the other particles
+            particleUtilsPS::setParticleSetPosition(particleSet, 0, 0, false);
+            particleUtilsPS::setParticleSetDirection(particleSet, 0, false);
+
+            //One particle starting at the end of the segment set
+            particleUtilsPS::setParticleSetPosition(particleSet, 1, numLines - 1, false);
+
+            //One particle starting in the middle of the segment set with double trails 
+            //We halve the trail length so the overall particle matches the others
+            //If the trailLength is odd, we add 1 to the particle's body eyeSize to compensate
+            particleUtilsPS::setParticleSetPosition(particleSet, 2, numLines/2, false);
+            particleUtilsPS::setParticleSetTrailType(particleSet, 2, 2);
+            scanType3SetTrails(); //handles setting up trail lengths 
+                                 //(in own function b/c it needs to be repeated in setTrailLength())
+            
+            scannerInst->blend = true;  //need to turn on blend so that the two particles don't overwrite each other when they meet           
     }
+
+
     //can't have 0 length trails, so we need to change the trail type
     if( trailLength == 0 ) {
         particleUtilsPS::setParticleSetProp(particleSet, 4, 0, 0, 0);
@@ -101,9 +137,26 @@ void LarsonScannerSL::setScanType(uint8_t newScanType) {
 void LarsonScannerSL::setTrailLength(uint8_t newTrailLength) {
     trailLength = newTrailLength;
     particleUtilsPS::setParticleSetProp(particleSet, 5, trailLength, 0, 0);
+
+    //for scanType 3 we need halve the trail length for the double trail particle
+    if( scanType == 3 ){
+        scanType3SetTrails();
+    }
+
     //can't have 0 length trails, so we need to change the trail type
     if( trailLength == 0 ) {
         particleUtilsPS::setParticleSetProp(particleSet, 4, 0, 0, 0);
+    }
+}
+
+//Handles setting up trails for the center particle for scanType 3
+//The particle needs double trails that are half the trailLength (so the all the particles match)
+//If the trailLength is odd, we add 1 to the particle's body eyeSize to compensate
+void LarsonScannerSL::scanType3SetTrails(){
+    particleUtilsPS::setParticleSetTrailSize(particleSet, 2, trailLength/2, 0);
+
+    if( mod8(trailLength, 2) != 0 ){
+        particleUtilsPS::setParticleSetSize(particleSet, 2, eyeSize + 1, 0);
     }
 }
 

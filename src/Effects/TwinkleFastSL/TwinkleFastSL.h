@@ -18,6 +18,11 @@ passing in a SegmentSetPS with only one segment containing the whole strip.
 This effect is fully compatible with color modes, and the bgColor is a pointer, so you can bind it
 to an external color variable
 
+randMode (default 0):
+sets how colors will be picked.
+    0: Picks colors from the palette.
+    1: Picks colors at random.
+
 Example call: 
     TwinkleFastSL twinkleFast(mainSegments, CRGB::Red, 5, 0, true, 50, 70);
     Will choose 5 segment lines to fade from red at 50 rate every cycle
@@ -35,9 +40,7 @@ Other Settings:
     colorMode (default 0) -- sets the color mode for the random pixels (see segDrawUtils::setPixelColor)
     bgColorMode (default 0) -- sets the color mode for the background (see segDrawUtils::setPixelColor)
     fillBg (default true) -- sets the background to be redrawn every cycle
-    randMode (default 0) -- sets how colors will be picked
-                           0: Picks colors from the palette
-                           1: Picks colors at random 
+    randMode (default 0) -- (See randMode notes in intro)
 
 Functions:
     setSingleColor(Color) -- Sets the effect to use a single color for the pixels, will restart the effect

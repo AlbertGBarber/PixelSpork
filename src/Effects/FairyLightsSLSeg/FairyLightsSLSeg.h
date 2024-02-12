@@ -20,10 +20,10 @@ Note that you can have the effect prefill a set of pixels on the first update us
 causing the effect to act as if a full cycle had been completed and we're ready to turn off the pixels.
 See Other Settings below.
 
-randModes:
+randModes (default 0):
     randMode sets how each twinkle color will be set.
-    0: Picks colors from the palette
-    1: Picks colors at random
+    0: Picks colors from the palette.
+    1: Picks colors at random.
 
 segMode:
     The effect is adapted to work on segment lines, whole segments for 2D use, or on single pixels (1D)

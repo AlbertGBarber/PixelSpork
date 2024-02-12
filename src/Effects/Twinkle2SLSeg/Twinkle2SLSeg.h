@@ -27,6 +27,11 @@ This is controlled by the segMode var:
     1: Twinkles will be drawn on whole segments
     2: Twinkles will be drawn on individual pixels
 
+randMode (default 0):
+sets how colors will be picked.
+    0: Picks colors from the palette.
+    1: Picks colors at random.
+
 Note that the effect does require slightly more programming space and ram than TwinklePS
 The ram needed is in proportion to the number of twinkles.
 
@@ -116,9 +121,7 @@ Constructor Inputs:
 Other Settings:
     colorMode (default 0) -- sets the color mode for the random twinkles (see segDrawUtils::setPixelColor)
     bgColorMode (default 0) -- sets the color mode for the background (see segDrawUtils::setPixelColor)
-    randMode (default 0) -- sets how colors will be picked
-                            0: Picks colors from the palette
-                            1: Picks colors at random
+    randMode (default 0) -- (See randMode notes in intro)
     fillBg (default false) -- sets the background to be redrawn every cycle, useful for bgColorModes that are dynamic
     limitSpawning -- Limits the twinkles so that only one new one can become active per update cycle (see inputs guide above)
     spawnBasis (default 1000) -- The spawn probability threshold. 

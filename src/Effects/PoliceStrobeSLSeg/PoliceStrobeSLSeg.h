@@ -32,7 +32,7 @@ For mode 0, this means all the colors will be strobe'd in halves, then strobe'd 
 segMode (bool):
 "segMode" controls if the strobe will pulse using segment lines or whole segments. True does whole segments.
 
-randMode:
+randMode (default 0):
 Sets how colors are chosen from the pattern/palette:
     0: Colors will be chosen from the palette in order (not random).
     1: Colors will be chosen completely at random (not using the palette).  
