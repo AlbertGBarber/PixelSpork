@@ -9,8 +9,8 @@ SegWavesFast::SegWavesFast(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &
 }
 
 //constructor for building the wave pattern from the passed in pattern and the palette, using the passed in colorLength and spacing
-SegWavesFast::SegWavesFast(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, uint16_t WaveThickness,
-                           uint16_t Spacing, CRGB BgColor, bool Direct, uint16_t Rate)
+SegWavesFast::SegWavesFast(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor,
+                           uint16_t WaveThickness, uint16_t Spacing, bool Direct, uint16_t Rate)
     : palette(&Palette), direct(Direct)  //
 {
     init(BgColor, SegSet, Rate);
@@ -23,8 +23,8 @@ SegWavesFast::SegWavesFast(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &
 }
 
 //constructor for building a wave using all the colors in the passed in palette, using the colorLength and spacing for each color
-SegWavesFast::SegWavesFast(SegmentSetPS &SegSet, palettePS &Palette, uint16_t WaveThickness, uint16_t Spacing,
-                           CRGB BgColor, bool Direct, uint16_t Rate)
+SegWavesFast::SegWavesFast(SegmentSetPS &SegSet, palettePS &Palette, CRGB BgColor, uint16_t WaveThickness, 
+                           uint16_t Spacing, bool Direct, uint16_t Rate)
     : palette(&Palette), direct(Direct)  //
 {
     init(BgColor, SegSet, Rate);
@@ -37,7 +37,7 @@ SegWavesFast::SegWavesFast(SegmentSetPS &SegSet, palettePS &Palette, uint16_t Wa
 }
 
 //constructor for doing a single colored wave, using colorLength and spacing
-SegWavesFast::SegWavesFast(SegmentSetPS &SegSet, CRGB Color, uint16_t WaveThickness, uint16_t Spacing, CRGB BgColor,
+SegWavesFast::SegWavesFast(SegmentSetPS &SegSet, CRGB Color, CRGB BgColor, uint16_t WaveThickness, uint16_t Spacing,
                            bool Direct, uint16_t Rate)
     : direct(Direct)  //
 {
@@ -207,16 +207,15 @@ otherwise the color is chosen either from the palette, or randomly
 according to the randMode:
     0: Colors will be chosen in order from the pattern (not random)
     1: Colors will be chosen completely at random
-    2: Colors will be chosen at random from the !!palette!!, but the same color won't be repeated in a row
-    3: Colors will be chosen randomly from the pattern
-    4: Colors will be chosen randomly from the !!palette!! 
-(option included b/c the pattern may have a lot of spaces, so choosing from it may be very biased) */
+    2: Colors will be chosen at random from the pattern, but the same color won't be repeated in a row
+    3: Colors will be chosen randomly from the pattern */
 CRGB SegWavesFast::pickStreamerColor(uint8_t patternIndex) {
     if( patternIndex == 255 ) {
         nextColor = *bgColor;
     } else if( randMode == 0 ) {
         //the color we're at based on the current index
         nextColor = paletteUtilsPS::getPaletteColor(*palette, patternIndex);
+        randPat = patternIndex;  //track the current pattern incase we switch modes
     } else if( patternIndex != prevPattern ) {
         //if we're doing random colors, we still want to stick to the streamer lengths in the pattern
         //but replace the color with a random one
@@ -227,19 +226,16 @@ CRGB SegWavesFast::pickStreamerColor(uint8_t patternIndex) {
             //choose a completely random color
             nextColor = colorUtilsPS::randColor();
         } else if( randMode == 2 ) {
-            //choose a color randomly from the palette (making sure it's not the same as the current color)
-            //(Can't shuffle the pattern directly, because it contains repeats of the same index)
-            nextColor = paletteUtilsPS::getShuffleColor(*palette, randColor);
-            randColor = nextColor;  //record the random color so we don't pick it again
-        } else if( randMode == 3 ) {
-            //choose a color randomly from the pattern (can repeat)
-            //we use nextPatternRand because we don't want to interfere with nextPattern
-            //since it keeps track of the spaces
-            nextPatternRand = patternUtilsPS::getPatternVal(*pattern, random16(pattern->length));
-            nextColor = paletteUtilsPS::getPaletteColor(*palette, nextPatternRand);
+            //choose a color randomly from the pattern (making sure it's not the same as the current random color)
+            //Note that the pattern shuffle function is coded to skip spaces in the pattern
+            randPat = patternUtilsPS::getShuffleVal(*pattern, randPat);
+            nextColor = paletteUtilsPS::getPaletteColor(*palette, randPat);
         } else {
-            //choose a color randomly from the palette (can repeat)
-            nextColor = paletteUtilsPS::getPaletteColor(*palette, random8(palette->length));
+            //Choose a color randomly from the pattern (can repeat)
+            //We use the spacing (255) value as the current shuffle value
+            //so that the shuffle will pick the first actual color it hits
+            randPat = patternUtilsPS::getShuffleVal(*pattern, 255);
+            nextColor = paletteUtilsPS::getPaletteColor(*palette, randPat);
         }
     }
     prevPattern = patternIndex;  //save the current pattern value (only needed for the random color case)

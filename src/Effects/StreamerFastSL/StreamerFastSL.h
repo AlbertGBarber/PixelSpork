@@ -13,13 +13,15 @@ Like a theater chase, but a pattern is used instead of just dots.
 This effect has been adapted to use segment lines to allow 2D effects. 
 
 The restrictions when compared to StreamerPS are listed below:
-1: There is no fading to shift the streamers along the strip
-2: Changing the palette on the fly will have a delayed effect on the colors
-  The existing colors will shift off the strip before new ones shift on
-  This prevents this effect from playing well with paletteBlend functions
-3: The same restrictions as (2) apply to changing the pattern
-4: Changing the direction of the segments or segment set mid-effect may break it temporarily
-5: This effect is not compatible with colorModes for either the streamers or the background
+    1: There is no fading to shift the streamers along the strip
+    2: Changing the palette on the fly will have a delayed effect on the colors
+        The existing colors will shift off the strip before new ones shift on
+        This prevents this effect from playing well with most Palette Utility Classes.
+    3: The same restrictions as (2) apply to changing the pattern
+    4: Changing the direction of the segments or segment set mid-effect may break it temporarily
+    5: This effect is not compatible with colorModes for either the streamers or the background
+    6. The effect should not be run alongside other effects on the same Segment Set due to it copying colors from LEDs.
+    7: This effect does not play well with the EffectSetFader utility.
 
 Basically the effect works by setting the color of the first pixel, 
 then for each subsequent pixel, it copies the color of the next pixel in line

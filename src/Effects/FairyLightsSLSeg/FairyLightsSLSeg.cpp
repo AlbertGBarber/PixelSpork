@@ -3,7 +3,7 @@
 //see update() for how the effect works
 
 //palette based constructor
-FairyLightsSLSeg::FairyLightsSLSeg(SegmentSetPS &SegSet, palettePS &Palette, uint16_t NumTwinkles, CRGB BgColor,
+FairyLightsSLSeg::FairyLightsSLSeg(SegmentSetPS &SegSet, palettePS &Palette, CRGB BgColor, uint16_t NumTwinkles,
                                    uint8_t Tmode, uint8_t SegMode, uint16_t Rate)
     : palette(&Palette), numTwinkles(NumTwinkles), tMode(Tmode), segMode(SegMode)  //
 {
@@ -11,7 +11,7 @@ FairyLightsSLSeg::FairyLightsSLSeg(SegmentSetPS &SegSet, palettePS &Palette, uin
 }
 
 //single color constructor
-FairyLightsSLSeg::FairyLightsSLSeg(SegmentSetPS &SegSet, CRGB Color, uint16_t NumTwinkles, CRGB BgColor,
+FairyLightsSLSeg::FairyLightsSLSeg(SegmentSetPS &SegSet, CRGB Color, CRGB BgColor, uint16_t NumTwinkles,
                                    uint8_t Tmode, uint8_t SegMode, uint16_t Rate)
     : numTwinkles(NumTwinkles), tMode(Tmode), segMode(SegMode)  //
 {

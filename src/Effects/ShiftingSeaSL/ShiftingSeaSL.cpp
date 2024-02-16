@@ -70,6 +70,15 @@ void ShiftingSeaSL::init(SegmentSetPS &SegSet, uint16_t Rate) {
     bindSegSetPtrPS();
     bindClassRatesPS();
 
+    //In shift mode 1, we want the offsets to stay together over time, but
+    //if randomShift is on, they naturally will drift apart endlessly, slowly ruining the effect.
+    //To cap how far they can drift, we turn on limitShift and also limit the total
+    //shift to gradLength using shiftMax.
+    if(shiftMode == 1){
+        limitShift = true;
+    }
+    shiftMax = gradLength;
+
     resetOffsets();
 }
 
@@ -156,6 +165,9 @@ void ShiftingSeaSL::resetOffsets() {
 
     setTotalCycleLen();
     shiftingSeaUtilsPS::genOffsetArray(offsets, numLines, gradLength, grouping, totalCycleLength, shiftMode);
+
+    //need to reset cycleNum because we've reset the offsets
+    cycleNum = 0; 
 }
 
 //calculates the totalCycleLength, which represents the total number of possible offsets a pixel can have
@@ -180,6 +192,24 @@ void ShiftingSeaSL::update() {
 
     if( (currentTime - prevTime) >= *rate ) {
         prevTime = currentTime;
+        
+        shiftCheck = totalCycleLength + 1 - cycleNum; //Comment block below
+        /* Calculates the cap to limit shifting
+        To limit shifting, we assume we're in shiftMode 1 (limiting doesn't make sense for mode 0)
+        In shift mode 1, all the offsets start between 0 and gradLength, we want to allow them to vary 
+        within this range over time if randomShift is on, but not too much, or the shiftMode breaks down.
+        So we need to calculate an allowable range the offsets can have.
+        We can use cycleNum as a baseline, b/c it always starts at 0 and follow the same cycle
+        as the offsets. From this, we can calculate the maximum allowable offset, and if a specific pixel is allowed to shift.
+        The allowance is calculated as "canShift = mod16PS(offsets[i] + shiftCheck, totalCycleLength) <= shiftMax;"
+        (done below in the main loop for each offset)
+        "shiftCheck" is calculated up here, b/c it doesn't change for each pixel.
+        Note that overall we do offsets[i] - cycleNum + 1 to get the range, the additional "totalCycleLength" is used to 
+        keep the value positive. I am not sure about the "+1", but it seems to prevent the case where 
+        the offset and shiftCheck are equal. 
+        Also, I only allow the offsets to shift forward, (allowing them to shift backwards is complicated due to the wrapping)
+        You'd think that over time, the offsets would all just hit shiftMax and stop, but this doesn't seem to happen.
+        Maybe b/c of the "+1"? */
 
         //calculates the totalCycleLength, which represents the total number of possible offsets a pixel can have
         //we do this on the fly so you can change gradLength and the palette freely
@@ -188,6 +218,7 @@ void ShiftingSeaSL::update() {
         setTotalCycleLen();
 
         for( uint16_t i = 0; i < numLines; i++ ) {
+
             //where we are in the cycle of all the colors based on the current pixel's offset
             step = addMod16PS(cycleNum, offsets[i], totalCycleLength);
 
@@ -234,7 +265,17 @@ void ShiftingSeaSL::update() {
 
             //randomly increment the offset (keeps the effect varied)
             if( randomShift ) {
-                if( random16(shiftBasis) <= shiftThreshold ) {
+
+                //If we're limiting shifting (probably in shiftMode 1)
+                //We need to calculate if the current offset is allowed to shift
+                //See comment block at at start of update() to explain shift limiting
+                canShift = true;
+                if(limitShift){ 
+                    //shiftCheck = totalCycleLength - cycleNum + 1; 
+                    canShift = mod16PS(offsets[i] + shiftCheck, totalCycleLength) <= shiftMax;
+                }
+
+                if( random16(shiftBasis) <= shiftThreshold && canShift ) {  
                     offsets[i] = addMod16PS(offsets[i], random8(1, shiftStep), totalCycleLength);
                 }
             }

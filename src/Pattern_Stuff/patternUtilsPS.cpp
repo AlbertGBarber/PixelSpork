@@ -66,13 +66,15 @@ void patternUtilsPS::shuffle(patternPS &pattern) {
     }
 }
 
-//Retuns a random value from the pattern
-//Works by picking a random starting index and then looping through the pattern until it finds a 
-//value different than the current value, "currentPatternVal".
-//Most patterns contain short-ish lengths of repeating values so there shouldn't be too many loop cycles.
-//DO NOT use this with a pattern that has all the same values as it will loop through all of them
-//and then just spit back out the "currentPatternVal" when none are different.
-uint8_t patternUtilsPS::getShuffleVal(patternPS &pattern, uint8_t currentPatternVal) {
+/* Retuns a random value from the pattern different from the current value in an effect
+Works by picking a random starting index and then looping through the pattern until it finds a 
+value different than the current value, "currentPatternVal",
+Most patterns contain short-ish lengths of repeating values so there shouldn't be too many loop cycles.
+Optionally allows spaces (pattern val 255) to be returned if the pattern has them. 
+This is controlled by `allowSpaces`, and is default false (no spaces).
+DO NOT use this with a pattern that has all the same values as it will loop through all of them
+and then just spit back out the "currentPatternVal" when none are different. */
+uint8_t patternUtilsPS::getShuffleVal(patternPS &pattern, uint8_t currentPatternVal, bool allowSpaces) {
     uint16One = random16(pattern.length);  //pick a random starting index
 
     //Loop through the pattern, offset by the starting index and check pattern values
@@ -83,7 +85,8 @@ uint8_t patternUtilsPS::getShuffleVal(patternPS &pattern, uint8_t currentPattern
         uint8One = patternUtilsPS::getPatternVal(pattern, i + uint16One); 
 
         //if we find value different than the current one, we're done and can return it
-        if( uint8One != currentPatternVal ) {
+        //The returned value can be a space (255) only if allowSpacing is true
+        if( uint8One != currentPatternVal && (allowSpaces || uint8One != 255) ) {
             return uint8One;
         }
 

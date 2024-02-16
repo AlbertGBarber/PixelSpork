@@ -10,8 +10,8 @@ SegWaves::SegWaves(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette,
 
 //constructor for building the wave pattern from the passed in pattern and the palette, using the passed in waveThickness and spacing
 //Passing a color length of 0 will set the wave thickness to 1 and the spacing such that there's only one wave on the segment set at once
-SegWaves::SegWaves(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, uint16_t WaveThickness,
-                   uint16_t Spacing, CRGB BgColor, uint8_t FadeSteps, bool Direct, uint16_t Rate)
+SegWaves::SegWaves(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint16_t WaveThickness,
+                   uint16_t Spacing, uint8_t FadeSteps, bool Direct, uint16_t Rate)
     : palette(&Palette), fadeSteps(FadeSteps), direct(Direct)  //
 {
     init(BgColor, SegSet, Rate);
@@ -25,7 +25,7 @@ SegWaves::SegWaves(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette,
 
 //constructor for building a wave using all the colors in the passed in palette, using the waveThickness and spacing for each color
 //Passing a color length of 0 will set the wave thickness to 1 and the spacing such that there's only one wave on the segment set at once
-SegWaves::SegWaves(SegmentSetPS &SegSet, palettePS &Palette, uint16_t WaveThickness, uint16_t Spacing, CRGB BgColor,
+SegWaves::SegWaves(SegmentSetPS &SegSet, palettePS &Palette, CRGB BgColor, uint16_t WaveThickness, uint16_t Spacing,
                    uint8_t FadeSteps, bool Direct, uint16_t Rate)
     : palette(&Palette), fadeSteps(FadeSteps), direct(Direct)  //
 {
@@ -40,7 +40,7 @@ SegWaves::SegWaves(SegmentSetPS &SegSet, palettePS &Palette, uint16_t WaveThickn
 
 //constructor for doing a single colored wave, using waveThickness and spacing
 //Passing a color length of 0 will set the wave thickness to 1 and the spacing such that there's only one wave on the segment set at once
-SegWaves::SegWaves(SegmentSetPS &SegSet, CRGB Color, uint16_t WaveThickness, uint16_t Spacing, CRGB BgColor,
+SegWaves::SegWaves(SegmentSetPS &SegSet, CRGB Color, CRGB BgColor, uint16_t WaveThickness, uint16_t Spacing,
                    uint8_t FadeSteps, bool Direct, uint16_t Rate)
     : fadeSteps(FadeSteps), direct(Direct)  //
 {
@@ -306,19 +306,24 @@ void SegWaves::handleRandColors() {
             //Choose from the palette, this is mainly to keep the transition from random to fixed colors
             //smooth
             colorOut = paletteUtilsPS::getPaletteColor(*palette, nextPattern);
+            randPat = nextPattern; //track the current pattern incase we switch modes
         } else if( randMode == 1 ) {
             //choose a completely random color
             colorOut = colorUtilsPS::randColor();
         } else if( randMode == 2 ) {
-            //choose a color randomly from the palette (making sure it's not the same as the current random color)
-            //(Can't shuffle the pattern directly, because it contains repeats of the same index)
-            colorOut = paletteUtilsPS::getShuffleColor(*palette, randColor);
+            //choose a color randomly from the pattern (making sure it's not the same as the current random color)
+            //Note that the pattern shuffle function is coded to skip spaces in the pattern
+            randPat = patternUtilsPS::getShuffleVal(*pattern, randPat);
+            colorOut = paletteUtilsPS::getPaletteColor(*palette, randPat);
         } else {
-            //choose a color randomly from the palette (can repeat)
-            colorOut = paletteUtilsPS::getPaletteColor(*palette, random8(palette->length));
+            //Choose a color randomly from the pattern (can repeat)
+            //We use the spacing (255) value as the current shuffle value 
+            //so that the shuffle will pick the first actual color it hits
+            randPat = patternUtilsPS::getShuffleVal(*pattern, 255);
+            colorOut = paletteUtilsPS::getPaletteColor(*palette, randPat);
         }
 
-        //set the new random color into the segColors array
+        //set the new color into the segColors array, accounting for the color mode
         segColors[numSegs] = segDrawUtils::getPixelColor(*segSet, pixelNum, colorOut, colorMode, segNum, 0);
         randColor = segColors[numSegs];
 

@@ -49,16 +49,16 @@ you should set `numTwinkles` to the maximum value you expect to use.
 See the Effects Advanced wiki page for more on memory management. 
 
 Example calls: 
-    FairyLightsSLSeg fairyLights(mainSegments, palette, 5, 0, 0, 1, 150);
+    FairyLightsSLSeg fairyLights(mainSegments, palette, 0, 5, 0, 1, 150);
     Will choose 5 segments (segMode 1) to cycle to/from colors chosen from the palette, using a blank background, 
     Each segment will be turned on one at a time, before resetting them all at once (mode 0), with 150ms between each cycle
     (segments are used over segment lines because segMode is true)
 
-    FairyLightsSLSeg fairyLights(mainSegments, CRGB::Red, 10, CRGB::Blue, 1, 0, 100);
+    FairyLightsSLSeg fairyLights(mainSegments, CRGB::Red, CRGB::Blue, 10, 1, 0, 100);
     Will choose 10 lines (segMode 0) to set to red before resetting, using a blue background, 
     The lines will be turned on one at a time, and then off one at a time (mode 1), with 100ms between each cycle
 
-    FairyLightsSLSeg fairyLights(mainSegments, 20, 0, 2, 3, 80);
+    FairyLightsSLSeg fairyLights(mainSegments, 0, 20, 2, 3, 80);
     Will choose 20 pixels (segMode 2) each cycle to set to random colors, using a blank background, 
     (note this sets randMode = 1)
     Each cycle, a new line will be turned on, while an old is turned off (mode 2), with 80ms in between each cycle
@@ -108,11 +108,11 @@ Flags:
 class FairyLightsSLSeg : public EffectBasePS {
     public:
         //Palette based constructor
-        FairyLightsSLSeg(SegmentSetPS &SegSet, palettePS &Palette, uint16_t NumTwinkles, CRGB BgColor,
+        FairyLightsSLSeg(SegmentSetPS &SegSet, palettePS &Palette, CRGB BgColor, uint16_t NumTwinkles,
                          uint8_t Tmode, uint8_t SegMode, uint16_t Rate);
 
         //Single color constructor
-        FairyLightsSLSeg(SegmentSetPS &SegSet, CRGB Color, uint16_t NumTwinkles, CRGB BgColor,
+        FairyLightsSLSeg(SegmentSetPS &SegSet, CRGB Color, CRGB BgColor, uint16_t NumTwinkles,
                          uint8_t Tmode, uint8_t SegMode, uint16_t Rate);
 
         //Random colors constructor

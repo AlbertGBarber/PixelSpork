@@ -449,8 +449,7 @@ The next color is stored in the particle's maxLife property
 randModes:
     0: Colors will be chosen in order from the pattern (not random)
     1: Colors will be chosen randomly from the pattern
-    2: Colors will be chosen at random from the pattern,
-    but the same color won't be repeated in a row
+    2: Colors will be chosen at random from the pattern, but the same color won't be repeated in a row
     3: new colors will not be chosen, the particle colors will be locked to whatever they currently are */
 void ScannerSL::setPartColor(particlePS *particlePtr) {
     particlePtr->life = particlePtr->colorIndex;

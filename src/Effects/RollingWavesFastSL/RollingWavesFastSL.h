@@ -23,11 +23,12 @@ it only does so for the lead pixel, while copying the color of each subsequent p
 This leads to a much more lightweight effect, however it does have a few extra restrictions:
     1. Changing the palette on the fly will have a delayed effect on the colors. 
         The existing colors will shift off the strip before new ones shift on. 
-        This prevents this effect from playing well with "Palette Blend" functions.
+        This prevents this effect from playing well with most Palette Utility Classes.
     2. The same restrictions as (1) apply to changing the pattern, `gradLength`, etc.
     3. Changing the direction of the segments or segment set mid-effect may break it temporarily.
-    4. The effect should not be run alongside other effects on the same Segment Set due to it copying colors from LEDs.
-    5. The effect will not work well with the EffectSetFaderPS utility.
+    4. This effect is not compatible with colorModes for either the waves or the background.
+    5. The effect should not be run alongside other effects on the same Segment Set due to it copying colors from LEDs.
+    6. The effect will not work well with the EffectSetFaderPS utility.
 
 However, as a bonus, this effect supports random colored waves
 where the colors for the waves are chosen at random as the enter the strip

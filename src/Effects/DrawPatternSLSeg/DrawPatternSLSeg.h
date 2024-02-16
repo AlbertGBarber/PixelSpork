@@ -72,9 +72,9 @@ Constructor Inputs:
     color(optional, see constructors) -- Used for making a single color pattern. 
                                          The color will be placed in the effect's local palette, `paletteTemp`. 
                                          The local pattern, `patternTemp`, will be set to match the palette (ie a single entry for the single color).
-    colorLength (optional, see constructors, max 255) -- The number pixels a color band is. Used for automated pattern creation.
-    spacing (optional, see constructors, max 255) -- The number of pixels between each color band (will be set to bgColor).  
-                                                     Used for automated pattern creation.
+    colorLength (optional, see constructors) -- The length of each color band. Used for automated pattern creation.
+    spacing (optional, see constructors) -- The number of pixels between each color band (will be set to bgColor).  
+                                            Used for automated pattern creation.
     bgColor -- The color of the spacing pixels. It is a pointer, so it can be tied to an external variable.
                By default it is bound to bgColorOrig.
     segMode -- Sets if the pattern will be drawn along segment lines, whole segments, or in 1D (see intro notes)

@@ -18,7 +18,7 @@ namespace patternUtilsPS {
         getPatternVal(patternPS &pattern, uint16_t index),
         getRandVal(patternPS &pattern),
         *getValPtr(patternPS &pattern, uint16_t index),
-        getShuffleVal(patternPS &pattern, uint8_t currentPatternVal);
+        getShuffleVal(patternPS &pattern, uint8_t currentPatternVal, bool allowSpacing = false);
 
     //Pre-allocated variables
     static uint8_t
