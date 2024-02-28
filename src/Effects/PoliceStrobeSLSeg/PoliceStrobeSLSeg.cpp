@@ -113,6 +113,7 @@ void PoliceStrobeSLSeg::update() {
         }
 
         //we add (numLines % 2) to account for odd length strips ((numLines % 2) is either 1 or 0)
+        //replace mod with bitwise "numLines & 1"?. Probably already optimized by compiler......
         halfLength = numLines / 2 + mod16PS(numLines, 2);
 
         //if we have not reached the number of pulses we need to do a pulse

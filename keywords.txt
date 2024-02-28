@@ -161,3 +161,4 @@ firePalPink_PS		KEYWORD3
 firePalBlue_PS		KEYWORD3
 lavaPal_PS		KEYWORD3
 cybPnkPal_PS		KEYWORD3
+cybPnkPalAlt_PS		KEYWORD3

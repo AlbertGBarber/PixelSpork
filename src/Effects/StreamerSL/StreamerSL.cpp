@@ -9,8 +9,8 @@ StreamerSL::StreamerSL(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Pale
 }
 
 //constructor for building the streamer pattern from the passed in pattern and the palette, using the passed in colorLength and spacing
-StreamerSL::StreamerSL(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, uint16_t ColorLength,
-                       uint16_t Spacing, CRGB BgColor, uint8_t FadeSteps, uint16_t Rate)
+StreamerSL::StreamerSL(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, 
+                       uint16_t ColorLength, uint16_t Spacing, uint8_t FadeSteps, uint16_t Rate)
     : palette(&Palette), fadeSteps(FadeSteps)  //
 {
     setPatternAsPattern(Pattern, ColorLength, Spacing);
@@ -18,8 +18,8 @@ StreamerSL::StreamerSL(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Pale
 }
 
 //constructor for building a streamer using all the colors in the passed in palette, using the colorLength and spacing for each color
-StreamerSL::StreamerSL(SegmentSetPS &SegSet, palettePS &Palette, uint16_t ColorLength, uint16_t Spacing,
-                       CRGB BgColor, uint8_t FadeSteps, uint16_t Rate)
+StreamerSL::StreamerSL(SegmentSetPS &SegSet, palettePS &Palette, CRGB BgColor, uint16_t ColorLength, 
+                       uint16_t Spacing, uint8_t FadeSteps, uint16_t Rate)
     : palette(&Palette), fadeSteps(FadeSteps)  //
 {
     setPaletteAsPattern(ColorLength, Spacing);
@@ -27,7 +27,7 @@ StreamerSL::StreamerSL(SegmentSetPS &SegSet, palettePS &Palette, uint16_t ColorL
 }
 
 //constructor for doing a single colored streamer, using colorLength and spacing
-StreamerSL::StreamerSL(SegmentSetPS &SegSet, CRGB Color, uint16_t ColorLength, uint16_t Spacing, CRGB BgColor,
+StreamerSL::StreamerSL(SegmentSetPS &SegSet, CRGB Color, CRGB BgColor, uint16_t ColorLength, uint16_t Spacing,
                        uint8_t FadeSteps, uint16_t Rate)
     : fadeSteps(FadeSteps)  //
 {

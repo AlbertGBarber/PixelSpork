@@ -16,6 +16,10 @@ palettePS firePalBlue_PS = {firePalBlue_PS_arr, SIZE(firePalBlue_PS_arr)};
 CRGB lavalPal_arr[] = {CRGB::DarkRed, CRGB::Maroon, CRGB::Red, CRGB::Orange, CRGB(245, 202, 10)};
 palettePS lavaPal_PS = {lavalPal_arr, SIZE(lavalPal_arr)};
 
-//Classic neon magenta-teal cyber punk palette, uses bright magenta, medium blue, and bright teal
-CRGB cybPnkPal_PS_arr[] = {CRGB{240, 0, 219}, CRGB{19, 61, 201}, CRGB{11, 196, 207}};
+//Classic neon magenta-orange-teal cyberpunk/vaporwave palette
+CRGB cybPnkPal_PS_arr[] = {CRGB{240, 0, 219}, CRGB{255, 153, 0}, CRGB{11, 196, 207}};
 palettePS cybPnkPal_PS = {cybPnkPal_PS_arr, SIZE(cybPnkPal_PS_arr)};
+
+//Alternate cyber punk palette, uses bright magenta, bright teal, and medium blue
+CRGB cybPnkPalAlt_PS_arr[] = {CRGB{240, 0, 219}, CRGB{11, 196, 207}, CRGB{19, 61, 201} };
+palettePS cybPnkPalAlt_PS = {cybPnkPalAlt_PS_arr, SIZE(cybPnkPalAlt_PS_arr)};

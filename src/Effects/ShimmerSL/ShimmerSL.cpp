@@ -13,10 +13,10 @@ ShimmerSL::ShimmerSL(SegmentSetPS &SegSet, uint8_t ShimmerMin, uint8_t ShimmerMa
 }
 
 //Constructor using a set shimmer color
-ShimmerSL::ShimmerSL(SegmentSetPS &SegSet, CRGB ShimmerColor, uint8_t ShimmerMin, uint8_t ShimmerMax, uint16_t Rate)
+ShimmerSL::ShimmerSL(SegmentSetPS &SegSet, CRGB Color, uint8_t ShimmerMin, uint8_t ShimmerMax, uint16_t Rate)
     : shimmerMin(ShimmerMin), shimmerMax(ShimmerMax)  //
 {
-    setSingleColor(ShimmerColor);
+    setSingleColor(Color);
     init(SegSet, Rate);
 }
 
@@ -38,9 +38,9 @@ void ShimmerSL::init(SegmentSetPS &SegSet, uint16_t Rate) {
 }
 
 //creates an palette of length 1 containing the passed in color
-void ShimmerSL::setSingleColor(CRGB Color) {
+void ShimmerSL::setSingleColor(CRGB color) {
     free(paletteTemp.paletteArr);
-    paletteTemp = paletteUtilsPS::makeSingleColorPalette(Color);
+    paletteTemp = paletteUtilsPS::makeSingleColorPalette(color);
     palette = &paletteTemp;
 }
 

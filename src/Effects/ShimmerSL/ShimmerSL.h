@@ -5,66 +5,73 @@
 #include "GeneralUtils/generalUtilsPS.h"
 
 /*
-A simple effect
-Colors all the pixels in a SegmentSetPS either using a single color, choosing colors from a palette, or at random
-each pixel is dimmed a random amount each cycle, which produces the effect
-The dim range is controlled by ShimmerSLMin and ShimmerSLMax.
 
-Each cycle each pixel's brightness and color are picked at random from the palette.
-If you do use your own palette it's probably best to pick colors that are similar to each other.
+A simple effect. 
+Colors all the pixels in a segment set, dimming each pixel by a random amount each cycle. 
+The pixel colors can be chosen from a single color, a palette, or totally at random. 
+The dimming range is controlled by `shimmerMin` and `shimmerMax` (0 to 255). 
+If using a palette, the effect looks best when the palette colors are similar. 
+Try it with a NoisePalette.
 
-If using a single color, it will be stored in the effect's paletteTemp palette
-You can change the color by using <your effect name>->paletteTemp.paletteArr[0] = <your color>
-or by calling paletteUtils::setColor(<your effect name>->paletteTemp, 0, <your color>)
+Note that when using a single color, it will be stored in the effect's local palette, `paletteTemp`. 
 
-The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
-passing in a SegmentSetPS with only one segment containing the whole strip.
-Or you can set lineMode to false, which means each pixel always gets it's own shimmer value.
+Supports Color Modes for the shimmering pixels.
 
-randModes (default 0):
-Sets how colors will be picked.
-    0: Picks colors from the palette.
-    1: Picks colors at random.
+The effect is adapted to work on segment lines for 2D use, with each line being a single color. 
+You can also force the effect to be 1D using `lineMode`:
+
+    `lineMode` (bool) (default true):
+        * true -- The effect will "shimmer" segment lines (2D).
+        * false -- The effect will "shimmer" individual pixels (1D). 
+                This is useful if you want to use a 2D color mode with individual pixels. 
+
+    `randMode` (uint8_t) (default 0):
+        Determines how the shimmer colors will be chosen.
+        * 0 -- Picks colors from the palette.
+        * 1 -- Picks colors at random.
 
 Example calls: 
     ShimmerSL shimmer(mainSegments, 0, 180, 80);
-    Each pixel will be set to a random color, refreshing at 80ms
-    The dim range will be 0 to 180.
+    The effect will do shimmers in random colors.
+    The dim range is 0 to 180.
+    The effect updates at a rate of 80ms
     (note this sets randMode = 1)
 
     ShimmerSL shimmer(mainSegments, CRGB::Red, 0, 230, 100);
-    The dim range will be 0 to 230.
-    Each pixel will be set to red, and dimmed randomly, refreshing at 100ms
+    The effect will do shimmers in red
+    The dim range is 0 to 230.
+    The effect updates at a rate of 100ms.
 
     ShimmerSL shimmer(mainSegments, cybPnkPal_PS, 0, 180, 80);
-    The dim range will be 0 to 180.
-    Each pixel will be set to a color from the palette, dimmed randomly, refreshing at 80ms
+    The effect will do shimmers using colors from the cybPnkPal_PS palette
+    The dim range is 0 to 180.
+    The effect updates at a rate of 80ms.
 
 Constructor Inputs:
     palette(optional, see constructors) -- the palette from which colors will be chosen randomly
     color(optional, see constructors) -- the color that the randomly chosen pixels will be set to
-    shimmerSLMin (min 0, max 255) -- The minimum amount of dim that will be applied to a pixel 
-    shimmerSLMax (min 0, max 255) -- The maximum amount of dim that will be applied to a pixel
+    shimmerMin (min 0, max 255) -- The minimum amount of dim that will be applied to a pixel (0 is no dimming).
+    shimmerMax (min 0, max 255) -- The maximum amount of dim that will be applied to a pixel (255 is max dimming, ie full black).
     rate -- The update rate (ms)
 
 Other Settings:
     colorMode (default 0) -- sets the color mode for the random pixels (see segDrawUtils::setPixelColor)
-    lineMode (default true) -- If false, each pixel will have it's own shimmer amount (rather than it being the same along segment lines)
-                               Only really useful if you want multi-segment color modes and don't want the shimmers in lines
-    randMode (default 0) -- (See randMode notes in intro)
+    lineMode (default true) -- Sets the effect to do shimmers along whole segment lines or individual pixels 
+                               (see lineMode notes in intro)
+    randMode (default 0) -- Sets how the shimmer colors will be chosen. (See randMode notes in intro)
 
 Functions:
-    setSingleColor(Color) -- Sets the effect to use a single color for the pixels
+    setSingleColor(color) -- Sets the effect to use a single color for the pixels
     update() -- updates the effect
 */
 class ShimmerSL : public EffectBasePS {
     public:
 
-        //Constructor using a random shimmer color
+        //Constructor using random shimmer colors
         ShimmerSL(SegmentSetPS &SegSet, uint8_t ShimmerMin, uint8_t ShimmerMax, uint16_t Rate);
 
         //Constructor using a set shimmer color
-        ShimmerSL(SegmentSetPS &SegSet, CRGB ShimmerColor, uint8_t ShimmerMin, uint8_t ShimmerMax, uint16_t Rate);
+        ShimmerSL(SegmentSetPS &SegSet, CRGB Color, uint8_t ShimmerMin, uint8_t ShimmerMax, uint16_t Rate);
 
         //Constructor for colors randomly chosen from palette
         ShimmerSL(SegmentSetPS &SegSet, palettePS &Palette, uint8_t ShimmerMin, uint8_t ShimmerMax, uint16_t Rate);
@@ -85,7 +92,7 @@ class ShimmerSL : public EffectBasePS {
             paletteTemp = {nullptr, 0};  //Must init structs w/ pointers set to null for safety
 
         void
-            setSingleColor(CRGB Color),
+            setSingleColor(CRGB color),
             update(void);
 
     private:

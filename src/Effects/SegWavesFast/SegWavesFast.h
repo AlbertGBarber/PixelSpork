@@ -64,10 +64,6 @@ Inputs Guide & Notes:
         Also, remember that the pattern length is limited to 65,025 (uint16_t max), 
         so make sure your `(waveLength + spacing) * <num palette colors>` is less than the limit. 
 
-        Finally, the effect needs to store a CRGB array of size `numSegs + 1` for random modes. 
-        This is also allocated dynamically, however, this will only needs to be adjusted if you 
-        change the number of segments in your segment set. It is re-sized when calling `reset()`.
-
     Random Modes: 
         `randMode` controls how pattern colors are chosen. For `randMode`'s other than 0, 
         colors are chosen at random as they enter the first segment, and are then shifted across the segments. 
@@ -75,12 +71,8 @@ Inputs Guide & Notes:
         `randMode` (default 0) (uint8_t): 
         * 0 -- Colors will be chosen in order from the pattern (not random).
         * 1 -- Colors will be chosen completely at random.
-        * 2 -- Colors will be chosen at random from the pattern, but the same color won't be repeated in a row.
-        * 3 -- Colors will be chosen randomly from the palette (allowing repeats).
-
-        Note that switching from random modes to the fixed pattern mode (`randMode` 0) will cause a jump in colors.
-
-The bgColor is a pointer, so you can bind it to an external color variable.
+        * 2 -- Colors will be chosen at random from the pattern, but the same color won't be repeated in a row. (won't pick spaces).
+        * 3 -- Colors will be chosen randomly from the pattern (allowing repeats). (won't pick spaces).
 
 Example calls: 
     uint8_t pattern_arr = {0, 255, 255, 255, 1, 1, 255, 255};
@@ -213,7 +205,7 @@ class SegWavesFast : public EffectBasePS {
         uint8_t
             nextPattern,
             prevPattern,
-            randPat;
+            randPat = 255; //Used to tracking the current pattern value for randModes, starts as spacing, but will be set in the first update().
 
         uint16_t
             numSegs,

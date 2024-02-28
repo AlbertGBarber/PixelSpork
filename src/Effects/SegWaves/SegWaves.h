@@ -70,8 +70,8 @@ Inputs Guide & Notes:
         `randMode` (default 0) (uint8_t): 
         * 0 -- Colors will be chosen in order from the pattern (not random).
         * 1 -- Colors will be chosen completely at random.
-        * 2 -- Colors will be chosen at random from the pattern, but the same color won't be repeated in a row.
-        * 3 -- Colors will be chosen randomly from the palette (allowing repeats).
+        * 2 -- Colors will be chosen at random from the pattern, but the same color won't be repeated in a row. (won't pick spaces).
+        * 3 -- Colors will be chosen randomly from the pattern (allowing repeats). (won't pick spaces).
 
         Note that switching from random modes to the fixed pattern mode (`randMode` 0) will cause a jump in colors.
 
@@ -166,7 +166,7 @@ Reference vars:
 */
 class SegWaves : public EffectBasePS {
     public:
-        //constructor for using the passed in pattern and palette for the wave
+        //constructor for using the passed in pattern and palette for the waves
         SegWaves(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint8_t FadeSteps,
                  bool Direct, uint16_t Rate);
 
@@ -228,7 +228,7 @@ class SegWaves : public EffectBasePS {
         uint8_t
             nextPattern,
             prevPattern,
-            randPat,
+            randPat = 255, //Used to tracking the current pattern value for randModes, starts as spacing, but will be set in the first update().
             blendStep = 0;
 
         uint16_t

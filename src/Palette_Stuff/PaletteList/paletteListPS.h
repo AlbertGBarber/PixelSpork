@@ -25,8 +25,12 @@ extern palettePS firePalBlue_PS;
 extern CRGB lavaPal_PS_arr[];
 extern palettePS lavaPal_PS;
 
-//Classic neon magenta-teal cyber punk palette, uses bright magenta, medium blue, and bright teal
+//Classic neon magenta-orange-teal cyberpunk/vaporwave palette
 extern CRGB cybPnkPal_PS_arr[];
 extern palettePS cybPnkPal_PS;
+
+//Alternate cyber punk palette, uses bright magenta, medium blue, and bright teal
+extern CRGB cybPnkPalAlt_PS_arr[];
+extern palettePS cybPnkPalAlt_PS;
 
 #endif
