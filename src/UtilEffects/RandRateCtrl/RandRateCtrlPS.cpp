@@ -1,98 +1,119 @@
 #include "RandRateCtrlPS.h"
 
-RandRateCtrlPS::RandRateCtrlPS(uint16_t BaseRate, int16_t RateRangeMin, int16_t RateRangeMax, bool Easing,
-                               uint16_t Rate)  //
+RandRateCtrlPS::RandRateCtrlPS(uint16_t BaseRate, int32_t RateRangeMin, int32_t RateRangeMax, uint16_t PauseTime,
+                               uint16_t Rate)
+    : rateRangeMin(RateRangeMin), rateRangeMax(RateRangeMax), pauseTime(PauseTime)  //
 {
     //Bind the update rate for the class, like with other effects
     bindClassRatesPS();
-    //create an instance of RateRandomizer with the specified base and rate range vars
-    //Since whenever we call this, we'll need a new rate, we'll set the update rate to 1ms
-    RR = new RateRandomizerPS(BaseRate, RateRangeMin, RateRangeMax, 1);
-    RR->update();  //get the first random rate
-    //Create an instance of RateCtrl, starting from the base rate and transitioning to the RateRandomizer's random rate
-    //looped is turned off, since we will choose new end rates using the RR after each transition
-    RC = new RateCtrlPS(BaseRate, RR->outputRate, Easing, false, Rate);
-    //point the RC rate to the same rate as the RandRateCtrl instance, so they stay in sync
-    RC->rate = rate;
-    //bind the output rate of the RandRateCtrl to the output rate of the RC to get the transition rates
-    outputRate = &RC->outputRate;
+
+    //bind the input rate
+    baseRateOrig = BaseRate;
+    baseRate = &baseRateOrig;
+
+    //pick a new random rate
+    //(we assume the base rate is the starting rate)
+    outputRate = *baseRate;
+    pickNewRate();
 }
 
-//destructor, cleans up the RateRandomizer and RateCtrl instances
-RandRateCtrlPS::~RandRateCtrlPS() {
-    RR->~RateRandomizerPS();
-    RC->~RateCtrlPS();
-}
-
-//Changes the rateRangeMin used in the RateRandomizer instance
-void RandRateCtrlPS::setRangeMin(int16_t newRangeMin) {
-    RR->rateRangeMin = newRangeMin;
-}
-
-//Changes the rateRangeMax used in the RateRandomizer instance
-void RandRateCtrlPS::setRangeMax(int16_t newRangeMax) {
-    RR->rateRangeMax = newRangeMax;
-}
-
-//Changes the baseRate used in the RateRandomizer instance
-void RandRateCtrlPS::setBaseRate(uint16_t newBaseRate) {
-    RR->baseRateOrig = newBaseRate;
-    RR->baseRate = &RR->baseRateOrig;
-}
-
-//Changes the easing setting of the RateCtrl instance
-void RandRateCtrlPS::setEasing(bool newEasing) {
-    RC->easing = newEasing;
-}
-
-//Changes the base rate, and min/max ranges of the RateRandomizer all at once
-void RandRateCtrlPS::setRandomizer(uint16_t newBaseRate, int16_t newRangeMin, int16_t newRangeMax) {
-    setRangeMin(newRangeMin);
-    setRangeMax(newRangeMax);
-    setBaseRate(newBaseRate);
-}
-
-//End the current transition, effectively resetting the effect
+//Picks a new random update rate and removes any pauses
 void RandRateCtrlPS::reset() {
-    RC->rateReached = true;
+    paused = false;
+    pickNewRate();
+}
+
+//Resets the outputRate to the base rate.
+//Also turns the utility off by setting "active" to false.
+void RandRateCtrlPS::resetToBaseRate(){
+    outputRate = *baseRate;
+    active = false;
 }
 
 //updates the effect
-//each update, we call RC->update to get the new output rate from the RateCtrl instance
-//If that instance has reached the end rate, we pick a new end rate using the RateRandomizer instance
-//While picking the new end rate, we also trigger the holding time, to pause the new transition
+//Each update we increment/decrement (depending on the direct) outputRate by 1
+//If the outputRate has reached the end rate, we trigger a pause
+//After the pause, we pick a new end rate and begin again
 void RandRateCtrlPS::update() {
     currentTime = millis();
 
     if( active && (currentTime - prevTime) >= *rate ) {
         prevTime = currentTime;
-        RC->update();
 
-        //if the end rate has been reached, we need to choose a new one
-        //and pause for the pauseTime
-        if( RC->rateReached ) {
-            //if we haven't started holding, set the flag
-            //and record the start time
+        //if we haven't reached the end rate, we just need to increment the outputRate
+        //otherwise we need to handle pausing
+        if( !rateReached ) {
+            updateRate();
+        } else {
+            //if we've reached the endRate but haven't started a pause, start one!
             if( !paused ) {
                 paused = true;
                 pauseStartTime = currentTime;
             }
 
-            //If we've passed the pause time, cancel the paused flag
-            //It's time to choose a new end rate to transition to
-            if( (currentTime - pauseStartTime) >= pauseTime ) {
+            //If we've passed the pause time, end the pause (set the pause flag)
+            //and choose a new endRate for the next transition
+            if( (currentTime - pauseStartTime) >= pauseTimeFinal ) {
                 paused = false;
-                //Since we're starting a new transition,
-                //we set the starting rate of the RateCtrl instance
-                //as whatever we ended the current one at
-                RC->startRate = RC->outputRate;
-                //choose a new rate, and set it to the end rate of the RateCtrl instance
-                RR->update();
-                RC->endRate = RR->outputRate;
-                //reset the RateCtrl instance to start the new transition
-                //(this sets rateReached to false)
-                RC->reset();
+                pickNewRate();
             }
         }
+    }
+}
+
+//Increments or decrements the outputRate by 1
+//If the outputRate has reached the endRate, then the current 
+//transition is finished, and we set the rateReached flag.
+void RandRateCtrlPS::updateRate() {
+
+    //increment the outputRate one step
+    outputRate += stepDirect;
+
+    //if we've reached the end rate based on the direction
+    //we need to end the transition
+    if( (direct && outputRate >= endRate) || (!direct && outputRate <= endRate) ) {
+        rateReached = true;
+    }
+}
+
+//Sets a new endRate to transition to, also calculates the pause time (see notes in intro in .h file)
+//Note that our starting rate is the current outputRate
+void RandRateCtrlPS::pickNewRate() {
+    //Since we're picking a new endRate, we need to trigger the transition to start on the next update()
+    rateReached = false;
+
+    //choose a new endRate
+    //Note that we need to bound it to the uin16_t range
+    temp = *baseRate + random(rateRangeMin, rateRangeMax);
+    if( temp < 0 ) {
+        temp = 0;
+    } else if( temp > 65536 ) {
+        temp = 65536;
+    }
+    endRate = temp;
+
+    //Set if we need to increment/decrement the current rate (outputRate)
+    //to reach the new endRate
+    if( outputRate <= endRate ) {
+        direct = true;
+    } else {
+        direct = false;
+    }
+    //get the increment step value using the direction
+    //will be -1 if direct is false, 1 if direct is true
+    stepDirect = direct - !direct;
+
+    if( usePauseRatio ) {
+        //If usePauseRatio is true, then we want to set the pause time in
+        //proportion to the difference between the current and end rates and the maximum possible difference
+        //So that if we're only changing the rate a small amount, we don't 
+        //spend a lot of time paused (see notes in intro for more)
+        rateRangeDiff = rateRangeMax - rateRangeMin; //maximum difference between the current and new rate
+        startEndDiff = abs(int32_t(outputRate) - endRate); //Actual difference between the current and new rate
+        //Adjust the pause time by  the ratio between the actual and maximum rate differences
+        pauseTimeFinal = uint32_t(pauseTime * startEndDiff) / rateRangeDiff; 
+    } else {
+        //if usePauseRatio is false, then we're not scaling the pause time
+        pauseTimeFinal = pauseTime;
     }
 }

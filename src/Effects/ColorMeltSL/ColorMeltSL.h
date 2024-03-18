@@ -41,8 +41,7 @@ As part of the effect, colors are dimmed in accordance with a wave, leaving larg
 I have given you to option to invert the brightness, which swaps the brightness, making the dark areas bright and bright areas dim.
 (In my opinion, the effect looks better with them inverted)
 
-The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
-passing in a SegmentSetPS with only one segment containing the whole strip.
+The effect is adapted to work on segment lines for 2D use. Each line will be a single color.
 
 Example calls: 
 
@@ -54,7 +53,7 @@ Example calls:
 
     ColorMeltSL colorMelt(mainSegments, cybPnkPal_PS, 9, 0, true, 80);
     Will do a melt with a meltFreq of 9 and a phaseFreq of 0
-    Colors from cybPnkPal_PS will be used
+    Colors from the cybPnkPal_PS palette will be used
     Because the phaseFreq is 0, phaseEnable will be set false as part of the constructor
     The brightness waves will be inverted for more color
     The effect updates at 80ms

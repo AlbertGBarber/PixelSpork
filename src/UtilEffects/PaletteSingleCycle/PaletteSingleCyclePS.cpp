@@ -2,7 +2,7 @@
 
 //Constructor with custom direction setting
 PaletteSingleCyclePS::PaletteSingleCyclePS(palettePS &InputPalette, uint8_t BlendMode, bool Direct, 
-                                           bool StartPaused, uint8_t TotalSteps, uint16_t Rate)
+                                           bool StartPaused, uint16_t PauseTime, uint8_t TotalSteps, uint16_t Rate)
     : inputPalette(&InputPalette), blendMode(BlendMode), direct(Direct)  //
 {
     bindClassRatesPS();
@@ -10,11 +10,12 @@ PaletteSingleCyclePS::PaletteSingleCyclePS(palettePS &InputPalette, uint8_t Blen
     switchPalette();
     //create a PaletteBlenderPS instance
     PB = new PaletteBlenderPS(currentPalette, nextPalette, false, TotalSteps, Rate);
-    PB->startPaused = StartPaused;
+    setStartPaused(StartPaused);
+    setPauseTime(PauseTime);
     //point the PB update rate to the same rate as the PaletteSingleCyclePS instance, so they stay in sync
     PB->rate = rate;
     //bind the output palette of PB to the output of the SinglePaletteCycle
-    cyclePalette = PB->blendPalette;
+    cyclePalette = &PB->blendPalette;
 }
 
 PaletteSingleCyclePS::~PaletteSingleCyclePS() {

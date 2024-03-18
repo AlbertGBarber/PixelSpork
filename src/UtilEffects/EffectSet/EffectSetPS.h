@@ -16,91 +16,123 @@
 //-- Add ability to store a callback function ptr, would be called when EffectSet finishes
 
 /*
-Takes an array of pointers to effects or utils, and allows you to manage them as a group
-(calling updates, destructors, etc) (see below for how to setup an effect array)
-This is useful for compactly handling multiple effects and utils, by only calling one update() function
-instead of one for each effect/util.
+This utility allows you to group and manage a set of effects and/or utilities (calling updates, setting a run time, etc).
+Specifically, updating the utility updates all of the grouped effects and utilities, 
+reducing the tediousness of updating them individually. 
+Also integrates with the EffectSetFaderPS utility for streamlining effect transitions.
 
-The EffectSet has a run time limit (in ms) or can be told to run forever.
-This allows you to limit how long the effect set runs for.
-After the run time limit is reached the effects/utils will not be updated and the "done" flag will be set.
-So you can run effect(s) for a fixed time, and then stop, allowing you to switch in new effects and reset, or do whatever.
+See the Effect Set code example at https://github.com/AlbertGBarber/PixelSpork/wiki/Cycling-Using-EffectSets,
+for a working implementation of an effect set.
 
-EffectSetPS is also designed to work with EffectSetFaderPS, allowing you to fade effects in/out as they start and stop.
-(see more info in EffectSetFaderPS.h)
+    Creating An Effect Set and Array Example:
+        Say I have a PaletteBlender utility and a StreamerSL effect. 
+        Also say that I am using the Palette Blender's blended palette for the colors in the Streamer effect, 
+        so that the shift over time. 
+        I'd like to use an effect set to group the effect and utility so I can update them together.
 
-Updating Effects:
-    To update the effects, call the EffectSet's update() function.
-    Effects/utils will be updated in order matching their placement in the array (see below)
-    so if you have multiple effects on one segment, make sure the order is correct to prevent overwriting the wrong effect
-    the first time you call the update function, the "started" flag will be set, and a start time (ms) will be recorded.
+        To make things a little more complicated the Palette Blender and Streamer are created differently:
+        The Palette Blender, named "PB", is created with a direct variable (not a pointer) like:
 
-Destructing Effects: 
-    I've designed the the general way to operate the library is that you create/destroy effects on the fly.
-    This helps keep memory usage down, since you don't need to every effect's variables all at once.
-    EffectSet is designed with this in mind, and includes functions for destructing the effects in the group
-    and setting new effects. 
+            //<Before Arduino setup()>
+            //Create a palette blender instance named "PB".
+            PaletteBlenderPS PB(firePalBlue_PS, firePal_PS true, 30, 100);
+            //Note that the palette's I've picked don't matter, so I just used some pre-made ones
 
-    However, you probably don't want to destruct and re-create your utils 
-    (since things like faders, palette blending, etc can be used across multiple effects)
-    So, to make it easy to avoid destructing your utils, I've added a effectDestLimit, which limits
-    the you to only destructing items AT and above the effectDestLimit index in the array.
-    For example:
-    If the effectDestLimit is 2 and the number of effects in the array is 5 -> [0, 1, 2, 3, 4]
-    then effects/utils at indexes 2, 3, and 4 will be destructed, while those at 0 and 1 will not.
+        While the Streamer is created dynamically with a pointer (`strem`) using `new`:
 
-    destructEffsAftLim() is the function to call to destruct the effects using the limit.
-    There are also other destructor functions (see below)
+            //<Before Arduino setup()>
+            //create a pointer for our streamer effect, we'll create the effect instance dynamically during runtime.
+            StreamerSL *strem; 
 
-Notes:
-    To allow multiple effects to be held in the array, they all inherit from (and have the type of) EffectBasePS.
-    So if you access any effects via the effect array, you'll only be able to access the vars listed in EffectBasePS.h
-    Ie if you effect has a var called "fillBg" you won't be able to access it from here b/c "fillBg" is not in EffectBasePS.
-    Instead you'll need a pointer of the same type as your effect:
-    Ie if your effect is FireworksPS, you'll need a pointer like FireworksPS *yourPointer, which you manage yourself.
+            //<In Arduino loop()>
+            //<some logic to prevent the Streamer from being re-created every loop> (see example on Temporary Effects wiki page)
+            //Create the streamer instance dynamically using "new", using the blend palette as a input.
+            strem = new StreamerSL(mainSegments, PB.blendPalette, 1, 2, 0, 30, 20);
+            
+        Before we can add the effect and utility to an effect set, we need to create an array to store them:
+ 
+            EffectBasePS *effArray[2] = {nullptr, nullptr};
+            //Note that the array is an array of pointers to effects/utils.
+           
+        All effect sets require an effect array -- this is how the effects are grouped together. 
+        In the example above, the array is length 2; one space for the Palette Blender and the Streamer. 
 
-    The length of the effectSet array, this is public so you can do shenanigans,
-    like only having a single array for all your effects, but manipulating the "length" 
-    so that you only use part of it at one time
-    Ie if you some times have 5 effects/utils, mostly only have 2, you could make an array
-    of length 5, but change the length in the set to 2 as needed.
+        Note that the effect array is an array of pointers to effects.
+        This mainly changes how you add effects to the array (as I'll show below), but is useful to know.
+        Also note that we initialize the array with `nullptr`'s, which is a safety measure to prevent crashes. 
+        The effect set is programmed to automatically skip over any `nullptr` array entries.
 
-    If you want to create an effect array on the fly do:
-    effArray = new EffectBasePS*[<<numEffects>>];
-    You should initialize the array members to nullptr's at first.
+        Now we need to add the Streamer and Palette Blender to the array:
 
-Creating An Effect Array:
-    Say I have one PaletteBlender util and one StreamerSL effect.
-    I am using the palette from the PaletteBlender in the StreamerSL, so I'd like to group them together in a set.
+            //<<in the Arduino setup() function>>
+            //Because the Palette Blender is a direct variable, we add it to the array via its address (using "&"):
+            effArray[0] = &PB;
 
-    The palette blender was created with a direct variable like:
-    <Before Arduino setup()>
-        PaletteBlenderPS PB(cybPnkPal_PS, palette2, true, 30, 100);
+            //Because the Streamer variable is already a pointer, we can add it to the array directly:
+            effArray[1] = strem;
 
-    While the StreamerSL was created with a pointer using new:
-    <Before Arduino setup()>
-        StreamerSL *strem;
-    <In Arduino loop()>
-        <some logic to prevent the Streamer from being re-created every loop>
-        strem = new StreamerSL(mainSegments, PB.blendPalette, 1, 2, 0, 30, 20);
-    
-    To group these together I'll create an effect array before the Arduino setup function with space for my util and effect.
-        EffectBasePS *effArray[2] = {nullptr, nullptr};
-        Note that the array is an array of pointers to effects/utils.
+        Finally, with the array complete, we can create the effect set:
 
-    Because the PaletteBlender has a direct variable, we can add it to the array in the Arduino Setup function:
-        effArray[0] = &PB;
+            EffectSetPS effectSet(effectArr, SIZE(effectArr), 10000); //run time of 10000ms
+ 
+        That's it. Now whenever we call `effectSet.update()`, it will update the Streamer and Palette Blender. 
+        We can also change their run time by setting `effectSet.runTime`.
 
-    We can add the StreamerSL to the array right after it's created in the Arduino loop():
-        effArray[1] = strem;
-    
-    Note that we use & for the PaletteBlender, because all the effArray elements must be pointers (using & puts a pointer to PB in the array).
-    strem is already a pointer, so we can just set it directly.
+    Updating Effects:
+        To update the utility's effects, call the effect set's `update()` function. 
+        Effects/utilities will be updated according to their order in the set's effect array 
+        (see "Creating an Effect Array" above). If you have multiple effects on one segment set, 
+        make sure the order is correct to prevent overwriting the wrong effect. 
+        The first time you call the update function, the "started" flag will be set, 
+        and a start time (ms) will be recorded.
 
-    For a full example of this in code see <EffectGroup example in the library>
+    Setting A Run Time:
+        You can set a fixed run time for the utility using `runtime`. 
+        After the run time is reached the effects/utilities will not be updated and the set's `done` flag will be set. 
+        So you can run effect(s) for a fixed time, and then stop, allowing you to switch in new effects,
+        change the run time, reset, or do whatever.
 
-    To manage the effect and util, you'd probably want to put the array into an EffectGroup.
-    Examples of setting one up are shown below:
+        You can also set the effects to run continuously either by setting the `infinite` setting to true, 
+        or by passing 0 as the `runTime` in the effect set constructor.
+
+    Destructing Dynamic Effects: 
+        Note, if you are not using any dynamically allocated effects, you can ignore this section. 
+        (You are only dynamically allocating effects if you use the `new` keyword when creating them).
+
+        Effect sets include functions for destructing dynamically allocated effects, freeing their memory. 
+        However, in many cases, only some of your effects will be dynamic. 
+        This is particularly true for utilities, which are often shared between multiple effects. 
+        Destructing an pre-allocated effect/utility will usually cause a crash, so it is critical to carefully 
+        manage what effects/utilities you are destructing. 
+
+        So, to make it easy to avoid destructing your pre-allocated effect/utilities, 
+        I've added a limit to effect sets, `effectDestLimit`, and a helper function, `destructEffsAftLim()`. 
+        When calling the function, any effects/utilities **_AT and AFTER_** the limit in the set's effect array 
+        will be destructed. Any before the limit will be untouched. So you put all your pre-allocated effects 
+        and utilities at the beginning of the array, up to the limit, 
+        and use the rest of the array for your dynamically allocated effects. 
+
+        For Example:
+            If the `effectDestLimit` is 2 and the number of effects in the array is 5, ie {0, 1, 2, 3, 4}, 
+            then effects at indexes 2, 3, and 4 will be destructed, while those at 0 and 1 will not.
+
+    Extra Notes:
+        * To allow multiple effects to be held in the array, they all inherit from (and have the type of) `EffectBasePS`. So if you access any effects via the effect array, you'll only be able to access the variables listed in [Effect Base](https://github.com/AlbertGBarber/PixelSpork/wiki/The-Effect-Base-Class).
+
+          For example, if you effect has a `fillBg` setting you won't be able to access 
+          it through the effect array b/c `fillBg" is not in `EffectBasePS`.
+
+          Instead you'll need a pointer of the same type as your effect. For example, 
+          if you have a FireworksPS effect, to access it you'll need a pointer like `FireworksPS *yourPointer`, 
+          which you manage yourself.
+
+        * The length of the effect array is public so you can do shenanigans, 
+          like only having a single array for all your effects, but manipulating the `length` so that 
+          you only use part of it at one time. Ie if you sometimes have 5 effects, but mostly only have 2, 
+          you could make an array of length 5, but change the `length` in the set to 2 as needed.
+
+        * If you want to create an effect array on the fly do: `effArray = new EffectBasePS*[<<numEffects>>];` 
+          You should initialize the array members to `nullptr`'s after creation.
 
 Example calls:
     EffectBasePS *effArray[2] = {nullptr, nullptr};
@@ -119,40 +151,42 @@ Constructor Inputs:
     numEffects -- The length of the effect array, ie how many effects/utils there are.
     effectDestLimit (optional, default 0) -- The destruct starting index for the effect array 
                                              (see Destructing Effects above)
-    runTime (ms) -- How long the effect set should update effects for. 
+    runTime (ms) -- How long the effect set will run for.
                     If 0 is passed in, the infinite flag will be set true.
                 
 Other Settings:
     infinite (default false) -- If true, the effect set will update forever, regardless of the runTime setting
 
 Functions:
-    reset() -- Resets the time settings of the effect set (started and done), essentially restarting the effect set
-    setNewSet(**newEffectArr, newNumEffects) -- Changes the effect set to use the passed in effect array and length
-    setEffect(*newEffect, effectNum) -- Changes the effect pointer at the specified index of the set's effect array
-    destructAllEffects() -- Calls the destructor for ALL effects, IGNORES the destruct limit
-    destructEffsAftLim() -- Calls the destructor for all effects in the effect array AT AND AFTER the current effectDestLimit (see Destructing Effects above)
+    reset() -- Resets the time settings of the effect set (started and done), restarting it.
+    setNewSet(**newEffectArr, newNumEffects) -- Changes the effect array of the effect set to the passed in array.
+    setEffect(*newEffect, effectNum) -- Changes the effect pointer at the specified index of the set's effect array, 
+                                        essentially replacing the current effect.
+    destructAllEffects() -- Calls the destructor for ALL effects and/or utilities, IGNORES the destruct limit
+    destructEffsAftLim() -- Calls the destructor for all effects in the effect array 
+                            AT AND AFTER the current effectDestLimit (see Destructing Effects above)
     destructEffsAftLim(limit) -- Calls the destructor for all effects in the effect array AT AND AFTER the passed in limit (see Destructing Effects above)
     destructEffect(effectNum) -- Calls the destructor for the effect in the effect array at the passed in index 
+    getEffectPtr(num) -- Returns the pointer to the effect in the effect array at the passed in index.
+                         Note that the return type will be EffectBasePS (see Notes above)
     updateEffect(effectNum) -- Updates the effect in the effect array at the passed in index
     update() -- Updates all the effects in the set, while also tracking the set's run time
                 Will set the "done" flag once the run time has elapsed
-    getEffectPtr(num) -- Returns the pointer to the effect in the effect array at the passed in index.
-                         Note that the return type will be EffectBasePS (see Notes above)
 
 Reference Vars:
-    startTime -- The time (ms) the first update() was called
-    timeElapsed -- The time elapsed (ms), since the first update was called
+    startTime -- The time (ms) the first update() was called.
+    timeElapsed -- The time elapsed (ms), since the first update() was called.
 
 Flags:
-    started (default false) -- Set true if the update() for the set has been called (the startTime will be set)
-    done (default false) -- Set true if the effect set has reached the run time. Prevents any updating of the set's effects.
+    started (default false) -- Set true if first the update() for the set has been called (the startTime will be set).
+    done (default false) -- Set true if the effect set has reached the run time. Prevents updating the set's effects.
 */
 class EffectSetPS {
     public:
         //Basic Constructor
         EffectSetPS(EffectBasePS **EffectArr, uint8_t NumEffects, uint16_t RunTime);
 
-        //Constructor with an effect destruct limit (see notes above)
+        //Constructor with an effect destruct limit (see "Destructing Dynamic Effects" above)
         EffectSetPS(EffectBasePS **EffectArr, uint8_t NumEffects, uint8_t EffectDestLimit, uint16_t RunTime);
 
         EffectBasePS

@@ -74,13 +74,13 @@ Example calls:
     uint8_t pattern_arr = {0, 2, 1};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
     BreathEyeSL breathEye(mainSegments, pattern, cybPnkPal_PS, 0, 10, true, true, 10, 50);
-    Does a breathing cycle using the colors from cybPnkPal_PS, following the pattern above
+    Does a breathing cycle using the colors from the cybPnkPal_PS palette, following the pattern above
     The background is blank
     The eyeHalfSize is 10, the eye wraps, and the eye position will be set randomly for each cycle.
     The breathFreq is 10, the effect updates at 50ms
 
     BreathEyeSL breathEye(mainSegments, cybPnkPal_PS, 0, 8, true, false, 5, 50);
-    Does a breathing cycle using the colors from cybPnkPal_PS in order
+    Does a breathing cycle using the colors from the cybPnkPal_PS palette in order
     The background is blank
     The eyeHalfSize is 8, the eye wraps,
     The eye position will be fixed (defaulting to the center point of the longest segment),

@@ -2,6 +2,7 @@
 
 TheaterChaseSL::TheaterChaseSL(SegmentSetPS &SegSet, CRGB Color, CRGB BgColor, uint16_t LitLength,
                                uint16_t Spacing, uint16_t Rate)  //
+    : litLength(LitLength), spacing(Spacing)                     //
 {
     //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
     bindSegSetPtrPS();
@@ -11,23 +12,11 @@ TheaterChaseSL::TheaterChaseSL(SegmentSetPS &SegSet, CRGB Color, CRGB BgColor, u
     //bind the color variable since it's a pointer
     colorOrig = Color;
     color = &colorOrig;
-    //set the litLength and spacing,
-    //we set them using their functions since they have a min value of 1
-    setLitLength(LitLength);
-    setSpacing(Spacing);
-}
-
-//sets the litLength (min value 1)
-void TheaterChaseSL::setLitLength(uint16_t newLitLength) {
-    litLength = newLitLength;
+    //Cap the litLength and spacing to a min of 1
     if( litLength < 1 ) {
         litLength = 1;
     }
-}
 
-//sets the spacing (min value 1)
-void TheaterChaseSL::setSpacing(uint16_t newSpacing) {
-    spacing = newSpacing;
     if( spacing < 1 ) {
         spacing = 1;
     }
@@ -61,12 +50,12 @@ void TheaterChaseSL::update() {
                 //when we draw the spot, we start with the first pixel of the spot,
                 //if the spot size is greater than 1 (litLength), then we will run into the next
                 //spot region. To prevent this, loop the spot round by modding by totalDrawLength
-                lineNum = i + addMod16PS(j, cycleNum, totalDrawLength);  //i + (j + cycleNum) % totalDrawLength;
+                lineNum = i + addMod16PS(j, cycleNum, totalDrawLength);
                 segDrawUtils::drawSegLine(*segSet, lineNum, *color, colorMode);
             }
         }
 
-        cycleNum = addMod16PS(cycleNum, 1, totalDrawLength);  //(cycleNum + 1) % (totalDrawLength);
+        cycleNum = addMod16PS(cycleNum, 1, totalDrawLength);
         showCheckPS();
     }
 }

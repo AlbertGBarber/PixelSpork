@@ -1,7 +1,7 @@
 #include "TwinkleFastSL.h"
 
 //palette color constructor
-TwinkleFastSL::TwinkleFastSL(SegmentSetPS &SegSet, palettePS &Palette, uint16_t NumTwinkles, CRGB BgColor,
+TwinkleFastSL::TwinkleFastSL(SegmentSetPS &SegSet, palettePS &Palette, CRGB BgColor, uint16_t NumTwinkles,
                              bool Sparkle, uint8_t FadeOutRate, uint16_t Rate)
     : palette(&Palette), numTwinkles(NumTwinkles), sparkle(Sparkle), fadeOutRate(FadeOutRate)  //
 {
@@ -9,24 +9,11 @@ TwinkleFastSL::TwinkleFastSL(SegmentSetPS &SegSet, palettePS &Palette, uint16_t 
 }
 
 //single color constructor
-TwinkleFastSL::TwinkleFastSL(SegmentSetPS &SegSet, CRGB Color, uint16_t NumTwinkles, CRGB BgColor, bool Sparkle,
+TwinkleFastSL::TwinkleFastSL(SegmentSetPS &SegSet, CRGB Color, CRGB BgColor, uint16_t NumTwinkles, bool Sparkle,
                              uint8_t FadeOutRate, uint16_t Rate)
     : numTwinkles(NumTwinkles), sparkle(Sparkle), fadeOutRate(FadeOutRate)  //
 {
     setSingleColor(Color);
-    init(BgColor, SegSet, Rate);
-}
-
-//random colors constructor
-TwinkleFastSL::TwinkleFastSL(SegmentSetPS &SegSet, uint16_t NumTwinkles, CRGB BgColor, bool Sparkle,
-                             uint8_t FadeOutRate, uint16_t Rate)
-    : numTwinkles(NumTwinkles), sparkle(Sparkle), fadeOutRate(FadeOutRate)  //
-{
-    //we make a random palette of one color so that
-    //if we switch to randMode 0 then we have a palette to use
-    setSingleColor(colorUtilsPS::randColor());
-    //since we're choosing colors at random, set the randMode
-    randMode = 1;
     init(BgColor, SegSet, Rate);
 }
 
@@ -49,6 +36,11 @@ void TwinkleFastSL::setSingleColor(CRGB Color) {
     free(paletteTemp.paletteArr);
     paletteTemp = paletteUtilsPS::makeSingleColorPalette(Color);
     palette = &paletteTemp;
+}
+
+//Resets the effect by filling in the background
+void TwinkleFastSL::reset(){
+    segDrawUtils::fillSegSetColor(*segSet, *bgColor, bgColorMode);
 }
 
 void TwinkleFastSL::update() {

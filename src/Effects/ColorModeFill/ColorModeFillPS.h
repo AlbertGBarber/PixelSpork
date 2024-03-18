@@ -10,7 +10,7 @@ Fills in the segment Set using the specified colorMode (see segDrawUtils::getPix
 Useful for drawing simple rainbow shifting effects on the segment set using the color modes 
 or filling in a background before drawing an effect.
 
-For a moving rainbow try out these segment settings with `color mode = 1` for the effect:
+For a moving rainbow try out these segment settings with `colorMode = 1` for the effect:
     //(place these in the Arduino Setup() function)
     mainSegments.runOffset = true; //Tells Pixel Spork to move the segment set's rainbow 
     mainSegments.gradLenVal = 30; //Sets the length of the rainbow for color mode 3

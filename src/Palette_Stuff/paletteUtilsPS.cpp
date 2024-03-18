@@ -72,7 +72,7 @@ void paletteUtilsPS::reverse(palettePS &palette) {
 //The likely-hood of this is 1/(palette.length!), ie 1/3! => 1/6 for a palette length of 3. 
 //Also includes an optional indexOrder array input, which will be set to match the shuffled index order,
 //allowing you to track the palette changes over time without checking colors. 
-//ie for a palette of 3 colors, if the shuffled palette only swaps the last to colors, 
+//ie for a palette of 3 colors, if the shuffled palette only swaps the last two colors, 
 //the indexOrder would be [0, 2, 1].
 //NOTE that indexOrder's length should be equal to palette.length, and it should be pre-filled
 //with the palette indexes (ie for a palette of length 3, it would be [0, 1, 2])
@@ -90,6 +90,49 @@ void paletteUtilsPS::shuffle(palettePS &palette, uint8_t *indexOrder) {
         setColor(palette, colorOne, uint8Two);
         setColor(palette, colorTwo, i);
 
+        //Get the new palette index order (if an indexOrder array has been supplied)
+        //by swapping the index values at the random index and the current loop index.
+        if(indexOrder){
+            uint8Three = indexOrder[uint8Two];
+            indexOrder[uint8Two] = indexOrder[i];
+            indexOrder[i] = uint8Three;
+        }
+    }
+}
+
+//Randomizes the order of colors in a PALETTE SET.
+//Note that it does not check against the current order, so it's possible to get the same palette order back. 
+//The likely-hood of this is 1/(paletteSet.length!), ie 1/3! => 1/6 for a palette set length of 3. 
+//Also includes an optional indexOrder array input, which will be set to match the shuffled index order,
+//allowing you to track the palette set changes over time without checking colors. 
+//ie for a palette set of 3 palettes, if the shuffled set only swaps the last two palettes, 
+//the indexOrder would be [0, 2, 1].
+//NOTE that indexOrder's length should be equal to paletteSet.length, and it should be pre-filled
+//with the palette indexes (ie for a palette set of length 3, it would be [0, 1, 2])
+void paletteUtilsPS::shuffleSet(paletteSetPS &paletteSet, uint8_t *indexOrder) {
+    uint8One = paletteSet.length - 1; //loopStart
+    //Start from the last element and swap one by one at random 
+    //i > 0 is the loop limit b/c we don't need to swap the first element.
+    for( uint8_t i = uint8One; i > 0; i-- ) {
+        //Pick a random index from 0 to i
+        uint8Two = random8(i + 1);
+
+        //Swap arr[i] with the palette at random index
+        //note that we don't just swap the palette pointers, b/c
+        //any effect that is using the palettes from the set via pointer won't be see the change 
+        //(since the pointer stays the same)
+        //instead we swap the underlying palette color arrays and lengths between the 
+        
+        //copy the palette at i into palette1
+        palette1 = *paletteSet.getPalette(i);
+
+        //copy the randomly picked palette into palette2
+        palette2 = *paletteSet.getPalette(uint8Two);
+
+        //swap the palettes (copying their contents into the paletteSet)
+        paletteSet.setPaletteByCopy(palette1, uint8Two);
+        paletteSet.setPaletteByCopy(palette2, i);
+     
         //Get the new palette index order (if an indexOrder array has been supplied)
         //by swapping the index values at the random index and the current loop index.
         if(indexOrder){

@@ -1,14 +1,6 @@
 #include "PaletteNoisePS.h"
 
-//Constructor with hueRate of 0
-PaletteNoisePS::PaletteNoisePS(uint8_t numColors, uint8_t HueBase, uint8_t HueMax, bool Compliment,
-                               uint16_t BlendSpeed, uint16_t Rate)
-    : hueBase(HueBase), hueMax(HueMax), blendSpeed(BlendSpeed), compliment(Compliment)  //
-{
-    init(numColors, 0, Rate);
-}
-
-//Constructor with hueRate setting
+//Constructor with hueRate setting and default satMin/valMin values
 PaletteNoisePS::PaletteNoisePS(uint8_t numColors, uint8_t HueBase, uint8_t HueMax, bool Compliment,
                                uint16_t BlendSpeed, uint16_t HueRate, uint16_t Rate)
     : hueBase(HueBase), hueMax(HueMax), blendSpeed(BlendSpeed), compliment(Compliment)  //
@@ -16,7 +8,7 @@ PaletteNoisePS::PaletteNoisePS(uint8_t numColors, uint8_t HueBase, uint8_t HueMa
     init(numColors, HueRate, Rate);
 }
 
-//Constructor with saturation and value min settings and  hueRate setting
+//Constructor with saturation and value min settings
 PaletteNoisePS::PaletteNoisePS(uint8_t numColors, uint8_t HueBase, uint8_t HueMax, uint8_t SatMin, uint8_t ValMin,
                                bool Compliment, uint16_t BlendSpeed, uint16_t HueRate, uint16_t Rate)
     : hueBase(HueBase), hueMax(HueMax), satMin(SatMin), valMin(ValMin), blendSpeed(BlendSpeed), compliment(Compliment)  //

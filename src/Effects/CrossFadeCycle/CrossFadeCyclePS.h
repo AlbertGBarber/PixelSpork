@@ -25,11 +25,11 @@ Example calls:
     uint8_t pattern_arr = {0, 2, 1};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
     CrossFadeCyclePS crossFadeCycle(mainSegments, pattern, cybPnkPal_PS, 40, 30);
-    Will fade from color 0, to color 2, to color 1 of the palette
+    Will fade from color 0, to color 2, to color 1 of the cybPnkPal_PS palette
     taking 40 steps for each fade, with 30ms between steps
 
     CrossFadeCyclePS crossFadeCycle(mainSegments, cybPnkPal_PS, 40, 30);
-    Will fade through the colors of the palette in order
+    Will fade through the colors of the cybPnkPal_PS palette in order
     taking 40 steps for each fade, with 30ms between steps
 
     CrossFadeCyclePS crossFadeCycle(mainSegments, 40, 30);

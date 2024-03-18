@@ -39,7 +39,7 @@ class RateRandomizerPS : public EffectBasePS {
     public:
         RateRandomizerPS(uint16_t BaseRate, int16_t RateRangeMin, int16_t RateRangeMax, uint16_t Rate);
 
-        int16_t
+        int32_t
             rateRangeMin,
             rateRangeMax;
 

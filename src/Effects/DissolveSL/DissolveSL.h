@@ -12,6 +12,7 @@
 Morphs the segment set from one color to the next by setting each segment line at random, one at a time.
 Includes various options for color selection (see modes) 
 Colors can be chosen using a palette and pattern, or selected randomly
+
 The effect can be accelerated to set more lines at once by adjusting spawnRateInc
 By default we start by spawning one segment line at a time, increasing the number every spawnRateInc ms
 so the spawning steadily accelerates. This helps keep the spawning consistent, since we're picking at random
@@ -28,16 +29,16 @@ You can increase the starting number of lines set at once (maxNumSpawnBase), whi
 accelerate the morphing, and may be good on longer segment sets.
 
 The effect is adapted to work on segment lines for 2D use. 
-You can use `lineMode` to control how pixels are filled in: 
-* true (default): Whole segment lines will be dissolved, rather than each pixel.
-* false: Individual pixels will be dissolved (only really useful when using certain color modes).
+    You can use `lineMode` to control how pixels are filled in: 
+    * true (default): Whole segment lines will be dissolved, rather than each pixel.
+    * false: Individual pixels will be dissolved (only really useful when using certain color modes).
 
-randModes:
-    0: Each dissolve is a solid color following the pattern (not random).
-    1: Each dissolve is a set of randomly chosen colors (dif color for each pixel).
-    2: Each dissolve is a set of random colors chosen from the pattern (dif color for each pixel).
-    3: Each dissolve is a solid color chosen at random.
-    4: Each dissolve is a solid color chosen randomly from the pattern.
+    randModes:
+        0: Each dissolve is a solid color following the pattern (not random).
+        1: Each dissolve is a set of randomly chosen colors (dif color for each pixel).
+        2: Each dissolve is a set of random colors chosen from the pattern (dif color for each pixel).
+        3: Each dissolve is a solid color chosen at random.
+        4: Each dissolve is a solid color chosen randomly from the pattern.
 
 You should be able switch freely between randModes on the fly (the random modes will set up a random palette/pattern as a fallback)
 
@@ -48,11 +49,11 @@ Example calls:
     uint8_t pattern_arr = {0, 2, 1};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
     DissolveSL dissolve(mainSegments, pattern, cybPnkPal_PS, 0, 150, 70);
-    Will dissolve from color 0 in the palette to color 2, to color 1, etc using randMode 0 (see below) 
+    Will dissolve colors from the cybPnkPal_PS palette, following the pattern above using randMode 0 (see above) 
     with the number of leds set on one cycle increasing every 150ms with the effect updating every 70ms
 
     DissolveSL dissolve(mainSegments, cybPnkPal_PS, 4, 100, 100);
-    Will dissolve from one palette color to the next using randMode 4 (see below) 
+    Will dissolve using from the cybPnkPal_PS palette in order, using randMode 4 (see above) 
     with the number of leds set on one cycle increasing every 100ms with the effect updating every 100ms
 
     DissolveSL dissolve(mainSegments, 3, 150, 70);

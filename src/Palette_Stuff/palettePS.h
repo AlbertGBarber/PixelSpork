@@ -43,9 +43,20 @@ struct paletteSetPS {
         return paletteArr[mod8(index, length)];
     };
 
-    //Sets the palette at the passed in array index (wraps so you always add the palette somewhere)
+    //Replaces the palette at the `index` by changing the array's palette pointer 
+    //(wraps so you always add the palette somewhere). 
+    //In other words, it replaces the pointer in the set's palette array with the new palette pointer.
     void setPalette(palettePS &palette, uint8_t index) {
         paletteArr[mod8(index, length)] = &palette;
+    };
+
+    //Replaces the palette at the `index` by copying from the input palette 
+    //(wraps so you always add the palette somewhere). 
+    //Unlike the `setPalette()` function, this replaces the `index` palette's palette color array and length 
+    //with that of the input palette's. This is handy if you have a temporary palette you want to place in the set.
+    void setPaletteByCopy(palettePS &palette, uint8_t index) {
+        paletteArr[mod8(index, length)]->paletteArr = palette.paletteArr;
+        paletteArr[mod8(index, length)]->length = palette.length;
     };
 };
 

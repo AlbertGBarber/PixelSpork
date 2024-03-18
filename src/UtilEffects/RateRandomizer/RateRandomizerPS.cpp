@@ -25,7 +25,8 @@ void RateRandomizerPS::update() {
     if( active && (currentTime - prevTime) >= *rate ) {
         prevTime = currentTime;
 
-        tempOut = *baseRate + random16(rateRangeMin, rateRangeMax);
+        //can't use random16 b/c we want possible negative values
+        tempOut = *baseRate + random(rateRangeMin, rateRangeMax);
 
         if( tempOut < 0 ) {
             tempOut = 0;

@@ -45,12 +45,13 @@ Example calls:
     uint8_t pattern_arr = {0, 2, 1};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
     BreathPS breath(mainSegments, pattern, cybPnkPal_PS, 0, 10, 50);
-    Does a breathing cycle using the colors from cybPnkPal_PS, following the pattern above
+    Does a breathing cycle using the colors from the cybPnkPal_PS palette, 
+    following the pattern above
     The background is blank
     The breathFreq is 10, the effect updates at 50ms
 
     BreathPS breath(mainSegments, cybPnkPal_PS, 0, 5, 50);
-    Does a breathing cycle using the colors from cybPnkPal_PS in order
+    Does a breathing cycle using the colors from the cybPnkPal_PS palette in order
     The background is blank
     The breathFreq is 5, the effect updates at 50ms
 

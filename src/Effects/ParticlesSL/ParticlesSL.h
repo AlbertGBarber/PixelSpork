@@ -124,7 +124,7 @@ Example calls:
 Constructor inputs for creating a particle set:
     palette -- The palette than will be used for the particle colors 
     BgColor -- The background color used for the effect
-    numParticles -- The number of particles that will be created for the effect
+    numParticles -- How many particles the effect will have. Note that the particles will be given random start points.
     direction -- The direction of the particle's motion (pass in any number > 1 to set it randomly)
     baseSpeed -- The base speed of the particles (ms)
     speedRange -- The amount the speed may vary up from the base speed ( ie baseSpeed + random(range) ) (ms)

@@ -21,20 +21,6 @@ Twinkle2SLSeg::Twinkle2SLSeg(SegmentSetPS &SegSet, CRGB Color, CRGB BgColor, uin
     init(FadeInSteps, FadeOutSteps, BgColor, SegSet, Rate);
 }
 
-//random colors constructor
-Twinkle2SLSeg::Twinkle2SLSeg(SegmentSetPS &SegSet, CRGB BgColor, uint16_t NumTwinkles, uint16_t SpawnChance,
-                             uint8_t FadeInSteps, uint8_t FadeInRange, uint8_t FadeOutSteps, uint8_t FadeOutRange,
-                             uint8_t SegMode, uint16_t Rate)
-    : numTwinkles(NumTwinkles), spawnChance(SpawnChance), fadeInRange(FadeInRange), fadeOutRange(FadeOutRange), segMode(SegMode)  //
-{
-    //we make a random palette of one color so that
-    //if we switch to randMode 0 then we have a palette to use
-    setSingleColor(colorUtilsPS::randColor());
-    //since we're choosing colors at random, set the randMode
-    randMode = 1;
-    init(FadeInSteps, FadeOutSteps, BgColor, SegSet, Rate);
-}
-
 Twinkle2SLSeg::~Twinkle2SLSeg() {
     free(paletteTemp.paletteArr);
     deleteTwinkleSet();
@@ -86,23 +72,13 @@ void Twinkle2SLSeg::initTwinkleArrays() {
 //We need to do this because twinkleSetTemp is always created using new
 //So we need to free up the memory if we ever create a new twinkleSet
 void Twinkle2SLSeg::deleteTwinkleSet() {
-    if( twinkleSetTemp.twinkleArr ) {  //check that the twinkle set array exists
-        //we need to delete all the twinkles in the set before deleting the twinkle array
-        for( uint16_t i = 0; i < twinkleSetTemp.maxLength; i++ ) {
-            free(twinkleSetTemp.twinkleArr[i]);
-        }
-        free(twinkleSetTemp.twinkleArr);
-    }
+    twinkleSetTemp.deleteTwinkleSet();
 }
 
 //resets all the twinkles to be inactive
 //and also fills the segment set with the background to clear any active twinkles
 void Twinkle2SLSeg::reset() {
-    for( uint16_t i = 0; i < twinkleSet->length; i++ ) {
-        twinklePtr = twinkleSet->twinkleArr[i];
-        twinklePtr->active = false;
-        twinklePtr->stepNum = 0;
-    }
+    twinkleSet->reset(); //sets all the twinkles to inactive and their blend step to 0.
     segDrawUtils::fillSegSetColor(*segSet, *bgColor, bgColorMode);
 }
 

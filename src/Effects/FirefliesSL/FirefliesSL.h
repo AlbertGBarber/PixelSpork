@@ -18,7 +18,8 @@ You can also turn the twinkling off
 This effect is fully compatible with color modes, and the bgColor is a pointer, so you can bind it
 to an external color variable. By default it is bound to bgColorOrig, which is set to 0 (blank color).
 
-If you have a non-zero background color be sure to set fillBg to true!!
+By default the background color is black (0). If you set a non-zero background color be sure to set `fillBG` to true, 
+otherwise each pixel will only be filled after a firefly touches it.
 
 The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
 passing in a SegmentSetPS with only one segment containing the whole strip.
@@ -87,7 +88,7 @@ Example calls:
     Otherwise it will get confused and call the random palette constructor
 
     FirefliesSL fireflies(mainSegments, cybPnkPal_PS, 5, 200, 3000, 4000, 6, 14, 70);
-    Will do a set of fireflies using colors from cybPnkPal_PS
+    Will do a set of fireflies using colors from the cybPnkPal_PS palette
     There are a maximum of 5 fireflies active at one time, and each has a 20 percent chance of spawning per cycle (200/1000)
     The fireflies have a base life of 3000ms, with a range of 4000ms (for a max life of 7000ms)
     The fireflies have a base speed of 6, with a range of 14 (for a max speed of 20)

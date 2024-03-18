@@ -71,7 +71,8 @@ Example calls:
     The effect updates at 80ms
 
     EdgeBurstSL edgeBurst(mainSegments, cybPnkPal_PS, 10, 80);
-    Will do a an edge burst using colors from cybPnkPal_PS with a burst freq of 10
+    Will do a an edge burst using colors from the cybPnkPal_PS palette,
+    with a burst freq of 10
     The effect updates at 80ms
 
     EdgeBurstSL edgeBurst(mainSegments, 3, true, 10, 80);

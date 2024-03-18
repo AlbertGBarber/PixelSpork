@@ -20,14 +20,15 @@ try `firePal_PS` for a traditional fire,
 `firePalPink_PS` for a pink/purple fire, and 
 `firePalBlue_PS` for a green/blue fire.
 
-The background color will be the coldest color and will be applied to most of the strip. 
-Usually it is left as blank. Note that it is separate from the palette colors, 
-which allows you to use more pre-built palettes while keeping the background constant. 
+The background color is separate from the palette colors and will be treated as the coldest color, filling most of the strip. 
+Usually it is left as blank. 
+Keeping the background color outside of the palette allows you to use multiple pre-built palettes 
+while keeping the background constant. 
 
 To produce a smoother fire, the palette colors can be blended together based on temperature
 This does take more processing power, and can be turned off using the "blend" setting.
 
-The other variables determine how the fire is drawn:
+The `cooling` and `sparking` settings largely shape your fire, they will probably be the main things you adjust.
 Cooling: indicates how fast a flame cools down. More cooling means shorter flames,
 recommended values are between 20 and 100. 50 seems the nicest.
 
@@ -39,12 +40,12 @@ recommended update rate for the effect is 30-80ms
 This effect is not compatible with color modes, but the bgColor is a pointer, so you can bind it
 
 Note that the effect stores a uint8_t value for each led in the segment set
-so watch your memory usage
+so watch your memory usage.
 
 Example calls: 
-
     Fire2012Seg fire2012Seg(mainSegments, firePal_PS, 0, 50, 90, true, 70);
-    Does a blended fire using the built-in firePal_PS (see paletteList.h) with a blank background
+    Does a blended fire using the built-in firePal_PS palette (see paletteList.h) 
+    with a blank background
     cooling is set to 50 and sparking is set to 90
     The fire updates at 70ms
  

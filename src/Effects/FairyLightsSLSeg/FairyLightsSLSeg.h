@@ -7,7 +7,7 @@
 /* 
 Colors a number of segment lines (or segments) one at a time, turning them off in sequence, depending on the mode chosen
 Meant to be similar to some classic fairy light twinkle modes.
-The color of the lines (twinkles) can be set to a single color, chosen randomly, of picked from a palette 
+The color of the lines (twinkles) can be set to a single color, chosen randomly, or picked from a palette 
 Just run an example and you'll see what I mean
 
 tModes:
@@ -49,19 +49,22 @@ you should set `numTwinkles` to the maximum value you expect to use.
 See the Effects Advanced wiki page for more on memory management. 
 
 Example calls: 
-    FairyLightsSLSeg fairyLights(mainSegments, palette, 0, 5, 0, 1, 150);
-    Will choose 5 segments (segMode 1) to cycle to/from colors chosen from the palette, using a blank background, 
+    FairyLightsSLSeg fairyLights(mainSegments, cybPnkPal_PS, 0, 5, 0, 1, 150);
+    Will choose 5 segments (segMode 1) to cycle to/from colors 
+    chosen from the cybPnkPal_PS palette, using a blank background, 
     Each segment will be turned on one at a time, before resetting them all at once (mode 0), with 150ms between each cycle
     (segments are used over segment lines because segMode is true)
 
     FairyLightsSLSeg fairyLights(mainSegments, CRGB::Red, CRGB::Blue, 10, 1, 0, 100);
     Will choose 10 lines (segMode 0) to set to red before resetting, using a blue background, 
-    The lines will be turned on one at a time, and then off one at a time (mode 1), with 100ms between each cycle
+    The lines will be turned on one at a time, and then off one at a time (mode 1),
+    with 100ms between each cycle
 
     FairyLightsSLSeg fairyLights(mainSegments, 0, 20, 2, 3, 80);
     Will choose 20 pixels (segMode 2) each cycle to set to random colors, using a blank background, 
     (note this sets randMode = 1)
-    Each cycle, a new line will be turned on, while an old is turned off (mode 2), with 80ms in between each cycle
+    Each cycle, a new line will be turned on, while an old is turned off (mode 2), 
+    with 80ms in between each cycle
 
 Constructor Inputs:
     palette(optional, see constructors) -- the palette from which colors will be chosen randomly

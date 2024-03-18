@@ -122,7 +122,7 @@ Example calls:
 
     FireworksPS fireworks(mainSegments, cybPnkPal_PS, 3, 20, 100, 4000, 5, 40, 500);
     Big fireworks with long lasting sparks
-    Will do a set of fireworks using colors from a cybPnkPal_PS
+    Will do a set of fireworks using colors from the cybPnkPal_PS palette
     There is a maximum of 3 fireworks active at one time.
     Each firework has 20 sparks
     There is a 10% chance a new firework spawns during an update (100/1000)

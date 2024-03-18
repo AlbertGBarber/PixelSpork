@@ -18,7 +18,7 @@ void EffectFaderPS::reset(EffectSetPS &EffectSet, bool newDirect) {
     reset();
 }
 
-// resets the core fade flags, doing this will start a new fade
+//resets the core fade flags, doing this will start a new fade
 //Will reset the segment sets brightnesses back to their original values if the fader has started but not finished
 void EffectFaderPS::reset() {
     if( started && !done ) {

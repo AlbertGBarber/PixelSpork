@@ -14,6 +14,7 @@ namespace paletteUtilsPS {
         randomize(palettePS &palette, bool comp = false),
         randomizeCol(palettePS &palette, uint8_t index),
         shuffle(palettePS &palette, uint8_t *indexOrder = nullptr),
+        shuffleSet(paletteSetPS &paletteSet, uint8_t *indexOrder = nullptr),
         reverse(palettePS &palette);
 
     CRGB  //Functions for getting colors from palettes
@@ -43,6 +44,10 @@ namespace paletteUtilsPS {
     static CRGB
         colorOne,
         colorTwo;
+
+    static palettePS
+        palette1 = { nullptr, 0 }, //for the shuffle set function
+        palette2 = { nullptr, 0 };
 };
 
 #endif

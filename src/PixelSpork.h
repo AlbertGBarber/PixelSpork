@@ -42,7 +42,6 @@
 
 /* 
 Effects TODO:
-    -- A Christmas Lights effect, basically like fairyLights, but you use a static pattern for the background
     -- Draw pattern based on segments, (basically a static patternShifter) (not needed, just update patternShifter once?)
     -- Android (see WLED android effect)
     -- Synced streamer dots across segments -> one array tracking dot locations on each segment, use even spacing.

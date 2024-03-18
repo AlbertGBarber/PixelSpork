@@ -6,30 +6,31 @@
 #include "MathUtils/mathUtilsPS.h"
 
 /*
-Does a classic theater chase (one color running on top of another with spaces in between)
-You can customize the spacing between the running color spots, and the lengths of each of the sections
-ie you can have say red spots of length 2, running on a blue background, with 3 pixels in between each red spot
-so you'd have rrbbbrrbbb, etc, were r = red, b = blue
+A classic theater chase effect; one color running on top of another with spaces in between. 
+You can customize the spacing between and the size of the running colors. For example, 
+lets say you have red spots of length 2, running on a blue background, with 3 spaces in between each red spot.
+The result would be ( r, r, b, b, b, r, r, etc) were r = red, b = blue.
 
-note that both the spot color and the background color are fully compatible with colorMode settings (see segDrawUtils::setPixelColor)
+Note: the minimum value for both the color spot size and spacing is 1.
 
-Both color and bgColor are pointers, so you can tie them to external variables
-ie color = &YourColorVar
-colorOrig is the default binding
+The effect is adapted to work on segment lines for 2D use. Each segment line will be a single color.
 
-The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
-passing in a SegmentSetPS with only one segment containing the whole strip.
+Supports Color Modes for both the main and background colors.
+
+For more advanced versions of this effect, see StreamerSL.h and SegWaves.h.
 
 Example call: 
     TheaterChaseSL theaterChase(mainSegments, CRGB::Red, CRGB::Green, 1, 2, 100);
-    Red spots of length 1, running on a green background, with 2 pixels in between each spot, updating at 100ms
-    ie you'd get rggrgg, etc where r = red, g = green pixels
+    Red spots of length 1, running on a green background, 
+    with 2 spaces in between each spot, 
+    updating at 100ms
 
 Constructor Inputs:
-    color-- The color of the running spots
-    bgColor -- The color of the background, the color in between the spots
-    litLength (min 1) -- The size of the spots
-    spacing (min 1) -- The size of the space between the spots
+    color-- The color of the running spots. Is a pointer. By default it's bound to colorOrig.
+    bgColor -- The color of the background, the color in between the spots. 
+               Is a pointer. By default it's bound to bgColorOrig.
+    litLength (min 1) -- The size of the spots. 
+    spacing (min 1) -- The size of the space between the spots. 
     rate -- The update rate (ms)
 
 Other Settings:
@@ -37,14 +38,10 @@ Other Settings:
     bgColorMode (default 0) -- sets the color mode for the background (see segDrawUtils::setPixelColor)
 
 Functions:
-    setLitLength(newLitLength) -- Changes the spot size, you can set litLength directly, but make sure its >1
-    setSpacing(newSpacing) -- Changes the size between spots, you can set spacing directly, but make sure its >1
     update() -- updates the effect
 
 Reference Vars:
-    cycleNum --  This tracks how many update cycles have happened, resets every totalDrawLength (spacing + litLength)
-    spacing -- The distance between lit pixels, can be set manually as long as it's >1, otherwise set with setLitLength()
-    litLength -- The length of lit pixel sections, can be set manually as long as it's >1, otherwise set with setSpacing()
+    cycleNum -- Tracks the number of update cycles, resets every (spacing + litLength) cycles.
 */
 class TheaterChaseSL : public EffectBasePS {
     public:
@@ -67,8 +64,6 @@ class TheaterChaseSL : public EffectBasePS {
             *bgColor = nullptr;  //bgColor is a pointer so it can be tied to an external variable if needed (such as a palette color)
 
         void
-            setLitLength(uint16_t newLitLength),
-            setSpacing(uint16_t newSpacing),
             update(void);
 
     private:

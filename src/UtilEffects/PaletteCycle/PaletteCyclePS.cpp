@@ -1,8 +1,8 @@
 #include "PaletteCyclePS.h"
 
-PaletteCyclePS::PaletteCyclePS(paletteSetPS &PaletteSet, bool Looped, bool RandomizePal, bool Shuffle,
-                               bool StartPaused, uint8_t TotalSteps, uint16_t Rate)
-    : paletteSet(&PaletteSet), looped(Looped), randomizePal(RandomizePal), shuffle(Shuffle)  //
+PaletteCyclePS::PaletteCyclePS(paletteSetPS &PaletteSet, bool Looped, bool Randomize, bool Shuffle,
+                               bool StartPaused, uint16_t PauseTime, uint8_t TotalSteps, uint16_t Rate)
+    : paletteSet(&PaletteSet), looped(Looped), randomize(Randomize), shuffle(Shuffle)  //
 {
     bindClassRatesPS();
     //create an instance of PaletteBlenderPS to do the blends
@@ -11,7 +11,8 @@ PaletteCyclePS::PaletteCyclePS(paletteSetPS &PaletteSet, bool Looped, bool Rando
     currentIndex = 0;
     nextIndex = addmod8(currentIndex, 1, paletteSet->length);
     PB = new PaletteBlenderPS(*paletteSet->getPalette(currentIndex), *paletteSet->getPalette(nextIndex), false, TotalSteps, Rate);
-    PB->startPaused = StartPaused;
+    setStartPaused(StartPaused);
+    setPauseTime(PauseTime);
     //point the PB update rate to the same rate as the PaletteCyclePS instance, so they stay in sync
     PB->rate = rate;
     //setup the initial palette blend
@@ -110,7 +111,7 @@ void PaletteCyclePS::update() {
                 }
 
                 //If we're randomizing
-                if( randomizePal ) {
+                if( randomize ) {
                     paletteUtilsPS::randomize(*paletteSet->getPalette(nextIndex), compliment);
                 }
                 //set the palettes in the PaletteBlendPS instance manually

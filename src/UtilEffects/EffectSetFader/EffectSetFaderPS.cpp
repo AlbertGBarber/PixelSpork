@@ -1,7 +1,15 @@
 #include "EffectSetFaderPS.h"
 
-//Constructor
+//Base constructor, will fade in and out
 EffectSetFaderPS::EffectSetFaderPS(EffectSetPS &EffectSet, uint16_t FadeRunTime)  //
+{
+    reset(EffectSet, FadeRunTime);
+    effectFader->rate = rate;
+}
+
+//Constructor with fade in and out options
+EffectSetFaderPS::EffectSetFaderPS(EffectSetPS &EffectSet, uint16_t FadeRunTime, bool FadeIn, bool FadeOut)
+    : fadeIn(FadeIn), fadeOut(FadeOut)  //
 {
     reset(EffectSet, FadeRunTime);
     effectFader->rate = rate;
@@ -78,7 +86,7 @@ void EffectSetFaderPS::update(void) {
     //Check if it's time to update, ultimately the update rate isn't super important, as long as it's fast enough to not look choppy
     //We always update on the first cycle, so that we start the fading before any effects are updated in the effect set.
     //(otherwise you'd get a flash of the default brightness before the fading kicks in)
-    if( active && ( firstUpdate || (currentTime - prevTime) >= *rate ) ) {
+    if( active && (firstUpdate || (currentTime - prevTime) >= *rate) ) {
         prevTime = currentTime;
         firstUpdate = false;
 

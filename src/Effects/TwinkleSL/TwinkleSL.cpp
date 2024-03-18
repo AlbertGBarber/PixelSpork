@@ -17,19 +17,6 @@ TwinkleSL::TwinkleSL(SegmentSetPS &SegSet, CRGB Color, CRGB BgColor, uint16_t Nu
     init(FadeInSteps, FadeOutSteps, BgColor, SegSet, Rate);
 }
 
-//random colors constructor
-TwinkleSL::TwinkleSL(SegmentSetPS &SegSet, CRGB BgColor, uint16_t NumTwinkles, uint8_t FadeInSteps,
-                     uint8_t FadeOutSteps, uint16_t Rate)
-    : numTwinkles(NumTwinkles)  //
-{
-    //we make a random palette of one color so that
-    //if we switch to randMode 0 then we have a palette to use
-    setSingleColor(colorUtilsPS::randColor());
-    //since we're choosing colors at random, set the randMode
-    randMode = 1;
-    init(FadeInSteps, FadeOutSteps, BgColor, SegSet, Rate);
-}
-
 TwinkleSL::~TwinkleSL() {
     free(paletteTemp.paletteArr);
     deleteTwinkleArrays();
@@ -184,7 +171,7 @@ void TwinkleSL::update() {
         //since the arrays start un-initialized
         if( !startUpDone ) {
             totalSteps++;
-            if( totFadeSteps == totalSteps ) {
+            if( totalSteps == totFadeSteps  ) {
                 startUpDone = true;
             }
         }
@@ -245,10 +232,11 @@ void TwinkleSL::update() {
 //set a color based on the size of the palette and random mode
 CRGB TwinkleSL::pickColor() {
     switch( randMode ) {
-        case 0:  // we're picking from a set of colors
+        case 0: //we're picking from a set of colors
+        default:
             twinkleColor = paletteUtilsPS::getPaletteColor(*palette, random8(paletteLength));
             break;
-        default:  //(mode 1) set colors at random
+        case 1: //set colors at random
             twinkleColor = colorUtilsPS::randColor();
             break;
     }
@@ -260,7 +248,7 @@ CRGB TwinkleSL::pickColor() {
 //since pixels in that location will be fully faded out
 void TwinkleSL::incrementTwinkleArrays() {
     for( uint16_t i = 0; i < numTwinkles; i++ ) {
-        for( uint8_t j = totFadeSteps - 1; j > 0; j-- ) {
+        for( uint16_t j = totFadeSteps - 1; j > 0; j-- ) {
             ledArray[i][j] = ledArray[i][j - 1];
             colorIndexArr[i][j] = colorIndexArr[i][j - 1];
         }
