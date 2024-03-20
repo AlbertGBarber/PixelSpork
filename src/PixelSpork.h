@@ -2,7 +2,7 @@
 #define PixelSpork_h
 
 /*Welcome to my library!
-    Pixel Spork is a WS2812+ LED Effects library based on the FastLed library.
+    Pixel Spork is a WS2812+ LED Effects library based on the FastLED library.
     Aims to streamline the use of the popular WS2812 (and other) addressable LEDs by providing a 
     wide variety of rich, class-based, effects and utilities. Also supports segment sets, allowing 
     users to organize and re-arrange their LED layout in code. These sets can be further used to 

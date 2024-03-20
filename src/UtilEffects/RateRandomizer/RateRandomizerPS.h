@@ -28,12 +28,15 @@ Constructor Inputs:
     rateRangeMax (int16_t, so it can be negative) -- The highest possible random amount to be added to the baseRate
     rate -- The update rate (ms)
 
+Outputs: 
+    outputRate -- The output rate of the utility (see intro).
+
 Other Settings:
     active (default true) -- If false, the effect will be blocked from updating
     
 Functions:
     resetToBaseRate() -- resets the outputRate to the baseRate
-    update() -- updates the effect
+    update() -- Updates the utility.
 */
 class RateRandomizerPS : public EffectBasePS {
     public:

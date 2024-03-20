@@ -32,6 +32,9 @@ Constructor Inputs:
     looped -- Sets the utility to looped continuously between the start and end rates
     rate -- The update rate of the utility (ms)
 
+Outputs: 
+    outputRate -- The output rate of the utility (see intro).
+
 Other Settings:
     pauseTime (default 0) -- Sets a time (ms) that the output rate will be held at after finishing a transition
     looped -- Sets if the utility will looped continuously between the start and end rates

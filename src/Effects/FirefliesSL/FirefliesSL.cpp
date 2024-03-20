@@ -185,14 +185,18 @@ void FirefliesSL::update() {
 /* Updates the particle location based on the inoise16() output
 It's important that each particle has a unique noise position, otherwise they will all move together
 After some testing, I found the best way to do this was to increment the noise based on the particle's speed
-and the current time. Unfortunately the speed range is fairly small (2 - 20) unless you want really fast particles
+and the current time. Unfortunately the speed range is fairly small (2 - 20) unless you want really fast particles.
 We also offset the particle's location by its start position.
-This prevents particles of similar speeds from grouping up
-The overall result is not perfect, but looks pretty good most of the time
-We also reduce the particle's life by the elapsed time each time we update it
+This prevents particles of similar speeds from grouping up.
+To add a bit of extra randomness, the particles "partLife" and "lastUpdateTime" are included as noise factors
+    * The partLife changes as the particle ages
+    * The lastUpdateTime is set to a fixed random16() value when the particle spawns
+      (since we move the particle using noise, we don't need lastUpdateTime for updating)
+The overall result is not perfect, but looks pretty good most of the time.
+In addition to moving, we also reduce the particle's life by the elapsed time each time we update it.
 Note, to keep things simple I'm only allowing particles of size 1 with no trails
 Likewise the motion of the particles is governed entirely by the noise
-So overall I'm not using the particle trialType, trailSize, size, direction, bounce, or lastUpdateTime properties */
+So overall I'm not using the particle trialType, trailSize, size, direction, or bounce properties */
 void FirefliesSL::moveParticle(particlePS *particlePtr, uint16_t partNum) {
 
     partLife = particlePtr->life;
@@ -201,8 +205,10 @@ void FirefliesSL::moveParticle(particlePS *particlePtr, uint16_t partNum) {
     //We want each particle's noise to change uniquely over time
     //After some testing, I found that using the particle's speed worked the best
     //The speed range is only about 2 - 20 before particles start getting really fast
-    //we use the partLife as a secondary input to the noise, since this is also unique to each particle
-    partPos = inoise16(currentTime * particlePtr->speed, partLife);  //(currentTime * particlePtr->speed)/2
+    //To make the particle's more unique we:
+    // * Use the partLife as a secondary input to the noise, since this is also unique to each particle
+    // * Use the particle's "lastUpdateTime", which is set to a random value when the particle is spawned
+    partPos = inoise16(currentTime * particlePtr->speed, partLife, particlePtr->lastUpdateTime);  //(currentTime * particlePtr->speed)/2
     //inoise tends to pick values in the middle of the range, so we want to map this section to the strip location
     partPos = constrain(partPos, 13000, 51000);
     partPos = map(partPos, 13000, 51000, 0, numLines);
@@ -320,7 +326,10 @@ void FirefliesSL::drawParticlePixel(particlePS *particlePtr, uint16_t partNum) {
 
 //Spawns a firefly by randomizing an existing particle
 //The particle is given a new speed, start position and color index
-//The size is locked at one
+//The size is locked at one.
+//We use the firefly's "lastUpdateTime" to give it a "random seed" for it noise movement
+//This is fine since we move the fireflies using the noise output, 
+//so we never use the "lastUpdateTime" as an update time.
 void FirefliesSL::spawnFirefly(uint16_t partNum) {
 
     //randomize the particle properties (position is only up to numLines)
@@ -333,6 +342,10 @@ void FirefliesSL::spawnFirefly(uint16_t partNum) {
 
     particlePtr->maxLife = lifeBase + random16(lifeRange);
     particlePtr->life = particlePtr->maxLife;
+
+    //use the particles "lastUpdateTime" to add random factor for it's noise motion
+    //We move the particle based on the noise, so "lastUpdateTime" is otherwise un-used.
+    particlePtr->lastUpdateTime = random16();
 
     drawParticlePixel(particlePtr, partNum);
 }

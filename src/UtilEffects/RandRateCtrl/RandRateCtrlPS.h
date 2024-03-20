@@ -73,7 +73,10 @@ Constructor Inputs:
     rateRangeMax (int32_t, so it can be negative) -- The highest possible random amount to be added to the baseRate.
                                                      **Must be** greater than rateRangeMax.
     pauseTime -- The time (ms) the utility will pause for after finishing a transition.
-    rate -- The update rate of the utility (ms) 
+    rate -- The update rate of the utility (ms)
+
+Outputs: 
+    outputRate -- The output rate of the utility (see intro).
 
 Other Settings:
     usePauseRatio (default true) -- If true, then the utility will adjust the pause time after each transition to be

@@ -31,6 +31,7 @@ PaletteSliderPS	KEYWORD1
 PaletteNoisePS	KEYWORD1
 RandRateCtrlPS	KEYWORD1
 RateCtrlPS	KEYWORD1
+RateNoisePS	KEYWORD1
 RateRandomizerPS	KEYWORD1
 SegmentSetCheckPS	KEYWORD1
 SegOffsetCyclerPS	KEYWORD1
@@ -134,22 +135,22 @@ mod16PS			KEYWORD2
 maxPS		KEYWORD2
 minPS		KEYWORD2
 SIZE			KEYWORD2
-qSubD_PS			KEYWORD2
-qSubA_PS			KEYWORD2
-clamp8PS			KEYWORD2
-clamp16PS			KEYWORD2
+qSubD_PS		KEYWORD2
+qSubA_PS		KEYWORD2
+clamp8PS		KEYWORD2
+clamp16PS		KEYWORD2
 
 #######################################
 # Constants (in GlobalVars.h)
 #######################################
 
-D_LED_PS			LITERAL1
+D_LED_PS		LITERAL1
 
 #######################################
 # Global Variables and Constants (in GlobalVars.h)
 #######################################
 
-alwaysResizeObj_PS	LITERAL1
+alwaysResizeObj_PS		LITERAL1
 
 #######################################
 # Palettes (Structs) (in paletteListPS.h)

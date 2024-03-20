@@ -15,3 +15,4 @@
 #include "UtilEffects/AddGlitter/addGlitterPS.h"
 #include "UtilEffects/PaletteSlider/PaletteSliderPS.h"
 #include "UtilEffects/PaletteNoise/PaletteNoisePS.h"
+#include "UtilEffects/RateNoise/RateNoisePS.h"
