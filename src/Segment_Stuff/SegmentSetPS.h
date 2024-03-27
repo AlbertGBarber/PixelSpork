@@ -392,14 +392,17 @@ class SegmentSetPS {
             getSegHasSingle(uint16_t segNum),
             getSecIsSingle(uint16_t segNum, uint8_t secNum);
 
-        const segmentSecCont *getSecContArrPtr(uint16_t segNum);  //Returns a pointer to the segment's segmentSecCont section, returns null if there isn't one
+        const segmentSecCont 
+			*getSecContArrPtr(uint16_t segNum);  //Returns a pointer to the segment's segmentSecCont section, returns null if there isn't one
 
-        const segmentSecMix *getSecMixArrPtr(uint16_t segNum);  //Returns a pointer to the segment's segmentSecMix section, returns null if there isn't one
+        const segmentSecMix 
+			*getSecMixArrPtr(uint16_t segNum);  //Returns a pointer to the segment's segmentSecMix section, returns null if there isn't one
 
         SegmentPS
             **segArr = nullptr;
 
-        SegmentPS *getSegPtr(uint16_t segNum);
+        SegmentPS 
+			*getSegPtr(uint16_t segNum);
 
         CRGB
             *leds = nullptr;  //pointer to the FastLed leds array

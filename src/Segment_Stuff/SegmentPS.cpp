@@ -43,7 +43,7 @@ void SegmentPS::init() {
 //Treats single sections as length 1
 uint16_t SegmentPS::getSegTotLen() {
     uint16_t totalLength = 0;
-    for( int i = 0; i < numSec; i++ ) {
+    for( uint8_t i = 0; i < numSec; i++ ) {
         totalLength += abs(getSecLength(i));
     }
     return totalLength;

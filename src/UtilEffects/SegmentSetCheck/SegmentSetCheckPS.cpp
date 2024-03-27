@@ -1,12 +1,5 @@
 #include "SegmentSetCheckPS.h"
 
-SegmentSetCheckPS::SegmentSetCheckPS(SegmentSetPS &SegSet, uint8_t TestMode)
-    : testMode(TestMode)  //
-{
-    uint16_t Rate = 500;  //set a default rate of 500ms
-    init(SegSet, Rate);
-}
-
 SegmentSetCheckPS::SegmentSetCheckPS(SegmentSetPS &SegSet, uint8_t TestMode, uint16_t Rate)
     : testMode(TestMode)  //
 {

@@ -84,10 +84,12 @@ Example calls:
     using 50 steps, with 100ms between each step
     Note, you'll have to create your own start and end palettes.
 
-    PaletteBlenderPS PaletteBlender(startPalette, endPalette, true, true, 50, 100);
+    PaletteBlenderPS PaletteBlender(startPalette, endPalette, true, true, false, 0, 50, 100);
     Blends from the start palette to the end palette once, 
     looping and randomizing the palettes with each loop cycle.
     (looping and randomize are true).
+    The utility will pause for 0ms after every cycle 
+    (startPaused is false, and pauseTime is 0)
     Uses 50 steps, with 100ms between each step.
     Will produce a palette of ever-changing colors.
     Note, you'll have to create your own start and end palettes.
@@ -102,7 +104,15 @@ Constructor Inputs:
     randomize (optional, default false) --  If true, will randomize the colors of the end palette.
                                             Combine this with looped to produce constantly changing palettes.
                                             Note that this will permanently modify the end palette 
-                                            so make sure you aren't using it elsewhere!              
+                                            so make sure you aren't using it elsewhere! 
+    pauseTime (optional, default 0) -- Sets a time (ms) that the blendPalette will be pause at after finishing 
+                                       a transition before starting the next
+                                       Only relevant if looping. (See notes in intro).
+    startPaused (optional default false) -- If true, then the utility will pause before the blend begins
+                                            instead of after it is over. 
+                                            Allows you to use the starting palette for a time
+                                            before it is blended to the final palette. Mainly used when looping. 
+                                            The inital pause will be triggered on the first update().             
     totalSteps (max 255) -- The total number of steps taken to blend between the palettes
     rate -- The update rate of the blend (ms)
 
@@ -110,12 +120,6 @@ Output Vars:
    blendPalette -- The blended palette created by the utility. See notes in intro on how to use it in effects. 
 
 Other Settings:
-    pauseTime (default 0) -- Sets a time (ms) that the blendPalette will be pause at after finishing a transition before starting the next
-                             Only relevant if looping. (See notes in intro).
-    startPaused (default false) -- If true, then the utility will pause before the blend begins
-                                   instead of after it is over. Allows you to use the starting palette for a time
-                                   before it is blended to the final palette. Mainly used when looping. 
-                                   The inital pause will be triggered on the first update().
     compliment (default false) -- Only relevant when randomizing -
                                   If true, randomized palettes will only generate complimentary colors, 
                                   which means they will be equally spaced across the hue spectrum (see the HSV color space). 
@@ -144,9 +148,9 @@ class PaletteBlenderPS : public EffectBasePS {
         PaletteBlenderPS(palettePS &StartPalette, palettePS &EndPalette, bool Looped, uint8_t TotalSteps,
                          uint16_t Rate);
 
-        //Constructor including a randomize option
-        PaletteBlenderPS(palettePS &StartPalette, palettePS &EndPalette, bool Looped, bool Randomize, 
-                         uint8_t TotalSteps, uint16_t Rate);
+        //Constructor including randomize and pausing options
+        PaletteBlenderPS(palettePS &StartPalette, palettePS &EndPalette, bool Looped, bool Randomize, bool StartPaused, 
+                         uint16_t PauseTime, uint8_t TotalSteps, uint16_t Rate);
 
         ~PaletteBlenderPS();
 

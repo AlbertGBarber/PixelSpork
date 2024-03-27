@@ -1,7 +1,7 @@
 #include "RateCtrlPS.h"
 
-RateCtrlPS::RateCtrlPS(uint16_t StartRate, uint16_t EndRate, bool Easing, bool Cycle, uint16_t Rate)
-    : startRate(StartRate), endRate(EndRate), easing(Easing), looped(Cycle)  //
+RateCtrlPS::RateCtrlPS(uint16_t StartRate, uint16_t EndRate, bool Easing, bool Looped, uint16_t PauseTime, uint16_t Rate)
+    : startRate(StartRate), endRate(EndRate), easing(Easing), looped(Looped), pauseTime(PauseTime)  //
 {
     //bind the rate vars since they are inherited from BaseEffectPS
     bindClassRatesPS();
@@ -20,11 +20,10 @@ void RateCtrlPS::reset() {
     }
 }
 
-//sets new vars for the start and end rates and the update rate
-void RateCtrlPS::reset(uint16_t StartRate, uint16_t EndRate, uint16_t Rate) {
-    startRate = StartRate;
-    endRate = EndRate;
-    bindClassRatesPS();
+//sets new vars for the start and end rates and restarts the transition
+void RateCtrlPS::reset(uint16_t newStartRate, uint16_t newEndRate) {
+    startRate = newStartRate;
+    endRate = newEndRate;
     reset();
 }
 

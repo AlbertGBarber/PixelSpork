@@ -45,6 +45,11 @@ namespace segDrawUtils {
     CRGB
         getPixelColor(SegmentSetPS &SegSet, uint16_t pixelNum, const CRGB &color, uint8_t colorMode, uint16_t segNum, uint16_t lineNum);
 
+    void  //Functions for getting/setting pixel colors, treating the segment set as a matrix ("x" is lineNum, "y" is segNum)
+        setPixelColor_XY(SegmentSetPS &SegSet, uint16_t lineNum, uint16_t segNum, const CRGB &color, uint8_t colorMode);
+    CRGB
+        getPixelColor_XY(SegmentSetPS &SegSet, uint16_t lineNum, uint16_t segNum, const CRGB &color, uint8_t colorMode);
+
     void  //Functions to do with displaying the pixels
         handleBri(SegmentSetPS &SegSet, uint16_t pixelNum),
         show(SegmentSetPS &SegSet, bool showNow);
@@ -76,7 +81,7 @@ namespace segDrawUtils {
         numSec;
 
     static uint16_t
-        locData1[2], //{segment number, pixel number in segment}
+        locData1[2],  //{segment number, pixel number in segment}
         locData2[2],
         lineNum,
         lengthSoFar,

@@ -276,6 +276,15 @@ uint16_t segDrawUtils::getLineNumFromPixelNum(SegmentSetPS &SegSet, uint16_t seg
     return (uint16_t)(segPixelNum * SegSet.numLines) / SegSet.getTotalSegLength(segNum);
 }
 
+//Sets the pixel color at (lineNum, segNum), 
+//treating the segment set as matrix with dimensions numLines x numSegs.
+//So your "x" input is a line number ("lineNum"), and your "y" input is a segment number ("segNum").
+//This function should be particularly handy in adapting existing matrix-based effects to Pixel Spork
+void segDrawUtils::setPixelColor_XY(SegmentSetPS &SegSet, uint16_t lineNum, uint16_t segNum, const CRGB &color, uint8_t colorMode){
+    pixelNum = getPixelNumFromLineNum(SegSet, segNum, lineNum);
+    setPixelColor(SegSet, pixelNum, color, colorMode, segNum, lineNum);
+}
+
 //sets pixel colors (same as other setPixelColor funct)
 //doesn't need lineNum as argument. If lineNum is needed, it will be determined
 //note segPixelNum is local to the segment set (ie 5th pixel in the whole set)
@@ -324,7 +333,17 @@ void segDrawUtils::handleBri(SegmentSetPS &SegSet, uint16_t pixelNum) {
     }
 }
 
-/* fills in a pixelInfoPS struct with data (the pixel's actual address, what segment it's in, it's line number, and what color it should be)
+//Returns the pixel color at (lineNum, segNum) (accounting for Color Modes), 
+//treating the segment set as matrix with dimensions numLines x numSegs.
+//So your "x" input is a line number ("lineNum"), and your "y" input is a segment number ("segNum").
+//This function should be particularly handy in adapting existing matrix-based effects to Pixel Spork
+//The input color will be returned unchanged if the Color Mode is 0.
+CRGB segDrawUtils::getPixelColor_XY(SegmentSetPS &SegSet, uint16_t lineNum, uint16_t segNum, const CRGB &color, uint8_t colorMode){
+    pixelNum = getPixelNumFromLineNum(SegSet, segNum, lineNum);
+    getPixelColor(SegSet, pixelNum, color, colorMode, segNum, lineNum);
+}
+
+/* Fills in a pixelInfoPS struct with data (the pixel's actual address, what segment it's in, it's line number, and what color it should be)
 (the passed in struct is empty and will be filled in, but you must provide it,
 the segPixelNum is the number of the pixel you want the info for)
 you're probably calling this to account for different color modes before manipulating or storing a color
