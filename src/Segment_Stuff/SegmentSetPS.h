@@ -220,18 +220,22 @@ ie sec0 = {0,5} , sec1 = {10, 5}, const PROGMEM segmentSection sec0_array[] = { 
 This takes up more ram memory, and should only be used if you need to reuse sections in multiple segment sets.
 
 const PROGMEM segmentSecCont sec0_array[] = { {0, 5}, {10, 5} };
-SegmentPS segment0 = { SIZE(sec0_array), sec0_array, true };
+SegmentPS segment0 = { sec0_array, SIZE(sec0_array), true };
 
 const PROGMEM segmentSecCont sec1_array[] = { {5, 5}, {15, 5} };
-SegmentPS segment1 = { SIZE(sec1_array), sec1_array, false };
+SegmentPS segment1 = { sec1_array, SIZE(sec1_array), false };
 
 const PROGMEM segmentSecCont sec2_array[] = { {20, 5}, {30, 5} };
-SegmentPS segment2 = { SIZE(sec2_array), sec2_array, true };
+SegmentPS segment2 = { sec2_array, SIZE(sec2_array), true };
 
 //segment 3 is defined using a mixed section, so all the led addresses are held in an array
 const PROGMEM uint16_t sec3_arr[] = {25, 26, 27, 28, 29, 35, 36, 37, 38, 39};
-const PROGMEM segmentSecMix segmentSec3 = { sec3_arr, SIZE(sec3_arr) };
-SegmentPS segment3 = { SIZE(segmentSec3), &segmentSec3, true };
+	//Note that you MUST put the mixed section(s) in an array.
+	//The code is a short hand, and skips defining a variable for the section
+	//by placing it directly in the array (hence the double curly brackets)
+	//To define the sections the long way, see the multiple mixed section example below
+const PROGMEM segmentSecMix segmentSec3[] = { { sec3_arr, SIZE(sec3_arr) } };
+SegmentPS segment3 = { segmentSec3, SIZE(segmentSec3), true };
 
 //If you have multiple mixed sections you'd need to stick them in an array like:
 //You should only need multiple mixed sections if you're setting them as single pixels (see section notes above)
@@ -244,13 +248,13 @@ SegmentPS segment3 = { SIZE(segmentSec3), &segmentSec3, true };
 																						|
 //Put the sections in an array															|
 //const PROGMEM segmentSecMix segSec3Arr[] = { segmentSec3_1, segmentSec3_2 };			|
-//SegmentPS segment3 = { SIZE(segSec3Arr), segSec3Arr, true }; <-The final segment		|
+//SegmentPS segment3 = { segSec3Arr, SIZE(segSec3Arr), true }; <-The final segment		|
 //--------------------------------------------------------------------------------------|
 
 //Alternate definition of segment 3 using continuous sections
 //----------------------------------------------------------------------|
 //const PROGMEM segmentSecCont sec3_array[] = { {25, 5}, {35, 5} };		|
-//SegmentPS segment3 = { SIZE(sec3_array), sec3_array, false };			|
+//SegmentPS segment3 = { sec3_array, SIZE(sec3_array), false };			|
 //----------------------------------------------------------------------|
 
 //define the segment array and the SegmentSetPS (must include the * and the &'s)

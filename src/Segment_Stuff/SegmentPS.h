@@ -3,6 +3,16 @@
 
 #include "segmentSectionsPS.h"
 
+//Needed to VALIDLY handle program memory pointer access in both C and C++
+//Used for accessing mixed segments pixel numbers.
+//See more info here: 
+//https://community.arduboy.com/t/progmem-functions-pgm-read-float-and-pgm-read-ptr/5771
+//(I don't know how template stuff works, this is a life-saving copy-paste)
+template<typename T> T * pgm_read_pointer_PS(T * const * pointer)
+{
+	return reinterpret_cast<T *>(pgm_read_ptr(pointer));
+}
+
 //for class explanation see SegmentSetPS.h
 class SegmentPS {
 
@@ -38,6 +48,10 @@ class SegmentPS {
 
         const segmentSecMix
             *secMixPtr = nullptr;
+        
+        //Pointer for accessing mixed section pixel array
+        const uint16_t
+            *pixArrPtr;
 
     private:
 

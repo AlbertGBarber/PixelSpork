@@ -24,14 +24,15 @@ void SegmentPS::init() {
 
     //check if any of the sections are single, if they are, flag the segment as having a single section
     //(so it gets caught in segDrawUtils::show())
+    //Note we use pgm_read_byte b/c "single" is a bool (uint8_t)
     for( uint8_t i = 0; i < numSec; i++ ) {
         if( secContPtr ) {
-            if( pgm_read_word(&(secContPtr + i)->single) ) {
+            if( pgm_read_byte( &secContPtr[i].single ) ) {
                 hasSingle = true;
                 break;
             }
         } else {
-            if( pgm_read_word(&(secMixPtr + i)->single) ) {
+            if( pgm_read_byte( &secMixPtr[i].single ) ) {
                 hasSingle = true;
                 break;
             }
@@ -54,25 +55,28 @@ uint16_t SegmentPS::getSegTotLen() {
 //b/c sections are stored in flash, we need to use pgm_read_word to fetch their properties
 //the start pixel is a uint16_t, pgm_read_word reads 16bit words.
 uint16_t SegmentPS::getSecStartPixel(uint8_t secNum) {
-    return pgm_read_word(&(secContPtr + secNum)->startPixel);
+    return pgm_read_word( &secContPtr[secNum].startPixel );
 }
 
 //!!!!Only works for mixed sections, not continuous sections
 //Returns the physical address of the pixel at pixelNum in the mixed section pixel array
-//accounts for the segment direction
-//b/c sections are stored in flash, we need to use pgm_read_word to fetch their properties
-//the start pixel is a uint16_t, pgm_read_word reads 16bit words.
+//b/c sections are stored in flash, fetching the data is a two step process
+//First we need to get the pointer to the mixed section's pixel array by reading the pixArr pointer from the section
+//Then we use the pointer to get the pixel's location value at pixelNum in the array.
+//(see SegmentPS.h file for template pgm_read_pointer_PS function)
 uint16_t SegmentPS::getSecMixPixel(uint8_t secNum, uint16_t pixelNum) {
-    return pgm_read_word(&(secMixPtr + secNum)->pixArr[pixelNum]);
+    pixArrPtr = pgm_read_pointer_PS(&secMixPtr[secNum].pixArr);
+    return pgm_read_word( &pixArrPtr[pixelNum] );
 }
 
 //Returns the value of the "single" var for the specified section
 //This indicates if the section is to be treated as a single pixel or not
+//Note we use pgm_read_byte b/c "single" is a bool (uint8_t)
 bool SegmentPS::getSecIsSingle(uint8_t secNum) {
     if( secContPtr ) {
-        return (pgm_read_word(&(secContPtr + secNum)->single));
+        return pgm_read_byte( &secContPtr[secNum].single );
     } else {
-        return (pgm_read_word(&(secMixPtr + secNum)->single));
+        return pgm_read_byte( &secMixPtr[secNum].single );
     }
 }
 
@@ -85,16 +89,18 @@ int16_t SegmentPS::getSecLength(uint8_t secNum) {
     //otherwise we must have a mixed section pointer
     //Then we check if the section is single
     if( secContPtr ) {
-        if( pgm_read_word(&(secContPtr + secNum)->single) ) {
+        if( pgm_read_byte( &secContPtr[secNum].single ) ) {
+            //Note we use pgm_read_byte b/c "single" is a bool (uint8_t)
             return 1;
         } else {
-            return pgm_read_word(&(secContPtr + secNum)->length);
+            return pgm_read_word( &secContPtr[secNum].length );
         }
     } else {
-        if( pgm_read_word(&(secMixPtr + secNum)->single) ) {
+        if( pgm_read_byte( &secMixPtr[secNum].single ) )  {
+            //Note we use pgm_read_byte b/c "single" is a bool (uint8_t)
             return 1;
         } else {
-            return pgm_read_word(&(secMixPtr + secNum)->length);
+            return pgm_read_word( &secMixPtr[secNum].length );
         }
     }
 }
@@ -103,8 +109,8 @@ int16_t SegmentPS::getSecLength(uint8_t secNum) {
 //(Used to set all the section's pixel colors)
 int16_t SegmentPS::getSecTrueLength(uint8_t secNum) {
     if( secContPtr ) {
-        return pgm_read_word(&(secContPtr + secNum)->length);
+        return pgm_read_word( &secContPtr[secNum].length );
     } else {
-        return pgm_read_word(&(secMixPtr + secNum)->length);
+        return pgm_read_word( &secMixPtr[secNum].length );
     }
 }

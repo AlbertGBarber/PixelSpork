@@ -62,10 +62,13 @@ struct segmentSecCont {
 //A section containing an array of pixel addresses. These do not have to be continuous.
 //example definition:
 //const PROGMEM uint16_t pixel_arr[] = {0, 2, 1};
-//const PROGMEM segmentSecMix segmentSec = { pixel_arr, SIZE(pixel_arr) };
-//SegmentPS segment0 = { segmentSec, true };
+    //Note that you MUST put the mixed section(s) in an array.
+    //The code is a short hand, and skips defining a variable for the section
+    //by placing it directly in the array (hence the double curly brackets)
+//const PROGMEM segmentSecMix segmentSec = { { pixel_arr, SIZE(pixel_arr) } };
+//SegmentPS segment0 = { segmentSec, SIZE(segmentSec), true };
 struct segmentSecMix {
-    uint16_t *pixArr;
+    const uint16_t *pixArr;
     uint16_t length;
     //used to mark if the segment should be treated as a single pixel in effects
     bool single;  //Will be default initialized to 0 if omitted from the section definition in your code
