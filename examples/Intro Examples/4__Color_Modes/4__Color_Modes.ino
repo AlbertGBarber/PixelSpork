@@ -68,6 +68,11 @@ Color Modes:
 //Define the array of LEDs
 CRGB leds[NUM_LEDS];
 
+//The setting below turns the Theater Chase effect on/off
+//If the Theater Chase is off, the code will only show the Color Mode Fill effect,
+//but will still cycle through the color modes. This may be helpful in understanding what each mode does.
+#define USE_THEATER_CHASE true
+
 //Set up a simple 2D segment set, splitting the strip into 4 equal segments.
 //If possible, you should arrange your LEDs into 4 equal rows to match the Segment Set.
 //This will help make each Color Mode more obvious.
@@ -188,9 +193,9 @@ void loop() {
 
     //Draw either the colorModeFill or theaterChase effects
     //We start by doing the colorModeFill until we hit effectChangeTime (after we're done each color mode)
-    //And then we switch to just doing theaterChase forever.
+    //And then we switch to just doing theaterChase forever (if USE_THEATER_CHASE is true).
     currentTime = millis();
-    if(currentTime > effectChangeTime) {
+    if(currentTime > effectChangeTime && USE_THEATER_CHASE) {
         theaterChase.update();
     } else {
         colorModeFill.update();
