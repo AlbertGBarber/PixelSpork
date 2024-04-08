@@ -9,6 +9,10 @@ A repository for pre-defined palettes
 See .cpp file for colors.
 */
 
+//Default purple/green palette for Segment Set Color Mode custom gradients
+extern CRGB segDefaultPal_PS_arr[];
+extern palettePS segDefaultPal_PS;
+
 //Red/yellow fire palette for use with Fire2012 effects
 extern CRGB firePal_PS_arr[];
 extern palettePS firePal_PS;

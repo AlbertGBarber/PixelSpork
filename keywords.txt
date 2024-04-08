@@ -1,5 +1,5 @@
 #######################################
-# Syntax Coloring Map For PixelSpork
+# Syntax Coloring Map For Pixel Spork
 # MUST edit this with Notepad, not Visual Studio!
 # You have to use tabs for the keywords,
 # using spaces prevents the Arduino IDE from recognizing them.
@@ -157,6 +157,7 @@ alwaysResizeObj_PS		LITERAL1
 #######################################
 
 pacificaPalettePS		KEYWORD3
+segDefaultPal_PS		KEYWORD3
 firePal_PS		KEYWORD3
 firePalPink_PS		KEYWORD3
 firePalBlue_PS		KEYWORD3

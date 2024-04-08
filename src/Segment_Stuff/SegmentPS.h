@@ -40,6 +40,9 @@ class SegmentPS {
             getSecLength(uint8_t secNum),      //Returns the length of the section, "single" sections will be returned as 1
             getSecTrueLength(uint8_t secNum);  //Returns the length of the section, disregards the section's "single" setting
 
+        void 
+            getSegTotLen(); //Calculates the totalLength of the segment, Treats "single" segments as length 1.
+
         //Pointers to the two types of segment section (see segmentSectionsPS.h)
         //We can only have one type of section per segment, which is set in the constructor
         //so one of these will always be null (this is important to checking what type of section is in the segment)
@@ -54,9 +57,6 @@ class SegmentPS {
             *pixArrPtr;
 
     private:
-
-        uint16_t
-            getSegTotLen();
 
         void
             init();

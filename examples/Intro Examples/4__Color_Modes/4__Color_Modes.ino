@@ -74,8 +74,8 @@ CRGB leds[NUM_LEDS];
 #define USE_THEATER_CHASE true
 
 //Set up a simple 2D segment set, splitting the strip into 4 equal segments.
-//If possible, you should arrange your LEDs into 4 equal rows to match the Segment Set.
-//This will help make each Color Mode more obvious.
+//If possible, you should arrange your LEDs into 4 equal rows,
+//using a serpentine layout to match the Segment Set.
 //Note that if you already have a 2D layout and Segment Set for your LEDs,
 //I encourage you to use it in place of the Segment Set below. 
 //For more info in segment sets, see
@@ -88,7 +88,7 @@ SegmentPS segment0 = { sec0, SIZE(sec0), true };
 
 //Segment 1, starting at LED (NUM_LEDS * 1/4) with length for NUM_LEDS/4
 const PROGMEM segmentSecCont sec1[] = { {(NUM_LEDS * 1 / 4), NUM_LEDS / 4} };
-SegmentPS segment1 = { sec1, SIZE(sec1), true };
+SegmentPS segment1 = { sec1, SIZE(sec1), false }; //reversed direction for serpentine layout
 
 //Segment 2, starting at LED (NUM_LEDS * 2/4) with length for NUM_LEDS/4
 const PROGMEM segmentSecCont sec2[] = { {(NUM_LEDS * 2 / 4), NUM_LEDS / 4} };
@@ -96,7 +96,7 @@ SegmentPS segment2 = { sec2, SIZE(sec2), true };
 
 //Segment 3, starting at LED (NUM_LEDS * 3/4) with length for NUM_LEDS/4
 const PROGMEM segmentSecCont sec3[] = { {(NUM_LEDS * 3 / 4), NUM_LEDS / 4} };
-SegmentPS segment3 = { sec3, SIZE(sec3), true };
+SegmentPS segment3 = { sec3, SIZE(sec3), false }; //reversed direction for serpentine layout
 
 //Create the segment set using the quarter segments above
 SegmentPS *quatSegs_arr[] = { &segment0, &segment1, &segment2, &segment3 };

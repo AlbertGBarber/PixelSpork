@@ -1,5 +1,9 @@
 #include "paletteListPS.h"
 
+//Default purple/green palette for Segment Set Color Mode custom gradients
+CRGB segDefaultPal_PS_arr[] = {CRGB{30, 15, 230}, CRGB{0, 200, 0}};
+palettePS segDefaultPal_PS = {segDefaultPal_PS_arr, SIZE(segDefaultPal_PS_arr)};
+
 //Red/yellow fire palette for use with Fire2012 effects
 CRGB firePal_PS_arr[] = {CRGB::Red, CRGB{255, 143, 0}, CRGB{255, 255, 100}};
 palettePS firePal_PS = {firePal_PS_arr, SIZE(firePal_PS_arr)};

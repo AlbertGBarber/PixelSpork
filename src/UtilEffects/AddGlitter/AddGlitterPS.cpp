@@ -44,7 +44,6 @@ void AddGlitterPS::fillGlitterArr() {
     numLeds = segSet->numLeds;
     for( uint16_t i = 0; i < glitterNum; i++ ) {
         pixelNum = random16(numLeds);
-        //pixelNum = segDrawUtils::getSegmentPixel(*segSet, pixelNum);
         glitterLocs[i] = pixelNum;
     }
 }
@@ -58,7 +57,6 @@ void AddGlitterPS::advanceGlitterArr() {
     for( int32_t i = glitterNum - 1; i >= 0; i-- ) {
         if( i == 0 ) {
             pixelNum = random16(numLeds);
-            //pixelNum = segDrawUtils::getSegmentPixel(*segSet, pixelNum);
             glitterLocs[i] = pixelNum;
         } else {
             glitterLocs[i] = glitterLocs[i - 1];
@@ -96,7 +94,6 @@ void AddGlitterPS::update() {
 
             //Drawn the glitter on the strip
             for( uint16_t i = 0; i < glitterNum; i++ ) {
-                //segDrawUtils::setPixelColor(*segSet, glitterLocs[i], *glitterColor, 0, 0, 0);
                 segDrawUtils::setPixelColor(*segSet, glitterLocs[i], *glitterColor, colorMode);
             }
 

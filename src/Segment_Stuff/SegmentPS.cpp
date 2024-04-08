@@ -20,7 +20,7 @@ SegmentPS::SegmentPS(const segmentSecMix *segSecMixArr, uint8_t NumSec, bool dir
 //Initializes core variables for the segment
 //and checks if the segment has any single sections
 void SegmentPS::init() {
-    totalLength = getSegTotLen();
+    getSegTotLen();
 
     //check if any of the sections are single, if they are, flag the segment as having a single section
     //(so it gets caught in segDrawUtils::show())
@@ -40,14 +40,12 @@ void SegmentPS::init() {
     }
 }
 
-//returns the total length of the segment by summing the length of each segment section
+//Sets the total length of the segment by summing the length of each segment section
 //Treats single sections as length 1
-uint16_t SegmentPS::getSegTotLen() {
-    uint16_t totalLength = 0;
+void SegmentPS::getSegTotLen() {
     for( uint8_t i = 0; i < numSec; i++ ) {
         totalLength += abs(getSecLength(i));
     }
-    return totalLength;
 }
 
 //!!!!Only works for continuous segment sections, not mixed sections

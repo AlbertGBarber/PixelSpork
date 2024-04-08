@@ -4,25 +4,34 @@ SegmentSetPS::SegmentSetPS(struct CRGB *Leds, uint16_t LedArrSize, SegmentPS **S
     : numSegs(NumSegs), segArr(SegArr), leds(Leds), ledArrSize(LedArrSize)  //
 {
     //Set some key segment set vars
-    setNumLines();
-    setNumLeds();
+    calcSetVars();
 
     //Reset the gradient values to use the key segment vars set above
     resetGradVals();
 
-    //create a default gradient palette
-    CRGB *newPalette_arr = new CRGB[2];
-    newPalette_arr[0] = CRGB(230, 15, 230);  //purple
-    newPalette_arr[1] = CRGB(0, 200, 0);     //green
-    paletteTemp = {newPalette_arr, 2};
-    gradPalette = &paletteTemp;
+    //Set the gradient palette to a default (from paletteList.h)
+    //The palette is used for Color Modes
+    gradPalette = &segDefaultPal_PS;
 }
 
-//resets the gradient vars to their defaults
-void SegmentSetPS::resetGradVals() {
-    gradLenVal = numLeds;
-    gradLineVal = numLines;
-    gradSegVal = numSegs;
+//destructor
+SegmentSetPS::~SegmentSetPS(){
+    free(segProgLengths);
+}
+
+//Changes a segment in the set 
+//also re-calculates various segment dependent vars
+void SegmentSetPS::setSegment(SegmentPS &newSegment, uint16_t segNum){
+    segArr[segNum] = &newSegment;
+
+    calcSetVars();
+}
+
+//Calculates various segment set vars based on the current segments
+void SegmentSetPS::calcSetVars(){
+    setNumLines();
+    setNumLeds();
+    setProgLengthArr();
 }
 
 //Gets and sets the number of lines across all segments
@@ -52,6 +61,33 @@ void SegmentSetPS::setNumLeds(void) {
         ledCount += getTotalSegLength(i);
     }
     numLeds = ledCount;
+}
+
+//Fills in the segProgLengths array.
+//Each entry in the array is the combined lengths of all previous segments up to the current segment
+//For example, if we have 4 segments in the set, each with length 10,
+//Then the segProgLengths array would be {0, 10, 20, 30}
+//This is useful for calculating a pixel's location is relative to the whole segment set.
+//Note that the array is allocated dynamically, and must be re-calc'd if you change any of the segments.
+void SegmentSetPS::setProgLengthArr(){
+    if( alwaysResizeObj_PS || (numSegs > maxNumSegs) ) {
+        maxNumSegs = numSegs;
+        free(segProgLengths);
+        segProgLengths = (uint16_t *)malloc((maxNumSegs) * sizeof(uint16_t));
+    }
+
+    uint16_t lengthSoFar = 0;
+    for( uint16_t i = 0; i < numSegs; i++ ) {
+        segProgLengths[i] = lengthSoFar;
+        lengthSoFar += getTotalSegLength(i);
+    }
+}
+
+//resets the gradient vars to their defaults
+void SegmentSetPS::resetGradVals() {
+    gradLenVal = numLeds;
+    gradLineVal = numLines;
+    gradSegVal = numSegs;
 }
 
 //returns a pointer to the specified segment instance
