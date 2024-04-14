@@ -7,10 +7,14 @@
 #include "MathUtils/mathUtilsPS.h"
 
 //Various functions for manipulating colors, see function comments in the .cpp file for info on each function
+//Note that randSatMin and randSatMax control the saturation range for random colors.
+//Their defaults produce a good mix of colors, trending towards the pastel range,
+//but you may adjust them to your liking. 
 namespace colorUtilsPS {
 
     CRGB
         randColor(),
+        randColor(uint8_t satMin, uint8_t satMax, uint8_t valMin, uint8_t valMax),
         getCompColor(uint8_t baseHue, uint8_t numColors, uint8_t num, uint8_t sat, uint8_t val),
         wheel(uint16_t hue, uint16_t hueOffset, uint8_t sat, uint8_t val),
         wheel(uint16_t hue, uint16_t hueOffset),
@@ -23,6 +27,8 @@ namespace colorUtilsPS {
 
     //pre-allocated variables
     static uint8_t
+        randSatMin = 100,
+        randSatMax = 255,
         ratio;
 
 };

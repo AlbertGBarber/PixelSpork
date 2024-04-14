@@ -23,7 +23,8 @@ BreathPS::BreathPS(SegmentSetPS &SegSet, palettePS &Palette, CRGB BgColor, uint8
 //Passing in maxBreath also forces the compiler to differentiate this constructor from the rainbow one below
 //(CRGB's look like uint8_t's to the compiler)
 BreathPS::BreathPS(SegmentSetPS &SegSet, CRGB color, CRGB BgColor, uint8_t MaxBreath, uint8_t BreathFreq, uint16_t Rate)
-    : maxBreath(MaxBreath) {
+    : maxBreath(MaxBreath) //
+{
     if( color == CRGB{0, 0, 0} ) {
         randMode = 1;  //set mode to 3 since we are doing a full random set of colors
     }
@@ -36,7 +37,8 @@ BreathPS::BreathPS(SegmentSetPS &SegSet, CRGB color, CRGB BgColor, uint8_t MaxBr
 
 //constructor for rainbow mode
 BreathPS::BreathPS(SegmentSetPS &SegSet, CRGB BgColor, uint8_t HueRate, uint8_t BreathFreq, uint16_t Rate)
-    : hueRate(HueRate) {
+    : hueRate(HueRate) //
+{
     randMode = 4;  //set mode to 4 for rainbow mode
 
     //we still make a palette with a single random color in case we switch randMode away from the rainbow mode

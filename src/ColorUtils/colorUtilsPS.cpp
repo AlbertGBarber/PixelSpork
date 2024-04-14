@@ -3,11 +3,19 @@
 using namespace colorUtilsPS;
 
 //Returns a random color using a random hue and a limited random saturation
-//Seems to produce a good set of random colors, tending towards more pastel type colors
+//The default sat min/max seem to produce a good set of random colors, tending towards more pastel type colors
 //We don't randomize the value because doing so mostly just dims the output colors without significantly changing them
 CRGB colorUtilsPS::randColor() {
-    return CHSV(random8(), random8(100, 255), 255);
+    return CHSV(random8(), random8(randSatMin, randSatMax), 255);
     //return CRGB( random8(), random8(), random8() );
+}
+
+//Returns a random color from the HSV spectrum
+//The ranges satMin to satMax and valMin to valMax set the random ranges for the HSV saturation and value
+//ie if satMin is 50 and satMax is 255, the random color's saturation will be between 50 and 255.
+//The ranges run from 0 to 255, with 255 being full saturation/value. 
+CRGB colorUtilsPS::randColor(uint8_t satMin, uint8_t satMax, uint8_t valMin, uint8_t valMax) {
+    return CHSV(random8(), random8(satMin, satMax), random8(valMin, valMax));
 }
 
 //Returns a complimentary color to the passed in base hue
