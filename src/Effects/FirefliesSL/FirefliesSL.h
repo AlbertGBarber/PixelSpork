@@ -13,16 +13,16 @@ Firefly colors can be set to a single color or picked randomly from a palette
 You also have the option of having the constructor make a random palette for you
 
 In general you can change most variables on the fly except for maxNumFireflies
-You can also turn the twinkling off
 
 This effect is fully compatible with color modes, and the bgColor is a pointer, so you can bind it
 to an external color variable. By default it is bound to bgColorOrig, which is set to 0 (blank color).
 
-By default the background color is black (0). If you set a non-zero background color be sure to set `fillBG` to true, 
+By default the background color is black (0). If you set a non-zero background color be sure to set `fillBg` to true, 
 otherwise each pixel will only be filled after a firefly touches it.
 
-The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
-passing in a SegmentSetPS with only one segment containing the whole strip.
+The effect is adapted to work on segment lines for 2D use. 
+Note that the firefly simulation is _1D_, using a 2D segment set will cause each firefly to drawn on a 
+whole segment line (which still looks neat, but is not the same as a full 2D set of fireflies).
 
 Due to the way the effect is programmed, if two flies meet each other, by default one will overwrite the other
 You can adjust this behavior by turning on "blend", which will add particle colors together as they pass by each other
@@ -62,11 +62,13 @@ Inputs guide:
     So lifeBase should probably be 2000+ (2 sec), while the range should be a bit larger than the base ie 3000ish
     A larger life range will help give your fireflies more variation.
 
-    SpeedBase and speedRange do most of the work in separating fireflies.
+    "speedBase" and "speedRange" do most of the work in separating fireflies.
     They work by multiplying the noise input, placing the fireflies on different noise paths. 
-    Unfortunately, the workable speed range is fairly small before the fireflies start to move too fast.
-    I recommend starting with a combined (speedBase + speedRange) of (1 - 15).
-    I'd set my range to at least 5 to get a good variation. If you set it too low fireflies will tend to move together.
+    So the "speed" isn't a time, but more like a scale of motion.
+    A "good" speed and range vary a lot depending on how large your segment set is.
+    I recommend starting with a speed of 10 and a range of 8.
+    Make sure your range is at a good portion of your base speed,
+    If you set it too low fireflies will tend to move together.
 
     Spawning:
         A firefly will spawn if random(spawnBasis) <= spawnChance. spawnBasis is default to 1000, so you can go down
@@ -75,13 +77,20 @@ Inputs guide:
         effect update rate and how many fireflies you have. 
         Even with quite low percentages, fireflies will probably spawn quite often.
 
-Example calls: 
+        Fireflies fade in and out as they spawn and de-spawn. The percentage of their life that they spend fading 
+        is controlled by `fadeThresh`, defaulted to 50 out of 255. 
+        See the "Other Settings" entry below for more details.
 
-    FirefliesSL fireflies(mainSegments, CRGB(222, 144, 9), 15, 50, 2000, 3000, 3, 6, 80);
+    Flickering:
+        By default, the fireflies vary their brightness randomly to "flicker". 
+        You can disable this by setting `flicker` to false.
+
+Example calls: 
+    FirefliesSL fireflies(mainSegments, CRGB(222, 144, 9), 15, 50, 2000, 3000, 8, 5, 80);
     Will do a set of fireflies using a yellow-orange color
     There are a maximum of 15 fireflies active at one time, and each has a 5 percent chance of spawning per cycle (50/1000)
     The fireflies have a base life of 2000ms, with a range of 3000ms (for a max life of 5000ms)
-    The fireflies have a base speed of 3, with a range of 6 (for a max speed of 9)
+    The fireflies have a base speed of 8, with a range of 5 (for a max speed of 13)
     The effect updates at 80ms
     !!When using a single color constructor, if you use a pre-build FastLED color make sure you pass in as
     CRGB(*colorCode*), ex CRGB(CRGB::Red)
@@ -94,11 +103,11 @@ Example calls:
     The fireflies have a base speed of 6, with a range of 14 (for a max speed of 20)
     The effect updates at 70ms
 
-    FirefliesSL fireflies(mainSegments, 2, 20, 50, 3000, 3000, 2, 5, 80);
+    FirefliesSL fireflies(mainSegments, 2, 20, 50, 3000, 3000, 4, 5, 80);
     Will do a set of fireflies using a random palette of 2 colors
     There are a maximum of 20 fireflies active at one time, and each has a 5 percent chance of spawning per cycle (50/1000)
     The fireflies have a base life of 3000ms, with a range of 3000ms (for a max life of 6000ms)
-    The fireflies have a base speed of 2, with a range of 5 (for a max speed of 7)
+    The fireflies have a base speed of 4, with a range of 5 (for a max speed of 9)
     The effect updates at 80ms
 
 Constructor Inputs:
@@ -128,7 +137,7 @@ Other Settings:
     fadeThresh (default 50) -- The number of steps (out of 255) for the fireflies to fade in or out
                                The fireflies spend 255 steps in total fading in, staying at a peak color, then fading out
                                The value of `fadeThresh` sets how many steps they spend fading
-                               Note that setting it to 255 will only doa fade in, and then the fireflies will disappear instantly
+                               Note that setting it to 255 will only do fade in, and then the fireflies will disappear instantly
                                128 will cause them to fade in then out with no pause at the peak 
     spawnBasis (default 1000) -- The spawn probability threshold. 
                                  A firefly will spawn if "random(spawnBasis) <= spawnChance".
@@ -229,6 +238,7 @@ class FirefliesSL : public EffectBasePS {
         void
             init(uint16_t maxNumFireflies, SegmentSetPS &SegSet, uint16_t Rate),
             moveParticle(particlePS *particlePtr, uint16_t partNum),
+            decayParticle(particlePS *particlePtr, uint16_t partNum),
             drawParticlePixel(particlePS *particlePtr, uint16_t partNum),
             spawnFirefly(uint16_t fireflyNum);
 };

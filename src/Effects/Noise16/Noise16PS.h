@@ -56,7 +56,7 @@ These include any effect with "noise" in the name, and the Lava effect.
 Finally, this effect is 1D, so it always treats your Segment Set as a single line.
 
 Example calls: 
-    Noise16PS noise16PS(mainSegments, 4, 40, 500, 2, 1, 0, 2, 100, 0, 40);
+    Noise16PS noise16(mainSegments, 4, 40, 500, 2, 1, 0, 2, 100, 0, 40);
     Will produce a noise effect with a palette of 4 randomly chosen colors
     There are 40 blend steps between each color
     An overall scaling value of 500 is applied to the noise
@@ -66,8 +66,8 @@ Example calls:
         z is mode 0, so is static at 0;
     The effect updates at 40ms
     
-    Noise16PS noise16PS(mainSegments, cybPnkPal_PS, 20, 600, 1, 0, 2, 200, 10, 5, 60);
-    Will produce a noise effect using colors from cybPnkPal_PS
+    Noise16PS noise16(mainSegments, cybPnkPal_PS, 20, 600, 1, 0, 2, 200, 10, 5, 60);
+    Will produce a noise effect using colors from the cybPnkPal_PS palette
     There are 20 blend steps between each color
     An overall scaling value of 600 is applied to the noise
     The noise has the following inputs:

@@ -83,10 +83,6 @@ Inputs guide:
     This makes the fireworks look more like an explosion.
     The settings for this spark all use the "center" in their name.
 
-    Note that to help avoid fireworks from spawning very close to either end of the strip, 
-    their spawn range is reduced by numLEDs / spawnRangeDiv from each end of the strip.
-    By default, spawnRangeDiv is 5. A higher spawnRangeDiv will expand the spawn area.
-
     There are some other, secondary variables, but you probably won't need to tweak these initially.
 
     Spawning:
@@ -95,6 +91,10 @@ Inputs guide:
         This means that how densely your fireworks spawn depends a lot on the
         effect update rate and how many fireworks you have. Even with quite low percentages, 
         at the default update rate (see below), fireworks will probably spawn quite often.
+
+        Note that to help avoid fireworks from spawning very close to either end of the strip, 
+        their spawn range is reduced by numLEDs / spawnRangeDiv from each end of the strip.
+        By default, spawnRangeDiv is 10. A higher spawnRangeDiv will expand the spawn area.
 
     Update Rate:
         Note that unlike other effects, the update rate is preset for you at 5ms, 
@@ -175,7 +175,7 @@ Other Settings:
     randSparkColors (default false) -- If true, each spark will have its own color picked from the palette
     spawnBasis (default 1000) -- The spawn probability threshold. 
                                  A firework will spawn if "random(spawnBasis) <= spawnChance".
-    spawnRangeDiv (default 5) -- Sets what range of the strip fireworks spawn in: from numLEDs / spawnRangeDiv to ( numLEDs - (numLEDs / spawnRangeDiv) )
+    spawnRangeDiv (default 10) -- Sets what range of the strip fireworks spawn in: from numLEDs / spawnRangeDiv to ( numLEDs - (numLEDs / spawnRangeDiv) )
     *burstColor and burstColOrig (default CRGB::White) -- The color of the initial firework burst, is a pointer. 
                                                           It is bound to the burstColOrig by default.
     *bgColor and bgColorOrig (default 0) -- The color of the background, is a pointer. 
@@ -209,7 +209,7 @@ class FireworksPS : public EffectBasePS {
         ~FireworksPS();
 
         uint8_t
-            spawnRangeDiv = 5,  //sets what range of the strip fireworks spawn in: from numLEDs / spawnRangeDiv to (numLEDs - numLEDs / spawnRangeDiv)
+            spawnRangeDiv = 10,  //sets what range of the strip fireworks spawn in: from numLEDs / spawnRangeDiv to (numLEDs - numLEDs / spawnRangeDiv)
             colorMode = 0,
             bgColorMode = 0,
             maxNumFireworks,

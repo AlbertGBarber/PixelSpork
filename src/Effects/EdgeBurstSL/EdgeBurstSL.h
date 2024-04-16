@@ -75,9 +75,10 @@ Example calls:
     with a burst freq of 10
     The effect updates at 80ms
 
-    EdgeBurstSL edgeBurst(mainSegments, 3, true, 10, 80);
+    EdgeBurstSL edgeBurst(mainSegments, 3, true, true, 10, 80);
     Will do a an edge burst using a palette of 3 random colors with a burst freq of 10
     The palette colors will be randomly picked for each wave
+    The waves will have random start points
     The effect updates at 80ms
 
 Constructor inputs: 

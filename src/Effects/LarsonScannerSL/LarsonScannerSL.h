@@ -40,7 +40,7 @@ for scan mode 2, the colors are added together when particles meet, which may le
 for segment sets with un-equal length segments
 
 Example calls: 
-    LarsonScannerSL larsonScanner(mainSegments, 0, CRGB::Red, 2, 3, 0, 80);
+    LarsonScannerSL larsonScanner(mainSegments, 0, CRGB::Red, 0, 2, 3, 80);
     Will do a scanner in mode 0 (cylon) using red.
     The scan particle will have a eye size of 2 (the non-trail portion), and a trail length of 3
     The background is blank

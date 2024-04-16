@@ -48,15 +48,15 @@ Example calls:
     with default blendSteps (30) and blendScale (80) values
     updating at 30ms
 
-    LavaPS lava(mainSegments, 20, 20, 30);
+    LavaPS lava(mainSegments, 10, 20, 60);
     Will do a lava effect, with 20 blendSteps
-    and a blendScale of 20 (see inputs for info below)
+    and a blendScale of 20
     at an update rate of 30ms
 
-    LavaPS lava(mainSegments, cybPnkPal_PS, 20, 80, 30);
-    Will do a lava effect using cybPnkPal_PS for colors, 
-    with 20 blendSteps and a blendScale of 80
-    at an update rate of 30ms
+    LavaPS lava(mainSegments, cybPnkPal_PS, 10, 80, 60);
+    Will do a lava effect using the cybPnkPal_PS palette for colors, 
+    with 10 blendSteps and a blendScale of 80
+    at an update rate of 60ms
 
     LavaPS lava(mainSegments, 3, 20, 80, 30);
     Will do a lava effect with a palette of 3 randomly chosen colors

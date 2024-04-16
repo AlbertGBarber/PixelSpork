@@ -70,18 +70,21 @@ You can adjust most of the effect variables on the fly, but changing the segWipe
 
 Example calls: 
     ColorWipeSeg colorWipeSeg(mainSegments, cybPnkPal_PS, 0, false, false, true, 60);
-    Will do a color wipe along mainSegment's segments using colors from cybPnkPal_PS
+    Will do a color wipe along the set's segments using colors from the cybPnkPal_PS palette
     (A pattern will be generated to match the palette)
     The style is 0, each segment will alternate colors according to the pattern.
     Alternate is false, so the wipes will all wipe in the same direction.
     The wipe direction is false, while the segWipeDir is true
     so wipes will go from the first to last segment, starting at the end of each segment
     The effect updates at 60ms
+    Hint: try colorWipeSeg.setUpLoop(true, false, true, false, false, false, false),
+          to continuously wipe the segments in new colors.
     
     uint8_t pattern_arr = {0, 2, 1};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
     ColorWipeSeg colorWipeSeg(mainSegments, cybPnkPal_PS, pattern, 1, true, true, true, 60);
-    Will do a color wipe along mainSegment's segments using colors from cybPnkPal_PS according to pattern
+    Will do a color wipe along the set's segments,
+    using colors from the cybPnkPal_PS palette according to pattern.
     The style is 1, each segment pixel will alternate colors according to the pattern.
     Alternate is true, so the wipes will alternate wipe directions for each segment.
     Both the wipe direction and segWipeDir are true.
@@ -90,7 +93,7 @@ Example calls:
     The effect updates at 60ms
 
     ColorWipeSeg colorWipeSeg(mainSegments, CRGB(CRGB::Red), 2, false, false, false, 60);
-    Will do a color wipe along mainSegment's segments using CRGB::Red as the only color
+    Will do a color wipe along the set's segments using CRGB::Red as the only color.
     The style is 2, each segment line will alternate colors according to the pattern.
     (although this doesn't matter since the color is just red)
     Alternate is false, so the wipes will all wipe in the same direction.

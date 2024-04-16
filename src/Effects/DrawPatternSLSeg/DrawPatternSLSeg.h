@@ -37,33 +37,33 @@ You can freely change any of the effect's variables during runtime.
 Example calls: 
     uint8_t pattern_arr = {0, 255, 255, 255, 1, 1, 255, 255};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
-    DrawPatternSLSeg drawPat(mainSegments, pattern, cybPnkPal_PS, 0, 0, 80);
+    DrawPatternSLSeg drawPat(mainSegments, pattern, cybPnkPal_PS, 0, 2, 80);
     Will draw a pattern using the first two colors in the cybPnkPal_PS palette (based on the pattern above)
     The pattern will begin with 1 pixel of color 0, with three spaces after, 
     followed by 2 pixels of color 1, followed by 2 spaces.
     The background is black (0).
-    The effect uses segMode 0, so the pattern will be drawn linearly (1D) on the segment set.
+    The effect uses segMode 2, so the pattern will be drawn linearly (1D) on the segment set.
     The pattern will be re-drawn every 80ms.
 
     uint8_t pattern_arr = {0, 2, 1};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
-    DrawPatternSLSeg drawPat(mainSegments, pattern, cybPnkPal_PS, 3, 4, 0, 1, 120);
+    DrawPatternSLSeg drawPat(mainSegments, pattern, cybPnkPal_PS, 3, 4, 0, 0, 120);
     Will draw a pattern using the first three colors of the cybPnkPal_PS palette (using the pattern above)
     The pattern will have color bands of length 3, followed by 4 spaces, background is black (0).
-    The pattern will be drawn on segment lines (segMode is 1).
+    The pattern will be drawn on segment lines (segMode is 0).
     The pattern will be re-drawn every 120ms.
 
-    DrawPatternSLSeg drawPat(mainSegments, cybPnkPal_PS, 3, 4, CRGB::Red, 2, 40);
+    DrawPatternSLSeg drawPat(mainSegments, cybPnkPal_PS, 3, 4, CRGB::Red, 1, 40);
     Will draw a pattern using all the colors in cybPnkPal_PS palette, 
     The pattern will have color bands of length 3, with 4 spaces in between.
     The background is red.
-    The pattern will be drawn on whole segments (segMode is 2).
+    The pattern will be drawn on whole segments (segMode is 1).
     The pattern will be re-drawn every 40ms.
 
-    DrawPatternSLSeg drawPat(mainSegments, CRGB::Blue, 2, 2, CRGB::Red, 0, 140);
+    DrawPatternSLSeg drawPat(mainSegments, CRGB::Blue, 2, 2, CRGB::Red, 2, 140);
     Will do a pattern with blue color bands of length 2 and 2 spaces in between.
     The background is red.
-    The effect uses segMode 0, so the pattern will be drawn linearly (1D) on the segment set.
+    The effect uses segMode 2, so the pattern will be drawn linearly (1D) on the segment set.
     The effect updates at a rate of 140ms
 
 Constructor Inputs:

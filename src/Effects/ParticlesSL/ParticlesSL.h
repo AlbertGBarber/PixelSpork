@@ -57,7 +57,7 @@ Trail Fading:
     his makes the particle "heads" brighter and standout more, which, in my opinion, 
     looks better then just using a linear fade. You can control the linearity of the trail 
     fades using the "dimPow" setting. A default of 80 is used in this effect. 
-    You can read the "dimPow" notes in "particleUtils.h" for more.
+    You can read the "dimPow" notes in "particleUtils.cpp, getTrailcolor()" for more.
 
 Blending:
     Due to the way the effect is programmed, particles that are placed later in the particleSet will run "in front"

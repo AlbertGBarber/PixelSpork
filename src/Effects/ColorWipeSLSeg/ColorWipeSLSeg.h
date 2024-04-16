@@ -110,6 +110,8 @@ Example calls:
     The style is 1, each line will alternate colors according to the pattern.
     Both simlut and alternate are false (they don't matter for a single wipe)
     The wipe will move in the positive direction, updating at 140ms
+    Hint: try colorWipeSL.setUpLoop(true, 2, false, 1, true, false, false, false, false);
+    with a style of 0 to wipe through all the colors continuously.
    
     uint8_t pattern_arr = {0, 2, 1};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};

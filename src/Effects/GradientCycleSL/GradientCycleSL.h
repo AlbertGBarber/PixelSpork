@@ -22,14 +22,17 @@ Example calls:
     uint8_t pattern_arr = {0, 2, 1};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
     GradientCycleSL gradientCycle(mainSegments, pattern, cybPnkPal_PS, 10, 100);
-    Will do a gradient cycle from color 0, to color 1, to color 4, of the palette
+    Will do a gradient cycle of the cybPnkPal_PS palette, 
+    following the pattern (color 0 to color 2 to color 1)
     with 10 steps to each gradient, and a 100ms update rate
 
     GradientCycleSL gradientCycle(mainSegments, cybPnkPal_PS, 10, 100);
-    Will do a gradient cycle using the colors in the palette, with 10 steps to each gradient,and a 100ms update rate
+    Will do a gradient cycle using the colors in the cybPnkPal_PS palette, 
+    with 10 steps to each gradient,and a 100ms update rate
 
     GradientCycleSL gradientCycle(mainSegments, 3, 15, 80);
-    Will do a gradient cycle using 3 randomly chosen colors, with 15 steps to each gradient,and an 80ms update rate
+    Will do a gradient cycle using 3 randomly chosen colors, 
+    with 15 steps to each gradient, and an 80ms update rate
  
 Constructor Inputs:
     pattern(optional, see constructors) -- A pattern is struct made from a 1-d array of palette indexes ie {0, 1, 3, 6, 7} 

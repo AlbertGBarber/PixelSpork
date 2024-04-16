@@ -1,42 +1,61 @@
 #include "GlimmerSL.h"
-//Constructor using default fade in and out values
-GlimmerSL::GlimmerSL(SegmentSetPS &SegSet, uint16_t NumGlims, CRGB GlimmerColor, CRGB BgColor,
+
+//Constructor with palette, using default fade in and out values
+GlimmerSL::GlimmerSL(SegmentSetPS &SegSet, uint16_t NumGlims, palettePS &Palette, CRGB BgColor,
+                     bool TwoPixelSets, uint8_t FadeSteps, uint16_t Rate)
+    : numGlims(NumGlims), palette(&Palette), fadeSteps(FadeSteps), twoPixelSets(TwoPixelSets)  //
+{
+    init(BgColor, SegSet, Rate);
+}
+
+//Constructor with palette and setting maximum fade in and out values
+GlimmerSL::GlimmerSL(SegmentSetPS &SegSet, uint16_t NumGlims, palettePS &Palette, CRGB BgColor,
+                     bool TwoPixelSets, uint8_t FadeSteps, uint8_t FadeMin, uint8_t FadeMax, uint16_t Rate)
+    : numGlims(NumGlims), palette(&Palette), fadeSteps(FadeSteps), twoPixelSets(TwoPixelSets), fadeMin(FadeMin), fadeMax(FadeMax)  //
+{
+    init(BgColor, SegSet, Rate);
+}
+
+//Constructor with single color, using default fade in and out values
+GlimmerSL::GlimmerSL(SegmentSetPS &SegSet, uint16_t NumGlims, CRGB Color, CRGB BgColor,
                      bool TwoPixelSets, uint8_t FadeSteps, uint16_t Rate)
     : numGlims(NumGlims), fadeSteps(FadeSteps), twoPixelSets(TwoPixelSets)  //
 {
-    init(GlimmerColor, BgColor, SegSet, Rate);
+    paletteTemp = paletteUtilsPS::makeSingleColorPalette(Color);
+    palette = &paletteTemp;
+    init(BgColor, SegSet, Rate);
 }
 
-//Constructor for setting maximum fade in and out values
-GlimmerSL::GlimmerSL(SegmentSetPS &SegSet, uint16_t NumGlims, CRGB GlimmerColor, CRGB BgColor,
+//Constructor with single color and setting maximum fade in and out values
+GlimmerSL::GlimmerSL(SegmentSetPS &SegSet, uint16_t NumGlims, CRGB Color, CRGB BgColor,
                      bool TwoPixelSets, uint8_t FadeSteps, uint8_t FadeMin, uint8_t FadeMax, uint16_t Rate)
     : numGlims(NumGlims), fadeSteps(FadeSteps), twoPixelSets(TwoPixelSets), fadeMin(FadeMin), fadeMax(FadeMax)  //
 {
-    //fade min can't be greater than fade max
-    if( fadeMin > fadeMax ) {
-        uint8_t temp = fadeMin;
-        fadeMin = fadeMax;
-        fadeMax = temp;
-    }
-    init(GlimmerColor, BgColor, SegSet, Rate);
+    paletteTemp = paletteUtilsPS::makeSingleColorPalette(Color);
+    palette = &paletteTemp;
+    init(BgColor, SegSet, Rate);
 }
 
 GlimmerSL::~GlimmerSL() {
     free(fadePixelLocs);
     free(totFadeSteps);
+    free(paletteTemp.paletteArr);
 }
 
-void GlimmerSL::init(CRGB GlimmerColor, CRGB BgColor, SegmentSetPS &SegSet, uint16_t Rate) {
+void GlimmerSL::init(CRGB BgColor, SegmentSetPS &SegSet, uint16_t Rate) {
     //bind the rate and segSet pointer vars since they are inherited from BaseEffectPS
     bindSegSetPtrPS();
     bindClassRatesPS();
     //bind background color pointer
     bindBGColorPS();
 
-    //bind the glimmer color to a pointer
-    //so it can be bound to an external variable like bgColor
-    glimColorOrig = GlimmerColor;
-    glimmerColor = &glimColorOrig;
+    //fade min can't be greater than fade max
+    if( fadeMin > fadeMax ) {
+        uint8_t temp = fadeMin;
+        fadeMin = fadeMax;
+        fadeMax = temp;
+    }
+
     setupPixelArray();
 }
 
@@ -45,13 +64,13 @@ void GlimmerSL::reset(void){
     //To reset the effect, we need to create a new pixel array, fill in the background to 
     //clear any old pixels, and then reset the effect flags and counters.
     firstFade = true;
-    step = 0;
-    fillPixelArray();
+    fillPixelArray(); //sets step to 0 and fadeIn to true
     segDrawUtils::fillSegSetColor(*segSet, *bgColor, bgColorMode);
 }
 
-/* Creates the pixel location and fade value arrays and also resets the effect.
-The arrays store the locations for the fading pixels, and how much they will fade by
+/* Creates the pixel location, fade value, and pixel color arrays and also resets the effect.
+The arrays store the locations for the fading pixels, how much they will fade by,
+and their color index from the palette.
 if we're doing twoPixelSets, then there will be one set of pixels fading in
 while another is fading out
 these sets are tracked in the same array, so the array's length is 2 * numGlims
@@ -71,24 +90,32 @@ void GlimmerSL::setupPixelArray() {
     if( alwaysResizeObj_PS || (glimArrLen > glimArrLenMax) ) {
         glimArrLenMax = glimArrLen;
 
+        //locations of the fading pixels
         free(fadePixelLocs);
         fadePixelLocs = (uint16_t *)malloc(glimArrLen * sizeof(uint16_t));
 
+        //how many fade steps each pixel will do (how much they will fade by)
         free(totFadeSteps);
         totFadeSteps = (uint8_t *)malloc(glimArrLen * sizeof(uint8_t));
+
+        //The palette color index of each pixel
+        //Ie what palette color it is
+        free(glimColorArr);
+        glimColorArr = (uint8_t *)malloc(glimArrLen * sizeof(uint8_t));
     }
 
     reset();
 }
 
-/* Fills in the pixel arrays with random locations and fade values
+/* Fills in the pixel arrays with random locations, fade values, and colors
 Note that the locations are chosen from the line or pixel numbers in the segment set, depending on lineMode
 Only fills the arrays up to numGlims since if we're working with two pixel sets,
 the second numGlims length of the array is used for the fading out set,
 which should already be set, and we don't want to overwrite it
-We also set the step to zero, since we're starting a new set of pixels */
+We also set the step to zero, and fadeIn to true, since we're starting a new set of pixels */
 void GlimmerSL::fillPixelArray() {
     step = 0;
+    fadeIn = true;
     //we set the segment vars here since the pixel locations depend on them
     //if we're in line mode, then we're drawing full lines,
     //otherwise we're drawing individual pixels
@@ -102,6 +129,7 @@ void GlimmerSL::fillPixelArray() {
     for( uint16_t i = 0; i < numGlims; i++ ) {
         totFadeSteps[i] = random8(fadeMin, fadeMax);  //target fade amount between the bgColor and the glimmer color
         fadePixelLocs[i] = random16(numLines);
+        glimColorArr[i] = random16(palette->length);
     }
 }
 
@@ -113,6 +141,7 @@ void GlimmerSL::advancePixelArray() {
     for( uint16_t i = 0; i < numGlims; i++ ) {
         totFadeSteps[i + numGlims] = totFadeSteps[i];
         fadePixelLocs[i + numGlims] = fadePixelLocs[i];
+        glimColorArr[i + numGlims] = glimColorArr[i];
     }
 }
 
@@ -138,18 +167,19 @@ void GlimmerSL::setTwoSets(bool newSetting) {
 }
 
 /* How the effect works:
-    The goal of the effect is to fade a random set of leds in and out, between the glimmerColor and the bgColor
-    each led fades a random amount towards glimmerColor, but all leds fade together (their fades finish at the same time)
+    The goal of the effect is to fade a random set of leds in and out, between a glimmer color and the bgColor.
+    Glimmer colors are picker randomly for each glimmering LED. 
+    Each led fades a random amount towards its glimmer color, but all leds fade together (their fades finish at the same time)
     Note that we start at the background color, fade towards the glimmer color, then fade back down
     To keep track of the fading led locations and the fade amounts we use two arrays (uint16_t for the locations and uint8_t for the fade)
     these are set by fillPixelArray()
-    the fade amounts are the number of steps out to fadeMax steps towards the glimmerColor
-    we work out the faded glimmer color on the fly to account for different colorModes
+    the fade amounts are the number of steps out to fadeMax steps towards the glimmer color
+    we work out the faded glimmer color on the fly to account for different colorModes and palette changes.
 
     Each cycle, we fade the leds one step towards their target glimmer colors
     once we reach the fadeSteps steps, then we reverse, and fade them back to the bgColor
     the fade direction is controlled by the bool fadeIn (true for towards the glimmer color)
-    once the fade in and outs are finished, we choose a new set of pixels and fade amounts
+    once the fade in and outs are finished, we choose a new set of pixels, fade amounts, and colors.
 
     There a two sub-modes for the effect: one using one set of leds and one using two sets
     The sub-mode is indicated by the twoPixelSets bool (true for two sets of pixels)
@@ -215,7 +245,8 @@ void GlimmerSL::update() {
                     startColor = segDrawUtils::getPixelColor(*segSet, pixelNum, *bgColor, bgColorMode, j, fadePixelLocs[i]);
 
                     //get the final target glimmer color, accounting for color modes
-                    targetColor = segDrawUtils::getPixelColor(*segSet, pixelNum, *glimmerColor, colorMode, j, fadePixelLocs[i]);
+                    targetColor = paletteUtilsPS::getPaletteColor(*palette, glimColorArr[i]);
+                    targetColor = segDrawUtils::getPixelColor(*segSet, pixelNum, targetColor, colorMode, j, fadePixelLocs[i]);
 
                     //get the final faded color
                     fadeColor = getFadeColor(i);
@@ -230,7 +261,8 @@ void GlimmerSL::update() {
                 startColor = pixelInfo.color;
 
                 //get the glimmer color, accounting for color modes
-                targetColor = segDrawUtils::getPixelColor(*segSet, pixelInfo.pixelLoc, *glimmerColor, colorMode, pixelInfo.segNum, pixelInfo.lineNum);
+                targetColor = paletteUtilsPS::getPaletteColor(*palette, glimColorArr[i]);
+                targetColor = segDrawUtils::getPixelColor(*segSet, pixelInfo.pixelLoc, targetColor, colorMode, pixelInfo.segNum, pixelInfo.lineNum);
 
                 //get the final faded color
                 fadeColor = getFadeColor(i);
@@ -254,9 +286,10 @@ void GlimmerSL::update() {
                 //before we pick a new set to fade
                 //this is done by flipping the fadeIn var
                 if( !fadeIn ) {
-                    fillPixelArray();
+                    fillPixelArray(); //also sets fadeIn true
+                } else {
+                    fadeIn = !fadeIn;
                 }
-                fadeIn = !fadeIn;
             }
         }
         showCheckPS();

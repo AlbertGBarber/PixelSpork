@@ -141,6 +141,9 @@ void FirefliesSL::update() {
                 //update the particle's location
                 moveParticle(particlePtr, i);
 
+                //Reduce the life of the particle
+                decayParticle(particlePtr, i);
+
                 //if we're not filling in the background each cycle
                 //we need to set the previous particle position to the background
                 //Although the effect is set up to work on segment lines, we only use the
@@ -193,13 +196,11 @@ To add a bit of extra randomness, the particles "partLife" and "lastUpdateTime" 
     * The lastUpdateTime is set to a fixed random16() value when the particle spawns
       (since we move the particle using noise, we don't need lastUpdateTime for updating)
 The overall result is not perfect, but looks pretty good most of the time.
-In addition to moving, we also reduce the particle's life by the elapsed time each time we update it.
 Note, to keep things simple I'm only allowing particles of size 1 with no trails
 Likewise the motion of the particles is governed entirely by the noise
 So overall I'm not using the particle trialType, trailSize, size, direction, or bounce properties */
 void FirefliesSL::moveParticle(particlePS *particlePtr, uint16_t partNum) {
 
-    partLife = particlePtr->life;
     particlePrevPos[partNum] = particlePtr->position;
 
     //We want each particle's noise to change uniquely over time
@@ -217,10 +218,14 @@ void FirefliesSL::moveParticle(particlePS *particlePtr, uint16_t partNum) {
 
     //update the particle's position
     particlePtr->position = partPos;
+}
 
+//Reduces the particles life by the elapsed update time, with a minimum life of 0
+void FirefliesSL::decayParticle(particlePS *particlePtr, uint16_t partNum){
+    partLife = particlePtr->life;
     //reduce the particle's life by the amount of time passed in ms
     //once the particle's life hits 0 it is deactivated
-    if( int32_t(partLife - deltaTime) <= 0 ) {
+    if( int32_t(partLife) - deltaTime <= 0 ) {
         partLife = 0;
     } else {
         partLife -= deltaTime;
@@ -243,7 +248,7 @@ void FirefliesSL::drawParticlePixel(particlePS *particlePtr, uint16_t partNum) {
     //get the where we are in the color blend based on the particle's life
     //(the blend has 255 steps total)
     partLife = particlePtr->life;
-    lifeRatio = (partLife * 255) / particlePtr->maxLife;
+    lifeRatio = (uint32_t(partLife) * 255) / particlePtr->maxLife;
     partPos = particlePtr->position;
 
     //Get what life stage the particle is in: fading in, solid, or fading out
@@ -273,6 +278,8 @@ void FirefliesSL::drawParticlePixel(particlePS *particlePtr, uint16_t partNum) {
         flickerBri = inoise8(particlePtr->startPosition, partLife * 10);  //millis() * 2
         //to prevent too much flicker, we constrain the brightness
         flickerBri = 255 - constrain(flickerBri, 50, 200);
+    } else {
+        flickerBri = 255;
     }
 
     //draw the particle's line across the segments
@@ -347,5 +354,7 @@ void FirefliesSL::spawnFirefly(uint16_t partNum) {
     //We move the particle based on the noise, so "lastUpdateTime" is otherwise un-used.
     particlePtr->lastUpdateTime = random16();
 
+    //set the particle's location and draw it
+    moveParticle(particlePtr, partNum);
     drawParticlePixel(particlePtr, partNum);
 }
