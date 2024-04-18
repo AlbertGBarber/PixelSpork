@@ -23,7 +23,8 @@ Particles are grouped into particle sets.
 Each particle in a set has its own properties, so you can have multiple 
 particles with different sizes, speeds, trails, etc. This effect animates a set of particles.
 
-Before using this effect, you should read about the full details of particles see particlePS.h.
+Before using this effect, you should read about the full details of particles see particlePS.h,
+particleUtilsPS.h and the particle wiki pages (listed under the Particle effect's page).
 For this effect, you have the option of using your own particle set, or have the effect create one for you. 
 
 You have a lot of options when creating a particle set, so you can use this effect to build some really great looks!
@@ -108,9 +109,6 @@ Update Rate:
     particles with speeds 40 and 50. The 50 speed particle ends up moving at more like 80 due to the 40ms update rate).
 
 Example calls: 
-    using the particleSet defined above:
-    ParticlesSL particles(mainSegments, particleSet, cybPnkPal_PS, CRGB::Red);
-    Will animate the single particle as described above, placing it on a red background
 
     ParticlesSL particles(mainSegments, cybPnkPal_PS, 0, 3, 2, 60, 50, 1, 3, 2, 3, 0, 2, cybPnkPal_PS.length, true);
     Creates a set of three particles that will run on a blank background with the following properties:
@@ -119,7 +117,12 @@ Example calls:
     The will have a minimum size of 1, up to 4 (1 + 3)
     They will have two trails of length 3 and no variations in length
     Their bounce properties will be chosen at random
-    Their colors will be chosen at random from cybPnkPal_PS
+    Their colors will be chosen at random from the cybPnkPal_PS palette.
+
+    ParticlesSL particles(mainSegments, particleSet, cybPnkPal_PS, CRGB::Red);
+    Will animate the supplied particle set, placing the particles on a red background
+    Note that you'll have to create the particle set yourself, see particle's wiki pages 
+    (under the Particle effect page), particlePS.h, and particleUtilsPS.h.
 
 Constructor inputs for creating a particle set:
     palette -- The palette than will be used for the particle colors 

@@ -36,6 +36,9 @@ void PatternShifterSeg::setShiftPattern(shiftPatternPS &newShiftPattern) {
     //number of "rows" in the pattern
     numPatRows = shiftPattern->numRows;
 
+    //number of segments the pattern takes up
+    numPatSegs = shiftPattern->patRowLength;
+
     //how many segment lines the pattern takes up
     patLineLength = shiftPattern->patLineLength;
 
@@ -44,16 +47,6 @@ void PatternShifterSeg::setShiftPattern(shiftPatternPS &newShiftPattern) {
     //(it's fine if the pattern is shorter than the number of lines)
     if( patLineLength > numLines ) {
         patLineLength = numLines;
-    }
-
-    //Set the wrapping point for the pattern
-    //If the pattern is longer than the number of segments we need to increase the mod amount
-    //so that the whole pattern is cycled across the segments
-    numPatSegs = shiftPattern->patRowLength;
-    if( numPatSegs > numSegs ) {
-        modVal = numPatSegs;
-    } else {
-        modVal = numSegs;
     }
 
     setRepeat(repeatSeg, repeatLine);
@@ -82,6 +75,20 @@ void PatternShifterSeg::setRepeat(bool newRepeatSeg, bool newRepeatLine) {
         repeatSegCount = ceil((float)numSegs / numPatSegs);
     } else {
         repeatSegCount = 1;  //One pattern will always be drawn, even with 0 repeats
+    }
+
+    //Set the wrapping point for the pattern
+    //To account for repeats, we treat the actual pattern size as the "seg length of pattern" * "number of repeats".
+    //So that we treat the output pattern as the whole repeated pattern. 
+    //Then, when we draw, we slide the segment set "window" across the pattern, only drawing what fits in the "window".
+    //So, if the overall pattern is longer than the number of segments we need to increase our wrapping point (mod amount)
+    //so that the whole pattern is cycled across the segments.
+    //However, if the pattern is shorter that the number of segments, we just need to wrap at the end segment. 
+    numPatSegs = shiftPattern->patRowLength;
+    if( (numPatSegs * repeatSegCount) > numSegs ) {
+        modVal = numPatSegs * repeatSegCount;
+    } else {
+        modVal = numSegs;
     }
 }
 

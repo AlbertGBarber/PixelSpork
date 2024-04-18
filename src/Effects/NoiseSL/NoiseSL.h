@@ -108,8 +108,7 @@ Example calls:
     The effect updates at 80ms
 
 Constructor inputs: 
-    palette (optional, see constructors) -- A custom palette passed to the effect, the default is the 
-                                          lava colors palette encoded below
+    palette (optional, see constructors) -- A custom palette passed to the effect
     numColors (optional, see constructors) -- How many colors will be in the randomly created palette
     blendSteps -- Sets how many steps are used to blend between each color
                   Basically changes how fast the colors blend
@@ -125,8 +124,8 @@ Other settings:
     bgColorMode (default 0) -- Sets the color mode for blend color target (background) (see segDrawUtils::setPixelColor)
     hueCycle (default true) -- sets if the noise center will be offset over time (see inputs guide above)
     hue (default 0) -- The position of the noise center, is automatically adjusted if hueCycle is on
-                        But you can also set if yourself to a specific value if needed (see inputs guide above)
-                        Range is (0 - 255) for `cMode`'s 0, 2, 3, and (0 - <<palette length>> * blendSteps) for cMode 1.
+                       But you can also set if yourself to a specific value if needed (see inputs guide above)
+                       Range is (0 - 255) for `cMode`'s 0, 2, 3, and (0 - <<palette length>> * blendSteps) for cMode 1.
     bgColorOrig (default 0) -- The default color of the background (bound to the bgColor pointer by default)
     *bgColor (default bound to bgColorOrig) -- The color of the background, is a pointer so it can be bound to an external variable
 

@@ -12,23 +12,35 @@
     #include "pins_arduino.h"
 #endif
 
-//represents a single moving pixel particle
-//the particle has a direction, speed, and can leave a trail
-//Trails blend cleanly into the background color over the trail length
-//(like waving a flame around, or a meteor trail)
-//Trail options:
-//    0: no trails
-//    1: one trail facing away from the direction of motion (like a comet)
-//    2: two trails, facing towards both directions of motion
-//    3: one trail facing towards the direction of motion
-//    4: Infinite trails that persist after the particle and are not faded. 
-//For example, with a trail length of 4, and a body size of 1, the modes will produce:
-//(The trail head is *, - are the trail, particle is moving to the right ->)
-//  0:     *
-//  1: ----*
-//  2: ----*----
-//  3:     *----
-//  4: *****
+/*
+Represents a single moving pixel particle,
+the particle has a direction, speed, and can leave a trail
+Trails blend cleanly into the background color over the trail length
+(like waving a flame around, or a meteor trail)
+Trail options:
+    0: no trails
+    1: one trail facing away from the direction of motion (like a comet)
+    2: two trails, facing towards both directions of motion
+    3: one trail facing towards the direction of motion
+    4: Infinite trails that persist after the particle and are not faded. 
+For example, with a trail length of 4, and a body size of 1, the modes will produce:
+(The trail head is *, - are the trail, particle is moving to the right ->)
+    0:     *
+    1: ----*
+    2: ----*----
+    3:     *----
+    4: *****
+
+Example of creating a particle:
+particlePS myParticle( 0, true, 50, 1, 2, 4, true, 0 );
+    Creates a particle ,"myParticle" that starts a 0, 
+    moving forward (direction is true) at a speed of 50ms.
+    It has a body size of 1 and 2 trails of length 4
+    It bounces at each end of the segment set, 
+    and uses color 0 from whatever palette it's paired with.
+
+See particle struct wiki page for more details.
+*/  
 struct particlePS {
     uint16_t startPosition;  //initial position of the particle on reset. Positions are generally local to the 
                              //segment set, ie the a `startPosition` of 5 will be the fifth pixel in the segment set.
@@ -70,6 +82,7 @@ struct particlePS {
 //to declare particleSet:
 //    //I highly recommend using the particleUtils buildParticleSet() function to create particle sets.
 //    //Just remember you must free the set's memory using freeParticleSet() once you are finished with it.
+      //See particle struct and particleUtils wiki pages for more details.
 
 //    //To create a set manually:
 //    //particlePS *particleArr[] = { &particle1, &particle2, etc}; //can leave this blank and fill it in using buildParticleSet() below

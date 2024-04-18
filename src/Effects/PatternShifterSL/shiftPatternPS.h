@@ -141,6 +141,8 @@ Final gotchas:
     * Gaps between segment lines may cause weird effects (ie you have a pattern line from 0 to 2 and from 5 to 6, but nothing in between)
       Gaps won't be filed with anything, so the lines patterns will just repeat as the pattern moves
     * Make sure you use the correct array length
+    * The direction the pattern moves is set by the segment set's segment directions. Changing the direction reverses 
+      the segments, and will in-turn reverse your pattern.
     * Patterns require a segment set as a input. This is tied to the pattern's segSet pointer, like in effects. 
       You can change the segSet just as you would in effects, this will also change the segSet for the PatternShifter effects. 
 */

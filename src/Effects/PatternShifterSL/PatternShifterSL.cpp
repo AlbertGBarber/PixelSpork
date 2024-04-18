@@ -47,15 +47,6 @@ void PatternShifterSL::setShiftPattern(shiftPatternPS &newShiftPattern) {
         numPatSegs = numSegs;
     }
 
-    //Set the wrapping point for the pattern
-    //If the pattern is longer than the number of lines we need to increase the mod amount
-    //so that the whole pattern is cycled across the segment set
-    if( patLineLength > numLines ) {
-        modVal = patLineLength;
-    } else {
-        modVal = numLines;
-    }
-
     setRepeat(repeat);
 }
 
@@ -72,6 +63,19 @@ void PatternShifterSL::setRepeat(bool newRepeat) {
         repeatCount = ceil((float)numLines / patLineLength);
     } else {
         repeatCount = 1;  //One pattern will always be drawn, even with 0 repeats
+    }
+
+    //Set the wrapping point for the pattern
+    //To account for repeats, we treat the actual pattern size as the "line length of pattern" * "number of repeats".
+    //So that we treat the output pattern as the whole repeated pattern. 
+    //Then, when we draw, we slide the segment line "window" across the pattern, only drawing what fits in the "window".
+    //So, if the overall pattern is longer than the number of lines we need to increase our wrapping point (mod amount)
+    //so that the whole repeated pattern is cycled across the segment set.
+    //However, if the pattern is shorter that the number of segment lines, we just need to wrap at the end line. 
+    if( (patLineLength * repeatCount) > numLines ) {
+        modVal = patLineLength * repeatCount;
+    } else {
+        modVal = numLines;
     }
 }
 

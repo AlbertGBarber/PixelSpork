@@ -25,10 +25,11 @@ Inputs guide:
     
     Brightness wave settings: 
         The brightness wave is generated using a cos() where the frequency and phase are set based on noise functions
-        The scale settings determine how fast the waves move and how large they are
+        The scale settings determine how fast the waves move and how large they are:
         1) phaseScale: Changes how fast the waves move. Must be greater than 0. Recommend between 3 - 15.
-                       Note that because the waves a noise based, their speed varies over time. phaseScale sets a cap on how 
-                       fast they move. Higher is slower. The effect has diminishing returns at higher values.
+                       Note that because the waves are noise based, their speed varies over time. 
+                       phaseScale sets a cap on how fast they move. 
+                       Higher is slower. The effect has diminishing returns at higher values.
         2) freqScale: Sets how long the waves are. Must be greater than 0. Recommend between 3 - 10.
                       The waves will vary in size over time, but this sets a minimum they will reach.
                       Higher means longer waves.
@@ -38,10 +39,9 @@ Inputs guide:
                        Recommend values 10 - 60+. Higher values produce smaller patches.
         2) blendSpeed: How fast the colors blend with time. Must be greater than 0.
                        This is not a constructor setting, and is defaulted to 10. Lower values will make faster blends
-        3) blendSteps: How many steps there are between colors. 
+        3) blendSteps: How many steps there are between colors. Defaulted to 30.
                        This is not a constructor setting since the change to the effect isn't very noticeable 
-                       unless below a certain value, which causes the colors to become coarse.
-                       Defaulted to 30.
+                       unless below a certain value, which causes the colors to become coarse.      
 
     Cycling Colors:
         For FastLED noise, most of the noise output falls in the center of its range. 
@@ -58,7 +58,6 @@ Inputs guide:
         2) hueCycle (default true): Controls the hue offset cycling.
                                     When off (false) the hue offset will be fixed to its current value.
                     
-
 Example calls: 
 
     NoiseWavesSL noiseWaves(mainSegments, 3, 0, 30, 8, 3, 80);
@@ -79,14 +78,14 @@ Example calls:
 Constructor inputs: 
     palette (optional, see constructors) -- A custom palette passed to the effect
     numColors (optional, see constructors) -- How many colors will be in the randomly created palette
-    bgColor --  The color of the background pixels
+    bgColor --  The color of the background pixels.
     blendScale -- Sets how "zoomed-in" the noise is. (See Inputs Guide above)
     phaseScale -- Changes how fast the waves move. Must be greater than 0. (See Inputs Guide above)
     freqScale -- Sets how long the waves are. Must be greater than 0. (See Inputs Guide above)
     rate -- The update rate (ms)
 
 Other Settings:
-    bgColorMode (default 0) -- sets the color mode for the spacing pixels (see segDrawUtils::setPixelColor)
+    bgColorMode (default 0) -- sets the color mode for the background pixels (see segDrawUtils::setPixelColor)
     blendSpeed (default 10) -- How fast the colors blend with time. Must be greater than 0. Lower => faster.
     blendSteps (default 30) -- How many steps there are between colors. Doesn't really change anything in the effect
                                unless you make it very small.

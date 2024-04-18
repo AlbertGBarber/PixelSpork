@@ -31,12 +31,11 @@ If you have any questions about how it works, please direct them to Mark Kriegsm
 
 Inputs Guide:
 
-The main input for the effect is the `hue`, which sets where our base color is in the rainbow.
- The effect's palettes then form their colors around that base color. 
- While this produces a nice gentle wave effect like the original effect, 
- but tinted in a specific color, it does mean that you cannot have colors from opposite ends of the spectrum 
- together (like green and purple for example). 
- If you want that, you may have luck with the LavaPS effect or one of the noise effects. 
+The main input for the effect is the `hue`, which sets a base color using the HSV rainbow.
+The effect's palettes then form their colors around that base color. 
+This produces a nice gentle wave effect like the original effect, but tinted in a specific color, 
+However, it does mean that you cannot have colors from opposite ends of the spectrum 
+together (like green and purple for example) (Try the Lave or Noise effects instead). 
 
 Some hue ranges are:
     Red/Orange: 240 to ~10 
@@ -93,15 +92,16 @@ Other Settings:
     thresholdMax (default 230) -- caps the white cap light level to prevent pixels from getting too white
                                   as part of the addWhiteCaps() function
                                 Lower -> lower light cap.
-    PacificaPalette -- The PacificaHuePal object. You shouldn't need to access this.
+    PacificaPalette -- The Pacifica Hue Palette instance. You shouldn't need to access this.
 
 Functions:
     setHue(newHue) -- Changes the hue value
     update() -- updates the effect 
 
 Reference vars:
-    hue -- The current hue setting, use setHue() to change
-    numSteps -- How many steps there are per color gradient. You shouldn't need to change this.
+    hue -- The current hue setting, use setHue() to change.
+    numSteps -- How many steps there are per color gradient.
+                Is set automatically, so you shouldn't need to change this.
 */
 class PacificaHueSL : public EffectBasePS {
     public:

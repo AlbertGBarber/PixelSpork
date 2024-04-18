@@ -13,6 +13,9 @@
 #include "MathUtils/mathUtilsPS.h"
 
 /*
+NOTE: You must understand ShiftPatterns to use this effect (see shiftPatternPS.h or the "Shift Pattern''s wiki page).
+      This effect is really only useful for segment set with multiple segments (2D).
+
 An effect that moves a shiftPatternPS along SEGMENTS. 
 Shift patterns are manually created, and are used to draw more complex patterns like arrows, text?, flags, etc. 
 Also see PatternShifterSL.h for an alternate, orthogonal, version of this effect. 
@@ -31,7 +34,7 @@ However, because the pattern is not shifted across segment lines,
 
 For example, if I have an 4x4 matrix, arranged into 4 segment rows, and use the following pattern:
 
-uint16_t basicPattern_arr[(6 + 2) * 3] = { <--(<<how long each "row"is>>) * <<number of rows>>
+uint16_t basicPattern_arr[(6 + 2) * 3] = { //<--(<<how long each "row"is>>) * <<number of rows>>
     0, 2,    0, 255, 0, 255, 0, 0
     2, 5,   255, 0, 255, 0,  0, 0
     5, 5,    0,  0,  0,  0,  0, 0 // <-- This row WON't be drawn b/c we only have 4 segment lines, but it wants to be drawn on the 5th line.
@@ -46,32 +49,44 @@ with an alternating pattern. Although this is longer than our 4 matrix segments,
 the full row will be drawn eventually because the effect shifts the pattern across segments. 
 So the final two columns will be cycled on/off as the pattern moves. 
 
-This effect is really only useful for segment set with multiple segments (2D).
-
-The shiftPattern can be set to repeat both along segment lines and segments,
-which will draw the pattern as many times as possible along the segment set
-For ie, for a segment set with 10 lines and 8 segments:
-    If you repeat along segment lines, a pattern that is 5 lines (number of "rows") 
-       long will be draw twice (10/5) (offset so the patterns don't overlap)
-    If you repeat along segments, a pattern that draws on 2 segments will be drawn four times (8/2)
-The effect tries to fit as many patterns as possible into the segment set, 
-so repeating works best if you can fit an even number of patterns onto the segment set
-
-Note that the effect has a `segSet` pointer like other effects, 
-but the effect doesn't take a segment set as an input. 
-Instead it gets its `segSet` from the shift pattern (see shiftPatternPS.h for more detail). 
-In other words, the effect's `segSet` pointer is bound to the shift pattern's `segSet` pointer. 
-(Usually a shift pattern is intended to work with a specific segment set, 
-so it made sense to include the segment set in the pattern itself). 
-This info is only relevant if you plan on changing the segment set. 
-If you do so, you should change the shift pattern's `segSet` rather than the effect's.
-
 The bgColor will be draw on any pattern indexes with the value 255.
 The bgColor is a pointer, so you can bind it to an external color variable.
 
 This effect is fully compatible with colorModes.
 
-!!While you can change the values of a pattern during runtime, you should avoid changing the row/column dimensions. 
+!!While you can change the values of a pattern during runtime, you should avoid changing the row/column dimensions.
+You can change the pattern using the `setShiftPattern()` function. 
+
+    Repeating Patterns:
+        The shift pattern can be set to repeat, segment lines, segments, or both,
+        which will draw the pattern as many times as possible along the segment set,
+        so that the pattern seamlessly loops. 
+        For example, for a segment set with 10 lines and 8 segments:
+            If you repeat along segment lines, a pattern that is 5 lines (number of "rows") 
+            long will be draw twice (10/5) (offset so the patterns don't overlap)
+            If you repeat along segments, a pattern that draws on 2 segments will be drawn four times (8/2)
+        
+        You can change the repeating using the `setRepeat( bool newRepeatSeg, bool newRepeatLine )` function.
+
+        Note that when repeating across segment lines, the pattern must fill evenly into the lines, 
+        otherwise part of the final repeat will be partially cut-off. 
+        For example, if we have a segment set with 10 lines, but our pattern is 3 lines long, 
+        the pattern will be repeated 4 times (10 / 3, rounding up), so that the entire segment set is filled. 
+        However, the total number of lines taken up by our repeated pattern is 12 (3 * 4), 
+        so the last 2 lines of the final repeat will be cut-off (12 -10). 
+        For the pattern to fit evenly, it would have to be either 2 or 5 lines long. 
+        This is not a problem when repeating across segments, because the pattern is shifted across them, 
+        so any cut-off parts will be cycled on/off.
+
+    The Effect's `segSet` pointer:
+        Note that the effect has a `segSet` pointer like other effects, 
+        but the effect doesn't take a segment set as an input. 
+        Instead it gets its `segSet` from the shift pattern (see shiftPatternPS.h for more detail). 
+        In other words, the effect's `segSet` pointer is bound to the shift pattern's `segSet` pointer. 
+        (Usually a shift pattern is intended to work with a specific segment set, 
+        so it made sense to include the segment set in the pattern itself). 
+        This info is only relevant if you plan on changing the segment set. 
+        If you do so, you should change the shift pattern's `segSet` rather than the effect's.
 
 Example calls: 
     Note that I cannot provide a universal shiftPattern for all segmentSets
@@ -83,14 +98,14 @@ Example calls:
 
     uint16_t patternSegs = mainSegments.numSegs;
 
-    uint16_t basicPattern_arr[(2 + 2) * 2] = { <--(<<how long each "row"is>>) * <<number of rows>>
+    uint16_t basicPattern_arr[(2 + 2) * 2] = { //<--(<<how long each "row"is>>) * <<number of rows>>
         0, 1,   0, 255,  //segment line 0, dot 1, then space
         1, 2,   255, 0, //segment line 1, space, then dot 2
     };
     shiftPatternPS basicPattern(mainSegments, patternSegs, basicPattern_arr, SIZE(basicPattern_arr));
 
     PatternShifterSeg patternShifterSeg(basicPattern, cybPnkPal_PS, 0, false, false, true, 100);
-    Will shift the "basicPattern" across its segment set using colors from cybPnkPal_PS
+    Will shift the "basicPattern" across its segment set using colors from the cybPnkPal_PS palette
     The background is blank
     The pattern is not repeated across segment lines or segments
     The segment shift direction is true (from first to last segment)
