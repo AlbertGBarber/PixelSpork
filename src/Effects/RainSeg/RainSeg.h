@@ -133,7 +133,7 @@ Example calls:
     rainSeg.bgColorMode = 6; => optional for next effect, will cycle the background through the rainbow, 
                                 place in Arduino setup()
     RainSeg rainSeg(mainSegments, cybPnkPal_PS, 0, true, 10, 4, 1, 1, 5, 80);
-    Will spawn drops on the mainSegment set, picking colors from cybPnkPal_PS
+    Will spawn drops on the mainSegment set, picking colors from the cybPnkPal_PS palette.
     The background is blank, and it will be pre-filled before the drops spawn
     The drops have a spawn chance of 10/1000 (1% chance of spawning each update cycle)
     There is a maximum of 4 drops running concurrently on each segment

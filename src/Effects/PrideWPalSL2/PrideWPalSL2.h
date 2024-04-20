@@ -86,14 +86,14 @@ Example calls:
     The effect updates at 80ms
 
     PrideWPalSL2 prideWPal2(mainSegments, cybPnkPal_PS, false, true, 80);
-    Will do the effect using colors from cybPnkPal_PS
+    Will do the effect using colors from the cybPnkPal_PS palette
     Colors will shift from the outer to the center segment
     The brightness wave values will be randomized,
     The effect updates at 80ms
 
     //Big constructor with all the wave settings, for if you really want to experiment!
     PrideWPalSL2 prideWPal2(mainSegments, cybPnkPal_PS, true, 20, 120, 250, 350, 20, 40, 3, 7, 60);
-    Will do the  effect using colors from cybPnkPal_PS
+    Will do the  effect using colors from the cybPnkPal_PS palette
     Colors will shift from the center to the outer segment, using 20 steps to blend the colors
     The brightDepth will vary from 120 to 250
     The briThetaInc16 will vary from 20 to 40 with a briThetaFreq of 350

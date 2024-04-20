@@ -28,13 +28,13 @@ void RainbowFontsSL::update() {
         numLines = segSet->numLines;
 
         hl = numLines / 2;
-
+ 
         t1 = beat8(waveFreq);
 
         //set a color for each line and then color in all the pixels on the line
         for( uint16_t i = 0; i < numLines; i++ ) {
 
-            c = 255 - abs(i - hl) * 255 / hl;
+            c = 255 - abs(int32_t(i) - hl) * 255 / hl;
             c = sin8(c);
             c = sin8(c + t1);
 

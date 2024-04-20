@@ -81,7 +81,7 @@ Example calls:
     uint8_t pattern_arr = {0, 255, 255, 255, 1, 1, 255, 255};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
     SegWaves segWaves(mainSegments, pattern, cybPnkPal_PS, 0, 30, true, 20);
-    Will do a set of waves using pattern above, with colors from cybPnkPal_PS palette.
+    Will do a set of waves using pattern above, with colors from the cybPnkPal_PS palette.
     The background is blank (0).
     The waves will begin with 1 pixel of color 0, with three spaces after, 
     followed by 2 pixels of color 1, followed by 2 spaces
@@ -91,7 +91,8 @@ Example calls:
     uint8_t pattern_arr = {0, 2, 1};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
     SegWaves segWaves(mainSegments, pattern, cybPnkPal_PS, 0, 3, 4, 0, false, 120);
-    Will do a wave using the first three colors of the palette (taken from the pattern)
+    Will do a wave using the first three colors of the cybPnkPal_PS palette 
+    (following the pattern)
     The background is blank (0).
     Each wave will be length 3, followed by 4 spaces.
     The fade steps are set to zero, so there is no blending. (fadeOn will be set false).
@@ -99,7 +100,7 @@ Example calls:
     The effect updates at a rate of 120ms
 
     SegWaves segWaves(mainSegments, cybPnkPal_PS, CRGB::Red, 0, 0, 10, true, 40);
-    Will do a waves using all the colors in cybPnkPal_PS,
+    Will do a waves using all the colors in the cybPnkPal_PS palette,
     because the passed in waveThickness is 0, the effect will be configured as to create a pattern of single waves
     (wave thickness of 1, with spacing such that there's only one wave on the segment sets at one time)
     (the 0 spacing input will be ignored)

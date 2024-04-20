@@ -23,7 +23,7 @@ Example call:
     moving towards the end of the segment set, at 80ms
 
 Constructor Inputs:
-    length (optional) -- The length of each rainbow, if omitted, the rainbow will be set to the default of 255
+    length (optional) -- The length of each rainbow, if omitted, the rainbow will be set to the default of 255.
     direct -- The direction the rainbows will move in (true is forward)
     rate -- update rate (ms)
 

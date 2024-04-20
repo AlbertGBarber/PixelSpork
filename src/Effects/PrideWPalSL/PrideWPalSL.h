@@ -66,7 +66,7 @@ Inputs guide:
         1) hueChangeMin and hueChangeMax: Sets the minimum and maximum shifts for colors in the palette. This effects
                                           how quickly colors will change and shift. The defaults for these are 5 and 9. 
                                           The actual shift value will vary between the min and max over time.
-                                           Lower -> slower shifts.
+                                          Lower -> slower shifts.
         2) gradLength: Sets how many steps we take to blend from one color to another. Default is 20. Lower numbers will
                        increase the speed that colors appear, but I wouldn't set it below 10ish, or the shift will become more
                        jagged. The effect of this is pretty subtle, so you may just want to leave it alone.
@@ -92,14 +92,14 @@ Example calls:
     The effect updates at 80ms
 
     PrideWPalSL prideWPal(mainSegments, cybPnkPal_PS, true, true, 80);
-    Will do the effect using colors from cybPnkPal_PS
+    Will do the effect using colors from the cybPnkPal_PS palette
     The brightness waves will move with the colors
     The brightness wave values will be randomized, 
     The effect updates at 80ms
     
     //Big constructor with all the wave settings, for if you really want to experiment!
     PrideWPalSL prideWPal(mainSegments, cybPnkPal_PS, true, 20, 120, 250, 350, 20, 40, 3, 7, 60);
-    Will do the effect using colors from cybPnkPal_PS
+    Will do the effect using colors from the cybPnkPal_PS palette
     The brightness waves will move with the colors
     Colors will shift using 20 steps to blend the colors
     The brightnessThetaInc16 will vary from 120 to 250

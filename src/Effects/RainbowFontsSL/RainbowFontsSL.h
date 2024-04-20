@@ -31,13 +31,11 @@ so we'd use beat8(9) in place of time(0.1);
 An effect based on the RainbowFonts pattern in PixelBlaze. Features rainbow waves that grow and shrink.
 The effect is largely the same as the original, but I've added the ability to change the frequency of the waves.
 
-The effect is adapted to work on segment lines for 2D use, but you can keep it 1D by
-passing in a SegmentSetPS with only one segment containing the whole strip.
+The effect is adapted to work on segment lines for 2D use. Each line will be a single color.
 
 Example calls: 
-
-    RainbowFontsSL rainbowFonts(mainSegments, 15, 80);
-    Will do the effect with a wave frequency of 15
+    RainbowFontsSL rainbowFonts(mainSegments, 8, 80);
+    Will do the effect with a wave frequency of 8
     The effect updates at 80ms
 
 Constructor inputs: 

@@ -197,10 +197,10 @@ void ShiftingSeaSL::update() {
         /* Calculates the cap to limit shifting
         To limit shifting, we assume we're in shiftMode 1 (limiting doesn't make sense for mode 0)
         In shift mode 1, all the offsets start between 0 and gradLength, we want to allow them to vary 
-        within this range over time if randomShift is on, but not too much, or the shiftMode breaks down.
+        within this range over time if randomShift is on, but not too much, or the colors become too spread out.
         So we need to calculate an allowable range the offsets can have.
-        We can use cycleNum as a baseline, b/c it always starts at 0 and follow the same cycle
-        as the offsets. From this, we can calculate the maximum allowable offset, and if a specific pixel is allowed to shift.
+        We can use cycleNum as a baseline, b/c it always starts at 0 and follows the same cycle as the offsets. 
+        From this, we can calculate the maximum allowable offset, and if a specific pixel is allowed to shift.
         The allowance is calculated as "canShift = mod16PS(offsets[i] + shiftCheck, totalCycleLength) <= shiftMax;"
         (done below in the main loop for each offset)
         "shiftCheck" is calculated up here, b/c it doesn't change for each pixel.

@@ -33,44 +33,44 @@ it just doesn't seem to have enough variation for me (maybe I've implemented it 
 Probably looks better on a 1D strip than in 2D. For alternative, 
 but more computationally intensive effects, check out the "noise" series. 
 
-## Inputs Guide & Notes:
+Inputs Guide & Notes:
 
-### Shifting Phases with Time:
-    To produce a more varied effect you can opt to have the wave phases shift with time by setting `randomize` = true.
-        * `phase1Base` and `phase1Range` control the shifting of wave 1.
-        * `phase2Base` and `phase2Range` control the shifting of wave 2.
-        * phase1Base is the minimum phase value, while phase1Base + phase1Range is the maximum. 
-        (Same for the wave 2 settings)
+    Shifting Phases with Time:
+        To produce a more varied effect you can opt to have the wave phases shift with time by setting `randomize` = true.
+            * `phase1Base` and `phase1Range` control the shifting of wave 1.
+            * `phase2Base` and `phase2Range` control the shifting of wave 2.
+            *  phase1Base is the minimum phase value, while phase1Base + phase1Range is the maximum. 
+               (Same for the wave 2 settings)
 
-    To randomize the phase, a target phase value will be set by adding the "phase base" to 
-    a randomly picked value up to the "phase range" ie, "phase1Base + random(phase1Range)"". 
-    With a target set, the phase will move towards the target value by one step each update cycle. 
-    This avoids color "jumps" by keeping the transition gradual. Once the target is reached, 
-    a new target value is picked and the process begins again.
-        
-    The default is to use the full range of 255 to vary the phases where:
-        * Both phase bases are set to a default value of 0.
-        * Both phase ranges are set to a default value of 255.
+        To randomize the phase, a target phase value will be set by adding the "phase base" to 
+        a randomly picked value up to the "phase range" ie, "phase1Base + random(phase1Range)"". 
+        With a target set, the phase will move towards the target value by one step each update cycle. 
+        This avoids color "jumps" by keeping the transition gradual. Once the target is reached, 
+        a new target value is picked and the process begins again.
+            
+        The default is to use the full range of 255 to vary the phases where:
+            * Both phase bases are set to a default value of 0.
+            * Both phase ranges are set to a default value of 255.
 
-    You can adjust either of these on the fly. If you don't want any shifting, simply set randomize = false. 
-    However, note that the to phases will stay at what ever value they currently have.
+        You can adjust either of these on the fly. If you don't want any shifting, simply set randomize = false. 
+        However, note that the to phases will stay at what ever value they currently have.
 
-    !!Do NOT set either phases directly after turning on randomize.
-    If you do, be sure to adjust `phase1 == targetPhase1` and `phase2 == targetPhase2`.
+        !!Do NOT set either phases directly after turning on randomize.
+        If you do, be sure to adjust `phase1 == targetPhase1` and `phase2 == targetPhase2`.
 
-    There are also an additional pair of phases that always vary using a sin() function. 
-    You don't need to touch these, but know that their frequencies are randomly adjusted 
-    by a small amount on startup if `randomize` is true. These are the `phaseWave1` and `phaseWave2` 
-    variables in the code. Giving them a slight variation helps produce a more unique effect.
+        There are also an additional pair of phases that always vary using a sin() function. 
+        You don't need to touch these, but know that their frequencies are randomly adjusted 
+        by a small amount on startup if `randomize` is true. These are the `phaseWave1` and `phaseWave2` 
+        variables in the code. Giving them a slight variation helps produce a more unique effect.
 
-### Random Frequencies:
-    If randomize is true in the constructor, the frequencies for the waves will be randomized once (between 10 and 30) 
-    but they will not be shifted over time because it causes jumps in the effect. 
-    You can randomize the frequencies at any time by calling `randomizeFreq(freqMin, freqMax)` with a min and max value.
+    Random Frequencies:
+        If "randomize" is true in the constructor, the frequencies for the waves will be randomized once (between 10 and 30) 
+        but they will not be shifted over time because it causes jumps in the effect. 
+        You can randomize the frequencies at any time by calling `randomizeFreq(freqMin, freqMax)` with a min and max value.
 
-    If you choose not to randomize, the freqs will be set to defaults (matching original values from Andrew Tuline):
-        * `freq1` = 23.
-        * `freq2` = 15.
+        If you choose not to randomize, the freqs will be set to defaults (matching original values from Andrew Tuline):
+            * `freq1` = 23.
+            * `freq2` = 15.
     
 Example calls: 
 
@@ -81,7 +81,7 @@ Example calls:
     The effect updates every 80ms
 
     PlasmaSL plasma(mainSegments, cybPnkPal_PS, 80, false, 40);
-    Will do a the effect using colors from cybPnkPal_PS
+    Will do a the effect using colors from the cybPnkPal_PS palette
     with 80 blend steps between each color
     and the freqs and phases are not randomized
     (set to defaults, and will not shift over time)

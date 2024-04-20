@@ -9,32 +9,46 @@
 A classic effect!
 
 Draws a repeated rainbow of a set length along segment lines in a set direction.
-Suggested min length is 5 (ie red, yellow, green, blue, indigo/violet)
+Suggested min length is 5 (ie red, yellow, green, blue, indigo/violet).
 
 This is the 2D version of rainbowCycle which draws on segment lines or whole segments
 (although if you pass in a 1D segment the results will be the same)
 For most effects I would combine the two effects for one that just works on segment lines
 But since this is a very basic effect I wanted to keep it more user friendly, so I kept the 1D version of the effect.
 
+    "segMode":
+        `segMode` controls if the rainbow is drawn along segment lines or whole segments:
+        * true -- The rainbow will be drawn across whole segments (each segment is a single shifting color).
+        * false -- The rainbow will be drawn across segment lines (each line is a single shifting color).
+
+    Other Notes:
+        * You can change all the effect's settings on the fly, but muse use `setLengh()` to change the rainbow's length.
+
+        * You can also achieve the same effect by using Pixel Spork's built-in Color Modes, 
+        with the ColorModeFillPS effect (also allows you to switch to different color modes).
+
 Example call: 
     RainbowCycleSLSeg rainbowCycleSLSeg(mainSegments, 30, true, false, 80); 
-    Will draw rainbows of length 30, moving towards the end of the segment lines, at 80ms
-    The rainbows will be drawn along segment lines
+    Will draw rainbows of length 30, 
+    moving towards the end of the segment lines (direct is true), at 80ms.
+    The rainbows will be drawn along segment lines (segMode is false).
 
     RainbowCycleSLSeg rainbowCycleSLSeg(mainSegments, 50, false, true, 80); 
-    Will draw rainbows of length 50, moving from the last to first segment, at 80ms
-    The rainbow colors will be drawn on each segment
+    Will draw rainbows of length 50, 
+     moving from the last to first segment (direct is false), at 80ms.
+    The rainbow colors will be drawn on each segment (segMode is true).
 
     RainbowCycleSLSeg rainbowCycleSLSeg(mainSegments, false, true, 80); 
-    Will draw rainbows of length 255 (the length is set to 255 by default b/c it is omitted from the constructor), 
-    moving from the last to first segment, at 80ms
-    The rainbow colors will be drawn on each segment
+    Will draw rainbows of length 255 
+    (the length is set to 255 by default b/c it is omitted from the constructor), 
+    moving from the last to first segment (direct is false), at 80ms.
+    The rainbow colors will be drawn on each segment  (segMode is true).
 
 Constructor Inputs:
-    length (optional) -- The length of each rainbow, if omitted, 255 will be used
-    direct -- The direction the rainbows will move in (true is forward)
+    length (optional) -- The length of each rainbow, if omitted, 255 will be used.
+    direct -- The direction the rainbows will move in (true is forward).
     segMode -- Sets if the rainbows will be drawn along segment lines or whole segments
-               (true will do whole segments)
+               (true will do whole segments).
     Rate -- update rate (ms)
 
 Other Settings:

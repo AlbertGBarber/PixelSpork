@@ -10,19 +10,21 @@ An effect to strobe a strip to mimic police lights, with some additional options
 A strobe is a rapid blinking of light. 
 An alternative to the general StrobeSLSeg.h effect.
 
-The base constructor takes two colors, but you can optionally pass in a pattern and palette, or just a palette instead.
+The base constructor takes two colors, but you can optionally pass in a pattern and palette, or just a palette alone.
 
 There are a few options for randomly choosing what pattern of strobes is used, 
 how the strobe colors are chosen, when/if the strobing pauses, and more.
 
-The effect is adapted to work on segment lines for 2D use, each segment line will be a solid color when pulsing.
+The effect is adapted to work on segment lines or whole segments for 2D use (see "segMode"), 
+each segment/segment line will be a solid color when pulsing.
 
 You can change the effect's settings freely on the fly.
 
 Strobe Modes (pulseMode):
-    0: Pulse half the SegmentSetPS in each color (alternating halves and colors), then pulse each color on the whole SegmentSetPS
-    1: Pulse half the SegmentSetPS in each color (alternating halves and colors)
-    2: Pulse the whole SegmentSetPS in each color (alternating colors)
+    0: Pulse half the segment set in each color (alternating halves and colors), 
+       then pulse each color on the whole segment set (modes 1 and 2 combined).
+    1: Pulse half the segment set in each color (alternating halves and colors)
+    2: Pulse the whole segment set in each color (alternating colors)
 
 The strobe of each color will continue for a set number of on/off pulses (creating the strobe effect).
 
@@ -71,7 +73,7 @@ Example calls:
 
     PoliceStrobeSLSeg policeStrobe(mainSegments, cybPnkPal_PS, CRGB:Purple, 4, 500, 0, true, 50);
     A more dynamic strobe
-    Will strobe all the colors in the cybPnkPal_PS, with 4 pulses at 50ms each.
+    Will strobe all the colors in the cybPnkPal_PS palette, with 4 pulses at 50ms each.
     The background color is purple
     Strobe mode 0 is used, so the strobe will alternate between strobing halves of the strip and the whole strip
     There is a 500ms pause between cycles 
@@ -81,7 +83,8 @@ Example calls:
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
 
     PoliceStrobeSLSeg policeStrobe(mainSegments, pattern, cybPnkPal_PS, CRGB:green, 6, 300, 0, false, 50);
-    Will strobe colors from the palette based on the pattern (ie colors 0, 2, and 1 in order), with 6 pulses at 50ms each
+    Will strobe colors from the palette based on the pattern (ie colors 0, 2, and 1 in order), 
+    with 6 pulses at 50ms each.
     The background color is green
     strobe mode 0 is used, so the strobe will alternate between strobing halves of the strip and the whole strip
     There is a 300ms pause between cycles 
@@ -122,15 +125,15 @@ class PoliceStrobeSLSeg : public EffectBasePS {
     public:
         //Constructor for a traditional two color strobe
         PoliceStrobeSLSeg(SegmentSetPS &SegSet, CRGB ColorOne, CRGB ColorTwo, CRGB BgColor, uint8_t NumPulses,
-                       uint16_t PauseTime, uint8_t PulseMode, bool SegMode, uint16_t Rate);
+                          uint16_t PauseTime, uint8_t PulseMode, bool SegMode, uint16_t Rate);
 
         //Constructor using both pattern and palette
         PoliceStrobeSLSeg(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor,
-                       uint8_t NumPulses, uint16_t PauseTime, uint8_t PulseMode, bool SegMode, uint16_t Rate);
+                          uint8_t NumPulses, uint16_t PauseTime, uint8_t PulseMode, bool SegMode, uint16_t Rate);
 
         //Constructor for using palette as the pattern
         PoliceStrobeSLSeg(SegmentSetPS &SegSet, palettePS &Palette, CRGB BgColor, uint8_t NumPulses,
-                       uint16_t PauseTime, uint8_t PulseMode, bool SegMode, uint16_t Rate);
+                          uint16_t PauseTime, uint8_t PulseMode, bool SegMode, uint16_t Rate);
 
         ~PoliceStrobeSLSeg();
 

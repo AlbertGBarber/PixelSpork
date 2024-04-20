@@ -96,7 +96,7 @@ void ColorMeltSL::update() {
         //set a color for each line and then color in all the pixels on the line
         for( uint16_t i = 0; i < numLines; i++ ) {
 
-            c1 = 255 - ((abs(i - hl) * 255) / hl);
+            c1 = 255 - (abs(int32_t(i) - hl) * 255) / hl;
             c2 = sin8(c1 + phase);  //adding the phase here seems to work best
             c3 = sin8(c2 + c1);
 

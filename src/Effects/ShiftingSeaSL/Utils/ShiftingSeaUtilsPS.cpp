@@ -16,7 +16,7 @@ void shiftingSeaUtilsPS::genOffsetArray(uint16_t *offsets, uint16_t numPixels, u
         grouping = 1;
     }
 
-    for( uint16_t i = 0; i < numPixels; i++ ) {
+    for( uint16_t i = 0; i < numPixels; ) {
         // for each value of i, pick a value somewhere between 1 and grouping
         // this is how many leds will share the same offset
         groupSize = random16(1, grouping);
@@ -29,7 +29,7 @@ void shiftingSeaUtilsPS::genOffsetArray(uint16_t *offsets, uint16_t numPixels, u
             offsets[i] = random16(totalCycleLength);
         } else {
             // for shiftMode 1, all the leds will start somewhere between the fade from the first to second colors
-            offsets[i] = random8(gradLength);
+            offsets[i] = random8(10, gradLength);
         }
         //copy the offset to the grouped pixels
         for( uint16_t j = 0; j < groupSize; j++ ) {

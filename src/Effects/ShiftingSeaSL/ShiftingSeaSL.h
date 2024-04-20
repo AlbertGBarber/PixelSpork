@@ -41,7 +41,7 @@ For a similar effects you could try Lava or NoiseSL.
     and usually cause an effect reset. These settings are listed in the "Reference Vars" section below. 
     However, anything not listed there, including the gradient length between colors can be changed on the fly.  
 
-    ### Shift Modes:
+    Shift Modes:
         To begin, you have two options for setting the initial offsets of the pixels. 
         Each option produces a fundamentally different look.
 
@@ -56,7 +56,7 @@ For a similar effects you could try Lava or NoiseSL.
         You can change both the shift mode and offsets during runtime using `setShiftMode(uint8_t newMode)` 
         and `resetOffsets()`, but doing so will cause a "jump" in the effect.
 
-        #### Shifting Offsets Over Time:
+        Shifting Offsets Over Time:
             By default, once the offsets are set, they do not change. 
             This can make the effect look a bit repetitive, as the same pixels are always in sync. 
             To counter this, you can turn on random shifting using "randomShift", 
@@ -67,13 +67,14 @@ For a similar effects you could try Lava or NoiseSL.
 
             Note that pixels are shifted individually, so any grouping (see below) will be ignored.
 
-        #### Limiting Shifting:
+        Limiting Shifting:
             In shiftMode 1, all the offsets are set between 0 and gradLength to produce more unified color shifting.
             However, if random shifting is on, the offsets will drift over time, slowly reducing the unified look.
             Eventually this leads to the effect looking the same as shiftMode 0. 
             
             To keep the original look, but still allow variations via shifting, I've implemented a shift limiting system. 
-            The system is toggled on automatically  if shiftMode 1 is set a constructor, or can be set using "limitShift". 
+            The system is controlled by the "limitShift" setting, and turned off by default. 
+            It is toggled on automatically if shiftMode 1 is set in a constructor. 
             By default it limits the shift range to one gradLength, so colors are not more that one color 
             ahead of the overall color. You can control the range via "shiftMax". 
             Note that the overall result is not perfect, and the effect will become more chaotic
@@ -82,7 +83,7 @@ For a similar effects you could try Lava or NoiseSL.
 
             For shiftMode 0, there is no real point in limiting shifting, as the offsets are already completely random.
 
-    ### Grouping:
+    Grouping:
         You can specify a "grouping" for the pixels, which gives lengths of pixels the same offset. 
         The number of pixels grouped together is chosen randomly, up to the "grouping" amount. 
         This makes the effect more uniform, and may look better with larger patterns or segments sets. 
@@ -90,8 +91,7 @@ For a similar effects you could try Lava or NoiseSL.
         `setGrouping( uint16_t newGrouping )`. 
         Doing so will cause a "jump" in the effect as the offsets are recalculated. 
 
-        ### Inserting Background Steps:
-
+    Inserting Background Steps:
         In some cases, the effect looks better if there is a "blank" inserted into the gradient cycle so that pixels 
         will cycle to off every so often.
 
@@ -99,20 +99,23 @@ For a similar effects you could try Lava or NoiseSL.
         add "blanks" to the shift pattern. This is controlled by the `bgMode` setting, 
         which is included in the constructors.
 
-        #### `bgMode`'s (uint8_t):
-            Note that 255 is used to mark the "blank" spaces in the pattern. 
-            You can also add spaces to your own input patterns.
+        `bgMode`'s (uint8_t):
             * 0 -- No spaces (ex: {0, 1, 2, 3, 4}, where the values are palette indexes).
             * 1 -- One space added to the end of the pattern (ex: {0, 1, 2, 3, 4, 255}).
             * 2 -- A space is added after each color (ex: {0, 255, 1, 255, 2, 255, 3, 255, 4, 255})
+        
+        Note that 255 is used to mark the "blank" spaces in the pattern. 
+        You can also add spaces to your own input patterns.
 
         By default, the blank color is set to 0, but you can change it using the `*bgColor` 
         setting (see Other Settings below).
 
         Can be changed during runtime using `setBgMode(uint8_t newMode)`. 
         Changing the `bgMode` also re-creates the shift pattern, storing it in the local `patternTemp` variable.
+        The new pattern will be set to follow all the palette colors in order. 
+        If you have a unique pattern you want to follow, you'll have to set it up manually.
 
-    ### Rainbow Mode:
+    Rainbow Mode:
         Setting `rainbowMode` to true switches the effect to use a rainbow gradient for colors. 
         The gradient is the typical 255 range of colors common in other rainbow effects and Color Modes. 
         This mode works with all the other effect settings, but the number of gradient steps is fixed to 255 and 
@@ -136,17 +139,19 @@ Example calls:
 
     uint8_t pattern_arr = {0, 2, 1};
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
-    ShiftingSeaSL shiftingSea(mainSegments, pattern, cybPnkPal_PS, 20, 0, 3, 40);
-    Will shift through the colors of cybPnkPal_PS according to the pattern (color 0, then 2, then 1),
+    ShiftingSeaSL shiftingSea(mainSegments, pattern, cybPnkPal_PS, 20, 0, 3, 60);
+    Will shift through the colors from the cybPnkPal_PS palette,
+    following the pattern (color 0, then 2, then 1),
     with 20 steps between each shift, using shift mode 0
-    grouping pixels by 3, at a rate of 40ms
+    grouping pixels by 3, at a rate of 60ms
 
-    ShiftingSeaSL shiftingSea(mainSegments, cybPnkPal_PS, 20, 0, 3, 0, 40);
+    ShiftingSeaSL shiftingSea(mainSegments, cybPnkPal_PS, 20, 0, 3, 0, 60);
     shiftingSea.randomShift = true; //place in Arduino setup()
-    Will shift through the colors of cybPnkPal_PS, with 20 steps between each shift, using shift mode 0.
+    Will shift through the color from the cybPnkPal_PS palette, 
+    20 steps between each shift, using shift mode 0.
     grouping pixels by 3, no "blank" spaces are added to the shift pattern (bgMode 0).
     Because randomShift is turned on (via the extra line), the pixel offsets will vary over time.
-    The effect updates at a rate of 40ms.
+    The effect updates at a rate of 60ms.
 
     ShiftingSeaSL shiftingSea(mainSegments, 4, 15, 1, 1, 2, 60);
     Will shift a random set of 4 colors, with 15 steps between each shift, using shift mode 1

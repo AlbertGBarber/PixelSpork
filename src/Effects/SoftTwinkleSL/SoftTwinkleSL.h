@@ -77,7 +77,7 @@ Original Effect Notes:
 
 Example Call:
 
-    SoftTwinklePS softTwinkle(mainSegments, 150, 20);
+    SoftTwinkleSL softTwinkle(mainSegments, 150, 20);
     soft twinkles with density of 150, updating at a rate of 20ms
 
 Constructor Inputs:

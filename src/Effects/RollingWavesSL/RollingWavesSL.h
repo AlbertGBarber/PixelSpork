@@ -61,14 +61,14 @@ Example calls:
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
 
     RollingWavesSL rollingWaves(mainSegments, pattern, cybPnkPal_PS, 0, 7, 1, 0, 100);
-    Will do a set of waves according to the pattern, using cybPnkPal_PS for colors, 
+    Will do a set of waves according to the pattern, using the cybPnkPal_PS palette for colors, 
     with a blank background
     Each wave will be 7 pixels long, using both leading and trailing trails
     there will be zero spacing between the waves
     The effect will update at a 100ms
 
     RollingWavesSL rollingWaves(mainSegments, cybPnkPal_PS, 0, 9, 0, 2, 80);
-    Will do a set of waves matching the input palette with an blank background
+    Will do a set of waves matching the cybPnkPal_PS palette with an blank background
     Each wave will be 9 pixels long, with only a trailing trail
     There will be two spaces in between each wave,
     The effect will update at 80ms

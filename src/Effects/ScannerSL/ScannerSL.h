@@ -170,7 +170,7 @@ Example calls:
     ScannerSL scanner(mainSegments, cybPnkPal_PS, 0, 3, 2, 4, 2, true, false, false, false, true, false, 80);
     Will automatically create a set of 3 scanner particles
     There will be 3 particles spaced evenly on the segment set (makeEndWave is false)
-    The particles will take their colors from cybPnkPal_PS, with a blank background.
+    The particles will take their colors from the cybPnkPal_PS palette, with a blank background.
     Each particle will have 2 trails of length 4, with a body size of 2
     The particles will start in the forward direction (not set to alternate)
     The particles will not bounce at each end of the segment set, and will wrap instead
