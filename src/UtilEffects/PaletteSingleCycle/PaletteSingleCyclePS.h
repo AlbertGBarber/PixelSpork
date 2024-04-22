@@ -87,7 +87,7 @@ You can also pass `*yourPaletteSingleCycle.cyclePalette` as part of the effect's
         * Any quirks from the Palette Blender will also apply to this utility, see the blender's "Other Notes" entry.
 
 Example calls: 
-    PaletteSingleCyclePS palSingleCycle(cybPnkPal_PS, 0, 50, true, false, 0, 80);
+    PaletteSingleCyclePS palSingleCycle(cybPnkPal_PS, 0, true, false, 0, 50, 80);
     Cycles through the cybPnkPal_PS palette using blend mode 0.
     The palette will be blended forward (direct is true),
     and will start blending immediately (startPaused is false)

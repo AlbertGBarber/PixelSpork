@@ -124,6 +124,10 @@ Example calls:
     Note that you'll have to create the particle set yourself, see particle's wiki pages 
     (under the Particle effect page), particlePS.h, and particleUtilsPS.h.
 
+    Tip: you can use particleUtilsPS::setAllTrailRand( *particles.particleSet, options... );
+    to add multiple trail types to your particle set after creation.
+    See particleUtils.h for more!
+
 Constructor inputs for creating a particle set:
     palette -- The palette than will be used for the particle colors 
     BgColor -- The background color used for the effect

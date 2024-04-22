@@ -28,7 +28,7 @@ You can use it in your effects like:
 You can also pass `&yourPaletteBlender.blendPalette` as part of the effect's constructor.
 
     Feature Notes:
-        * _**Overall, I recommend only blending between palettes of equal lengths.**_ 
+        * **Overall, I recommend only blending between palettes of equal lengths.** 
           The length of the blended output palette will be the length of the longest input palette. 
           For example, if I blend from a palette of 5 colors into a palette with 3, 
           the output palette will have 5 colors. This makes it easier when looping and helps maintain 
