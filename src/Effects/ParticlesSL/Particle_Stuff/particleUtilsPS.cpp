@@ -25,7 +25,7 @@ void particleUtilsPS::resetParticleSet(particleSetPS &particleSet) {
 
 //Fills in a given particle set with particles using the passed in options
 //The option names are the same as used in the individual setParticle functions and do the same things
-//ie maxPosition will be passed to setParticleSetPositions() as the maxPosition input
+//ie maxPosition will be passed to setParticleSetStartPos() as the maxPosition input
 //See each of the individual functions for what the options do
 //NOTE: the particles are created using new, so don't forget to call freeParticleSet() or freeParticle() once you are
 //finished with a particleSet
@@ -57,7 +57,7 @@ particleSetPS particleUtilsPS::buildParticleSet(uint16_t numParticles, uint16_t 
 
 //Randomizes the properties of a set of particles
 //The option names are the same as used in the individual setParticle functions and do the same things
-//ie maxPosition will be passed to setParticleSetPositions() as the maxPosition input
+//ie maxPosition will be passed to setParticleSetStartPos() as the maxPosition input
 //See each of the individual functions for what the options do
 void particleUtilsPS::randomizeParticleSet(particleSetPS &particleSet, uint16_t maxPosition, uint8_t direction, uint16_t baseSpeed,
                                            uint16_t speedRange, uint16_t size, uint16_t sizeRange, uint8_t trailType, uint8_t trailSize,
@@ -70,13 +70,13 @@ void particleUtilsPS::randomizeParticleSet(particleSetPS &particleSet, uint16_t 
 
 //Randomizes the properties of a particle (that is a member of a particle set)
 //The option names are the same as used in the individual setParticle functions and do the same things
-//ie maxPosition will be passed to setParticleSetPositions() as the maxPosition input
+//ie maxPosition will be passed to setParticleSetStartPoss() as the maxPosition input
 //See each of the individual functions for what the options do
 void particleUtilsPS::randomizeParticle(particleSetPS &particleSet, uint16_t partNum, uint16_t maxPosition, uint8_t direction, uint16_t baseSpeed,
                                         uint16_t speedRange, uint16_t size, uint16_t sizeRange, uint8_t trailType, uint8_t trailSize,
                                         uint8_t trailRange, uint8_t bounce, uint8_t colorIndex, bool randColor) {
 
-    setParticleSetPosition(particleSet, partNum, maxPosition, true);
+    setParticleSetStartPos(particleSet, partNum, maxPosition, true);
     setParticleSetDirection(particleSet, partNum, direction);
     setParticleSetSpeed(particleSet, partNum, baseSpeed, speedRange);
     setParticleSetSize(particleSet, partNum, size, sizeRange);
@@ -102,7 +102,7 @@ void particleUtilsPS::randomizeParticle(particleSetPS &particleSet, uint16_t par
 //So see those functions for exact explanations of their inputs
 //set any unused opt's to 0
 //For example: setParticleSetProp(particleSet, 0, 100, 0, 0);
-//calls setParticleSetPositions() using 100 as the "max" value. opt2 and opt3 are not used
+//calls setParticleSetStartPos() using 100 as the "max" value. opt2 and opt3 are not used
 //Another example: setParticleSetProp(particleSet, 4, 1, 5, 2);
 //calls setParticleSetTrails() using 1 (opt1) as the trailType, 5 (opt2) ad the trailSize, and 2 (opt3) as the range
 void particleUtilsPS::setParticleSetProp(particleSetPS &particleSet, uint8_t propNum, uint16_t opt1, uint16_t opt2, uint16_t opt3) {
@@ -114,7 +114,7 @@ void particleUtilsPS::setParticleSetProp(particleSetPS &particleSet, uint8_t pro
     for( uint16_t i = 0; i < particleSetLength; i++ ) {
         switch( propNum ) {
             case 0:
-                setParticleSetPosition(particleSet, i, opt1, opt2);
+                setParticleSetStartPos(particleSet, i, opt1, opt2);
                 break;
             case 1:
                 setParticleSetDirection(particleSet, i, opt1);
@@ -143,7 +143,8 @@ void particleUtilsPS::setParticleSetProp(particleSetPS &particleSet, uint8_t pro
 //Sets a particle's startPosition to the passed in value
 //if rand is true, it will be chosen randomly up to the passed in position
 //(generally use the SegmentSetPS length as the position for rand)
-void particleUtilsPS::setParticleSetPosition(particleSetPS &particleSet, uint16_t partNum, uint16_t position, bool rand) {
+//Be sure to call resetParticle() after this to reposition the particle!
+void particleUtilsPS::setParticleSetStartPos(particleSetPS &particleSet, uint16_t partNum, uint16_t position, bool rand) {
     if( rand ) {
         position = random16(position);
     }

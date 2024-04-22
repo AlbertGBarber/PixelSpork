@@ -248,7 +248,7 @@ class FireworksPS : public EffectBasePS {
 
         particleSetPS
             *particleSet = nullptr,          //the particle set used in the effect
-            particleSetTemp = {nullptr, 0};  //storage for self created particle sets (init to an empty set for safety)
+            particleSetTemp = {nullptr, 0, 0};  //storage for self created particle sets (init to an empty set for safety)
 
         void
             setupFireworks(uint8_t newMaxNumFireworks, uint8_t newMaxNumSparks),

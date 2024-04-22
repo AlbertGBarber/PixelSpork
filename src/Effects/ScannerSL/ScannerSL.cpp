@@ -143,7 +143,7 @@ void ScannerSL::makeWaveSet(uint16_t numWaves, bool direction, bool alternate, b
                 position = mod16PS(position, numLines);
             }
         }
-        particleUtilsPS::setParticleSetPosition(particleSet, i, position, false);
+        particleUtilsPS::setParticleSetStartPos(particleSet, i, position, false);
     }
 
     reset();

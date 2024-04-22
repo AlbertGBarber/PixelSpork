@@ -21,7 +21,7 @@ ParticlesSL::ParticlesSL(SegmentSetPS &SegSet, particleSetPS &ParticleSet, palet
     : particleSet(&ParticleSet), palette(&Palette)  //
 {
     init(BgColor, SegSet);
-    trailEndColors = (CRGB *)malloc((particleSet->length) * sizeof(CRGB));
+    trailEndColors = (CRGB *)malloc((particleSet->maxLength) * sizeof(CRGB));
 }
 
 //destructor

@@ -104,12 +104,19 @@ class LarsonScannerSL : public EffectBasePS {
 
         ParticlesSL
             *scannerInst = nullptr;  //pointer to the ParticleSL instance
+        
+        //READ ONLY, DO NOT CHANGE!
+        //must be above the particleSet definition, otherwise the Arduino compiler doesn't link it
+        const uint8_t
+            maxNumParticles = 3; //We always use the same particle set length regardless of scan modes.
+                                 //This helps prevent memory fragmentation when switching scan modes.
 
         particleSetPS
-            particleSet = {nullptr, maxNumParticles};  //the particle set used in the ParticleSL instance. 
-                                                       //Init to empty for safety, but with our max length of 3 
-                                                       //so that the ParticlesSL instances boots up correctly
-
+            particleSet = { nullptr, maxNumParticles, maxNumParticles };  
+            //the particle set used in the ParticleSL instance. 
+            //Init to empty for safety, but with our max length of 3 
+            //so that the ParticlesSL instances boots up correctly
+        
         void
             setColorMode(uint8_t colorMode, bool bgColorMode),
             setColor(CRGB color),
@@ -125,10 +132,6 @@ class LarsonScannerSL : public EffectBasePS {
             prevRate = 0,
             currentTime,
             prevTime = 0;
-
-        const uint8_t 
-            maxNumParticles = 3; //We always use the same particle set length regardless of scan modes.
-                                 //This helps prevent memory fragmentation when switching scan modes.
 
         uint16_t
             numLines;

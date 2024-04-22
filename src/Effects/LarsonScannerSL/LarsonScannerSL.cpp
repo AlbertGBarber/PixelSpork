@@ -23,7 +23,7 @@ LarsonScannerSL::LarsonScannerSL(SegmentSetPS &SegSet, uint8_t ScanType, CRGB sc
 LarsonScannerSL::~LarsonScannerSL() {
     scannerInst->~ParticlesSL();
     //Free all particles and the particle array pointer
-    particleSet.length = 2;  //set the particle set to it's maximum length (see setScanType())
+    particleSet.length = maxNumParticles;  //set the particle set to it's maximum length (see setScanType())
     particleUtilsPS::freeParticleSet(particleSet);
     free(palette.paletteArr);
 }
@@ -94,11 +94,11 @@ void LarsonScannerSL::setScanType(uint8_t newScanType) {
 
             //One particle starting at the start of the segment set
             //We reverse its direction verses the other particle
-            particleUtilsPS::setParticleSetPosition(particleSet, 0, 0, false);
+            particleUtilsPS::setParticleSetStartPos(particleSet, 0, 0, false);
             particleUtilsPS::setParticleSetDirection(particleSet, 0, false);
 
             //One particle starting at the end of the segment set
-            particleUtilsPS::setParticleSetPosition(particleSet, 1, numLines - 1, false);
+            particleUtilsPS::setParticleSetStartPos(particleSet, 1, numLines - 1, false);
             scannerInst->blend = true;  //need to turn on blend so that the two particles don't overwrite each other when they meet
             break;
         case 3:
@@ -106,20 +106,19 @@ void LarsonScannerSL::setScanType(uint8_t newScanType) {
             particleSet.length = 3;
             //One particle starting at the start of the segment set
             //We reverse its direction verses the other particles
-            particleUtilsPS::setParticleSetPosition(particleSet, 0, 0, false);
+            particleUtilsPS::setParticleSetStartPos(particleSet, 0, 0, false);
             particleUtilsPS::setParticleSetDirection(particleSet, 0, false);
 
             //One particle starting at the end of the segment set
-            particleUtilsPS::setParticleSetPosition(particleSet, 1, numLines - 1, false);
+            particleUtilsPS::setParticleSetStartPos(particleSet, 1, numLines - 1, false);
 
             //One particle starting in the middle of the segment set with double trails 
             //We halve the trail length so the overall particle matches the others
             //If the trailLength is odd, we add 1 to the particle's body eyeSize to compensate
-            particleUtilsPS::setParticleSetPosition(particleSet, 2, numLines/2, false);
+            particleUtilsPS::setParticleSetStartPos(particleSet, 2, numLines/2, false);
             particleUtilsPS::setParticleSetTrailType(particleSet, 2, 2);
             scanType3SetTrails(); //handles setting up trail lengths 
-                                 //(in own function b/c it needs to be repeated in setTrailLength())
-            
+                                  //(in own function b/c it needs to be repeated in setTrailLength())
             scannerInst->blend = true;  //need to turn on blend so that the two particles don't overwrite each other when they meet           
     }
 
@@ -182,6 +181,7 @@ void LarsonScannerSL::update() {
             particleUtilsPS::setParticleSetProp(particleSet, 2, *rate, 0, 0);
         }
 
+        //Updating the particles instance
         scannerInst->update();
     }
 }

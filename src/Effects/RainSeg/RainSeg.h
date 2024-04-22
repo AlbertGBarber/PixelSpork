@@ -273,7 +273,7 @@ class RainSeg : public EffectBasePS {
 
         particleSetPS
             *particleSet = nullptr,          //the particle set used in the effect
-            particleSetTemp = {nullptr, 0};  //storage for self created particle sets, init to empty for safety
+            particleSetTemp = {nullptr, 0, 0};  //storage for self created particle sets, init to empty for safety
 
         void
             setupDrops(uint8_t newMaxNumDrops),

@@ -200,7 +200,7 @@ class FirefliesSL : public EffectBasePS {
 
         particleSetPS
             *particleSet = nullptr,          //the particle set used in the effect
-            particleSetTemp = {nullptr, 0};  //storage for self created particle sets (init to an empty set for safety)
+            particleSetTemp = {nullptr, 0, 0};  //storage for self created particle sets (init to an empty set for safety)
 
         void
             setupFireflies(uint16_t newMaxNumFireflies),
