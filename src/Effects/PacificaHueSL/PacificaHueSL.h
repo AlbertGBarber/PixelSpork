@@ -30,43 +30,42 @@ Almost all of the code is directly copied from the original linked above
 If you have any questions about how it works, please direct them to Mark Kriegsman
 
 Inputs Guide:
+    The main input for the effect is the `hue`, which sets a base color using the HSV rainbow.
+    The effect's palettes then form their colors around that base color. 
+    This produces a nice gentle wave effect like the original effect, but tinted in a specific color, 
+    However, it does mean that you cannot have colors from opposite ends of the spectrum 
+    together (like green and purple for example) (Try the Lave or Noise effects instead). 
 
-The main input for the effect is the `hue`, which sets a base color using the HSV rainbow.
-The effect's palettes then form their colors around that base color. 
-This produces a nice gentle wave effect like the original effect, but tinted in a specific color, 
-However, it does mean that you cannot have colors from opposite ends of the spectrum 
-together (like green and purple for example) (Try the Lave or Noise effects instead). 
+    Some hue ranges are:
+        Red/Orange: 240 to ~10 
+        Orange/Yellow: 10 to ~40
+        Yellow/Green: 40 to ~90
+        Green/Blue: 90 to ~150
+        Blue/Purple: 150 to ~180
+        Purple/Red: 180 to 240
+            
+    By default the hue is set to 130, which closely matches the colors from the original effect.
 
-Some hue ranges are:
-    Red/Orange: 240 to ~10 
-    Orange/Yellow: 10 to ~40
-    Yellow/Green: 40 to ~90
-    Green/Blue: 90 to ~150
-    Blue/Purple: 150 to ~180
-    Purple/Red: 180 to 240
-        
-By default the hue is set to 130, which closely matches the colors from the original effect.
+    You can also set the hue to cycle through colors over time at hueRate (ms) (see constructors below)
+    A hue rate of 0 will stop the hue cycle.
+    The hue is updated as part of the effect, so the hueRate should be slower than the effect's update rate.
+    Note that the hueRate is a pointer (like the overall effect Rate), so you can bind it to an external variable if wanted.
+    The rate passed into the constructors is hueRateOrig
 
-You can also set the hue to cycle through colors over time at hueRate (ms) (see constructors below)
-A hue rate of 0 will stop the hue cycle.
-The hue is updated as part of the effect, so the hueRate should be slower than the effect's update rate.
-Note that the hueRate is a pointer (like the overall effect Rate), so you can bind it to an external variable if wanted.
-The rate passed into the constructors is hueRateOrig
+    In the original code, waves are shifted towards white where they meet using the function `addWhiteCaps()`. 
+    I've made this function optional for a few reasons:
 
-In the original code, waves are shifted towards white where they meet using the function `addWhiteCaps()`. 
-I've made this function optional for a few reasons:
+        1. In the code, pixel colors are added to one another. For a 1D line or a rectangular matrix this is fine, 
+        because each pixel is part of a single Segment Line, so the `addWhiteCaps()` is needed to form the wave peaks. 
+        However for an uneven segment set with different length segments, a single pixel may exist in multiple 
+        lines at once. In this case, the code is already forming the wave peaks by adding the colors of the 
+        overlapping pixels multiple times, making `addWhiteCaps()` overkill. 
 
-    1. In the code, pixel colors are added to one another. For a 1D line or a rectangular matrix this is fine, 
-       because each pixel is part of a single Segment Line, so the `addWhiteCaps()` is needed to form the wave peaks. 
-       However for an uneven segment set with different length segments, a single pixel may exist in multiple 
-       lines at once. In this case, the code is already forming the wave peaks by adding the colors of the 
-       overlapping pixels multiple times, making `addWhiteCaps()` overkill. 
+        2. `addWhiteCaps()` was specifically written for the original blue-green colors of the original Pacifica effect. 
+            I have been unable to adapt it to work well with all hues. So in some cases, it's best to leave it off. 
 
-    2. `addWhiteCaps()` was specifically written for the original blue-green colors of the original Pacifica effect. 
-        I have been unable to adapt it to work well with all hues. So in some cases, it's best to leave it off. 
-
-In addition to the above, I've also allowed you to cap the white light level 
-of the pixels using `thresholdMax` as part of `addWhiteCaps()`.
+    In addition to the above, I've also allowed you to cap the white light level 
+    of the pixels using `thresholdMax` as part of `addWhiteCaps()`.
 
 Example calls: 
     PacificaHueSL pacificaHue(mainSegments, 40);

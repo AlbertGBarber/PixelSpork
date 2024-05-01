@@ -167,23 +167,23 @@ Reference vars:
 */
 class SegWaves : public EffectBasePS {
     public:
-        //constructor for using the passed in pattern and palette for the waves
+        //Constructor for using the passed in pattern and palette for the waves
         SegWaves(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint8_t FadeSteps,
                  bool Direct, uint16_t Rate);
 
-        //constructor for building the wave pattern from the passed in pattern and the palette, using the passed in waveThickness and spacing
+        //Constructor for building the wave pattern from the passed in pattern and the palette, using the passed in waveThickness and spacing
         SegWaves(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Palette, CRGB BgColor, uint16_t WaveThickness,
                  uint16_t Spacing, uint8_t FadeSteps, bool Direct, uint16_t Rate);
 
-        //constructor for building a wave using all the colors in the passed in palette, using the waveThickness and spacing for each color
+        //Constructor for building a wave using all the colors in the passed in palette, using the waveThickness and spacing for each color
         SegWaves(SegmentSetPS &SegSet, palettePS &Palette, CRGB BgColor, uint16_t WaveThickness, 
                  uint16_t Spacing, uint8_t FadeSteps, bool Direct, uint16_t Rate);
 
-        //constructor for doing a single colored wave, using waveThickness and spacing
+        //Constructor for doing a single colored wave, using waveThickness and spacing
         SegWaves(SegmentSetPS &SegSet, CRGB Color, CRGB BgColor, uint16_t WaveThickness, uint16_t Spacing,
                  uint8_t FadeSteps, bool Direct, uint16_t Rate);
 
-        //constructor doing a rainbow based on the number of segments
+        //Constructor doing a rainbow based on the number of segments
         SegWaves(SegmentSetPS &SegSet, uint8_t FadeSteps, bool Direct, uint16_t Rate);
 
         ~SegWaves();

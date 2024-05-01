@@ -120,8 +120,8 @@ class DrawPatternSLSeg : public EffectBasePS {
 
         uint8_t
             segMode,
-            colorMode,
-            bgColorMode;
+            colorMode = 0,
+            bgColorMode = 0;
 
         CRGB
             bgColorOrig,

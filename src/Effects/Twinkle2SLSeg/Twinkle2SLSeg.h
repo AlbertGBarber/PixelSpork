@@ -96,14 +96,14 @@ Other Effect Settings:
 
 Example call: 
 
-    Twinkle2SLSeg twinkle2(mainSegments, cybPnkPal_PS, 0, 12, 500, 3, 2, 4, 5, 1, 70);
+    Twinkle2SLSeg twinkle2(mainSegments, cybPnkPal_PS, 0, 12, 500, 3, 2, 4, 5, 0, 70);
     Will choose 12 segment lines (segMode 0) to fade to/from colors from the cybPnkPal_PS palette 
     The background in blank. 
     There is a 50% chance an inactive line will become active each cycle (500/1000)
     There are 3 fade in and 4 fade out steps with ranges of 2 and 5 respectively
     The effect updates at a rate of 70ms.
 
-    Twinkle2SLSeg twinkle2(mainSegments, CRGB::Red, CRGB::Blue, 3, 1000, 2, 0, 6, 0, 0, 60);
+    Twinkle2SLSeg twinkle2(mainSegments, CRGB::Red, CRGB::Blue, 3, 1000, 2, 0, 6, 0, 1, 60);
     Will choose 3 whole segments (segMode 1) to fade to/from red, using a blue background, 
     There is a 100% chance an inactive segment will become active each cycle (1000/1000)
     There are 2 fade in and 6 fade out steps with ranges of 0 and 0 respectively

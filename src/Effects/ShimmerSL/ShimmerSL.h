@@ -23,7 +23,7 @@ You can also force the effect to be 1D using `lineMode`:
     `lineMode` (bool) (default true):
         * true -- The effect will "shimmer" segment lines (2D).
         * false -- The effect will "shimmer" individual pixels (1D). 
-                This is useful if you want to use a 2D color mode with individual pixels. 
+                   This is useful if you want to use a 2D color mode with individual pixels. 
 
     `randMode` (uint8_t) (default 0):
         Determines how the shimmer colors will be chosen.

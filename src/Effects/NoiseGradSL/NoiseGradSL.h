@@ -16,9 +16,9 @@ This lets the effect stay calm for a while, and then quickly shift to a new look
 You can change the variables freely, although this may result in jumps in the effect.
 
 The noise colors will be blended towards a background color.
- Changing the background color will "tint" the overall output, 
- because all the colors are blended towards the background color as part of the effect. 
- Supports color modes for the background color.
+Changing the background color will "tint" the overall output, 
+because all the colors are blended towards the background color as part of the effect. 
+Supports color modes for the background color.
 
 Inputs guide:
     Overall the effect has two components:

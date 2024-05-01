@@ -9,7 +9,7 @@
 Moves a set of color gradients along the segment set
 the gradients can be set to follow a pattern, use a palette, or set randomly
 The gradients have a set length, and smoothly transition from one color to the next, wrapping back to the first color at the end.
-If the total length of the gradients is longer than the segment set, t all colors will still be shown, 
+If the total length of the gradients is longer than the segment set, all colors will still be shown, 
 they will just cycle on and off the segment set.
 
 There is a version of this effect that takes less CPU power (GradientCycleSLFastPS)

@@ -27,7 +27,7 @@ You can use it in your effects like:
     //So we need to pass the palette slider's palette by address (using the "&")
     yourEffect.palette = &yourPaletteSlider.sliderPalette;
 
-You can also pass `&yourPaletteSlider.sliderPalette` as part of the effect's constructor.
+You can also pass `yourPaletteSlider.sliderPalette` as part of the effect's constructor.
 
     Color Shifting Modes:
         There are two modes of shifting through palette colors, using a "single shift", and shifting the whole palette length (controlled by `singleShift`):

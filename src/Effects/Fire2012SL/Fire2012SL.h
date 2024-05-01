@@ -40,7 +40,7 @@ recommended values are between 20 and 100. 50 seems the nicest.
 Sparking: indicates the chance (out of 255) that a spark will ignite. A higher value makes the fire more active.
 Suggested values lay between 50 and 200. 90 & 120 work well.
 
-recommended update rate for the effect is 30-80ms
+Recommended update rate for the effect is 30-80ms
 
 This effect is not compatible with color modes, but the bgColor is a pointer, so you can bind it
 

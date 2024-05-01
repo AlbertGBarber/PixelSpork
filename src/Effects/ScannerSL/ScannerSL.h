@@ -72,7 +72,6 @@ Inputs Guide:
                         If bounce is false:
                             The waves will change colors every time they wrap to 0.
                         
-        
         randMode 3 -- To lock the waves colors so that they never change, use `randMode` 3.
         
         blend -- If true, then waves' colors will be blended together when they pass each other. 

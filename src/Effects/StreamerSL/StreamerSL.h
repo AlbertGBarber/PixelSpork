@@ -22,34 +22,32 @@ but has a few extra restrictions.
 
 This effect supports Color Modes for both the streamer and background colors.
 
-## Inputs Guide & Notes:
+    Patterns:
+        Patterns work the same as with other effects; they are a pattern of palette array indexes. 
+        ie a pattern of {0, 2, 1} would be the first three colors of a palette. 
+        However, in this effect, to indicate a background pixel (set it to the `bgColor`) we use 255 in the pattern. 
+        Make sure your palette doesn't have 255 colors (that would be waaaay to big!).
 
-### Patterns:
-Patterns work the same as with other effects; they are a pattern of palette array indexes. 
-ie a pattern of {0, 2, 1} would be the first three colors of a palette. 
-However, in this effect, to indicate a background pixel (set it to the `bgColor`) we use 255 in the pattern. 
-Make sure your palette doesn't have 255 colors (that would be waaaay to big!).
+        For example, lets say we wanted to do the first two colors of our palette, each as length 4 streamers, 
+        with 3 background pixels in between each. We would make a pattern as: 
+        `{0, 0, 0, 0, 255, 255, 255, 1, 1, 1, 1, 255, 255, 255}`.
 
-For example, lets say we wanted to do the first two colors of our palette, each as length 4 streamers, 
-with 3 background pixels in between each. We would make a pattern as: 
-`{0, 0, 0, 0, 255, 255, 255, 1, 1, 1, 1, 255, 255, 255}`.
+        For simple patterns like the previous example, I have written a few constructors that automate the 
+        pattern creation for you, taking the length of the colored streamers, and the length of the background spaces 
+        as arguments (see constructor notes below). 
 
-For simple patterns like the previous example, I have written a few constructors that automate the 
-pattern creation for you, taking the length of the colored streamers, and the length of the background spaces 
-as arguments (see constructor notes below). 
+        Note that while each entry in the pattern is a uint8_t, if you have a lot of colors, 
+        with long waves and spaces, your patterns may be quite large, so watch your memory usage. 
 
-Note that while each entry in the pattern is a uint8_t, if you have a lot of colors, 
-with long waves and spaces, your patterns may be quite large, so watch your memory usage. 
+        Any automatically generated patterns will be allocated dynamically. 
+        To avoid memory fragmentation, when you create the effect, you should set your color length and spacing 
+        to the maximum values you expect to use, and then call `setPatternAsPattern()` or `setPaletteAsPattern()` 
+        to resize your waves and spacing. See 
+        https://github.com/AlbertGBarber/PixelSpork/wiki/Effects-Advanced#managing-dynamic-memory-and-fragmentation
+        for more details. 
 
-Any automatically generated patterns will be allocated dynamically. 
-To avoid memory fragmentation, when you create the effect, you should set your color length and spacing 
-to the maximum values you expect to use, and then call `setPatternAsPattern()` or `setPaletteAsPattern()` 
-to resize your waves and spacing. See 
-https://github.com/AlbertGBarber/PixelSpork/wiki/Effects-Advanced#managing-dynamic-memory-and-fragmentation
-for more details. 
-
-Also, remember that the pattern length is limited to 65,025 (uint16_t max), 
-so make sure your `(colorLength + spacing) * <num palette colors>` is less than the limit. 
+        Also, remember that the pattern length is limited to 65,025 (uint16_t max), 
+        so make sure your `(colorLength + spacing) * <num palette colors>` is less than the limit. 
 
 Example calls: 
     uint8_t pattern_arr = {0, 255, 255, 255, 1, 1, 255, 255};

@@ -24,7 +24,7 @@ You can use it in your effects like:
     //So we need to pass the Palette Noise's palette by address (using the "&")
     yourEffect.palette = &yourPaletteNoise.noisePalette;
 
-You can also pass `&yourPaletteNoise.noisePalette` as part of the effect's constructor.
+You can also pass `yourPaletteNoise.noisePalette` as part of the effect's constructor.
 
 Note that you are free to change most of the utility's settings on the fly, 
 with exception to the number of noise palette colors, which you must call `setupPalette()` to change.

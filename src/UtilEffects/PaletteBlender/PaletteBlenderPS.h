@@ -25,7 +25,7 @@ You can use it in your effects like:
     //So we need to pass the palette blender's palette by address (using the "&")
     yourEffect.palette = &yourPaletteBlender.blendPalette;
 
-You can also pass `&yourPaletteBlender.blendPalette` as part of the effect's constructor.
+You can also pass `yourPaletteBlender.blendPalette` as part of the effect's constructor.
 
     Feature Notes:
         * **Overall, I recommend only blending between palettes of equal lengths.** 
