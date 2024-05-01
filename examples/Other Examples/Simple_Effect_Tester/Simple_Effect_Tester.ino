@@ -43,7 +43,7 @@ SegmentSetPS mainSegments(leds, NUM_LEDS, halfSegs_arr, SIZE(halfSegs_arr));
 //=============================================================
 StreamerSL streamer(mainSegments, cybPnkPal_PS, 0, 3, 3, 15, 60);
 
-void setup() {cybPnkPal_PS
+void setup() {
 
     //This setup assumes you're using WS2812 LEDs
     //For other LED type setups, see the FastLED Blink  example
