@@ -28,9 +28,9 @@ Features:
 
 * Uses the famous [FastLED](https://github.com/FastLED/FastLED) library as a foundation, ensuring that writing to LEDs is as fast as possible.
 
-* Fully documented, both here and in the code itself. I hate wading through incomplete wikis and unexplained code. I pledge that I will do my very best to keep this wiki complete and up-to-date. If you ever find a topic/feature that isn't explained or is incomplete, please let me know (by opening an issue, etc)!
+* Fully documented, both in the [Gitub Wiki](https://github.com/AlbertGBarber/PixelSpork/wiki) and in the code itself. I hate wading through incomplete wikis and unexplained code. I pledge that I will do my very best to keep this wiki complete and up-to-date. If you ever find a topic/feature that isn't explained or is incomplete, please let me know (by opening an issue, etc)!
 
-### To get started, check out the wiki [starter guide](https://github.com/AlbertGBarber/PixelSpork/wiki/Overview)!
+### To get started, check out the [starter guide](https://github.com/AlbertGBarber/PixelSpork/wiki/Overview)!
 
 ### Join the Discord Server!
 
