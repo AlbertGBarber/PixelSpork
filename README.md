@@ -1,5 +1,11 @@
 <p align="center">
    <img align="center" width="40%" src = "https://github.com/AlbertGBarber/Pixel-Spork-Wiki-Images/blob/main/Logo/Logo%20Rainbow.png" alt="Pixel Spork Logo">
+   <p align="center">
+      <a href="https://github.com/AlbertGBarber/PixelSpork/wiki/"</a><img src="https://img.shields.io/badge/Wiki-blue?style=flat-square&logo=Wikipedia&labelColor=black"></a>
+      <a href="https://discord.gg/xZHcvXqq"><img src="https://img.shields.io/badge/Discord-blue?style=flat-square&logo=discord&labelColor=black"></a>
+      <a href="https://github.com/AlbertGBarber/PixelSpork/wiki/Overview"><img src="https://img.shields.io/badge/Starter%20Guide-blue?style=flat-square&logo=Github&labelColor=black"></a>
+      <a href="https://github.com/AlbertGBarber/PixelSpork/blob/main/LICENSE"><img src="https://img.shields.io/github/license/AlbertGBarber/PixelSpork?color=blue&style=flat-square&labelColor=black"></a>
+   </p>
 </p>
 
 # Welcome!
@@ -24,4 +30,8 @@ Features:
 
 * Fully documented, both here and in the code itself. I hate wading through incomplete wikis and unexplained code. I pledge that I will do my very best to keep this wiki complete and up-to-date. If you ever find a topic/feature that isn't explained or is incomplete, please let me know (by opening an issue, etc)!
 
-For more, please check out the Pixel Spork wiki: https://github.com/AlbertGBarber/PixelSpork/wiki/.
+### To get started, check out the wiki [starter guide](https://github.com/AlbertGBarber/PixelSpork/wiki/Overview)!
+
+### Join the Discord Server!
+
+<a href="https://discord.gg/xZHcvXqq"><img src="https://discordapp.com/api/guilds/1235341175175774361/widget.png?style=banner2" width="25%"></a>
