@@ -38,3 +38,5 @@ Features:
 ### Join the Discord Server!
 
 <a href="https://discord.gg/xZHcvXqq"><img src="https://discordapp.com/api/guilds/1235341175175774361/widget.png?style=banner2" width="25%"></a>
+
+If needed, you can can DM me [here](https://discord.com/users/abarb_255).
