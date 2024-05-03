@@ -1,5 +1,5 @@
-#ifndef PixelSpork_h
-#define PixelSpork_h
+#ifndef Pixel_Spork_h
+#define Pixel_Spork_h
 
 /*Welcome to my library!
     Pixel Spork is a WS2812+ LED Effects library based on the FastLED library.

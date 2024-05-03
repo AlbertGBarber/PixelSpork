@@ -1,5 +1,5 @@
 #define FASTLED_INTERNAL 1  //turns off the pragma messages from FastLED
-#include <PixelSpork.h>
+#include <Pixel_Spork.h>
 
 /*
 This example lays out how to use Segment Sets to create 2D effects.

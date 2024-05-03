@@ -1,5 +1,5 @@
 #define FASTLED_INTERNAL 1  //turns off the pragma messages from FastLED
-#include <PixelSpork.h>
+#include <Pixel_Spork.h>
 
 /*
 In this example, we'll use a Pixel Spork utility class, EffectSetsPS, to help switch between and manage

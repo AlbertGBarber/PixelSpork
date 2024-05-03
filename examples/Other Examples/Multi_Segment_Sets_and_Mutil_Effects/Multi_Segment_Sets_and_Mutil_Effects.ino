@@ -1,5 +1,5 @@
 #define FASTLED_INTERNAL 1  //turns off the pragma messages from FastLED
-#include <PixelSpork.h>
+#include <Pixel_Spork.h>
 
 /*
 This example demonstrates how to run two different effects on two different Segment Sets

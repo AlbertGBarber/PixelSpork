@@ -1,5 +1,5 @@
 #define FASTLED_INTERNAL 1  //turns off the pragma messages from FastLED
-#include <PixelSpork.h>
+#include <Pixel_Spork.h>
 
 /*
 In this example, we'll create "temporary" effect, which only keep their variables in memory while active.
