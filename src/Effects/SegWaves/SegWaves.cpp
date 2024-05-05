@@ -57,24 +57,10 @@ SegWaves::SegWaves(SegmentSetPS &SegSet, CRGB Color, CRGB BgColor, uint16_t Wave
 
 //constructor doing a rainbow based on the number of segments, there's no spacing for this mode
 SegWaves::SegWaves(SegmentSetPS &SegSet, uint8_t FadeSteps, bool Direct, uint16_t Rate)
-    : fadeSteps(FadeSteps), direct(Direct) {
+    : fadeSteps(FadeSteps), direct(Direct) //
+{
     init(0, SegSet, Rate);
-    //For the rainbow we create a pattern and palette of length equal to the number of segments
-    //The pattern is just each segment number in order,
-    //while the palette is filled with a rainbow spread across all the segments (one color for each segment)
-    numSegs = segSet->numSegs;
-    uint8_t *patternArr = new uint8_t[numSegs];
-    CRGB *paletteArr = new CRGB[numSegs];
-    for( uint16_t i = 0; i < numSegs; i++ ) {
-        patternArr[i] = i;
-        paletteArr[i] = colorUtilsPS::wheel((i * 255 / numSegs), 0);
-    }
-
-    paletteTemp = {paletteArr, numSegs};
-    palette = &paletteTemp;
-
-    patternTemp = {patternArr, numSegs};
-    pattern = &patternTemp;
+    makeRainbowWaves();
 }
 
 //destructor
@@ -131,6 +117,40 @@ void SegWaves::resetSegColors() {
 //wave on the segment at once
 void SegWaves::makeSingleWave() {
     setPaletteAsPattern(1, segSet->numSegs);
+}
+
+//Creates a pattern and palette that evenly distributes a rainbow across the segment set
+//Note that if the number of segments in the set is greater than 255, the rainbow will cap at 255, and repeat.
+void SegWaves::makeRainbowWaves(){
+    //For the rainbow we create a pattern and palette of length equal to the number of segments
+    //(if numSegs is >255, we cap it to 255)
+    //The pattern is just each segment number in order,
+    //while the palette is filled with a rainbow spread across all the segments (one color for each segment)
+    numSegs = segSet->numSegs;
+
+    //cap the palette length to 255 (max)
+    uint8_t palLength;
+    if(numSegs > 255){
+        palLength = 255;
+    } else {
+        palLength = numSegs;
+    }
+    
+    free(paletteTemp.paletteArr);
+    free(patternTemp.patternArr);
+
+    uint8_t *patternArr = new uint8_t[palLength];
+    CRGB *paletteArr = new CRGB[palLength];
+    for( uint16_t i = 0; i < palLength; i++ ) {
+        patternArr[i] = i;
+        paletteArr[i] = colorUtilsPS::wheel((i * 255 / numSegs), 0);
+    }
+
+    paletteTemp = {paletteArr, palLength};
+    palette = &paletteTemp;
+
+    patternTemp = {patternArr, palLength, palLength};
+    pattern = &patternTemp;
 }
 
 //takes the passed in pattern and creates a pattern for the wave

@@ -62,6 +62,13 @@ Inputs Guide & Notes:
         Finally, the effect needs to store a CRGB array of size `numSegs + 1` for random modes. 
         This is also allocated dynamically, however, this will only needs to be adjusted if you 
         change the number of segments in your segment set. It is re-sized when calling `reset()`.
+    
+    Rainbow Waves:
+        The effect has a special constructor which will automatically create a rainbow palette and pattern
+        that is spread evenly across the segment set.
+        Note that if the number of segments in the set is greater than 255, the rainbow will cap at 255, and repeat.
+        There is no spacing for this mode.
+        Should you need to, you can re-create the rainbow pattern/palette by calling makeRainbowWaves(),
 
     Random Modes: 
         `randMode` controls how pattern colors are chosen. For `randMode`'s other than 0, 
@@ -159,6 +166,10 @@ Functions:
     setPaletteAsPattern(colorLength, spacing) -- Like the previous function, but all of the current palette will be used for the pattern                                                       
     makeSingleWave() -- Creates a wave pattern such that there's a single wave of length 1 
                         active on the segment set at one time. All the pattern colors will still be used.
+    makeRainbowWaves() -- Uses the effect's local pattern and palette (patternTemp and paletteTemp)
+                          To create an evenly distributed a rainbow across the segment set
+                          Note that if the number of segments in the set is greater than 255, 
+                          the rainbow will cap at 255, and repeat.
     update() -- updates the effect
 
 Reference vars:
@@ -217,6 +228,7 @@ class SegWaves : public EffectBasePS {
             makeSingleWave(),
             setPatternAsPattern(patternPS &inputPattern, uint16_t waveThickness, uint16_t spacing),
             setPaletteAsPattern(uint16_t waveThickness, uint16_t spacing),
+            makeRainbowWaves(),
             reset(),
             resetSegColors(),
             update(void);

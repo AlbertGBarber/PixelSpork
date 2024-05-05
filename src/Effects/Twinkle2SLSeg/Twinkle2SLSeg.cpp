@@ -99,7 +99,6 @@ void Twinkle2SLSeg::setSteps(uint8_t newFadeInSteps, uint8_t newFadeOutSteps) {
 //Sets the number of twinkles, if we need more space for the twinkles, re-creates the twinkle array and twinkleSet
 //If the new number of twinkles is different from the current, we reset the effect
 void Twinkle2SLSeg::setNumTwinkles(uint16_t newNumTwinkles) {
-
     //We only need to make new twinkle array if the current one isn't large enough
     //This helps prevent memory fragmentation by limiting the number of heap allocations
     //but this may use up more memory overall.

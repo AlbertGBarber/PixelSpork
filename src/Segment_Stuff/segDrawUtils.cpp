@@ -337,7 +337,7 @@ void segDrawUtils::handleBri(SegmentSetPS &SegSet, uint16_t pixelNum) {
 //The input color will be returned unchanged if the Color Mode is 0.
 CRGB segDrawUtils::getPixelColor_XY(SegmentSetPS &SegSet, uint16_t lineNum, uint16_t segNum, const CRGB &color, uint8_t colorMode){
     pixelNum = getPixelNumFromLineNum(SegSet, segNum, lineNum);
-    getPixelColor(SegSet, pixelNum, color, colorMode, segNum, lineNum);
+    return getPixelColor(SegSet, pixelNum, color, colorMode, segNum, lineNum);
 }
 
 /* Fills in a pixelInfoPS struct with data (the pixel's actual address, what segment it's in, it's line number, and what color it should be)
