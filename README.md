@@ -40,4 +40,4 @@ Features:
 
 <a href="https://discord.gg/xZHcvXqq"><img src="https://discordapp.com/api/guilds/1235341175175774361/widget.png?style=banner2" width="25%"></a>
 
-If needed, you can can DM me [here](https://discord.com/users/abarb_255).
+If needed, you can can DM me on [Discord](https://discord.com/users/abarb_255) or [Reddit](https://www.reddit.com/user/splat2385/).
