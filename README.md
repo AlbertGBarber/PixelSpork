@@ -4,6 +4,7 @@
       <a href="https://youtu.be/n6MAIFuHd8U"><img align="center"  width="40%" src="https://github.com/AlbertGBarber/Pixel-Spork-Wiki-Images/blob/main/Images/Thumb%20Play.png"></a>
    </p>
    <p align="center">
+      <a href="https://reference.arduino.cc/reference/en/libraries/pixel_spork/"</a><img src="https://img.shields.io/badge/Pixel%20Spork-DarkGreen?logo=Arduino&logoColor=Grey&label=Library%20Manager"></a>
       <a href="https://github.com/AlbertGBarber/PixelSpork/wiki/"</a><img src="https://img.shields.io/badge/Wiki-blue?style=flat-square&logo=Wikipedia&labelColor=black"></a>
       <a href="https://discord.gg/xZHcvXqq"><img src="https://img.shields.io/badge/Discord-blue?style=flat-square&logo=discord&labelColor=black"></a>
       <a href="https://github.com/AlbertGBarber/PixelSpork/wiki/Overview"><img src="https://img.shields.io/badge/Starter%20Guide-blue?style=flat-square&logo=Github&labelColor=black"></a>
