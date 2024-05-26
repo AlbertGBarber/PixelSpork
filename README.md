@@ -6,7 +6,7 @@
    <p align="center">
       <a href="https://reference.arduino.cc/reference/en/libraries/pixel_spork/"</a><img src="https://img.shields.io/badge/Pixel%20Spork-DarkGreen?logo=Arduino&logoColor=Grey&label=Library%20Manager"></a>
       <a href="https://github.com/AlbertGBarber/PixelSpork/wiki/"</a><img src="https://img.shields.io/badge/Wiki-blue?style=flat-square&logo=Wikipedia&labelColor=black"></a>
-      <a href="https://discord.gg/xZHcvXqq"><img src="https://img.shields.io/badge/Discord-blue?style=flat-square&logo=discord&labelColor=black"></a>
+      <a href="https://discord.gg/HVeD8BgVTW"><img src="https://img.shields.io/badge/Discord-blue?style=flat-square&logo=discord&labelColor=black"></a>
       <a href="https://github.com/AlbertGBarber/PixelSpork/wiki/Overview"><img src="https://img.shields.io/badge/Starter%20Guide-blue?style=flat-square&logo=Github&labelColor=black"></a>
       <a href="https://github.com/AlbertGBarber/PixelSpork/blob/main/LICENSE"><img src="https://img.shields.io/github/license/AlbertGBarber/PixelSpork?color=blue&style=flat-square&labelColor=black"></a>
    </p>
@@ -38,6 +38,6 @@ Features:
 
 ### Join the Discord Server!
 
-<a href="https://discord.gg/xZHcvXqq"><img src="https://discordapp.com/api/guilds/1235341175175774361/widget.png?style=banner2" width="25%"></a>
+<a href="https://discord.gg/HVeD8BgVTW"><img src="https://discordapp.com/api/guilds/1235341175175774361/widget.png?style=banner2" width="25%"></a>
 
 If needed, you can can DM me on [Discord](https://discord.com/users/abarb_255) or [Reddit](https://www.reddit.com/user/splat2385/).
