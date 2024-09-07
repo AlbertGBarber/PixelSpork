@@ -14,19 +14,21 @@
 
 # Welcome!
 
-Pixel Spork is an Arduino library for controlling addressable LEDs. It aims to streamline the use of the popular WS2812 (and other) addressable LEDs by providing a wide variety of rich, class-based, effects and utilities. The library's stand-out feature is "Segment Sets", allowing you to intuitively arrange your LEDs into virtual 1 or 2D shapes. Pixel Spork lets users code at their own comfort level by only requiring a few core tools to operate, but providing many more for power users. Start small with a simple 1D Segment Set and effect, and scale up over time to fully 2D Segment Sets, using multiple effects, while managing multiple palettes, color modes, utilities and more!
+Pixel Spork is an Arduino library for controlling addressable LEDs. It aims to streamline the use of the popular WS2812 (and other) addressable LEDs by providing a wide variety of rich, class-based, effects and utilities. The library's stand-out feature is "[Segment Sets](https://github.com/AlbertGBarber/PixelSpork/wiki/Ring-Segments-Example)", which allow you to intuitively arrange your LEDs into virtual 2D shapes. Effects map onto these shapes automatically, streamlining your coding experience. Pixel Spork lets users code at their own comfort level by only requiring a few core tools to operate, but providing many more for power users. Start small with a simple 1D Segment Set and effect, and scale up over time to fully 2D Segment Sets, using multiple effects, while managing multiple palettes, color modes, utilities and more!
+
+Check out the [Youtube Trailer](https://youtu.be/n6MAIFuHd8U) for more!
 
 Features:
 
 * Over 40 class-based, deeply customizable effects.
 
-* Virtually re-arrange your LEDs into 1D or 2D shapes using Segment Sets.
+* Virtually re-arrange your LEDs into 1D or 2D shapes using [Segment Sets](https://github.com/AlbertGBarber/PixelSpork/wiki/Ring-Segments-Example).
 
 * Use a suite of utility classes to manage and enhance your effects.
 
-* Add rainbows (or a custom gradients) to most effects using Color Modes.
+* Add rainbows (or a custom gradients) to most effects using [Color Modes](https://github.com/AlbertGBarber/PixelSpork/wiki/Color-Modes).
 
-* Create color palettes to unify colors across you code.
+* Create [color palettes](https://github.com/AlbertGBarber/PixelSpork/wiki/Palette-Basics) to unify colors across your code.
 
 * Compartmentalized design. Most features are optional, meaning that you only need to interact with them if you want to, allowing you to explore and code at your own pace.
 
