@@ -20,11 +20,11 @@ Check out the [Youtube Trailer](https://youtu.be/n6MAIFuHd8U) for more!
 
 Features:
 
-* Over 40 class-based, deeply customizable effects.
+* Over 40 class-based, deeply customizable [effects](https://github.com/AlbertGBarber/PixelSpork/wiki/Effect-Samples).
 
 * Virtually re-arrange your LEDs into 1D or 2D shapes using [Segment Sets](https://github.com/AlbertGBarber/PixelSpork/wiki/Ring-Segments-Example).
 
-* Use a suite of utility classes to manage and enhance your effects.
+* Use a suite of [utility classes](https://github.com/AlbertGBarber/PixelSpork/wiki/Utility-Classes-Basics) to manage and enhance your effects.
 
 * Add rainbows (or a custom gradients) to most effects using [Color Modes](https://github.com/AlbertGBarber/PixelSpork/wiki/Color-Modes).
 
