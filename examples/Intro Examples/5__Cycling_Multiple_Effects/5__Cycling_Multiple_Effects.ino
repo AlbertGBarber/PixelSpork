@@ -14,6 +14,11 @@ To draw our effects, we'll use a switch statement to periodically swap which eff
 
 For a complete guide to the code, see
 https://github.com/AlbertGBarber/PixelSpork/wiki/Cycling-Multiple-Effects
+
+Note: when compiling using the Arduino IDE, if you have your "compiler warnings" (found in "preferences") 
+set to "More" or "All" you may get a few warnings when you first compile a sketch. 
+These should mainly concern the possible non-usage of various static variables, and are expected. 
+They will not prevent the code from running!
 */
 
 // How many leds in your strip?

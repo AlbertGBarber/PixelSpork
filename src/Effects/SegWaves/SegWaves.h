@@ -68,7 +68,7 @@ Inputs Guide & Notes:
         that is spread evenly across the segment set.
         Note that if the number of segments in the set is greater than 255, the rainbow will cap at 255, and repeat.
         There is no spacing for this mode.
-        Should you need to, you can re-create the rainbow pattern/palette by calling makeRainbowWaves(),
+        Should you need to, you can re-create the rainbow pattern/palette by calling makeRainbowWaves().
 
     Random Modes: 
         `randMode` controls how pattern colors are chosen. For `randMode`'s other than 0, 

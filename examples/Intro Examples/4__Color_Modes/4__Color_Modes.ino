@@ -10,6 +10,11 @@ read/understand C++ classes and objects.
 This example lays out a how to use Color Modes in Pixel Spork
 For a complete guide to the code, see
 https://github.com/AlbertGBarber/PixelSpork/wiki/Color-Mode-Example
+
+Note: when compiling using the Arduino IDE, if you have your "compiler warnings" (found in "preferences") 
+set to "More" or "All" you may get a few warnings when you first compile a sketch. 
+These should mainly concern the possible non-usage of various static variables, and are expected. 
+They will not prevent the code from running!
 */
 
 /*
