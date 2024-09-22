@@ -18,6 +18,8 @@ Pixel Spork is an Arduino library for controlling addressable LEDs. It aims to s
 
 Check out the [Youtube Trailer](https://youtu.be/n6MAIFuHd8U) for more!
 
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/K3K713QB3L) 
+
 Features:
 
 * Over 40 class-based, deeply customizable [effects](https://github.com/AlbertGBarber/PixelSpork/wiki/Effect-Samples).
