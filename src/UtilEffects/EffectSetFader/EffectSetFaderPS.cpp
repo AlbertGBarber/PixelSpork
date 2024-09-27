@@ -92,11 +92,11 @@ void EffectSetFaderPS::update(void) {
 
         //If we've not started a fade in, do so by resetting the effectFader, and setting it to fade in
         if( !fadeInStarted ) {
+            fadeInStarted = true;
             if( !fadeIn ) {  //If we don't want to fade in, just the end the fader before it can start
                 effectFader->done = true;
             } else {
-                effectFader->direct = true;
-                fadeInStarted = true;
+                effectFader->direct = true;  
                 effectFader->reset();
             }
         }
@@ -104,11 +104,11 @@ void EffectSetFaderPS::update(void) {
         //We want to start a fade out whenever the remaining effect set run time is less than the fade run time.
         //(if the set is infinite, then we never want to fade out)
         if( !(*infinite) && !fadeOutStarted && *setTimeElap >= (*runTime - fadeRunTime) ) {
+            fadeOutStarted = true;
             if( !fadeOut ) {  //If we don't want to fade out, just the end the fader before it can start
                 effectFader->done = true;
             } else {  //reset the effectFader, and setting it to fade out
                 effectFader->direct = false;
-                fadeOutStarted = true;
                 effectFader->reset();
             }
         }
