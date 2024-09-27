@@ -45,7 +45,7 @@ void segDrawUtils::getSegLocationFromPixel(SegmentSetPS &SegSet, uint16_t segSet
         if( (pixelCount - 1) >= segSetPixelNum ) {
             locData[0] = i;
             locData[1] = segSetPixelNum - (pixelCount - SegSet.getTotalSegLength(i));
-            pixelCount = segSetPixelNum; //used for Color Mode 1 (see getPixelColor() below)
+            pixelCount = segSetPixelNum;  //used for Color Mode 1 (see getPixelColor() below)
             break;
         }
     }
@@ -83,7 +83,7 @@ uint16_t segDrawUtils::getSegmentPixel(SegmentSetPS &SegSet, uint16_t segNum, ui
         secLength = SegSet.getSecLength(segNum, i);         //sec length can be negative
         secLengthSign = (secLength > 0) - (secLength < 0);  //either 1 or -1
         secLength = secLength * secLengthSign;              //get the positive version of secLength
-        pixelCount += secLength;                           //always add a positive sec length, we want to know the physical length of each section
+        pixelCount += secLength;                            //always add a positive sec length, we want to know the physical length of each section
         //if the count is greater than the number we want (num always starts at 0, so secLength will always be one longer than the max num in the section)
         //the num'th pixel is in the current segment.
         //for ascending segments:
@@ -118,7 +118,7 @@ uint16_t segDrawUtils::getSegmentPixel(SegmentSetPS &SegSet, uint16_t segNum, ui
                 } else if( segDirection ) {
                     return (secStartPixel + secLengthSign * (pixelLocNum));
                 } else {
-                    return (secStartPixel + secLengthSign * (secLength - (pixelLocNum) - 1));
+                    return (secStartPixel + secLengthSign * (secLength - (pixelLocNum)-1));
                 }
             } else {
                 //for mixed sections we grab the pixel value from the section array
@@ -127,7 +127,7 @@ uint16_t segDrawUtils::getSegmentPixel(SegmentSetPS &SegSet, uint16_t segNum, ui
                     return SegSet.getSecMixPixel(segNum, i, pixelLocNum);
                 } else {
                     //if the segment is reversed, we grab the pixel counting from the end of the section
-                    return SegSet.getSecMixPixel(segNum, i, secLength - (pixelLocNum) - 1);
+                    return SegSet.getSecMixPixel(segNum, i, secLength - (pixelLocNum)-1);
                 }
             }
         }
@@ -179,7 +179,7 @@ for(uint8_t i = 0; i < secNum; i++){
 } */
 void segDrawUtils::fillSegSecColor(SegmentSetPS &SegSet, uint16_t segNum, uint8_t secNum, uint16_t lengthSoFar, const CRGB &color, uint8_t colorMode) {
     secLength = SegSet.getSecLength(segNum, secNum);
-    for(uint16_t i = 0; i < secLength; i++){
+    for( uint16_t i = 0; i < secLength; i++ ) {
         setPixelColor(SegSet, lengthSoFar + i, color, colorMode, segNum);
     }
 }
@@ -189,7 +189,7 @@ void segDrawUtils::fillSegSecColor(SegmentSetPS &SegSet, uint16_t segNum, uint8_
 void segDrawUtils::fillSegLengthColor(SegmentSetPS &SegSet, uint16_t segNum, uint16_t startSegPixel, uint16_t endPixel, const CRGB &color, uint8_t colorMode) {
     //below is the fastest way to do this
     //there's no point in trying to split the length into partially and completely filled segment sections
-    //because in the end you need to call getSegmentPixel() for each pixel anyway 
+    //because in the end you need to call getSegmentPixel() for each pixel anyway
     //(also it means we don't have to worry about handling "pixelCount" for Color Mode 1)
     for( uint16_t i = startSegPixel; i <= endPixel; i++ ) {
         setPixelColor(SegSet, i, color, colorMode, segNum);
@@ -246,7 +246,7 @@ void segDrawUtils::drawSegLineSection(SegmentSetPS &SegSet, uint16_t startSeg, u
 
 //This function is the basis for 2D segment sets.
 //Will return a pixel such that you can draw a "straight" line across all segments, using the longest segment as the basis.
-//The pixels are mapped to the closest line, so some pixels may exist in multiple lines. 
+//The pixels are mapped to the closest line, so some pixels may exist in multiple lines.
 //Retuns the pixel number located on segment "segNum" located along line "lineNum" where the total number of lines is the length of the longest segment
 //Note that it returns the physical address of the Pixel
 uint16_t segDrawUtils::getPixelNumFromLineNum(SegmentSetPS &SegSet, uint16_t segNum, uint16_t lineNum) {
@@ -270,11 +270,11 @@ uint16_t segDrawUtils::getLineNumFromPixelNum(SegmentSetPS &SegSet, uint16_t seg
     return (uint32_t)(segPixelNum * SegSet.numLines) / SegSet.getTotalSegLength(segNum);
 }
 
-//Sets the pixel color at (lineNum, segNum), 
+//Sets the pixel color at (lineNum, segNum),
 //treating the segment set as matrix with dimensions numLines x numSegs.
 //So your "x" input is a line number ("lineNum"), and your "y" input is a segment number ("segNum").
 //This function should be particularly handy in adapting existing matrix-based effects to Pixel Spork
-void segDrawUtils::setPixelColor_XY(SegmentSetPS &SegSet, uint16_t lineNum, uint16_t segNum, const CRGB &color, uint8_t colorMode){
+void segDrawUtils::setPixelColor_XY(SegmentSetPS &SegSet, uint16_t lineNum, uint16_t segNum, const CRGB &color, uint8_t colorMode) {
     pixelNum = getPixelNumFromLineNum(SegSet, segNum, lineNum);
     setPixelColor(SegSet, pixelNum, color, colorMode, segNum, lineNum);
 }
@@ -330,12 +330,12 @@ void segDrawUtils::handleBri(SegmentSetPS &SegSet, uint16_t pixelNum) {
     }
 }
 
-//Returns the pixel color at (lineNum, segNum) (accounting for Color Modes), 
+//Returns the pixel color at (lineNum, segNum) (accounting for Color Modes),
 //treating the segment set as matrix with dimensions numLines x numSegs.
 //So your "x" input is a line number ("lineNum"), and your "y" input is a segment number ("segNum").
 //This function should be particularly handy in adapting existing matrix-based effects to Pixel Spork
 //The input color will be returned unchanged if the Color Mode is 0.
-CRGB segDrawUtils::getPixelColor_XY(SegmentSetPS &SegSet, uint16_t lineNum, uint16_t segNum, const CRGB &color, uint8_t colorMode){
+CRGB segDrawUtils::getPixelColor_XY(SegmentSetPS &SegSet, uint16_t lineNum, uint16_t segNum, const CRGB &color, uint8_t colorMode) {
     pixelNum = getPixelNumFromLineNum(SegSet, segNum, lineNum);
     return getPixelColor(SegSet, pixelNum, color, colorMode, segNum, lineNum);
 }
@@ -418,7 +418,7 @@ CRGB segDrawUtils::getPixelColor(SegmentSetPS &SegSet, uint16_t pixelNum, const 
         case 3:  //colors each segment line according to a rainbow or gradient mapped to the longest segment
         case 8:
             colorModeDom = SegSet.gradLineVal;  //the total number of gradient steps
-            colorModeNum = lineNum; //the current step (the line number)
+            colorModeNum = lineNum;             //the current step (the line number)
             break;
         case 4:                                                            //produces a single color that cycles through the rainbow or gradient at the SegSet's offsetRate
         case 9:                                                            //used to color a whole effect as a single color that cycles through the rainbow or gradient

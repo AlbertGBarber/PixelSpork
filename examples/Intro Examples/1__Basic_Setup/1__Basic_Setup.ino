@@ -15,6 +15,11 @@ read/understand C++ classes and objects.
 Note that Pixel Spork uses the FastLED library to manage much of the nitty gritty of writing to the LEDs
 So some functions in this example will be from FastLED.
 (while helpful, a full understanding of FastLED is not required to use Pixel Spork)
+
+Note: when compiling using the Arduino IDE, if you have your "compiler warnings" (found in "preferences") 
+set to "More" or "All" you may get a few warnings when you first compile a sketch. 
+These should mainly concern the possible non-usage of various static variables, and are expected. 
+They will not prevent the code from running!
 */
 
 // How many LEDs in your strip?

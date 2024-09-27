@@ -67,7 +67,7 @@ struct twinkleSetPS {
     };
 
     //Frees the memory of the twinkle set by freeing all the twinkles and the twinkle array. 
-    //**Should only be use if the twinkle set was dynamically allocated (ie using malloc() or "new")**
+    //++Should only be use if the twinkle set was dynamically allocated (ie using malloc() or "new")++
     void deleteTwinkleSet(){
         if( twinkleArr ) {  //check that the twinkle set array exists
             //we need to delete all the twinkles in the set before deleting the twinkle array

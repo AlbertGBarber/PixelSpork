@@ -19,6 +19,11 @@ We'll use the blend palette created by the PaletteBlender as the palette for the
 
 For a complete guide to the code, see
 https://github.com/AlbertGBarber/PixelSpork/wiki/Cycling-Using-EffectSets
+
+Note: when compiling using the Arduino IDE, if you have your "compiler warnings" (found in "preferences") 
+set to "More" or "All" you may get a few warnings when you first compile a sketch. 
+These should mainly concern the possible non-usage of various static variables, and are expected. 
+They will not prevent the code from running!
 */
 
 // How many LEDs in your strip?

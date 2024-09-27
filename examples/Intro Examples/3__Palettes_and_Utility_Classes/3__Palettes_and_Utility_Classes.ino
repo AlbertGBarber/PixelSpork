@@ -9,6 +9,11 @@ https://github.com/AlbertGBarber/PixelSpork/wiki/Palettes-and-Util-Classes
 In the example, we'll create a pair of palettes, a PaletteBlender utility, and a Twinkle effect.
 We'll use the palettes and the PaletteBlender to create a palette that constantly blends between colors.
 We'll then use the palette for the Twinkle effect's colors.
+
+Note: when compiling using the Arduino IDE, if you have your "compiler warnings" (found in "preferences") 
+set to "More" or "All" you may get a few warnings when you first compile a sketch. 
+These should mainly concern the possible non-usage of various static variables, and are expected. 
+They will not prevent the code from running!
 */
 
 // How many LEDs in your strip?

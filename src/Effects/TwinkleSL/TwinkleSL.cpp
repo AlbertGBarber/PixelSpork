@@ -11,8 +11,8 @@ TwinkleSL::TwinkleSL(SegmentSetPS &SegSet, palettePS &Palette, CRGB BgColor, uin
 //single color constructor
 TwinkleSL::TwinkleSL(SegmentSetPS &SegSet, CRGB Color, CRGB BgColor, uint16_t NumTwinkles, uint8_t FadeInSteps,
                      uint8_t FadeOutSteps, uint16_t Rate)
-    : numTwinkles(numTwinkles)  //
-{
+    : numTwinkles(NumTwinkles)  //
+{   
     setSingleColor(Color);
     init(FadeInSteps, FadeOutSteps, BgColor, SegSet, Rate);
 }

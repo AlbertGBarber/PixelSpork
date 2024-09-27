@@ -49,7 +49,7 @@ I have called the SegmentSetPS horzLines.
 The 0's in the above diagram represent the arrow we want to draw (with all of the pixels being part of the background)
 To create the arrow as a shiftPattern I would represent it as:
 
-//***********************************************************
+//===========================================================================
     //255 in the pattern indicates the background, but to keep the matrix easy to read, I define 255 as I
     uint8_t I = 255; 
 
@@ -70,7 +70,7 @@ To create the arrow as a shiftPattern I would represent it as:
     //Note that we include the segment set we intend to use the pattern with in the pattern definition
     shiftPatternPS arrowPattern(horzLines, numSegs, arrowPattern_arr, SIZE(arrowPattern_arr);
 
-//******************************************************************************
+//===========================================================================
 
 The array above may look strange at first, but it is actually quite simple.
 While shiftPattern arrays are one continuous array, they actually have distinct sections,

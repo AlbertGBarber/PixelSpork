@@ -10,6 +10,11 @@ https://github.com/AlbertGBarber/PixelSpork/wiki/2D-Segment-Sets-for-2D-Effects
 In the example, we'll create two different segment sets by virtually splitting the strip into sections.
 We'll re-use the rainbowCycle effect from the "Basic Setup" example, but we'll swap between the two segment sets
 periodically. This will change how the effect is drawn on the strip.
+
+Note: when compiling using the Arduino IDE, if you have your "compiler warnings" (found in "preferences") 
+set to "More" or "All" you may get a few warnings when you first compile a sketch. 
+These should mainly concern the possible non-usage of various static variables, and are expected. 
+They will not prevent the code from running!
 */
 
 // How many LEDs in your strip?
