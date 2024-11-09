@@ -107,7 +107,7 @@ uint16_t segDrawUtils::getSegmentPixel(SegmentSetPS &SegSet, uint16_t segNum, ui
 
             //Switch how we output to match the two possible segment section types
             //If the first if statement is true, then the segment has continuous sections, with starting pixels and lengths
-            //Otherwise the segment will have a single mixed section, with an array of physical pixel locations and a length
+            //Otherwise the segment will have mixed sections, with an array of physical pixel locations and a length
             //( SegSet.getSecContArrPtr(segNum) returns false if the segment has a null section array pointer,
             //it should have a real mixed section pointer instead )
             if( SegSet.getSecContArrPtr(segNum) ) {
@@ -152,40 +152,12 @@ void segDrawUtils::fillSegSetColor(SegmentSetPS &SegSet, const CRGB &color, uint
 
 //Fills a segment with a specific color
 void segDrawUtils::fillSegColor(SegmentSetPS &SegSet, uint16_t segNum, const CRGB &color, uint8_t colorMode) {
-    numSec = SegSet.getTotalNumSec(segNum);
-    uint16_t lengthSoFar = 0;
-    //Color each segment section.
-    for( uint8_t i = 0; i < numSec; i++ ) {
-        fillSegSecColor(SegSet, segNum, i, lengthSoFar, color, colorMode);
-        lengthSoFar += SegSet.getSecLength(segNum, i);
-    }
-}
-
-/* Fills a segment section with a specific color
-(ex: a segment section has three sub sections: {1, 4} , {8, 3}, {14, 8}) 
-(so 4 pixels starting at 1, 3 starting at 8, and 8 starting at 14)
-this function fills a selected section with a color.
-(ex: a segment section has three sub sections: {1, 4} , {8, 3}, {14, 8}) (so 4 pixels starting at 1, 3 starting at 8, and 8 starting at 14)
-this function fills all sections with a color
-To get the right seg pixel number, we need to know how far the section's pixels are in the overall segment.
-This is represented as the passed in lengthSoFar, which is the total length of all the sections up to the current section
-Since you'll usually be using this function to color in all the sections of a segment, the lengthSoFar is easy to track
-(see fillSegColor() above)
-But if you need to track it for an arbitrary section you can use the code below:
-Where secNum is the section you're coloring in
-lengthSoFar = 0;
-for(uint8_t i = 0; i < secNum; i++){
-  lengthSoFar += SegSet.getSecLength(segNum, i);
-} */
-void segDrawUtils::fillSegSecColor(SegmentSetPS &SegSet, uint16_t segNum, uint8_t secNum, uint16_t lengthSoFar, const CRGB &color, uint8_t colorMode) {
-    secLength = SegSet.getSecLength(segNum, secNum);
-    for( uint16_t i = 0; i < secLength; i++ ) {
-        setPixelColor(SegSet, lengthSoFar + i, color, colorMode, segNum);
-    }
+    uint16_t endPixel = SegSet.getTotalSegLength(segNum) - 1; //-1 because we need to count from 0
+    fillSegLengthColor(SegSet, segNum, 0, endPixel, color, colorMode);
 }
 
 //Fills in a length of a segment with a color, using a start and end pixel
-//pixel numbers are local to the segment, not global. ie 1-8th pixel in the segment
+//pixel numbers are local to the segment, not global. ie 1-8th pixel in the segment (starting from 0)
 void segDrawUtils::fillSegLengthColor(SegmentSetPS &SegSet, uint16_t segNum, uint16_t startSegPixel, uint16_t endPixel, const CRGB &color, uint8_t colorMode) {
     //below is the fastest way to do this
     //there's no point in trying to split the length into partially and completely filled segment sections
@@ -229,6 +201,45 @@ void segDrawUtils::fillSegSetLengthColor(SegmentSetPS &SegSet, uint16_t startSeg
             fillSegLengthColor(SegSet, locData2[0], 0, locData2[1], color, colorMode);
         }
     }
+}
+
+/* 
+Fills a segment section with a specific color
+(ex: a segment section has three sub sections: {1, 4}, {8, 3}, {14, 8})
+(so 4 pixels starting at 1, 3 starting at 8, and 8 starting at 14)
+this function fills a selected section with a color. */
+void segDrawUtils::fillSegSecColor(SegmentSetPS &SegSet, uint16_t segNum, uint8_t secNum, const CRGB &color, uint8_t colorMode) {
+    lengthSoFar = getSecLengthSoFar(SegSet, segNum, secNum);
+    secLength = SegSet.getSecLength(segNum, secNum);
+    for( uint16_t i = 0; i < secLength; i++ ) {
+        setPixelColor(SegSet, lengthSoFar + i, color, colorMode, segNum);
+    }
+}
+
+/* 
+Returns the location of the first LED in a Segment _Section_ local to the overall Segment.
+Takes into account the direction of the segment.
+For example, if I have a segment with two sections of lengths 5 and 8 like: {0, 5}, {5, 8}
+(assume the segment's direction is true, so we're counting from the start of the segment)
+I want the locations of LEDs in the second section, relative to the whole segment
+To do this I need to know how long all of the preceding sections are.
+This function returns that answer (5 in this case). */
+uint16_t segDrawUtils::getSecLengthSoFar(SegmentSetPS &SegSet, uint16_t segNum, uint8_t secNum) {
+    numSec = SegSet.getTotalNumSec(segNum);
+    lengthSoFar = 0;
+
+    //We need to account for the segment direction when counting the sections
+    //If the direction is true, we count forward, ie 0 -> last section
+    //If the direction is false, we count backward, ie last section - >0th
+    segDirection = SegSet.getSegDirection(segNum);
+    for( uint8_t i = 0; i < secNum; i++ ) {
+        if( segDirection ) {
+            lengthSoFar += SegSet.getSecLength(segNum, i);
+        } else {
+            lengthSoFar += SegSet.getSecLength(segNum, numSec - i - 1);
+        }
+    }
+    return lengthSoFar;
 }
 
 //Draws a segment line of one color

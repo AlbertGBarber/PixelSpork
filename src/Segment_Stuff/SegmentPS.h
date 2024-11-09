@@ -20,7 +20,7 @@ class SegmentPS {
         //Constructor for creating a segment with a continuous section
         SegmentPS(const segmentSecCont *segSecContArr, uint8_t NumSec, bool Direct = true);
 
-        //Constructor for creating a segment with a mixed section
+        //Constructor for creating a segment with mixed sections
         SegmentPS(const segmentSecMix *segSecMixArr, uint8_t NumSec, bool Direct = true);
 
         uint8_t
