@@ -5,20 +5,23 @@ DissolveSL::DissolveSL(SegmentSetPS &SegSet, patternPS &Pattern, palettePS &Pale
                        uint16_t SpawnRateInc, uint16_t Rate)
     : pattern(&Pattern), palette(&Palette), randMode(RandMode), spawnRateInc(SpawnRateInc)  //
 {
+    bgMode = 0;  //since we're using a set pattern, bgMode isn't being used
     init(SegSet, Rate);
 }
 
 //constructor for palette as pattern
-DissolveSL::DissolveSL(SegmentSetPS &SegSet, palettePS &Palette, uint8_t RandMode, uint16_t SpawnRateInc, uint16_t Rate)
-    : palette(&Palette), randMode(RandMode), spawnRateInc(SpawnRateInc)  //
+DissolveSL::DissolveSL(SegmentSetPS &SegSet, palettePS &Palette, uint8_t RandMode, uint8_t BgMode, uint16_t SpawnRateInc, uint16_t Rate)
+    : palette(&Palette), randMode(RandMode), bgMode(BgMode), spawnRateInc(SpawnRateInc)  //
 {
     setPaletteAsPattern();
     init(SegSet, Rate);
 }
 
 //constructor for randomly chosen colors (should only use randMode 1 or 3 with this constructor)
-DissolveSL::DissolveSL(SegmentSetPS &SegSet, uint8_t RandMode, uint16_t SpawnRateInc, uint16_t Rate)
-    : randMode(RandMode), spawnRateInc(SpawnRateInc)  //
+//note that RandMode3CycleLen is only relevant for bgMode 1 and randMode 3.
+//it controls how many colors are cycled before the background color is used. (see intro bgMode section for more)
+DissolveSL::DissolveSL(SegmentSetPS &SegSet, uint8_t RandMode, uint8_t BgMode, uint16_t RandMode3CycleLen, uint16_t SpawnRateInc, uint16_t Rate)
+    : randMode(RandMode), bgMode(BgMode), spawnRateInc(SpawnRateInc)  //
 {
     //although we're randomly choosing colors, we still make a palette and pattern
     //so that if the randMode is changed later, there's still a palette/pattern to use
@@ -26,6 +29,8 @@ DissolveSL::DissolveSL(SegmentSetPS &SegSet, uint8_t RandMode, uint16_t SpawnRat
     palette = &paletteTemp;
     setPaletteAsPattern();
     init(SegSet, Rate);
+    //we need to bind the randMode 3 cycle limit after init b/c init sets it to the pattern length by default
+    randMode3CycleLen = RandMode3CycleLen;
 }
 
 //destructor
@@ -41,14 +46,58 @@ void DissolveSL::init(SegmentSetPS &SegSet, uint16_t Rate) {
     bindSegSetPtrPS();
     bindClassRatesPS();
     setLineMode(lineMode);
+    //set the cycle limit for randMode 3 just in case
+    randMode3CycleLen = pattern->length - 1;
 }
 
 //sets the pattern to match the current palette
-//ie for a palette length 5, the pattern would be
-//{0, 1, 2, 3, 4}
+//ie for a palette length 5, the pattern would be {0, 1, 2, 3, 4}
+//Also injects "blank" spaces in the pattern depending on the bgMode setting.
+//The spaces are set to 255 in the pattern, which is recognized as the bgColor for the rest of the effect.
+//See setBgMode() below for the bgModes list
 void DissolveSL::setPaletteAsPattern() {
-    generalUtilsPS::setPaletteAsPattern(patternTemp, *palette);
+    uint8_t spacing = 0;
+
+    //Manage the bgMode
+    if( bgMode == 1 ) {
+        //We're going to build the pattern to match the palette automatically below,
+        //but for bgMode 1, we need an extra space in the pattern
+        //Unfortunately, this means we need to "trick" the code into thinking the is palette longer by adjusting its length
+        //So we increment the palette length here, and then decrement it once the pattern is made
+        //!!This is only ok because it's all being done in one function call. You shouldn't be manipulating palette lengths usually!
+        palette->length = palette->length + 1;
+    } else if( bgMode == 2 ) {
+        //For bgMode 2, we're adding a space between each palette color, we can do this by setting a spacing
+        //value of 1 for when we call setPaletteAsPattern() below
+        spacing = 1;
+    }
+
+    //Set patternTemp to match the palette, possibly with a single space in-between each color
+    generalUtilsPS::setPaletteAsPattern(patternTemp, *palette, 1, spacing);
+
+    //For bgMode 1, once the pattern is created, we need to revert the palette back to its original length
+    //and also set the final pattern value to 255 (so it's recognized as the background color)
+    if( bgMode == 1 ) {
+        palette->length = palette->length - 1;
+        patternUtilsPS::setVal(patternTemp, 255, patternTemp.length - 1);
+    }
+
     pattern = &patternTemp;
+}
+
+//Changes the bgMode to add background spaces to the dissolve pattern
+//bgModes:
+//  0 -- No spaces (ex: {0, 1, 2, 3, 4}, where the values are palette indexes)
+//  1 -- One space added to the end of the pattern (ex: {0, 1, 2, 3, 4, 255})
+//  2 -- A space is added after each color (ex: {0, 255, 1, 255, 2, 255, 3, 255, 4, 255})
+//(background spaces are denoted by 255 in the patterns)
+//Note that changing the bgMode also changes the dissolve pattern to use patternTemp
+//and re-writes patternTemp to a new pattern for the bgMode.
+void DissolveSL::setBgMode(uint8_t newBgMode) {
+    if( newBgMode != bgMode ) {
+        bgMode = newBgMode;
+        setPaletteAsPattern();
+    }
 }
 
 //Sets the line mode var, also restarts the dissolve,
@@ -101,31 +150,81 @@ randModes:
     1: Each dissolve is a set of randomly chosen colors
     2: Each dissolve is a set of random colors chosen from the pattern
     3: Each dissolve is a solid color chosen at random
-    4: Each dissolve is a solid color chosen randomly from the pattern */
-CRGB DissolveSL::pickColor() {
+    4: Each dissolve is a solid color chosen randomly from the pattern 
+    5: Each dissolve is a solid color chosen randomly from the pattern, but a "blank" dissolve is 
+       done between each color (see "Inserting Background Steps" below). 
+       By default, the same dissolve color won't repeat after a blank, but you can allow
+       repeats by setting "randMode5AllowRepeats" to true (making the colors choosen at random).
+       Note that bgMode should be set to 0 for this randMode.
+Note that in the pattern, a value of 255 will indicates the background color 
+(See "Inserting Background Steps" in Intro for randMode + bgMode behaviors)*/
+CRGB DissolveSL::pickDissolveColor() {
     if( randMode == 0 ) {
         //cycle through the pattern
         currentIndex = patternUtilsPS::getPatternVal(*pattern, numCycles);
-        color = paletteUtilsPS::getPaletteColor(*palette, currentIndex);
+        //get the next dissolve color
+        color = getPatternColor(currentIndex);
     } else if( randMode == 1 ) {
         //choose colors randomly
         color = colorUtilsPS::randColor();
     } else if( randMode == 2 ) {
-        //choose colors randomly from the pattern
-        color = paletteUtilsPS::getPaletteColor(*palette, patternUtilsPS::getRandVal(*pattern));
+        //choose colors randomly from the pattern for each pixel
+        //note that we use a separate variable, tempIndex for tracking, so that we don't overwrite the currentIndex value
+        //(incase the randMode is changed, we want to keep the tracking)
+        tempIndex = patternUtilsPS::getRandVal(*pattern);
+        //get the next dissolve color
+        color = getPatternColor(tempIndex);
     } else {
-        //for modes 3 and 4, the colors must only be picked once, since they are chosen randomly
+        //for modes 3, 4, and 5 the colors must only be picked once, since they are chosen randomly
         //hence the ranColorPicked flag
         //(This could also apply to mode 0, but we want to check the color each time for paletteBlending)
         if( !randColorPicked ) {
+            flipFlop = !flipFlop;  //tracking for bgMode 2 (can't use odd/even cycle check since it resets, so even cycle lengths produce double blanks)
             if( randMode == 3 ) {
-                color = colorUtilsPS::randColor();
+                //Pick a random color for the next dissolve
+                //for randMode 3, we still want to respect the background mode, but we aren't using the pattern
+                //so we need to check the bgMode conditions manually,
+                //either by adding a blank once "randMode3CycleLen" number of cycles (user configurable, default to patten length) (bgMode 1),
+                //or by adding a blank every other cycle (bgMode 2)
+                //If bgMode is 0, no blanks are added
+                if( (bgMode == 1 && numCycles == (randMode3CycleLen)) || (bgMode == 2 && flipFlop) ) {
+                    color = *bgColor;
+                } else {
+                    color = colorUtilsPS::randColor();
+                }
             } else if( randMode == 4 ) {
-                currentIndex = patternUtilsPS::getShuffleVal(*pattern, currentIndex);
-                color = paletteUtilsPS::getPaletteColor(*palette, currentIndex);
+                currentIndex = patternUtilsPS::getShuffleVal(*pattern, currentIndex, true); //get a shuffled color index, allowing blanks
+                //get the next dissolve color
+                color = getPatternColor(currentIndex);
+            } else if( randMode == 5 ) {
+                //Every other dissolve is picked randomly from the pattern, alternating between the blank color
+                //So every color dissolves to the blank color and then to a new random color
+                //Note that by default, the same color won't repeat, as the currentIndex is maintained between blanks,
+                //but we can change this using "randMode5AllowRepeats", which if true, randomizes the currentIndex each cycle 
+                if( flipFlop ) {
+                    color = *bgColor;
+                    if(randMode5AllowRepeats){
+                        currentIndex = random16(pattern->length);
+                    }
+                } else {
+                    currentIndex = patternUtilsPS::getShuffleVal(*pattern, currentIndex, false); //get a shuffled color index, NOT allowing blanks
+                    //get the next dissolve color
+                    color = getPatternColor(currentIndex);
+                }
             }
             randColorPicked = true;
         }
+    }
+    return color;
+}
+
+//Returns the next dissolve color, using a pattern array index
+//if the index is 255, then the spacing background color is used
+CRGB DissolveSL::getPatternColor(uint8_t patIndex) {
+    if( patIndex == 255 ) {
+        color = *bgColor;
+    } else {
+        color = paletteUtilsPS::getPaletteColor(*palette, patIndex);
     }
     return color;
 }
@@ -200,7 +299,16 @@ void DissolveSL::update() {
             resetPixelArray();
             dissolveCount++;
             paused = true;
-            numCycles = addMod16PS(numCycles, 1, pattern->length);
+
+            //randMode 3 doesn't use the pattern, and instead uses randMode3CycleLen
+            //to control the pattern length, so we need to adjust the cycle cap.
+            if( randMode == 3 ) {
+                maxNumCycles = randMode3CycleLen + 1;
+            } else {
+                maxNumCycles = pattern->length;
+            }
+
+            numCycles = addMod16PS(numCycles, 1, maxNumCycles);
         }
 
         showCheckPS();
@@ -219,7 +327,7 @@ void DissolveSL::update() {
 //records that it's set to the array and also increments the number of lines spawned
 void DissolveSL::spawnLed(uint16_t lineNum) {
     pixelArray[lineNum] = true;
-    color = pickColor();
+    color = pickDissolveColor();
 
     if( lineMode ) {
         //write the color out to all the leds in the segment line

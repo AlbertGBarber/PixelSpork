@@ -44,10 +44,12 @@
 Effects TODO:
     -- Draw pattern based on segments, (basically a static patternShifter) (not needed, just update patternShifter once?)
     -- Android (see WLED android effect)
-    -- Synced streamer dots across segments -> one array tracking dot locations on each segment, use even spacing.
+    -- Synced streamer dots across segments -> one array tracking dot locations on each segment, use seg lines for even spacing,
+       each dot moves independently. Like the rotating kaleidoscope matrix effect (WLED or Soulmate).
     -- Cyborg rings (each segment has a dot that moves along it, pausing and reversing direction randomly)
     -- Aurora (see WLED)
     -- Running dual or phased noise (see WLED)
+    -- Perlin Move (fireflies, but they don't decay)
     -- A multiple version of breath eye (like twinkle, but you do breath eyes in place of twinkles)
     -- Multipath snake. Snake runs across segments, when segments meet it chooses which segment to switch to.
        Snake tracks all the pixels it's on in its own in array.
@@ -64,9 +66,6 @@ Utils TODO:
     -- Function that sets up a synced rainbow across multiple segment sets. 
        Basically it just goes through each segment set and sets various rainbow offsets and lengths.
     -- Copy one section to another?
-    -- segment x,y. Not a util, but a function added to segments sets. 
-       segment sets are already matrixes -> their dimensions are numSegs x numLines. 
-       The function would just return the pixel at the passed in line and seg num.
 */
 
 #endif

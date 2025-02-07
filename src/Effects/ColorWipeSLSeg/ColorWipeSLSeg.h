@@ -5,7 +5,7 @@
 #include "GeneralUtils/generalUtilsPS.h"
 
 /* 
-An effect that colors one segment line, (or segment) in after another until all lines/segments are colored. 
+An effect that colors one segment line (or segment) after another until all lines/segments are colored. 
 The effect can be configured to wipe in specific lengths (these being repeated down the segment set)
 Ie you could have a segment set with 24 lines, and use a wipe length of 6, producing 24/6 = 4 wipes.
 The wipes can be set to either all happen simultaneously or in sequence.
@@ -31,7 +31,7 @@ The only restriction are the wipeLength and segMode, which must be set using set
 
 SegMode, Wipe Lengths, and Update Rates:
     segMode (bool) configures the effect to wipe whole segments, or segment lines one by one.
-    Each segMode has it's own wipeLength (segWipeLen or lineWipeLen).
+    Each segMode has its own wipeLength (segWipeLen or lineWipeLen).
     When you first create the effect, depending on the segMode you use,
     either segWipeLen or lineWipeLen will be set to wipeLength you pass in.
     The other length will be set to 0 (so that a whole wipe is done).

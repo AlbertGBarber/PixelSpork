@@ -94,7 +94,7 @@ Constructor inputs:
     palette (optional, see constructors) -- A custom palette passed to the effect, the default is the 
                                            lava colors palette encoded below
     numColors (optional, see constructors) -- How many colors will be in the randomly created palette
-    bgColor --  The color of the background pixels.
+    bgColor -- The color of the background pixels.
     blendStepsBase -- The minimum number of gradient steps between palette colors. (See Inputs Guide above)
     blendStepsRange -- The maximum amount added to blendStepBase for shifting. (See Inputs Guide above)
     phaseScale -- Sets how must the gradient wobbles. Must be greater than 0. (See Inputs Guide above)

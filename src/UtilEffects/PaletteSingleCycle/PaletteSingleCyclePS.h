@@ -28,24 +28,25 @@ You can also pass `*yourPaletteSingleCycle.cyclePalette` as part of the effect's
         Set using `blendMode`.
         Examples below use a palette of {blue, red, green}
             0 -- Cycles the entire palette forward/backward by one step each cycle. 
-                ie for direct = true, {blue, red, green} => {green, blue, red} => {red, green, blue} , etc
+                 ie for direct = true, {blue, red, green} => {green, blue, red} => {red, green, blue} , etc
             1 -- Like mode 0, but a random color is inserted at the beginning (end if direct is false) each cycle, 
-                (initially starts as the input palette)
-                ie for direct = true, {rand1, red, green} => {rand4, rand1, red} => {rand5, rand4, rand1}, etc, 
-                where "rand#" are random colors
-            2 -- Randomizes the whole palette each cycle for a palette with 3 random colors: 
-                {rand1, rand2, rand3} -> {rand4, rand5, rand6}, etc
-                direct has no effect.
+                 (initially starts as the input palette)
+                 ie for direct = true, {rand1, red, green} => {rand4, rand1, red} => {rand5, rand4, rand1}, etc, 
+                 where "rand#" are random colors
+            2 -- Randomizes the whole palette each cycle. 
+                 For a palette with 3 random colors: 
+                 {rand1, rand2, rand3} -> {rand4, rand5, rand6}, etc
+                 direct has no effect.
             3 -- Shuffles the input palette each cycle
-                ie {blue, red, green} could go to {red, blue, green}, or {blue, green, red}, etc 
-                Note that the same palette order can repeat, the likely-hood depends on the palette length.
-                DO not use this for a palette with only 2 colors!
-                direct has no effect.
+                 ie {blue, red, green} could go to {red, blue, green}, or {blue, green, red}, etc 
+                 Note that the same palette order can repeat, the likely-hood depends on the palette length.
+                 DO not use this for a palette with only 2 colors!
+                 direct has no effect.
             4 -- Makes the output palette a single color, cycling through each color in the input palette.
-                ie for direct = true and an input palette {blue, red, green} 
-                the output will be {blue} => {red} => {green} => {blue}, etc.
+                 ie for direct = true and an input palette {blue, red, green} 
+                 the output will be {blue} => {red} => {green} => {blue}, etc.
             5 -- Same as mode 4, but chooses the next color randomly from the input palette (will not be the current color). 
-                direct has no effect.
+                 direct has no effect.
             6 -- Same as mode 4, but the next color is chosen completely randomly (not from the palette). direct has no effect.
 
         For blend modes 0, 1, 2, 3 the output palette length will be the same as the input. 
