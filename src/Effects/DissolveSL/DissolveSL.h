@@ -13,42 +13,76 @@ Morphs the segment set from one color to the next by setting each segment line a
 Includes various options for color selection (see modes) 
 Colors can be chosen using a palette and pattern, or selected randomly.
 You can also automatically insert a background color (default black) between each dissolve,
-or at the end of a dissolve pattern
+or at the end of a color pattern.
+
+Once a dissolve is finished, the effect can be set to pause for a period using the `pauseTime` setting.
+
+The effect is adapted to work on segment lines for 2D use. (see Inputs Guide below).
 
 You can freely use colorModes from segDrawUtils::setPixelColor(), but they don't make much sense
 unless you are running an offset in the SegmentSetPS or using colorModes 5 or 6.
 
+Warning: requires an array of bools of equal size to the number of pixels in the segment set.
+So be careful of your memory usage!
+
 Inputs Guide:
 
-    The effect is adapted to work on segment lines for 2D use. 
+    Line Modes: 
+        The effect is adapted to work on segment lines for 2D use. 
+        
         You can use `lineMode` to control how pixels are filled in: 
-        * true (default): Whole segment lines will be dissolved, rather than each pixel.
-        * false: Individual pixels will be dissolved (only really useful when using certain color modes).
+            * true (default): Whole segment lines will be dissolved, rather than each pixel.
+            * false: Individual pixels will be dissolved (only really useful when using certain color modes).
     
     Controlling How Pixels Spawn/Dissolve:
-        The effect can be accelerated to set more lines at once by adjusting "spawnRateInc".
+        The effect can be accelerated to set more lines/pixels at once by adjusting "spawnRateInc".
         By default we start by spawning one segment line at a time, increasing the number every spawnRateInc ms,
-        so the spawning steadily accelerates. This helps keep the spawning consistent, since we're picking at random.
+        so the spawning steadily accelerates. This helps keep the spawning consistent, since we're picking 
+        repeatedly at random.
         Setting spawnRateInc close-ish (up to double?) to the update rate looks the best.
 
         Once a certain threshold has been met, "setAllThreshold"  
         (default of 1/10 of the number of lines in the segment set remaining)
         All the remaining lines are set. This prevents us from getting stuck looking for the last line.
-
-        Once a dissolve is finished, the effect can be set to pause for a period using the pauseTime variable.
+        This may sound weird, but in practice it looks quite good.
 
         Note, I know it would be better to remove the chance of picking a line that's already dissolved,
-        but that would require more memory to track the dissolved line's locations 
+        but that would require more memory to track the dissolved lines' locations 
         (an array of uint16_t's vs an array of bools). 
         Since the current effect seems to work, albeit with a bit of manual tweaking, I see no reason to change it.
 
         You can increase the starting number of lines set at once (maxNumSpawnBase), which will
         accelerate the dissolving, and may be good on longer segment sets.
 
+    Inserting Background Dissolves:
+        Using the "bgMode" setting, you can configure the effect to dissolve to a "blank" color
+        either between every colored dissolve, or at the end of a full pattern of colors. 
+
+        The blank color is default to black, but can be set using via the effects `*bgColor` pointer, 
+        or bgColorOrig (the default target of the bgColor pointer).
+
+        The modes work by inserting "blanks" into the effect's dissolve color pattern; 
+        they are indicated by a value of 255. 
+        You can also use the blank marker in your own patterns 
+        (as opposed to those generated automatically by the effect, see constructors below). 
+
+        For example, a pattern of {0, 1, 2, 255, 3} would dissolve through palette colors 
+        0, 1, 2, then a blank, and then to color 3 before repeating.
+       
+        bgMode's (uint8_t):
+            0: No blanks (ex: {0, 1, 2, 3, 4}, where the values are palette indexes).
+            1: One blank added to the end of the pattern (ex: {0, 1, 2, 3, 4, 255}).
+            2: A blank is added after each color (ex: {0, 255, 1, 255, 2, 255, 3, 255, 4, 255}).
+
+        You can change the bgMode using the setBgMode() function. Note that this will rewrite the effect's local
+        color pattern (patternTemp) and tell the effect to use it. 
+        Changing the bgMode while the effect is running may have weird effects. 
+        You can call resetPixelArray() to reset the effect.
+    
     Choosing Colors randomly:
-        You can opt to have the dissolve colors choosen at random in various combinations. 
-        This is controlled by randMode. Note that there is some interplay between randMode and bgMode.
-        (see "Inserting Background Steps" below)
+        You can opt to have the dissolve colors chosen at random in various combinations using the "randMode" setting.
+        Note that there is some interplay between randMode and bgMode which you should be aware of
+        (see "Background and Random Color Behavior" below).
 
             randMode's:
                 0: Each dissolve is a solid color following the pattern (not random).
@@ -57,50 +91,28 @@ Inputs Guide:
                 3: Each dissolve is a solid color chosen at random.
                 4: Each dissolve is a solid color chosen randomly from the pattern (non-repeating).
                 5: Each dissolve is a solid color chosen randomly from the pattern, but a "blank" dissolve is 
-                   done between each color (see "Inserting Background Steps" below). 
+                   done between each color (see "Inserting Background Dissolves" below). 
                    By default, the same dissolve color won't repeat after a blank, but you can allow
-                   repeats by setting "randMode5AllowRepeats" to true (making the colors choosen at random).
+                   repeats by setting "randMode5AllowRepeats" to true (making the colors chosen at random).
                    Note that bgMode should be set to 0 for this randMode.
 
             You should be able switch freely between randModes on the fly, but there may be some initial color repeating
-            (the random modes will set up a random palette/pattern as a fallback)
+            (the random modes will set up a random palette/pattern as a fallback).
 
-            Note that bgMode does not effect randMode 1 as, the pattern is not used for the colors.
+    Background and Random Color Behavior:
+        There is some interplay between the random and background modes, as both modify what colors are shown when.
+        The background behavior for each random mode is listed below.
 
-    Inserting Background Steps:
-        Using the "bgMode" setting, you can configure the effect to dissolve to a "blank" color
-        either between every colored dissolve, or at the end of a full pattern of colors. 
-
-        The blank color is default to black, but can be set using via the effects `*bgColor` pointer, 
-        or bgColorOrig (the default target of the bgColor pointer).
-
-        The modes work by inserting a blanks into the effect's dissolve color pattern. 
-        These "blanks" are indicated by a value of 255, so you can also add blanks
-        if you are using your own custom pattern. 
-
-        For example, a pattern of {0, 1, 2, 255, 3} would dissolve through palette colors 
-        0, 1, 2, then a blank, and then to color 3 before repeating.
-       
-        bgMode's:
-            0: No blanks (ex: {0, 1, 2, 3, 4}, where the values are palette indexes).
-            1: One blank added to the end of the pattern (ex: {0, 1, 2, 3, 4, 255}).
-            2: A blank is added after each color (ex: {0, 255, 1, 255, 2, 255, 3, 255, 4, 255}).
-
-        You can change the bgMode using the setBgMode() function. Note that this will rewrite the effect's local
-        color pattern (patternTemp) and set the effect to use it. 
-        Changing the bgMode while the effect is running may have weird effects. 
-        You can call resetPixelArray() to reset the effect.
-
-        Background and randMode Behavior:
-            For randModes:
+        For randMode:
             0: The background mode works as described above.
             1: The background mode is ignored. There will be no blank dissolves.
-            2: The blank color can be choosen from the pattern, but the effect will not cycle to fully blank. 
+            2: The blank color can be chosen from the pattern, but the effect will not cycle to fully blank. 
                (Note the more blanks in your pattern, the more likely a pixel will be dissolve to blank. 
                So be careful when using randMode 2 and bgMode 2).
             3: The background mode works as described above, 
                however, for bgMode 1, the number of dissolves before the blank is set by "randMode3CycleLen".
                Ie, if randMode3CycleLen is 3, then the effect will dissolve through 3 random colors before the blank color.
+               randMode3CycleLen is defaulted to the input pattern length, or can specified in some constructors.
             4: Each dissolve is a random color from the pattern, with the blank color being a possible choice.  
             5: The background mode is ignored. A blank dissolve always happens between random colors.
 
@@ -109,16 +121,22 @@ Example calls:
     patternPS pattern = {pattern_arr, SIZE(pattern_arr), SIZE(pattern_arr)};
     DissolveSL dissolve(mainSegments, pattern, cybPnkPal_PS, 0, 150, 70);
     Will dissolve colors from the cybPnkPal_PS palette, following the pattern above using randMode 0 (see above) 
-    with the number of leds set on one cycle increasing every 150ms with the effect updating every 70ms
+    with the number of lines set on one cycle increasing every 150ms with the effect updating every 70ms.
 
-    DissolveSL dissolve(mainSegments, cybPnkPal_PS, 4, 100, 100);
-    Will dissolve using from the cybPnkPal_PS palette in order, using randMode 4 (see above) 
-    with the number of leds set on one cycle increasing every 100ms with the effect updating every 100ms
+    DissolveSL dissolve(mainSegments, cybPnkPal_PS, 0, 2, 100, 100);
+    Will dissolve colors using from the cybPnkPal_PS palette in order, 
+    using randMode 0 (not random) and bgMode 2 (see Inputs Guide above), so there will be a blank dissolve between colors. 
+    The number of lines set on one cycle increases every 100ms with the effect updating every 100ms.
 
-    DissolveSL dissolve(mainSegments, 3, 150, 70);
+    DissolveSL dissolve(mainSegments, cybPnkPal_PS, 4, 0, 100, 100);
+    Will dissolve using colors from the cybPnkPal_PS using randMode 4 and bgMode 0 (see Inputs Guide above) 
+    with the number of lines set on one cycle increasing every 100ms with the effect updating every 100ms.
+
+    DissolveSL dissolve(mainSegments, 3, 0, 3, 150, 70);
     Will dissolve using random colors set according to randMode 3
     (use randMode 2 or 3 with this constructor)
-    with the number of leds set on one cycle increasing every 150ms with the effect updating every 70ms
+    The bgMode is 0 (no blanks), with a "randMode3CycleLen" of 3, although this is ignored (see Inputs Guide above)
+    The number of lines set on one cycle increases every 150ms with the effect updating every 70ms.
 
 Constructor Inputs
     pattern(optional, see constructors) -- The color pattern the effect will use. 
@@ -126,14 +144,14 @@ Constructor Inputs
     palette(optional, see constructors) -- The repository of colors used in the pattern, or can be used as the pattern itself.
     randMode -- The randMode that will be used for the dissolves (see above)
     bgMode -- Controls if "blank" spaces are added to the shift pattern. 
-              See "Inserting Background Steps" in Inputs Guide above. 
+              See "Inserting Background Dissolves" in Inputs Guide above. 
               Can be changed later using `setBgMode()`.
-    spawnRateInc -- The rate increase at which the total number of lines that are set each cycle (ms)
-                    Setting this close-ish (up to double?) to the update rate looks the best.
     randMode3CycleLen (optional, see constructors, default to pattern length if not used) --
                       Only relevant when using bgMode 1 and randMode 3. 
                       Sets how many colors are cycled through before the background color is used. 
-                      (See "Inserting Background Steps" in Inputs Guide above)
+                      (See "Inserting Background Dissolves" in Inputs Guide above)
+    spawnRateInc -- The rate increase at which the total number of lines that are set each cycle (ms)
+                    Setting this close-ish (up to double?) to the update rate looks the best.
     rate -- update rate (ms)
 
 Other Settings:
@@ -151,13 +169,13 @@ Other Settings:
                                    Higher numbers may work better for longer segment set lengths.
     randMode5AllowRepeats (default false) -- Only used in randMode 5. If true, then dissolve colors from the 
                                              pattern can repeat between blanks. 
-                                             If false, a new color will always be choosen. 
+                                             If false, a new color will always be chosen. 
                                 
 Functions:
     setPaletteAsPattern() -- Sets the effect pattern to match the current palette, 
                              will also add "blank" spaces depending on bgMode (see intro).
     setBgMode(newBgMode) -- Sets the bgMode to control "blank" pattern spaces.
-                            See "Inserting Background Steps" in Inputs Guide above.
+                            See "Inserting Background Dissolves" in Inputs Guide above.
     resetPixelArray() -- Resets the dissolved state of the segment lines, effectively restarting the current dissolve.
     setLineMode(newLineMode) -- Sets the line mode (see intro LineMode notes), 
                                 also restarts the dissolve, and sets the setAllThreshold to 1/10 the numLines
@@ -167,14 +185,10 @@ Reference vars:
     dissolveCount -- The number of dissolves we've done (does not reset automatically).
     bgMode -- (see constructor vars above). Set using setBgMode().
     numCycles -- How many dissolves we've finished (resets when we've gone through the whole pattern).
-    lineMode (default true) -- (See intro lineMode notes) !!FOR reference only, set using setLineMode().
+    lineMode (default true) -- (See intro Line Mode notes). Set using setLineMode().
 
 Flags:
-    paused -- If true, then the effect is paused. Note that the effect is not re-draw while paused.
-
-Notes:
-    Requires an array of bools of equal size to the number of pixels in the segment set
-    So be careful of your memory usage 
+    paused -- While true, the effect is paused. Note that the effect is not re-drawn while paused.
 */
 class DissolveSL : public EffectBasePS {
     public:
