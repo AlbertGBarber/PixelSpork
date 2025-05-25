@@ -3,7 +3,7 @@
 
 #include "Effects/EffectBasePS.h"
 #include "GeneralUtils/generalUtilsPS.h"
-#include "Utils/fire2012SegUtilsPS.h"
+#include "Utils/fire2012UtilsPS.h"
 
 /* 
 A classic, traditional fire loop, most useful for strips with a diffuser
