@@ -1,5 +1,5 @@
-#ifndef Fire2012SegUtilsPS_h
-#define Fire2012SegUtilsPS_h
+#ifndef fire2012UtilsPS_h
+#define fire2012UtilsPS_h
 
 #if ARDUINO >= 100
     #include "Arduino.h"
