@@ -1,6 +1,7 @@
 #ifndef pixelInfoPS_h
 #define pixelInfoPS_h
 
+//
 //struct used in segDrawUtils::getPixelColor
 //used to store all the variables associated with a segment pixel for setting it's color
 struct pixelInfoPS {
