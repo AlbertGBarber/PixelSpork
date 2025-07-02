@@ -14,7 +14,7 @@
 
 # Welcome!
 
-<b>Warning: Currently only compatible with FastLED versions up to and including 3.10.0!</b>
+<b>Warning: May have instability problems with FastLED version greater than 3.10.0. Recommend using 3.10.0 or less!</b>
 
 Pixel Spork is an Arduino library for controlling addressable LEDs. It aims to streamline the use of the popular WS2812 (and other) addressable LEDs by providing a wide variety of rich, class-based, effects and utilities. The library's stand-out feature is "[Segment Sets](https://github.com/AlbertGBarber/PixelSpork/wiki/Ring-Segments-Example)", which allow you to intuitively arrange your LEDs into virtual 2D shapes. Effects map onto these shapes automatically, streamlining your coding experience. Pixel Spork lets users code at their own comfort level by only requiring a few core tools to operate, but providing many more for power users. Start small with a simple 1D Segment Set and effect, and scale up over time to fully 2D Segment Sets, using multiple effects, while managing multiple palettes, color modes, utilities and more!
 
